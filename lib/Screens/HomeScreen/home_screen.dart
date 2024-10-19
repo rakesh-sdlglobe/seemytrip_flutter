@@ -542,7 +542,7 @@ class HomeScreen extends StatelessWidget {
                           },
                           child: Column(
                             children: [
-                              Image.asset(trainsAndBus, height: 55, width: 55),
+                              Image.asset(train, height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
                                 text: "Trains &\nBus",

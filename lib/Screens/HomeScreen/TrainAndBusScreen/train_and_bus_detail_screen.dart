@@ -15,7 +15,9 @@ import 'package:makeyourtripapp/main.dart';
 import '../../../Constants/font_family.dart';
 
 class TrainAndBusDetailScreen extends StatelessWidget {
-  TrainAndBusDetailScreen({Key? key}) : super(key: key);
+  TrainAndBusDetailScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

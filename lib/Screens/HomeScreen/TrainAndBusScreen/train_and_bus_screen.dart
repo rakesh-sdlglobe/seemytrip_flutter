@@ -28,7 +28,7 @@ class TrainAndBusScreen extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.only(left: 24,right: 24,top: 50),
+              padding: EdgeInsets.only(left: 24, right: 24, top: 50),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

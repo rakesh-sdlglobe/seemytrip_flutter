@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart'; // For date formatting
 import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_detail_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
 
 class TrainAndBusSearchScreen extends StatefulWidget {
   TrainAndBusSearchScreen({Key? key}) : super(key: key);
@@ -19,8 +20,75 @@ class TrainAndBusSearchScreen extends StatefulWidget {
 
 class _TrainAndBusSearchScreenState extends State<TrainAndBusSearchScreen> {
   int selectedIndex = 0;
+  DateTime selectedDate = DateTime.now(); // Initial date
+  bool isTomorrowSelected = false; // Flag to track selection
+  int selectedDateOption = 0; // 0 for None, 1 for Tomorrow, 2 for Day After
+
+  String? selectedFromStation; // To store the selected "From" station
+  String? selectedToStation; // To store the selected "To" station
+
+  // Swap the logic here - from and to stations are swapped in this function
+  void _swapStations() {
+    setState(() {
+      final temp = selectedFromStation;
+      selectedFromStation = selectedToStation;
+      selectedToStation = temp;
+    });
+  }
+
+  Future<void> _navigateToFromScreen() async {
+    final result = await Get.to(() => TrainAndBusFromScreen());
+    if (result != null && result.containsKey('stationName')) {
+      setState(() {
+        selectedFromStation = result['stationName'];
+      });
+    }
+  }
+
+  Future<void> _navigateToToScreen() async {
+    final result = await Get.to(() => TrainAndBusToScreen());
+    if (result != null && result.containsKey('stationName')) {
+      setState(() {
+        selectedToStation = result['stationName'];
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  void _setDateToTomorrow() {
+    setState(() {
+      selectedDate = DateTime.now().add(Duration(days: 1));
+      isTomorrowSelected = true;
+      selectedDateOption = 1;
+    });
+  }
+
+  void _setDateToDayAfter() {
+    setState(() {
+      selectedDate = DateTime.now().add(Duration(days: 2));
+      isTomorrowSelected = false;
+      selectedDateOption = 2;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('dd MMM').format(selectedDate);
+    String dayOfWeek = DateFormat('EEEE').format(selectedDate);
+
     return Scaffold(
       backgroundColor: white,
       body: Column(
@@ -57,204 +125,210 @@ class _TrainAndBusSearchScreenState extends State<TrainAndBusSearchScreen> {
             ),
           ),
           SizedBox(height: 20),
-          ListView.builder(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
-            itemCount: Lists.trainAndBusFromToList.length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) => Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: InkWell(
-                onTap: Lists.trainAndBusFromToList[index]["onTap"],
-                child: Container(
-                  width: Get.width,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: grey9B9.withOpacity(0.15),
-                    border: Border.all(color: greyE2E, width: 1),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(trainAndBusFromToIcon),
-                        SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
+              alignment: Alignment
+                  .centerRight, // Align the swap icon at the center of the Stack
+              children: [
+                Column(
+                  children: [
+                    GestureDetector(
+                      onTap: _navigateToFromScreen,
+                      child: Container(
+                        width: Get.width,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Row(
                           children: [
+                            SvgPicture.asset(trainAndBusFromToIcon),
+                            SizedBox(width: 15),
                             CommonTextWidget.PoppinsMedium(
-                              text: Lists.trainAndBusFromToList[index]["text1"],
-                              color: grey888,
-                              fontSize: 14,
+                              text:
+                                  selectedFromStation ?? "Select From Station",
+                              color: selectedFromStation == null
+                                  ? grey888
+                                  : black2E2,
+                              fontSize: 16,
                             ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: _navigateToToScreen,
+                      child: Container(
+                        width: Get.width,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(trainAndBusFromToIcon),
+                            SizedBox(width: 15),
+                            CommonTextWidget.PoppinsMedium(
+                              text: selectedToStation ?? "Select To Station",
+                              color: selectedToStation == null
+                                  ? grey888
+                                  : black2E2,
+                              fontSize: 16,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Positioned(
+                  // Position the swap icon at the vertical center between the two fields
+                  top: 35, // Adjust this value to control the position
+                  child: GestureDetector(
+                    onTap: _swapStations,
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.withOpacity(0.2),
+                      ),
+                      child:
+                          Icon(Icons.swap_vert, size: 24, color: Colors.black),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 18),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: InkWell(
+              onTap: () {
+                _selectDate(context);
+              },
+              child: Container(
+                width: Get.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.grey.withOpacity(0.15),
+                  border: Border.all(color: Colors.grey[300]!, width: 1),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/icons/calendar_plus.svg'),
+                            SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CommonTextWidget.PoppinsSemiBold(
-                                  text: Lists.trainAndBusFromToList[index]
-                                      ["text2"],
-                                  color: black2E2,
-                                  fontSize: 16,
+                                Text(
+                                  "DATE",
+                                  style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
                                 ),
-                                SizedBox(width: 5),
-                                CommonTextWidget.PoppinsRegular(
-                                  text: Lists.trainAndBusFromToList[index]
-                                      ["text3"],
-                                  color: grey888,
-                                  fontSize: 14,
+                                Text(
+                                  formattedDate,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  dayOfWeek,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400),
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Container(
-              width: Get.width,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: grey9B9.withOpacity(0.15),
-                border: Border.all(color: greyE2E, width: 1),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(calendarPlus),
-                          SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CommonTextWidget.PoppinsMedium(
-                                text: "DATE",
-                                color: grey888,
-                                fontSize: 14,
-                              ),
-                              CommonTextWidget.PoppinsSemiBold(
-                                text: "03 Oct",
-                                color: black2E2,
-                                fontSize: 14,
-                              ),
-                              CommonTextWidget.PoppinsRegular(
-                                text: "Today, Monday",
-                                color: black2E2,
-                                fontSize: 12,
-                              ),
-                            ],
-                          ),
-                        ],
                       ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 30,
-                              width: Get.width,
-                              decoration: BoxDecoration(
-                                color: redFAE.withOpacity(0.8),
-                                border: Border.all(color: redCA0, width: 1),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: CommonTextWidget.PoppinsMedium(
-                                  text: "Tomorrow",
-                                  color: redCA0,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Expanded(
-                            child: Container(
-                              height: 30,
-                              width: Get.width,
-                              decoration: BoxDecoration(
-                                color: white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: grey515.withOpacity(0.25),
-                                    blurRadius: 6,
-                                    offset: Offset(0, 1),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: _setDateToTomorrow,
+                                child: Container(
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: selectedDateOption == 1
+                                        ? Colors.red
+                                        : Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.25),
+                                        blurRadius: 6,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                ],
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Center(
-                                child: CommonTextWidget.PoppinsMedium(
-                                  text: "Day After",
-                                  color: redCA0,
-                                  fontSize: 10,
+                                  child: Center(
+                                    child: Text(
+                                      "Tomorrow",
+                                      style: TextStyle(
+                                          color: selectedDateOption == 1
+                                              ? Colors.white
+                                              : Colors.redAccent,
+                                          fontSize: 10),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 18),
-          SizedBox(
-            height: 45,
-            child: ScrollConfiguration(
-              behavior: MyBehavior(),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: Lists.trainAndBusSearchList.length,
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(left: 24, right: 9, top: 5, bottom: 5),
-                itemBuilder: (context, index) => Padding(
-                  padding: EdgeInsets.only(right: 15),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                    child: Container(
-                      height: 45,
-                      width: 68,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                            color: index == selectedIndex
-                                ? Color(0xffCA0F2E)
-                                : white),
-                        color:
-                            index == selectedIndex ? Color(0xffF8EAED) : white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: grey515.withOpacity(0.25),
-                            offset: Offset(0, 1),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: CommonTextWidget.PoppinsMedium(
-                          text: Lists.trainAndBusSearchList[index],
-                          color: redCA0,
-                          fontSize: 10,
+                            SizedBox(width: 5),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: _setDateToDayAfter,
+                                child: Container(
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: selectedDateOption == 2
+                                        ? Colors.red
+                                        : Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.25),
+                                        blurRadius: 6,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Day After",
+                                      style: TextStyle(
+                                          color: selectedDateOption == 2
+                                              ? Colors.white
+                                              : Colors.redAccent,
+                                          fontSize: 10),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),

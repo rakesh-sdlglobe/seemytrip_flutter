@@ -189,6 +189,7 @@ const String kedarnath = "assets/images/kedarnath.png";
 const String kochi = "assets/images/kochi.png";
 const String flight = "assets/images/flight.png";
 const String trainsAndBus = "assets/images/trainsAndBus.png";
+const String train = "assets/images/train_image.png";
 const String hotel = "assets/images/hotel.png";
 const String holidayPakages = "assets/images/holidayPakages.png";
 const String flightSearchTopImage = "assets/images/flightSearchTopImage.png";
