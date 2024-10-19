@@ -61,20 +61,20 @@ class HomeScreen extends StatelessWidget {
                           //   },
                           //   child: Image.asset(menuIcon, height: 42, width: 42),
                           // ),
-                          Column(
-                            children: [
-                              CommonTextWidget.PoppinsRegular(
-                                text: "Good Morning",
-                                color: white,
-                                fontSize: 14,
-                              ),
-                              CommonTextWidget.PoppinsMedium(
-                                text: "Andrew Smith",
-                                color: white,
-                                fontSize: 16,
-                              ),
-                            ],
-                          ),
+                          // Column(
+                          //   children: [
+                          //     CommonTextWidget.PoppinsRegular(
+                          //       text: "Good Morning",
+                          //       color: white,
+                          //       fontSize: 14,
+                          //     ),
+                          //     CommonTextWidget.PoppinsMedium(
+                          //       text: "Andrew Smith",
+                          //       color: white,
+                          //       fontSize: 16,
+                          //     ),
+                          //   ],
+                          // ),
                           InkWell(
                             onTap: () {
                               Get.to(() => NotificationScreen());

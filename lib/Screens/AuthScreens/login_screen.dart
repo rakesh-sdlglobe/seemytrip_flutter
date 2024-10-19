@@ -5,6 +5,7 @@ import 'package:makeyourtripapp/Constants/font_family.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
 import 'package:makeyourtripapp/Controller/login_controller.dart';
 import 'package:makeyourtripapp/Screens/AuthScreens/otp_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/home_screen.dart';
 import 'package:makeyourtripapp/Screens/NavigationSCreen/navigation_screen.dart';
 import 'package:makeyourtripapp/Screens/ReferralScreen/refferal_screen.dart';
 import 'package:makeyourtripapp/Screens/SelectCountryScreen/select_country_screen.dart';
@@ -12,11 +13,59 @@ import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_textfeild_widget.dart';
 import 'package:makeyourtripapp/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LogInScreen extends StatelessWidget {
   LogInScreen({Key? key}) : super(key: key);
   final TextEditingController numberController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final LoginController loginController = Get.put(LoginController());
+  bool isLoading = false;
+
+  Future<void> loginUser() async {
+    if (isLoading) {
+      return;
+    }
+
+    isLoading = true;
+
+    final String apiUrl = 'https://tripadmin.onrender.com/api/login';
+
+    final Map<String, dynamic> data = {
+      'email': numberController.text,
+      'password': passwordController.text,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData['token'] != null) {
+          print('Login successful!');
+
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('accessToken', responseData['token']);
+
+          Get.to(NavigationScreen());
+        } else {
+          print('Invalid credentials');
+        }
+      } else {
+        print('Failed to login. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error during user login: $error');
+    } finally {
+      isLoading = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +84,7 @@ class LogInScreen extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                Image.asset(welcome2Canvas,
-                    width: Get.width, fit: BoxFit.cover),
+                Image.asset(welcome2Canvas, width: Get.width, fit: BoxFit.cover),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
@@ -79,7 +127,6 @@ class LogInScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 245),
             child: Container(
-              // height: Get.height,
               width: Get.width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -137,25 +184,31 @@ class LogInScreen extends StatelessWidget {
                             ),
                           ),
                           onChange: (value) {
-                            if (value.isNotEmpty) {
-                              loginController.isTextEmpty.value = true;
-                            } else {
-                              loginController.isTextEmpty.value = false;
-                            }
+                            loginController.isTextEmpty.value = value.isNotEmpty;
                           },
+                        ),
+                        SizedBox(height: 35),
+                        // Password field
+                        CommonTextFieldWidget.TextFormField1(
+                          hintText: "Enter Password",
+                          keyboardType: TextInputType.visiblePassword,
+                          controller: passwordController,
                         ),
                         SizedBox(height: 35),
                         Obx(
                           () => CommonButtonWidget.button(
-                            onTap: () {
-                              Get.to(() => OtpScreen());
-                            },
+                            onTap: loginController.isTextEmpty.isFalse
+                                ? null
+                                : () {
+                                    loginUser();
+                                  },
                             buttonColor: loginController.isTextEmpty.isFalse
                                 ? greyD8D
                                 : redCA0,
                             text: "CONTINUE",
                           ),
                         ),
+                        
                         SizedBox(height: 55),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 25),

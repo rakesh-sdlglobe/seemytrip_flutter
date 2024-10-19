@@ -1,20 +1,124 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Add shared_preferences
+import 'dart:convert'; // For decoding JSON
+import 'package:http/http.dart' as http;
 import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_textfeild_widget.dart';
 import 'package:makeyourtripapp/main.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
   EditProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  _EditProfileScreenState createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController dateOfBirthController = TextEditingController();
   final TextEditingController nationalityController = TextEditingController();
   final TextEditingController emailIdController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
+
+  bool isLoading = true;
+  Map<String, dynamic>? userDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfile();
+  }
+
+  Future<void> _fetchProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? accessToken = prefs.getString('accessToken');
+    if (accessToken != null) {
+      final String serverEndpoint =
+          'https://tripadmin.onrender.com/api/users/userProfile';
+      final Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
+
+      final response = await http.get(
+        Uri.parse(serverEndpoint),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          userDetails = data;
+          fullNameController.text = data['name'] ?? '';
+          genderController.text = data['gender'] ?? '';
+          dateOfBirthController.text = data['dob'] ?? '';
+          nationalityController.text = data['nationality'] ?? '';
+          emailIdController.text = data['email'] ?? '';
+          mobileNumberController.text = data['mobile'] ?? '';
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        throw Exception('Failed to fetch customer details');
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      print('Access token not found');
+    }
+  }
+
+  Future<void> editProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? accessToken = prefs.getString('accessToken');
+    if (accessToken != null) {
+      final String serverEndpoint =
+          'https://tripadmin.onrender.com/api/users/editProfile';
+      final Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      };
+
+      final Map<String, dynamic> body = {
+        'name': fullNameController.text,
+        'gender': genderController.text,
+        'dob': dateOfBirthController.text,
+        'email': emailIdController.text,
+        'mobile': mobileNumberController.text,
+      };
+
+      final response = await http.post(
+        Uri.parse(serverEndpoint),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        print('Profile updated successfully');
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        throw Exception('Failed to update profile');
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      print('Access token not found');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +143,7 @@ class EditProfileScreen extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () {
+              editProfile();
               Get.back();
             },
             child: Padding(
@@ -52,15 +157,17 @@ class EditProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ScrollConfiguration(
-        behavior: MyBehavior(),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 22),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 25),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ScrollConfiguration(
+              behavior: MyBehavior(),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 22),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 25),
                 InkWell(
                   onTap: () {
                     Get.defaultDialog(
@@ -132,7 +239,7 @@ class EditProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 22),
                 CommonTextWidget.PoppinsMedium(
-                  text: "Full Name",
+                  text: "Name",
                   color: black2E2,
                   fontSize: 14,
                 ),
@@ -162,22 +269,23 @@ class EditProfileScreen extends StatelessWidget {
                     child: SvgPicture.asset(genderIcon),
                   ),
                 ),
-                SizedBox(height: 22),
-                CommonTextWidget.PoppinsMedium(
-                  text: "Date of Birth",
+                         SizedBox(height: 22),
+              CommonTextWidget.PoppinsMedium(
+                  text: "Date Of Birth",
                   color: black2E2,
                   fontSize: 14,
                 ),
                 SizedBox(height: 10),
-                CommonTextFieldWidget.TextFormField8(
-                  keyboardType: TextInputType.text,
-                  controller: fullNameController,
-                  hintText: "25 Oct 2022",
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SvgPicture.asset(calendarIcon),
-                  ),
-                ),
+                   CommonTextFieldWidget.TextFormField8(
+                        keyboardType: TextInputType.text,
+                        controller: dateOfBirthController, 
+                        hintText: "25 Oct 2022",
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: SvgPicture.asset(calendarIcon),
+                        ),
+                      ),
+              
                 SizedBox(height: 22),
                 CommonTextWidget.PoppinsMedium(
                   text: "Nationality",
