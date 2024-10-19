@@ -41,7 +41,7 @@ dependencies:
   table_calendar: ^3.0.8
   flutter_toggle_tab: ^1.2.0
   http: ^1.2.2
-  dio: ^5.7.0
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
