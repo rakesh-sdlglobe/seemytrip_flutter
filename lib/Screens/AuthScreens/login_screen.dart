@@ -84,7 +84,8 @@ class LogInScreen extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                Image.asset(welcome2Canvas, width: Get.width, fit: BoxFit.cover),
+                Image.asset(welcome2Canvas,
+                    width: Get.width, fit: BoxFit.cover),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
@@ -184,7 +185,8 @@ class LogInScreen extends StatelessWidget {
                             ),
                           ),
                           onChange: (value) {
-                            loginController.isTextEmpty.value = value.isNotEmpty;
+                            loginController.isTextEmpty.value =
+                                value.isNotEmpty;
                           },
                         ),
                         SizedBox(height: 35),
@@ -208,7 +210,7 @@ class LogInScreen extends StatelessWidget {
                             text: "CONTINUE",
                           ),
                         ),
-                        
+
                         SizedBox(height: 55),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 25),
