@@ -34,20 +34,24 @@ import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/Screens/Where2GoScreen/international_screen.dart';
 
 class Lists {
-  static List<Map> welcomeList = [
+  static List<Map<String, dynamic>> welcomeList = [
     {
       "image": welcomeImage1,
-      "text": "Instruction 1",
+      "text": "Embark on Your Adventure",
+      "description": "Start your journey with us and explore breathtaking destinations. Every journey begins with a single step.",
     },
     {
       "image": welcomeImage2,
-      "text": "Instruction 2",
+      "text": "Discover the World",
+      "description": "Uncover hidden gems and iconic landmarks as you travel to places you've always dreamed of.",
     },
     {
       "image": welcomeImage3,
-      "text": "Instruction 3",
+      "text": "Create Unforgettable Memories",
+      "description": "Capture moments that last a lifetime and cherish experiences with loved ones as you travel the world.",
     },
   ];
+
 
   static List dayList = [
     "Thu 13",
@@ -1077,16 +1081,7 @@ class Lists {
     "CC",
   ];
 
-  static List trainAndBusDetailList1 = [
-    "3, MON",
-    "4, Tue",
-    "5, Wed",
-    "6, Thu",
-    "7, Fri",
-    "8, Sat",
-    "9, Sun",
-    "10, Mon",
-  ];
+  
 
   static List trainAndBusDetailList2 = [
     "AC",

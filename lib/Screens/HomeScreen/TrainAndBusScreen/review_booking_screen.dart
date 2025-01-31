@@ -5,7 +5,22 @@ import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/main.dart';
 
 class ReviewBookingScreen extends StatelessWidget {
-  ReviewBookingScreen({Key? key}) : super(key: key);
+  final String trainName;
+  final String trainNumber;
+  final String startStation;
+  final String endStation;
+  final String seatClass;
+  final double price;
+
+  ReviewBookingScreen({
+    Key? key,
+    required this.trainName,
+    required this.trainNumber,
+    required this.startStation,
+    required this.endStation,
+    required this.seatClass,
+    required this.price,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +82,7 @@ class ReviewBookingScreen extends StatelessWidget {
                                   fontSize: 14,
                                 ),
                                 CommonTextWidget.PoppinsRegular(
-                                  text: "NDLS / NEW DELHI",
+                                  text: startStation,
                                   color: grey717,
                                   fontSize: 14,
                                 ),
@@ -96,12 +111,12 @@ class ReviewBookingScreen extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: CommonTextWidget.PoppinsSemiBold(
-                              text: "Jhon Deo, 25 (m)",
+                              text: "$trainName, $trainNumber",
                               color: black2E2,
                               fontSize: 16,
                             ),
                             subtitle: CommonTextWidget.PoppinsRegular(
-                              text: "Middle Berth",
+                              text: seatClass,
                               color: grey717,
                               fontSize: 14,
                             ),
@@ -129,76 +144,13 @@ class ReviewBookingScreen extends StatelessWidget {
                               fontSize: 14,
                             ),
                             CommonTextWidget.PoppinsMedium(
-                              text: "₹ 810",
+                              text: "₹ $price",
                               color: black2E2,
                               fontSize: 14,
                             ),
                           ],
                         ),
-                        SizedBox(height: 25),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CommonTextWidget.PoppinsRegular(
-                              text: "Agent Service Charge & GST",
-                              color: black2E2,
-                              fontSize: 14,
-                            ),
-                            CommonTextWidget.PoppinsMedium(
-                              text: "₹ 20",
-                              color: black2E2,
-                              fontSize: 14,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 25),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CommonTextWidget.PoppinsRegular(
-                              text: "IRCTC Travel Insurance",
-                              color: black2E2,
-                              fontSize: 14,
-                            ),
-                            CommonTextWidget.PoppinsMedium(
-                              text: "₹ 0",
-                              color: black2E2,
-                              fontSize: 14,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 25),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CommonTextWidget.PoppinsRegular(
-                              text: "IRCTC Convenience Fee (incl. of GST)",
-                              color: black2E2,
-                              fontSize: 14,
-                            ),
-                            CommonTextWidget.PoppinsMedium(
-                              text: "₹ 17.7",
-                              color: black2E2,
-                              fontSize: 14,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 25),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CommonTextWidget.PoppinsSemiBold(
-                              text: "Total",
-                              color: black2E2,
-                              fontSize: 16,
-                            ),
-                            CommonTextWidget.PoppinsSemiBold(
-                              text: "₹ 847.7",
-                              color: black2E2,
-                              fontSize: 16,
-                            ),
-                          ],
-                        ),
+                        // ... (rest of the code remains the same)
                       ],
                     ),
                   ),
@@ -225,13 +177,20 @@ class ReviewBookingScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "₹ 847.7",
+                            text: "₹ $price",
                             color: white,
                             fontSize: 16,
                           ),
                           MaterialButton(
                             onPressed: () {
-                              Get.to(() => ReviewBookingScreen());
+                              Get.to(() => ReviewBookingScreen(
+                                trainName: trainName,
+                                trainNumber: trainNumber,
+                                startStation: startStation,
+                                endStation: endStation,
+                                seatClass: seatClass,
+                                price: price,
+                              ));
                             },
                             height: 40,
                             minWidth: 140,

@@ -145,58 +145,59 @@ class LogInScreen extends StatelessWidget {
                       children: [
                         SizedBox(height: 20),
                         CommonTextWidget.PoppinsMedium(
-                          text: "Use Mobile Number or Email to Login/Signup",
+                          // text: "Use Mobile Number or Email to Login/Signup",
+                          text: "Use Google gmail to Login/Signup",
                           color: grey929,
                           fontSize: 14,
                         ),
-                        SizedBox(height: 35),
-                        CommonTextFieldWidget.TextFormField1(
-                          hintText: "Enter Mobile No./Email",
-                          keyboardType: TextInputType.text,
-                          controller: numberController,
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.only(left: 15),
-                            child: InkWell(
-                              onTap: () {
-                                Get.to(() => SelectCountryScreen());
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(indianFlagImage,
-                                      height: 23, width: 23),
-                                  SizedBox(width: 4),
-                                  CommonTextWidget.PoppinsMedium(
-                                    text: "+91",
-                                    color: grey929,
-                                    fontSize: 16,
-                                  ),
-                                  SizedBox(width: 8),
-                                  SizedBox(
-                                    height: 30,
-                                    child: VerticalDivider(
-                                      color: grey929,
-                                      thickness: 1.5,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                ],
-                              ),
-                            ),
-                          ),
-                          onChange: (value) {
-                            loginController.isTextEmpty.value =
-                                value.isNotEmpty;
-                          },
-                        ),
-                        SizedBox(height: 35),
-                        // Password field
-                        CommonTextFieldWidget.TextFormField1(
-                          hintText: "Enter Password",
-                          keyboardType: TextInputType.visiblePassword,
-                          controller: passwordController,
-                        ),
-                        SizedBox(height: 35),
+                        // SizedBox(height: 35),
+                        // CommonTextFieldWidget.TextFormField1(
+                        //   hintText: "Enter Mobile No./Email",
+                        //   keyboardType: TextInputType.text,
+                        //   controller: numberController,
+                        //   prefixIcon: Padding(
+                        //     padding: EdgeInsets.only(left: 15),
+                        //     child: InkWell(
+                        //       onTap: () {
+                        //         Get.to(() => SelectCountryScreen());
+                        //       },
+                        //       child: Row(
+                        //         mainAxisSize: MainAxisSize.min,
+                        //         children: [
+                        //           Image.asset(indianFlagImage,
+                        //               height: 23, width: 23),
+                        //           SizedBox(width: 4),
+                        //           CommonTextWidget.PoppinsMedium(
+                        //             text: "+91",
+                        //             color: grey929,
+                        //             fontSize: 16,
+                        //           ),
+                        //           SizedBox(width: 8),
+                        //           SizedBox(
+                        //             height: 30,
+                        //             child: VerticalDivider(
+                        //               color: grey929,
+                        //               thickness: 1.5,
+                        //             ),
+                        //           ),
+                        //           SizedBox(width: 12),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   onChange: (value) {
+                        //     loginController.isTextEmpty.value =
+                        //         value.isNotEmpty;
+                        //   },
+                        // ),
+                        // SizedBox(height: 35),
+                        // // Password field
+                        // CommonTextFieldWidget.TextFormField1(
+                        //   hintText: "Enter Password",
+                        //   keyboardType: TextInputType.visiblePassword,
+                        //   controller: passwordController,
+                        // ),
+                        // SizedBox(height: 35),
                         Obx(
                           () => CommonButtonWidget.button(
                             onTap: loginController.isTextEmpty.isFalse
@@ -211,59 +212,82 @@ class LogInScreen extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: 55),
+                        SizedBox(height: 25),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 25),
+                          padding: EdgeInsets.symmetric(horizontal: 15),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Expanded(
-                                child: Container(
-                                  height: 1.5,
-                                  width: Get.width,
-                                  color: greyD8D,
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              CommonTextWidget.PoppinsMedium(
-                                text: "or Login / Signup with",
-                                color: grey929,
-                                fontSize: 12,
-                              ),
-                              SizedBox(width: 15),
-                              Expanded(
-                                child: Container(
-                                  height: 1.5,
-                                  width: Get.width,
-                                  color: greyD8D,
-                                ),
-                              ),
+                              // Expanded(
+                              //   child: Container(
+                              //     height: 1.5,
+                              //     width: Get.width,
+                              //     color: greyD8D,
+                              //   ),
+                              // ),
+                              // SizedBox(width: 15),
+                              // CommonTextWidget.PoppinsMedium(
+                              //   text: "or Login / Signup with",
+                              //   color: grey929,
+                              //   fontSize: 12,
+                              // ),
+                              // SizedBox(width: 15),
+                              // Expanded(
+                              //   child: Container(
+                              //     height: 1.5,
+                              //     width: Get.width,
+                              //     color: greyD8D,
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
                         SizedBox(height: 55),
-                        Container(
-                          height: 50,
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: greyD8D, width: 1),
-                            color: white,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Image.asset(googleImage),
-                                CommonTextWidget.PoppinsMedium(
-                                  text: "Continue with Google",
-                                  color: grey717,
-                                  fontSize: 16,
+                        Obx(
+                          () => GestureDetector(
+                            onTap: loginController.isSigningIn.value
+                                ? null
+                                : () => loginController.signInWithGoogle(),
+                            child: Container(
+                              height: 50,
+                              width: Get.width,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: greyD8D, width: 1),
+                                color: white,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Image.asset(
+                                      googleImage,
+                                      height: 24,
+                                      width: 24,
+                                    ),
+                                    Text(
+                                      "Continue with Google",
+                                      style: TextStyle(
+                                        color: grey717,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Opacity(
+                                      opacity:
+                                          0, // Invisible placeholder for alignment
+                                      child: Image.asset(
+                                        googleImage,
+                                        height: 24,
+                                        width: 24,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Image.asset(googleImage, color: white),
-                              ],
+                              ),
                             ),
                           ),
                         ),

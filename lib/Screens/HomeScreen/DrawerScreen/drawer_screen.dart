@@ -6,10 +6,14 @@ import 'package:makeyourtripapp/Constants/images.dart';
 import 'package:makeyourtripapp/Screens/MyAccountScreen/edit_profile_screen.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DrawerScreen extends StatelessWidget {
   DrawerScreen({Key? key}) : super(key: key);
+
+  // Fetch authenticated user data
+  final User? user = FirebaseAuth.instance.currentUser;
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,8 @@ class DrawerScreen extends StatelessWidget {
           },
           leading: Image.asset(myAccountImage, height: 70, width: 70),
           title: CommonTextWidget.PoppinsMedium(
-            text: "Ellison Perry",
+            text: user?.displayName ??
+                "Guest User", // Use authenticated user's name
             color: black2E2,
             fontSize: 18,
           ),

@@ -4,158 +4,223 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/custom_dialogbox.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/datepicker.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_from_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_to_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/from_station_selector.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/offer_make_your_trip_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/to_station_selector.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/flight_book_screen.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
 import 'package:makeyourtripapp/main.dart';
+import 'package:intl/intl.dart';
 
-class OneWayScreen extends StatelessWidget {
-  OneWayScreen({Key? key}) : super(key: key);
+class OneWayScreen extends StatefulWidget {
+  const OneWayScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OneWayScreen> createState() => _OneWayScreenState();
+}
+
+class _OneWayScreenState extends State<OneWayScreen> {
+  String? selectedFromStation; // To store the selected "From" station
+  String? selectedToStation; // To store the selected "To" station
+  String formattedDate = "Select Date"; // Placeholder for selected date
+  String dayOfWeek = ""; // Placeholder for day of the week
+  DateTime selectedDate = DateTime.now();
+  DateTime? returnDate; // To store the return date
+  bool isReturnDateVisible = false;
+  int? selectedFareIndex; // Add this variable to track the selected fare index
+  String travelClass = "Economy"; // Default travel class
+  int travelers = 1; // Default number of travelers
+
+  Future<void> _navigateToFromScreen() async {
+    final result = await Get.to(() => FlightFromScreen());
+    if (result != null && result.containsKey('stationName')) {
+      setState(() {
+        selectedFromStation = result['stationName'];
+      });
+    }
+  }
+
+  Future<void> _navigateToToScreen() async {
+    final result = await Get.to(() => FlightToScreen());
+    if (result != null && result.containsKey('stationName')) {
+      setState(() {
+        selectedToStation = result['stationName'];
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context,
+      {bool isReturnDate = false}) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate:
+          isReturnDate && returnDate != null ? returnDate! : selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isReturnDate) {
+          returnDate = picked;
+        } else {
+          selectedDate = picked;
+        }
+      });
+    }
+  }
+
+  void _selectTravelersAndClass() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TravelClassAndTravelerSelector(
+          travelClass: travelClass,
+          travelers: travelers,
+          onClassChanged: (String newClass) {
+            setState(() {
+              travelClass = newClass;
+            });
+          },
+          onTravelerCountChanged: (int newCount) {
+            setState(() {
+              travelers = newCount;
+            });
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    String formattedDepartureDate = DateFormat('dd MMM').format(selectedDate);
+    String formattedReturnDate = returnDate != null
+        ? DateFormat('dd MMM').format(returnDate!)
+        : 'Select Return Date';
+    String dayOfWeekDeparture = DateFormat('EEEE').format(selectedDate);
+    String dayOfWeekReturn =
+        returnDate != null ? DateFormat('EEEE').format(returnDate!) : '';
     return ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: Lists.flightSearchList1.length,
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              itemBuilder: (context, index) => Padding(
-                padding: EdgeInsets.only(bottom: 15),
-                child: InkWell(
-                  onTap: Lists.flightSearchList1[index]["onTap"],
-                  child: Container(
-                    width: Get.width,
-                    decoration: BoxDecoration(
-                      color: grey9B9.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(width: 1, color: greyE2E),
-                    ),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                              Lists.flightSearchList1[index]["image"]),
-                          SizedBox(width: 15),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CommonTextWidget.PoppinsMedium(
-                                  text: Lists.flightSearchList1[index]["text1"],
-                                  color: grey888,
-                                  fontSize: 14,
-                                ),
-                                Row(
-                                  children: [
-                                    CommonTextWidget.PoppinsSemiBold(
-                                      text: Lists.flightSearchList1[index]
-                                          ["text2"],
-                                      color: black2E2,
-                                      fontSize: 18,
-                                    ),
-                                    CommonTextWidget.PoppinsMedium(
-                                      text: Lists.flightSearchList1[index]
-                                          ["text3"],
-                                      color: grey888,
-                                      fontSize: 12,
-                                    ),
-                                  ],
-                                ),
-                                CommonTextWidget.PoppinsRegular(
-                                  text: Lists.flightSearchList1[index]["text4"],
-                                  color: grey888,
-                                  fontSize: 12,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            FromStationSelector(
+              selectedFromStation: selectedFromStation,
+              onTap: _navigateToFromScreen,
             ),
+            SizedBox(height: 15),
+            ToStationSelector(
+              selectedToStation: selectedToStation,
+              onTap: _navigateToToScreen,
+            ),
+            SizedBox(height: 15),
+            DatePickerWidget(
+              title: "DATE",
+              formattedDate: formattedDepartureDate,
+              dayOfWeek: dayOfWeekDeparture,
+              onTap: () => _selectDate(context),
+            ),
+            SizedBox(height: 18),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Container(
-                width: Get.width,
-                decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1, color: greyE2E),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonTextWidget.PoppinsMedium(
-                        text: "+ADD RETURN DATE",
-                        color: redCA0,
-                        fontSize: 14,
-                      ),
-                      CommonTextWidget.PoppinsMedium(
-                        text: "Save more on round trop!",
-                        color: grey888,
-                        fontSize: 14,
-                      ),
-                    ],
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isReturnDateVisible = true;
+                  });
+                },
+                child: Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: grey9B9.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(width: 1, color: greyE2E),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonTextWidget.PoppinsMedium(
+                          text: "+ ADD RETURN DATE",
+                          color: redCA0,
+                          fontSize: 14,
+                        ),
+                        CommonTextWidget.PoppinsMedium(
+                          text: "Save more on round trips!",
+                          color: grey888,
+                          fontSize: 14,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             SizedBox(height: 15),
+
+            // Return Date Picker (Visible only if 'Add Return Date' is tapped)
+            if (isReturnDateVisible)
+              DatePickerWidget(
+                title: "RETURN DATE",
+                formattedDate: formattedReturnDate,
+                dayOfWeek: dayOfWeekReturn,
+                onTap: () => _selectDate(context, isReturnDate: true),
+              ),
+
+            SizedBox(height: 15),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Container(
-                width: Get.width,
-                decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1, color: greyE2E),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(user),
-                      SizedBox(width: 15),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CommonTextWidget.PoppinsMedium(
-                            text: "TRAVELLERS & CLASS",
-                            color: grey888,
-                            fontSize: 14,
-                          ),
-                          Row(
-                            children: [
-                              CommonTextWidget.PoppinsSemiBold(
-                                text: "1,",
-                                color: black2E2,
-                                fontSize: 18,
-                              ),
-                              CommonTextWidget.PoppinsMedium(
-                                text: "TEconomy/Premium Economy",
-                                color: grey888,
-                                fontSize: 14,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+              child: GestureDetector(
+                onTap: _selectTravelersAndClass,
+                child: Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: grey9B9.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(width: 1, color: greyE2E),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(user),
+                        SizedBox(width: 15),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CommonTextWidget.PoppinsMedium(
+                              text: "TRAVELLERS & CLASS",
+                              color: grey888,
+                              fontSize: 14,
+                            ),
+                            Row(
+                              children: [
+                                CommonTextWidget.PoppinsSemiBold(
+                                  text: "$travelers ,",
+                                  color: black2E2,
+                                  fontSize: 18,
+                                ),
+                                SizedBox(width: 10.0),
+                                CommonTextWidget.PoppinsMedium(
+                                  text: travelClass,
+                                  color: grey888,
+                                  fontSize: 14,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -182,19 +247,35 @@ class OneWayScreen extends StatelessWidget {
                       EdgeInsets.only(top: 13, bottom: 13, left: 24, right: 12),
                   itemBuilder: (context, index) => Padding(
                     padding: EdgeInsets.only(right: 12),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: white,
-                        border: Border.all(color: greyE2E, width: 1),
-                      ),
-                      child: Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: CommonTextWidget.PoppinsMedium(
-                            text: Lists.flightSearchList2[index],
-                            color: grey5F5,
-                            fontSize: 14,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedFareIndex =
+                              index; // Update the selected fare index
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: selectedFareIndex == index
+                              ? redCA0 // Highlight the selected fare
+                              : white,
+                          border: Border.all(
+                            color:
+                                selectedFareIndex == index ? redCA0 : greyE2E,
+                            width: 1,
+                          ),
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: CommonTextWidget.PoppinsMedium(
+                              text: Lists.flightSearchList2[index],
+                              color: selectedFareIndex == index
+                                  ? white // Change text color for selected fare
+                                  : grey5F5,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),

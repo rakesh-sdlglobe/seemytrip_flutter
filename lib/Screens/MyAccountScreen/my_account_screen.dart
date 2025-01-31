@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   Map<String, dynamic>? userDetails;
   bool isLoading = true;
 
+  // Fetch authenticated user data
+  final User? user = FirebaseAuth.instance.currentUser;
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +40,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           'https://tripadmin.onrender.com/api/users/userProfile';
       final Map<String, String> headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken', 
+        'Authorization': 'Bearer $accessToken',
       };
 
       final response = await http.get(
@@ -99,9 +103,11 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                       onTap: () {
                         Get.to(() => EditProfileScreen());
                       },
-                      leading: Image.asset(myAccountImage, height: 70, width: 70),
+                      leading:
+                          Image.asset(myAccountImage, height: 70, width: 70),
                       title: CommonTextWidget.PoppinsMedium(
-                        text: userDetails?['name'] ?? 'Ellison Perry',
+                        // text: userDetails?['name'] ?? 'Ellison Perry',
+                        text: user?.displayName ?? "Guest User",
                         color: black2E2,
                         fontSize: 18,
                       ),

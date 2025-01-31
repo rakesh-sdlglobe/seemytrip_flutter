@@ -39,7 +39,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
             },
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.only(left: 30, top: 70, right: 30),
+                padding: EdgeInsets.only(left: 30, top: 140, right: 30),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -61,9 +61,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: CommonTextWidget.PoppinsRegular(
-                        text: "Lorem ipsum dolor sit amet "
-                            "consectetur adipiscing elit In commodo "
-                            "iaculis pretium.",
+                        text: Lists.welcomeList[index]["description"],
                         color: grey717,
                         fontSize: 12,
                         textAlign: TextAlign.center,

@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -6,14 +5,9 @@ import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
 import 'package:makeyourtripapp/Controller/flight_search_controller.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/multicity_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/offer_make_your_trip_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/one_way_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/round_trip_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/flight_book_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
 
 class FlightSearchScreen extends StatelessWidget {
   FlightSearchScreen({Key? key}) : super(key: key);
@@ -135,30 +129,30 @@ class FlightSearchScreen extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            right: 32,
-            top: 335,
-            child: InkWell(
-              onTap: () {
-                // Get.to(() => SortAndFilterScreen());
-              },
-              child: Container(
-                height: 45,
-                width: 33,
-                decoration: BoxDecoration(
-                  color: white,
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(
-                    color: greyE2E,
-                    width: 1,
-                  ),
-                ),
-                child: Center(
-                  child: SvgPicture.asset(arrowsDownUp),
-                ),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   right: 32,
+          //   top: 335,
+          //   child: InkWell(
+          //     onTap: () {
+          //       // Get.to(() => SortAndFilterScreen());
+          //     },
+          //     child: Container(
+          //       height: 45,
+          //       width: 33,
+          //       decoration: BoxDecoration(
+          //         color: white,
+          //         borderRadius: BorderRadius.circular(4),
+          //         border: Border.all(
+          //           color: greyE2E,
+          //           width: 1,
+          //         ),
+          //       ),
+          //       child: Center(
+          //         child: SvgPicture.asset(arrowsDownUp),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

@@ -4,8 +4,35 @@ import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/main.dart';
 
-class TrainAndBusContactInformationScreen extends StatelessWidget {
+class TrainAndBusContactInformationScreen extends StatefulWidget {
   TrainAndBusContactInformationScreen({Key? key}) : super(key: key);
+
+  @override
+  _TrainAndBusContactInformationScreenState createState() =>
+      _TrainAndBusContactInformationScreenState();
+}
+
+class _TrainAndBusContactInformationScreenState
+    extends State<TrainAndBusContactInformationScreen> {
+  final TextEditingController _usernameController = TextEditingController();
+  final ValueNotifier<bool> _isButtonEnabled = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    _isButtonEnabled.value = _usernameController.text.isNotEmpty;
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _isButtonEnabled.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +54,22 @@ class TrainAndBusContactInformationScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CommonTextWidget.PoppinsMedium(
-                    text: "Contact information",
-                    color: black2E2,
-                    fontSize: 18,
-                  ),
+                    Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CommonTextWidget.PoppinsMedium(
+                      text: "Contact information",
+                      color: black2E2,
+                      fontSize: 18,
+                      ),
+                        IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      icon: Icon(Icons.close, color: Colors.black),
+                      ),
+                    ],
+                    ),
                   SizedBox(height: 15),
                   Container(
                     width: Get.width,
@@ -64,29 +102,42 @@ class TrainAndBusContactInformationScreen extends StatelessWidget {
                         color: grey888,
                         fontSize: 12,
                       ),
-                      subtitle: CommonTextWidget.PoppinsMedium(
-                        text: "Enter IRCTC Username",
-                        color: grey888,
-                        fontSize: 12,
+                      subtitle: TextField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          hintText: "Enter IRCTC Username",
+                          hintStyle: TextStyle(color: grey888, fontSize: 12),
+                          border: InputBorder.none,
+                        ),
+                        style: TextStyle(color: grey888, fontSize: 12),
                       ),
                     ),
                   ),
                   SizedBox(height: 25),
-                  MaterialButton(
-                    onPressed: () {
-                      Get.back();
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _isButtonEnabled,
+                    builder: (context, isEnabled, child) {
+                      return MaterialButton(
+                        height: 50,
+                        minWidth: Get.width,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        color: redCA0,
+                        disabledColor: greyE2E,
+                        onPressed: isEnabled
+                          ? () {
+                            String username = _usernameController.text;
+                           Get.back(result: username);
+                            }
+                          : null,
+                        child: CommonTextWidget.PoppinsSemiBold(
+                          fontSize: 16,
+                          text: "SUBMIT",
+                          color: white,
+                        ),
+                      );
                     },
-                    height: 50,
-                    minWidth: Get.width,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    color: greyBEB,
-                    child: CommonTextWidget.PoppinsSemiBold(
-                      fontSize: 16,
-                      text: "SUBMIT",
-                      color: white,
-                    ),
                   ),
                   SizedBox(height: 20),
                   CommonTextWidget.PoppinsMedium(
