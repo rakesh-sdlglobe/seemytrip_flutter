@@ -5,9 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
 import 'package:makeyourtripapp/Controller/train_and_bus_detail_controller.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/AirportCabsScreens/select_travell_date_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/CalendarScreen/calender_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_detail_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
+import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_traveldate_screen.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 
@@ -233,7 +236,7 @@ class _TrainAndBusSearchScreenState extends State<TrainAndBusSearchScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: InkWell(
-        onTap: () => _selectDate(context),
+        onTap: _navigateToCalendarScreen,
         child: Container(
           width: Get.width,
           decoration: BoxDecoration(
@@ -256,42 +259,54 @@ class _TrainAndBusSearchScreenState extends State<TrainAndBusSearchScreen> {
     );
   }
 
+  Future<void> _navigateToCalendarScreen() async {
+    final result = await Get.to(() => TrainTravelDateScreen());
+    if (result != null && result.containsKey('selectedDate')) {
+      setState(() {
+        selectedDate = result['selectedDate'];
+      });
+    }
+  }
+
   Widget _buildDateInfo(String formattedDate, String dayOfWeek) {
     return Expanded(
-      child: Row(
-        children: [
-          SvgPicture.asset('assets/images/calendarPlus.svg'),
-          SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "DATE",
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+      child: GestureDetector(
+        onTap: _navigateToCalendarScreen,
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today, color: Colors.grey[600]),
+            SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "DATE",
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              Text(
-                formattedDate,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                Text(
+                  formattedDate,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Text(
-                dayOfWeek,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
+                Text(
+                  dayOfWeek,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -368,12 +383,12 @@ class _TrainAndBusSearchScreenState extends State<TrainAndBusSearchScreen> {
             selectedDate.toIso8601String(),
           );
 
-            Get.to(() => TrainAndBusDetailScreen(
-              trains: _controller.trains.value,
-              selectedDate: selectedDate,
-              fromStation: selectedFromStation?.split(' - ')[0] ?? '',
-              toStation: selectedToStation?.split(' - ')[0] ?? '',
-            ));
+          Get.to(() => TrainAndBusDetailScreen(
+                trains: _controller.trains.value,
+                selectedDate: selectedDate,
+                fromStation: selectedFromStation?.split(' - ')[0] ?? '',
+                toStation: selectedToStation?.split(' - ')[0] ?? '',
+              ));
 
           setState(() {
             isLoading = false;

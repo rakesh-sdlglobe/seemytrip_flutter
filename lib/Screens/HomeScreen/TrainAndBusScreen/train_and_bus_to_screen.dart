@@ -96,7 +96,14 @@ class _TrainAndBusToScreenState extends State<TrainAndBusToScreen> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          redCA0), // Change to your desired color
+                      strokeWidth:
+                          3.0, // Change the thickness of the progress indicator
+                    ),
+                  );
                 } else if (controller.hasError.value) {
                   return Center(child: Text("Error fetching stations."));
                 } else if (controller.filteredStations.isEmpty) {

@@ -94,6 +94,7 @@ class TrainSortAndFilterController extends GetxController {
 
   void toggleAvailabilityFilter() {
     isAvailabilityFilterEnabled.value = !isAvailabilityFilterEnabled.value;
+    print("Availability Filter Enabled: ${isAvailabilityFilterEnabled.value}");
   }
 
   void toggleTatkalFilter() {
@@ -120,6 +121,7 @@ class TrainSortAndFilterController extends GetxController {
         print('Excluded by class filter: ${train['trainNumber']}');
         return false;
       }
+      
       bool quotaMatch = false;
       if (selectedQuotas.isNotEmpty) {
         quotaMatch = train['availabilities']?.any((avlDayList) {
@@ -150,24 +152,25 @@ class TrainSortAndFilterController extends GetxController {
 
       // Apply Tatkal filter
       bool tatkalMatch = !isTatkalFilterEnabled.value ||
-          train['availabilities']?.any((avlDayList) =>
-          avlDayList['quota']?.toUpperCase() == 'TQ');
+          train['availabilities']
+              ?.any((avlDayList) => avlDayList['quota']?.toUpperCase() == 'TQ');
       if (!tatkalMatch) {
         print('Excluded by Tatkal filter: ${train['trainNumber']}');
         return false;
       }
 
       // Apply availability filter
+      // Apply availability filter
       bool availabilityMatch = !isAvailabilityFilterEnabled.value ||
-          train['availabilities']?.any((avlDayList) {
-        final availability = avlDayList['availability']?.split('-').first.toUpperCase();
-        return availability == 'AVAILABLE';
-          });
-      if (!availabilityMatch) {
-        print('Excluded by availability filter: ${train['trainNumber']}');
-        return false;
-      }
-    
+              train['availabilities']?.any((avlDayList) {
+                final availability =
+                    avlDayList['availability']?.split('-').first.toUpperCase();
+                return availability == 'AVAILABLE';
+              }) ??
+          false;
+
+     
+
       // Apply departure time filter
       final DateTime departureTime =
           DateFormat("HH:mm").parse(train['departureTime']);
@@ -220,10 +223,10 @@ class TrainSortAndFilterController extends GetxController {
     print('selectedQuotas: $selectedQuotas');
 
     print("Filtered Trains: $filteredTrains");
-    print("Selected classes: $selectedClasses");
-    print("Selected departure times: $selectedDepartureTimes");
-    print("Selected arrival times: $selectedArrivalTimes");
-    print("AC filter enabled: $isACFilterEnabled");
+    // print("Selected classes: $selectedClasses");
+    // print("Selected departure times: $selectedDepartureTimes");
+    // print("Selected arrival times: $selectedArrivalTimes");
+    // print("AC filter enabled: $isACFilterEnabled");
 
     return filteredTrains;
   }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:makeyourtripapp/Controller/login_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Add shared_preferences
+import 'package:intl/intl.dart'; // Add intl package for DateFormat
 import 'dart:convert'; // For decoding JSON
 import 'package:http/http.dart' as http;
 import 'package:makeyourtripapp/Constants/colors.dart';
@@ -18,6 +20,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final LoginController loginController = Get.find<LoginController>();
+
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController dateOfBirthController = TextEditingController();
@@ -31,48 +35,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchProfile();
+    fetchUserProfile();
+    formattedDate = DateFormat('yyyy-MM-dd').format(now);
   }
 
-  Future<void> _fetchProfile() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? accessToken = prefs.getString('accessToken');
-    if (accessToken != null) {
-      final String serverEndpoint =
-          'https://tripadmin.onrender.com/api/users/userProfile';
-      final Map<String, String> headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      };
+  DateTime now = DateTime.now(); // Current date and time
+  late String formattedDate;
+
+  Future<void> fetchUserProfile() async {
+    try {
+      loginController.isLoading.value = true;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('accessToken');
+
+      if (token == null) {
+        Get.snackbar("Error", "No access token found. Please log in again.");
+        return;
+      }
 
       final response = await http.get(
-        Uri.parse(serverEndpoint),
-        headers: headers,
+        Uri.parse(loginController.userProfileUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          userDetails = data;
-          fullNameController.text = data['name'] ?? '';
-          genderController.text = data['gender'] ?? '';
-          dateOfBirthController.text = data['dob'] ?? '';
-          nationalityController.text = data['nationality'] ?? '';
-          emailIdController.text = data['email'] ?? '';
-          mobileNumberController.text = data['mobile'] ?? '';
-          isLoading = false;
-        });
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        loginController.userData.value = responseData;
+        print("User Profile: $responseData");
+
+        fullNameController.text = responseData['firstName'] ?? '';
+        genderController.text = responseData['gender'] ?? '';
+        dateOfBirthController.text = responseData['dob'] ?? '';
+        nationalityController.text = responseData['nationality'] ?? '';
+        emailIdController.text = responseData['email'] ?? '';
+        mobileNumberController.text = responseData['phoneNumber'] ?? '';
+
       } else {
-        setState(() {
-          isLoading = false;
-        });
-        throw Exception('Failed to fetch customer details');
+        Get.snackbar("Error", "Failed to fetch user profile.");
       }
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      print('Access token not found');
+    } catch (error) {
+      Get.snackbar("Error", "An error occurred: $error");
+    } finally {
+      loginController.isLoading.value = false;
     }
   }
 
@@ -81,7 +88,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final String? accessToken = prefs.getString('accessToken');
     if (accessToken != null) {
       final String serverEndpoint =
-          'https://tripadmin.onrender.com/api/users/editProfile';
+          'http://192.168.1.103:3002/api/users/editProfile';
       final Map<String, String> headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $accessToken',
@@ -157,189 +164,194 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ],
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ScrollConfiguration(
-              behavior: MyBehavior(),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 22),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 25),
-                InkWell(
-                  onTap: () {
-                    Get.defaultDialog(
-                      radius: 4,
-                      backgroundColor: white,
-                      title: "",
-                      contentPadding: EdgeInsets.zero,
-                      titlePadding: EdgeInsets.zero,
-                      content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 15, top: 13),
-                            child: CommonTextWidget.PoppinsMedium(
-                              text: "Select Photo",
-                              color: black2E2,
-                              fontSize: 14,
-                            ),
+      body: Obx(() {
+        if (loginController.isLoading.value) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 22),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 25),
+                    InkWell(
+                      onTap: () {
+                        Get.defaultDialog(
+                          radius: 4,
+                          backgroundColor: white,
+                          title: "",
+                          contentPadding: EdgeInsets.zero,
+                          titlePadding: EdgeInsets.zero,
+                          content: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 15, top: 13),
+                                child: CommonTextWidget.PoppinsMedium(
+                                  text: "Select Photo",
+                                  color: black2E2,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Divider(color: greyE2E, thickness: 1),
+                              ListTile(
+                                horizontalTitleGap: 16,
+                                leading: Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: SvgPicture.asset(cameraIcon),
+                                ),
+                                title: CommonTextWidget.PoppinsMedium(
+                                  text: "Camera",
+                                  color: grey717,
+                                  fontSize: 14,
+                                ),
+                                subtitle: CommonTextWidget.PoppinsRegular(
+                                  text: "Take a beautiful picture",
+                                  color: greyAFA,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Divider(color: greyE2E, thickness: 1),
+                              ListTile(
+                                horizontalTitleGap: 16,
+                                leading: Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: SvgPicture.asset(galleryIcon),
+                                ),
+                                title: CommonTextWidget.PoppinsMedium(
+                                  text: "Gallery",
+                                  color: grey717,
+                                  fontSize: 14,
+                                ),
+                                subtitle: CommonTextWidget.PoppinsRegular(
+                                  text: "Choose an existing photo",
+                                  color: greyAFA,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                          Divider(color: greyE2E, thickness: 1),
-                          ListTile(
-                            horizontalTitleGap: 16,
-                            leading: Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: SvgPicture.asset(cameraIcon),
-                            ),
-                            title: CommonTextWidget.PoppinsMedium(
-                              text: "Camera",
-                              color: grey717,
-                              fontSize: 14,
-                            ),
-                            subtitle: CommonTextWidget.PoppinsRegular(
-                              text: "Take a beautiful picture",
-                              color: greyAFA,
-                              fontSize: 12,
-                            ),
-                          ),
-                          Divider(color: greyE2E, thickness: 1),
-                          ListTile(
-                            horizontalTitleGap: 16,
-                            leading: Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: SvgPicture.asset(galleryIcon),
-                            ),
-                            title: CommonTextWidget.PoppinsMedium(
-                              text: "Gallery",
-                              color: grey717,
-                              fontSize: 14,
-                            ),
-                            subtitle: CommonTextWidget.PoppinsRegular(
-                              text: "Choose an existing photo",
-                              color: greyAFA,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  child: Center(
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        Image.asset(myAccountImage, height: 90, width: 90),
-                        SvgPicture.asset(editIcon),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 22),
-                CommonTextWidget.PoppinsMedium(
-                  text: "Name",
-                  color: black2E2,
-                  fontSize: 14,
-                ),
-                SizedBox(height: 10),
-                CommonTextFieldWidget.TextFormField8(
-                  keyboardType: TextInputType.name,
-                  controller: fullNameController,
-                  hintText: "Ellison Perry",
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SvgPicture.asset(profileIcon),
-                  ),
-                ),
-                SizedBox(height: 22),
-                CommonTextWidget.PoppinsMedium(
-                  text: "Gender",
-                  color: black2E2,
-                  fontSize: 14,
-                ),
-                SizedBox(height: 10),
-                CommonTextFieldWidget.TextFormField8(
-                  keyboardType: TextInputType.text,
-                  controller: genderController,
-                  hintText: "Male",
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SvgPicture.asset(genderIcon),
-                  ),
-                ),
-                         SizedBox(height: 22),
-              CommonTextWidget.PoppinsMedium(
-                  text: "Date Of Birth",
-                  color: black2E2,
-                  fontSize: 14,
-                ),
-                SizedBox(height: 10),
-                   CommonTextFieldWidget.TextFormField8(
-                        keyboardType: TextInputType.text,
-                        controller: dateOfBirthController, 
-                        hintText: "25 Oct 2022",
-                        suffixIcon: Padding(
-                          padding: EdgeInsets.all(16),
-                          child: SvgPicture.asset(calendarIcon),
+                        );
+                      },
+                      child: Center(
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            // Image.asset(myAccountImage, height: 90, width: 90),
+                            Icon(Icons.account_circle, size: 130, color: redCA0),
+                            // SvgPicture.asset(editIcon),
+                          ],
                         ),
                       ),
-              
-                SizedBox(height: 22),
-                CommonTextWidget.PoppinsMedium(
-                  text: "Nationality",
-                  color: black2E2,
-                  fontSize: 14,
+                    ),
+                    SizedBox(height: 22),
+                    CommonTextWidget.PoppinsMedium(
+                      text: "Name",
+                      color: black2E2,
+                      fontSize: 14,
+                    ),
+                    SizedBox(height: 10),
+                    CommonTextFieldWidget.TextFormField8(
+                      keyboardType: TextInputType.name,
+                      controller: fullNameController,
+                      hintText: "Unkonwn",
+                      suffixIcon: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: SvgPicture.asset(profileIcon),
+                      ),
+                    ),
+                    SizedBox(height: 22),
+                    CommonTextWidget.PoppinsMedium(
+                      text: "Gender",
+                      color: black2E2,
+                      fontSize: 14,
+                    ),
+                    SizedBox(height: 10),
+                    CommonTextFieldWidget.TextFormField8(
+                      keyboardType: TextInputType.text,
+                      controller: genderController,
+                      hintText: "Male",
+                      suffixIcon: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: SvgPicture.asset(genderIcon),
+                      ),
+                    ),
+                    // SizedBox(height: 22),
+                    // CommonTextWidget.PoppinsMedium(
+                    //   text: "Date Of Birth",
+                    //   color: black2E2,
+                    //   fontSize: 14,
+                    // ),
+                    // SizedBox(height: 10),
+                    // CommonTextFieldWidget.TextFormField8(
+                    //   keyboardType: TextInputType.text,
+                    //   controller:
+                    //       dateOfBirthController, // Just use the controller directly
+                    //   hintText: "25 Oct 2022",
+                    //   suffixIcon: Padding(
+                    //     padding: EdgeInsets.all(16),
+                    //     child: SvgPicture.asset(calendarIcon),
+                    //   ),
+                    // ),
+                    SizedBox(height: 22),
+                    CommonTextWidget.PoppinsMedium(
+                      text: "Nationality",
+                      color: black2E2,
+                      fontSize: 14,
+                    ),
+                    SizedBox(height: 10),
+                    CommonTextFieldWidget.TextFormField8(
+                      keyboardType: TextInputType.text,
+                      controller: nationalityController,
+                      hintText: "India",
+                      suffixIcon: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Image.asset(india, height: 16, width: 22),
+                      ),
+                    ),
+                    SizedBox(height: 22),
+                    CommonTextWidget.PoppinsMedium(
+                      text: "Email ID",
+                      color: black2E2,
+                      fontSize: 14,
+                    ),
+                    SizedBox(height: 10),
+                    CommonTextFieldWidget.TextFormField8(
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailIdController,
+                      hintText: "ellisonperry@123",
+                      suffixIcon: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: SvgPicture.asset(emailIcon),
+                      ),
+                    ),
+                    SizedBox(height: 22),
+                    CommonTextWidget.PoppinsMedium(
+                      text: "Mobile No.",
+                      color: black2E2,
+                      fontSize: 14,
+                    ),
+                    SizedBox(height: 10),
+                    CommonTextFieldWidget.TextFormField8(
+                      keyboardType: TextInputType.number,
+                      controller: mobileNumberController,
+                      hintText: "84XXX XXXXX",
+                      suffixIcon: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: SvgPicture.asset(smartphoneIcon),
+                      ),
+                    ),
+                    SizedBox(height: 60),
+                  ],
                 ),
-                SizedBox(height: 10),
-                CommonTextFieldWidget.TextFormField8(
-                  keyboardType: TextInputType.text,
-                  controller: nationalityController,
-                  hintText: "India",
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Image.asset(india, height: 16, width: 22),
-                  ),
-                ),
-                SizedBox(height: 22),
-                CommonTextWidget.PoppinsMedium(
-                  text: "Email ID",
-                  color: black2E2,
-                  fontSize: 14,
-                ),
-                SizedBox(height: 10),
-                CommonTextFieldWidget.TextFormField8(
-                  keyboardType: TextInputType.emailAddress,
-                  controller: emailIdController,
-                  hintText: "ellisonperry@123",
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SvgPicture.asset(emailIcon),
-                  ),
-                ),
-                SizedBox(height: 22),
-                CommonTextWidget.PoppinsMedium(
-                  text: "Mobile No.",
-                  color: black2E2,
-                  fontSize: 14,
-                ),
-                SizedBox(height: 10),
-                CommonTextFieldWidget.TextFormField8(
-                  keyboardType: TextInputType.number,
-                  controller: mobileNumberController,
-                  hintText: "84520 25360",
-                  suffixIcon: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SvgPicture.asset(smartphoneIcon),
-                  ),
-                ),
-                SizedBox(height: 60),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
+          );
+        }
+      }),
     );
   }
 }

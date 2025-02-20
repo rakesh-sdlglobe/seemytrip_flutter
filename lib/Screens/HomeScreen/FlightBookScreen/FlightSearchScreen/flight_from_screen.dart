@@ -41,7 +41,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
   Future<void> fetchAirports() async {
     final dio = Dio();
     final url =
-        'http://192.168.0.57:3002/api/trains/getStation'; // Replace with your API
+        'http://192.168.1.103:3002/api/trains/getStation'; // Replace with your API
 
     try {
       final response = await dio.get(url);

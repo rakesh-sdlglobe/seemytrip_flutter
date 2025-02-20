@@ -4,6 +4,8 @@ import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Constants/font_family.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
 import 'package:makeyourtripapp/Controller/login_controller.dart';
+import 'package:makeyourtripapp/Screens/AuthScreens/Login_bottom_sheet.dart';
+import 'package:makeyourtripapp/Screens/AuthScreens/mobile_bottom_sheet.dart';
 import 'package:makeyourtripapp/Screens/AuthScreens/otp_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/home_screen.dart';
 import 'package:makeyourtripapp/Screens/NavigationSCreen/navigation_screen.dart';
@@ -65,6 +67,24 @@ class LogInScreen extends StatelessWidget {
     } finally {
       isLoading = false;
     }
+  }
+
+  // To show this bottom sheet using GetX:
+  void showAuthBottomSheet() {
+    Get.bottomSheet(
+      LoginSignupBottomSheet(),
+      isScrollControlled:
+          true, // Allows the bottom sheet to be fully scrollable.
+    );
+  }
+
+  // To show this bottom sheet using GetX:
+  void showMobileAuthBottomSheet() {
+    Get.bottomSheet(
+      MobileOtpBottomSheet(),
+      isScrollControlled:
+          true, // Allows the bottom sheet to be fully scrollable.
+    );
   }
 
   @override
@@ -212,7 +232,7 @@ class LogInScreen extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(height: 25),
+                        SizedBox(height: 15),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 15),
                           child: Row(
@@ -242,7 +262,102 @@ class LogInScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(height: 55),
+
+                        // SizedBox(height: 55),
+                        GestureDetector(
+                          onTap: showMobileAuthBottomSheet,
+                          child: Container(
+                            height: 50,
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: greyD8D, width: 1),
+                              color: white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // Image.asset(
+                                  //   emailIcon,
+                                  //   height: 24,
+                                  //   width: 24,
+                                  // ),
+                                  Icon(Icons.phone),
+                                  Text(
+                                    "Continue with mobile No.",
+                                    style: TextStyle(
+                                      color: grey717,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Opacity(
+                                    opacity:
+                                        0, // Invisible placeholder for alignment
+                                    // child: Image.asset(
+                                    //   emailIcon,
+                                    //   height: 24,
+                                    //   width: 24,
+                                    // ),
+                                    child: Icon(Icons.phone),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10.0),
+                        GestureDetector(
+                          onTap: showAuthBottomSheet,
+                          child: Container(
+                            height: 50,
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: greyD8D, width: 1),
+                              color: white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // Image.asset(
+                                  //   emailIcon,
+                                  //   height: 24,
+                                  //   width: 24,
+                                  // ),
+                                  Icon(Icons.email),
+                                  Text(
+                                    "Continue with email&Pass",
+                                    style: TextStyle(
+                                      color: grey717,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Opacity(
+                                    opacity:
+                                        0, // Invisible placeholder for alignment
+                                    // child: Image.asset(
+                                    //   emailIcon,
+                                    //   height: 24,
+                                    //   width: 24,
+                                    // ),
+                                    child: Icon(Icons.email),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10.0),
                         Obx(
                           () => GestureDetector(
                             onTap: loginController.isSigningIn.value

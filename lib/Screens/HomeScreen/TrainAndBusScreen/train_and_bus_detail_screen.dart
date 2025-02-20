@@ -124,6 +124,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
             Center(
               child: CircularProgressIndicator.adaptive(
                 valueColor: AlwaysStoppedAnimation<Color>(redCA0),
+                strokeWidth: 3.0,
               ),
             ),
         ],
@@ -266,7 +267,8 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
                               );
 
                               setState(() {
-                                filteredTrains = controller.trains;
+                                filteredTrains = filterController
+                                    .applyFilters(controller.trains);
                                 isLoading = false; // Stop loading
                               });
 
@@ -316,7 +318,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
   }
 
   Widget _buildTrainList() {
-    final filteredTrains = filterController.applyFilters(widget.trains);
+    // final filteredTrains = filterController.applyFilters(widget.trains);
     filteredTrains.removeWhere((train) {
       return train['availabilities'].isEmpty ||
           train['availabilities'].every((seat) {
@@ -491,7 +493,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
   Widget _buildSeatAvailability(
       BuildContext context, Map<String, dynamic> train) {
     final DateTime now = DateTime.now();
-    final filteredTrains = filterController.applyFilters(widget.trains);
+    filterController.applyFilters(widget.trains);
 
     DateTime? _parseDate(String date) {
       try {
@@ -535,7 +537,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
             statusColor = Colors.green;
             statusIcon = Icons.check_circle;
           } else if (status.contains('RAC')) {
-            statusColor = Colors.yellow[700]!;
+            statusColor = Colors.blue;
             statusIcon = Icons.timer;
           } else if (status.contains('WL')) {
             statusColor = Colors.orange;
@@ -550,6 +552,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
         }
 
         return Container(
+          height: 22,
           margin: EdgeInsets.only(bottom: 2),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -576,263 +579,288 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
               SizedBox(height: 3),
 
               // Additional information (e.g., availability types and travel guarantee)
-              if (!isPastDate) ...[
-                if (availability['availablityType'] == "1" ||
-                    availability['availablityType'] == "2")
-                  Row(
-                    children: [
-                      // Icon(
-                      //   Icons.check_circle,
-                      //   color: Colors.green,
-                      //   size: 16,
-                      // ),
-                      SizedBox(width: 4),
-                      Text(
-                        "Travel Guarantee",
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  )
-                else if (availability['availablityType'] == "3")
-                  Text(
-                    "50% chances",
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 12,
-                    ),
-                  ),
-              ],
+              // if (!isPastDate) ...[
+              //   if (availability['availablityType'] == "1" ||
+              //       availability['availablityType'] == "2")
+              //     Row(
+              //       children: [
+              //         // Icon(
+              //         //   Icons.check_circle,
+              //         //   color: Colors.green,
+              //         //   size: 16,
+              //         // ),
+              //         SizedBox(width: 4),
+              //         Text(
+              //           "Travel Guarantee",
+              //           style: TextStyle(
+              //             color: Colors.green,
+              //             fontSize: 13,
+              //           ),
+              //         ),
+              //       ],
+              //     )
+              //   else if (availability['availablityType'] == "3")
+              //     Text(
+              //       "50% chances",
+              //       style: TextStyle(
+              //         color: Colors.orange,
+              //         fontSize: 12,
+              //       ),
+              //     ),
+              // ],
             ],
           ),
         );
       }).toList();
     }
 
+    final DateTime departureDateTime = DateTime(
+      widget.selectedDate.year,
+      widget.selectedDate.month,
+      widget.selectedDate.day,
+      int.parse(train['departureTime'].split(':')[0]),
+      int.parse(train['departureTime'].split(':')[1]),
+    );
+    final bool isDeparted = now.isAfter(departureDateTime);
+
     return Column(
       children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              train['availabilities']?.length ?? 0,
-              (seatIndex) {
-                final seat = train['availabilities'][seatIndex];
-                final DateTime departureDateTime = DateTime(
-                  widget.selectedDate.year,
-                  widget.selectedDate.month,
-                  widget.selectedDate.day,
-                  int.parse(train['departureTime'].split(':')[0]),
-                  int.parse(train['departureTime'].split(':')[1]),
-                );
-                final bool isDeparted = now.isAfter(departureDateTime);
+        if (isDeparted)
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.red, width: 1),
+            ),
+            child: Center(
+              child: CommonTextWidget.PoppinsMedium(
+                text: "Train has already departed",
+                color: Colors.red,
+                fontSize: 14,
+              ),
+            ),
+          )
+        else
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(
+                train['availabilities']?.length ?? 0,
+                (seatIndex) {
+                  final seat = train['availabilities'][seatIndex];
+                  final DateTime departureDateTime = DateTime(
+                    widget.selectedDate.year,
+                    widget.selectedDate.month,
+                    widget.selectedDate.day,
+                    int.parse(train['departureTime'].split(':')[0]),
+                    int.parse(train['departureTime'].split(':')[1]),
+                  );
+                  final bool isDeparted = now.isAfter(departureDateTime);
 
-                // Set color based on availability status
-                Color boxColor;
-                String availabilityStatus =
-                    seat['avlDayList'] != null && seat['avlDayList'].isNotEmpty
-                        ? seat['avlDayList'][0]['availablityStatus'] ?? 'N/A'
-                        : 'N/A';
-                if (availabilityStatus != 'N/A') {
-                  if (availabilityStatus.contains('AVAILABLE')) {
-                    boxColor = const Color.fromARGB(255, 237, 250, 237);
-                  } else if (availabilityStatus.contains('WL')) {
-                    boxColor = const Color.fromARGB(255, 255, 246, 235);
-                  } else if (availabilityStatus.contains('RAC')) {
-                    boxColor = const Color.fromRGBO(255, 255, 0, 0.1);
+                  // Set color based on availability status
+                  Color boxColor;
+                  String availabilityStatus = seat['avlDayList'] != null &&
+                          seat['avlDayList'].isNotEmpty
+                      ? seat['avlDayList'][0]['availablityStatus'] ?? 'N/A'
+                      : 'N/A';
+                  if (availabilityStatus != 'N/A') {
+                    if (availabilityStatus.contains('AVAILABLE')) {
+                      boxColor = const Color.fromARGB(255, 237, 250, 237);
+                    } else if (availabilityStatus.contains('WL')) {
+                      boxColor = const Color.fromARGB(255, 255, 246, 235);
+                    } else if (availabilityStatus.contains('RAC')) {
+                      boxColor = const Color.fromARGB(173, 216, 230, 255);
+                    } else {
+                      boxColor = Colors.grey[300]!;
+                    }
                   } else {
                     boxColor = Colors.grey[300]!;
                   }
-                } else {
-                  boxColor = Colors.grey[300]!;
-                }
 
-                // Set color based on availability status
-                Color borderColor = Colors.grey[300]!;
-                String availabilityStatus2 =
-                    seat['avlDayList'] != null && seat['avlDayList'].isNotEmpty
-                        ? seat['avlDayList'][0]['availablityStatus'] ?? 'N/A'
-                        : 'N/A';
-                if (availabilityStatus2 != 'N/A') {
-                  if (availabilityStatus2.contains('AVAILABLE')) {
-                    borderColor = Colors.green;
-                  } else if (availabilityStatus2.contains('WL')) {
-                    borderColor = Colors.orange;
-                  } else if (availabilityStatus2.contains('RAC')) {
-                    borderColor = const Color.fromARGB(255, 90, 80, 20);
+                  // Set color based on availability status
+                  Color borderColor = Colors.grey[300]!;
+                  String availabilityStatus2 = seat['avlDayList'] != null &&
+                          seat['avlDayList'].isNotEmpty
+                      ? seat['avlDayList'][0]['availablityStatus'] ?? 'N/A'
+                      : 'N/A';
+                  if (availabilityStatus2 != 'N/A') {
+                    if (availabilityStatus2.contains('AVAILABLE')) {
+                      borderColor = Colors.green;
+                    } else if (availabilityStatus2.contains('WL')) {
+                      borderColor = Colors.orange;
+                    } else if (availabilityStatus2.contains('RAC')) {
+                      borderColor = const Color.fromARGB(172, 51, 123, 248);
+                    } else {
+                      borderColor = Colors.grey[300]!;
+                    }
                   } else {
                     borderColor = Colors.grey[300]!;
                   }
-                } else {
-                  borderColor = Colors.grey[300]!;
-                }
 
-                // Filter classes based on enqClass
-                if (filterController.selectedClasses.isNotEmpty &&
-                    !filterController.selectedClasses
-                        .contains(seat['enqClass'])) {
-                  return SizedBox.shrink();
-                }
-
-                // Filter quotas based on selectedQuotas or Tatkal filter
-                if (filterController.isTatkalFilterEnabled.value) {
-                  if (seat['quota'] != 'TQ') {
-                    // Hide seat if Tatkal filter is enabled and it's not TQ
+                  // Filter classes based on enqClass
+                  if (filterController.selectedClasses.isNotEmpty &&
+                      !filterController.selectedClasses
+                          .contains(seat['enqClass'])) {
                     return SizedBox.shrink();
                   }
-                } else if (filterController.selectedQuotas.isNotEmpty &&
-                    !filterController.selectedQuotas.contains(seat['quota'])) {
-                  // Hide seat if its quota is not in the selected quotas
-                  return SizedBox.shrink();
-                }
-                // Apply availability filter
-                bool availabilityMatch =
-                    !filterController.isAvailabilityFilterEnabled.value ||
-                        seat['avlDayList']?.any((avlDayList) =>
-                            avlDayList['availablityStatus']?.toUpperCase() ==
-                            'AVAILABLE');
-                if (!availabilityMatch) {
-                  print(
-                      'Excluded by availability filter: ${train['trainNumber']}');
-                  return SizedBox.shrink();
-                }
 
-                // // Default to showing GN quota when no quotas are selected
-                // if (filterController.selectedQuotas.isEmpty &&
-                //     seat['quota'] != 'GN') {
-                //   // Hide seat if no quotas are selected and it's not GN
-                //   return SizedBox.shrink();
-                // }
+                  // Filter quotas based on selectedQuotas or Tatkal filter
+                  if (filterController.isTatkalFilterEnabled.value) {
+                    if (seat['quota'] != 'TQ') {
+                      // Hide seat if Tatkal filter is enabled and it's not TQ
+                      return SizedBox.shrink();
+                    }
+                  } else if (filterController.selectedQuotas.isNotEmpty &&
+                      !filterController.selectedQuotas
+                          .contains(seat['quota'])) {
+                    // Hide seat if its quota is not in the selected quotas
+                    return SizedBox.shrink();
+                  }
+                  
 
-                // Apply AC filter and exclude SL
-                bool acMatch = !filterController.isACFilterEnabled.value ||
-                    seat['enqClass'] != "SL" &&
-                        ["1A", "2A", "3A", "3E", "CC", "EC"]
-                            .contains(seat['enqClass']);
-                if (!acMatch) {
-                  print('Excluded by AC filter: ${train['trainNumber']}');
-                  return SizedBox.shrink();
-                }
+                  // Apply availability filter
+                  // if (filterController.isAvailabilityFilterEnabled.value) {
+                  //   if (seat['avlDayList']?.any((avlDayList) =>
+                  //       avlDayList['availablityStatus']?.toUpperCase() ==
+                  //       'AVAILABLE')) {
+                  //     // Hide seat if filter is enabled and the availability status is not AVAILABLE-0010
+                  //     return SizedBox.shrink();
+                  //   }
+                  // } else {
+                  //   // If filter is not enabled, you can show the seat or apply other filters as needed
+                  //   return SizedBox
+                  //       .shrink(); // This can be adjusted based on other conditions
+                  // }
 
-                return Padding(
-                  padding: EdgeInsets.only(
-                    right: seatIndex < train['availabilities']?.length - 1
-                        ? 15
-                        : 0,
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      if (!isDeparted &&
-                          availabilityStatus != 'N/A' &&
-                          seat['totalFare'] != null) {
-                        {
-                          Get.snackbar(
-                            "Seat Availability",
-                            "Seat is available: ${seat['enqClass']}",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                            duration: Duration(seconds: 3),
-                          );
-                        }
-                        Get.to(
-                          () => TrainAndBusSearchScreen2(
-                            trainName: train['trainName'],
-                            trainNumber: train['trainNumber'],
-                            startStation: train['fromStnCode'],
-                            endStation: train['toStnCode'],
-                            fromStation: widget.fromStation,
-                            toStation: widget.toStation,
-                            seatClass: seat['enqClass'],
-                            price:
-                                double.tryParse(seat['totalFare'].toString()),
-                            duration: train['duration'],
-                            departureTime: train['departureTime'],
-                            arrivalTime: train['arrivalTime'],
-                            departure: DateFormat('dd MMM, EE')
-                                .format(widget.selectedDate),
-                            arrival: calculateArrival(train,
-                                widget.selectedDate)['formattedArrivalDate'],
-                          ),
-                        );
-                      } else {
-                        print("Seat is available: ${seat['enqClass']}");
-                      }
-                    },
-                    child: Container(
-                      width: 150,
-                      decoration: BoxDecoration(
-                        color: boxColor,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.25),
-                            blurRadius: 6,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: borderColor, width: 1),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Seat class and fare
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                CommonTextWidget.PoppinsMedium(
-                                  text: seat['enqClass'] ?? "N/A",
-                                  color: Colors.black,
-                                  fontSize: 13,
-                                ),
-                                CommonTextWidget.PoppinsMedium(
-                                  text: seat['totalFare'] != null
-                                      ? "\₹${seat['totalFare']}"
-                                      : "Regret",
-                                  color: Colors.black,
-                                  fontSize: 13,
-                                ),
-                              ],
+                  // Apply AC filter and exclude SL
+                  bool acMatch = !filterController.isACFilterEnabled.value ||
+                      seat['enqClass'] != "SL" &&
+                          ["1A", "2A", "3A", "3E", "CC", "EC"]
+                              .contains(seat['enqClass']);
+                  if (!acMatch) {
+                    print('Excluded by AC filter: ${train['trainNumber']}');
+                    return SizedBox.shrink();
+                  }
+
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      right: seatIndex < train['availabilities']?.length - 1
+                          ? 15
+                          : 0,
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        if (!isDeparted &&
+                            availabilityStatus != 'N/A' &&
+                            seat['totalFare'] != null) {
+                          {
+                            Get.snackbar(
+                              "Seat Availability",
+                              "Seat is available: ${seat['enqClass']}",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              duration: Duration(seconds: 3),
+                            );
+                          }
+                          Get.to(
+                            () => TrainAndBusSearchScreen2(
+                              trainName: train['trainName'],
+                              trainNumber: train['trainNumber'],
+                              startStation: train['fromStnCode'],
+                              endStation: train['toStnCode'],
+                              fromStation: widget.fromStation,
+                              toStation: widget.toStation,
+                              seatClass: seat['enqClass'],
+                              price:
+                                  double.tryParse(seat['totalFare'].toString()),
+                              duration: train['duration'],
+                              departureTime: train['departureTime'],
+                              arrivalTime: train['arrivalTime'],
+                              departure: DateFormat('dd MMM, EE')
+                                  .format(widget.selectedDate),
+                              arrival: calculateArrival(train,
+                                  widget.selectedDate)['formattedArrivalDate'],
                             ),
-                            // SizedBox(height: 2),
-                            // Quota type
-                            if (seat['quota'] == 'TQ' ||
-                                seat['quota'] == 'PT' ||
-                                seat['quota'] == 'LD' ||
-                                seat['quota'] == 'GN' ||
-                                seat['quota'] == 'SS' ||
-                                seat['quota'] == 'HP')
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: CommonTextWidget.PoppinsMedium(
-                                  text: seat['quota'] == 'TQ'
-                                      ? 'Tatkal'
-                                      : seat['quota'] == 'PT'
-                                          ? 'Premium Tatkal'
-                                          : seat['quota'] == 'LD'
-                                              ? 'Ladies'
-                                              : '',
-                                  color: Colors.red,
-                                  fontSize: 8,
-                                ),
-                              ),
-                            // Build the availability widgets
-                            ..._buildAvailabilityWidgets(
-                                seat['avlDayList'] ?? []),
+                          );
+                        } else {
+                          print("Seat is available: ${seat['enqClass']}");
+                        }
+                      },
+                      child: Container(
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: boxColor,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.25),
+                              blurRadius: 6,
+                              offset: Offset(0, 1),
+                            ),
                           ],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: borderColor, width: 1),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Seat class and fare
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CommonTextWidget.PoppinsMedium(
+                                    text: seat['enqClass'] ?? "N/A",
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                  ),
+                                  CommonTextWidget.PoppinsMedium(
+                                    text: seat['totalFare'] != null
+                                        ? "\₹${seat['totalFare']}"
+                                        : "Regret",
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                  ),
+                                ],
+                              ),
+                              // SizedBox(height: 2),
+                              // Quota type
+                              if (seat['quota'] == 'TQ' ||
+                                  seat['quota'] == 'PT' ||
+                                  seat['quota'] == 'LD' ||
+                                  seat['quota'] == 'GN' ||
+                                  seat['quota'] == 'SS' ||
+                                  seat['quota'] == 'HP')
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: CommonTextWidget.PoppinsMedium(
+                                    text: seat['quota'] == 'TQ'
+                                        ? 'Tatkal'
+                                        : seat['quota'] == 'PT'
+                                            ? 'Premium Tatkal'
+                                            : seat['quota'] == 'LD'
+                                                ? 'Ladies'
+                                                : '',
+                                    color: Colors.red,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              // Build the availability widgets
+                              ..._buildAvailabilityWidgets(
+                                  seat['avlDayList'] ?? []),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -917,8 +945,9 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color:
-                toggleValue.value ? Colors.blueAccent : const Color(0xFFEDEDED),
+            color: toggleValue.value
+                ? const Color(0xFF1976D2)
+                : const Color(0xFFEDEDED),
             boxShadow: toggleValue.value
                 ? [
                     BoxShadow(
@@ -946,6 +975,11 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
     final String availabilityStatus =
         seat['availablityStatus'] ?? 'Not Available';
     final String availabilityType = seat['availablityType'] ?? '';
+
+    // Check if the train has departed
+    if (availabilityStatus.toUpperCase().contains('TRAIN DEPARTED')) {
+      return "DEPARTED";
+    }
 
     if (availabilityType == "0" ||
         availabilityType == "4" ||

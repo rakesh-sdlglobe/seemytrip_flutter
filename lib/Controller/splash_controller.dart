@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:makeyourtripapp/Screens/WelcomeScreen/welcome_screen1.dart';
+import 'package:makeyourtripapp/Screens/NavigationSCreen/navigation_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashController extends GetxController
     with SingleGetTickerProviderMixin {
@@ -26,11 +28,30 @@ class SplashController extends GetxController
     // Start the animation
     animationController.forward();
 
-    // Navigate to WelcomeScreen1 after 10 seconds
+    // Check login status and navigate accordingly
     Timer(
       const Duration(seconds: 6),
-      () => Get.off(() => WelcomeScreen1()),
+      () => checkLoginStatus(),
     );
+  }
+
+  Future<void> checkLoginStatus() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('accessToken');
+
+      if (token != null && token.isNotEmpty) {
+        // User is logged in, navigate to home
+        Get.off(() => NavigationScreen());
+      } else {
+        // User is not logged in, show onboarding
+        Get.off(() => WelcomeScreen1());
+      }
+    } catch (error) {
+      print("Error checking login status: $error");
+      // If there's an error, default to onboarding
+      Get.off(() => WelcomeScreen1());
+    }
   }
 
   @override

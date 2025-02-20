@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:makeyourtripapp/Constants/colors.dart';
 import 'package:makeyourtripapp/Constants/images.dart';
+import 'package:makeyourtripapp/Controller/login_controller.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/DrawerScreen/setting_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_from_screen.dart';
 import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_to_screen.dart';
@@ -34,24 +35,28 @@ import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/Screens/Where2GoScreen/international_screen.dart';
 
 class Lists {
+  final LoginController loginController = Get.find<LoginController>();
+
   static List<Map<String, dynamic>> welcomeList = [
     {
       "image": welcomeImage1,
       "text": "Embark on Your Adventure",
-      "description": "Start your journey with us and explore breathtaking destinations. Every journey begins with a single step.",
+      "description":
+          "Start your journey with us and explore breathtaking destinations. Every journey begins with a single step.",
     },
     {
       "image": welcomeImage2,
       "text": "Discover the World",
-      "description": "Uncover hidden gems and iconic landmarks as you travel to places you've always dreamed of.",
+      "description":
+          "Uncover hidden gems and iconic landmarks as you travel to places you've always dreamed of.",
     },
     {
       "image": welcomeImage3,
       "text": "Create Unforgettable Memories",
-      "description": "Capture moments that last a lifetime and cherish experiences with loved ones as you travel the world.",
+      "description":
+          "Capture moments that last a lifetime and cherish experiences with loved ones as you travel the world.",
     },
   ];
-
 
   static List dayList = [
     "Thu 13",
@@ -1081,8 +1086,6 @@ class Lists {
     "CC",
   ];
 
-  
-
   static List trainAndBusDetailList2 = [
     "AC",
     "Available",
@@ -1666,8 +1669,9 @@ class Lists {
                     SizedBox(width: 20),
                     Expanded(
                       child: InkWell(
-                        onTap: () {
-                          Get.back();
+                        onTap: () async {
+                          final loginController = Get.find<LoginController>();
+                          await loginController.logout();
                         },
                         child: Container(
                           height: 40,
@@ -1748,6 +1752,88 @@ class Lists {
       "text": "Settings",
       "onTap": () {
         Get.to(() => SettingScreen());
+      },
+    },
+    {
+      "image": powerOffIcon,
+      "text": "Logout",
+      "onTap": () {
+        Get.defaultDialog(
+          backgroundColor: white,
+          contentPadding: EdgeInsets.zero,
+          title: "",
+          titlePadding: EdgeInsets.zero,
+          content: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            child: Column(
+              children: [
+                CommonTextWidget.PoppinsSemiBold(
+                  text: "Log Out",
+                  color: black2E2,
+                  fontSize: 18,
+                ),
+                CommonTextWidget.PoppinsRegular(
+                  text: "Are you sure?",
+                  color: black2E2,
+                  fontSize: 15,
+                ),
+                SizedBox(height: 22),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Container(
+                          height: 40,
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: black2E2, width: 1),
+                            color: white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: CommonTextWidget.PoppinsMedium(
+                              text: "Cancel",
+                              color: black2E2,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          final loginController = Get.find<LoginController>();
+                          await loginController.logout();
+                        },
+                        child: Container(
+                          height: 40,
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                            color: redCA0,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: CommonTextWidget.PoppinsMedium(
+                              text: "Yes",
+                              color: white,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
       },
     },
   ];
@@ -1972,9 +2058,6 @@ class Lists {
     seatsCrossImage,
     seatsCrossImage,
     seatsCrossImage,
-    seatsXlImage,
-    seatsCrossImage,
-    seatsXlImage,
     seatsXlImage,
     seatsCrossImage,
     seatsXlImage,

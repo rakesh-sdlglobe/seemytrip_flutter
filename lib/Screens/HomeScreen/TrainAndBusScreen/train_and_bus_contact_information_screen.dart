@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:makeyourtripapp/Constants/colors.dart';
+import 'package:makeyourtripapp/Controller/train_contact_information_controller.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/main.dart';
 
@@ -15,7 +16,7 @@ class TrainAndBusContactInformationScreen extends StatefulWidget {
 class _TrainAndBusContactInformationScreenState
     extends State<TrainAndBusContactInformationScreen> {
   final TextEditingController _usernameController = TextEditingController();
-  final ValueNotifier<bool> _isButtonEnabled = ValueNotifier(false);
+  final controller = Get.put(TrainContactInformationController());
 
   @override
   void initState() {
@@ -24,13 +25,13 @@ class _TrainAndBusContactInformationScreenState
   }
 
   void _onTextChanged() {
-    _isButtonEnabled.value = _usernameController.text.isNotEmpty;
+    controller.validateUsername(_usernameController.text);
   }
 
   @override
   void dispose() {
     _usernameController.dispose();
-    _isButtonEnabled.dispose();
+    controller.clearForm();
     super.dispose();
   }
 
@@ -54,22 +55,22 @@ class _TrainAndBusContactInformationScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                    Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonTextWidget.PoppinsMedium(
-                      text: "Contact information",
-                      color: black2E2,
-                      fontSize: 18,
+                        text: "Contact information",
+                        color: black2E2,
+                        fontSize: 18,
                       ),
-                        IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: Icon(Icons.close, color: Colors.black),
+                      IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: Icon(Icons.close, color: Colors.black),
                       ),
                     ],
-                    ),
+                  ),
                   SizedBox(height: 15),
                   Container(
                     width: Get.width,
@@ -82,7 +83,7 @@ class _TrainAndBusContactInformationScreenState
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       child: CommonTextWidget.PoppinsMedium(
                         text:
-                            "Please enter the correct IRTC username. You will be required to "
+                            "Please enter the correct IRCTC username. You will be required to "
                             "enter the password for this IRCTC username after payment.",
                         color: yellowCE8,
                         fontSize: 12,
@@ -108,16 +109,38 @@ class _TrainAndBusContactInformationScreenState
                           hintText: "Enter IRCTC Username",
                           hintStyle: TextStyle(color: grey888, fontSize: 12),
                           border: InputBorder.none,
+                          errorStyle: TextStyle(height: 0),
                         ),
                         style: TextStyle(color: grey888, fontSize: 12),
                       ),
                     ),
                   ),
+                  Obx(() => controller.errorMessage.isNotEmpty
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            controller.errorMessage.value,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )
+                      : controller.successMessage.isNotEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                controller.successMessage.value,
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            )
+                          : SizedBox.shrink()),
                   SizedBox(height: 25),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: _isButtonEnabled,
-                    builder: (context, isEnabled, child) {
-                      return MaterialButton(
+                  Obx(() => MaterialButton(
                         height: 50,
                         minWidth: Get.width,
                         shape: RoundedRectangleBorder(
@@ -125,31 +148,52 @@ class _TrainAndBusContactInformationScreenState
                         ),
                         color: redCA0,
                         disabledColor: greyE2E,
-                        onPressed: isEnabled
-                          ? () {
-                            String username = _usernameController.text;
-                           Get.back(result: username);
-                            }
-                          : null,
-                        child: CommonTextWidget.PoppinsSemiBold(
-                          fontSize: 16,
-                          text: "SUBMIT",
-                          color: white,
-                        ),
-                      );
-                    },
-                  ),
+                        onPressed: controller.isUsernameValid.value &&
+                                !controller.isLoading.value
+                            ? () async {
+                                if (await controller.submitForm()) {
+                                  // Add delay to show success message
+                                  await Future.delayed(Duration(seconds: 1));
+                                  Get.back(result: controller.username.value);
+                                }
+                              }
+                            : null,
+                        child: controller.isLoading.value
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : CommonTextWidget.PoppinsSemiBold(
+                                fontSize: 16,
+                                text: "SUBMIT",
+                                color: white,
+                              ),
+                      )),
                   SizedBox(height: 20),
-                  CommonTextWidget.PoppinsMedium(
-                    text: "FORGOT USERNAME",
-                    color: redCA0,
-                    fontSize: 12,
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Implement forgot username functionality
+                    },
+                    child: CommonTextWidget.PoppinsMedium(
+                      text: "FORGOT USERNAME",
+                      color: redCA0,
+                      fontSize: 12,
+                    ),
                   ),
                   SizedBox(height: 10),
-                  CommonTextWidget.PoppinsMedium(
-                    text: "CREATE NEW IRCTC ACCOUNT",
-                    color: redCA0,
-                    fontSize: 12,
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Implement create new account functionality
+                    },
+                    child: CommonTextWidget.PoppinsMedium(
+                      text: "CREATE NEW IRCTC ACCOUNT",
+                      color: redCA0,
+                      fontSize: 12,
+                    ),
                   ),
                   SizedBox(height: 60),
                 ],

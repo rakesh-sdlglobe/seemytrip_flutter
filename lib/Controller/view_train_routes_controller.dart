@@ -12,7 +12,8 @@ class ViewTrainRoutesController extends GetxController {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.0.57:3002/api/trains/getTrainSchedule/$trainNumber'),
+        Uri.parse(
+            'http://192.168.1.108:3002/api/trains/getTrainSchedule/$trainNumber'),
       );
 
       if (response.statusCode == 200) {

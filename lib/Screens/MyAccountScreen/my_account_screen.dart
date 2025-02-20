@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:makeyourtripapp/Controller/login_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -20,52 +21,59 @@ class MyAccountScreen extends StatefulWidget {
 }
 
 class _MyAccountScreenState extends State<MyAccountScreen> {
-  Map<String, dynamic>? userDetails;
-  bool isLoading = true;
+  final LoginController loginController = Get.find<LoginController>();
 
-  // Fetch authenticated user data
-  final User? user = FirebaseAuth.instance.currentUser;
+  String fullName = "";
+  String gender = "";
+  String dateOfBirth = "";
+  String emailId = "";
+  String phoneNumber = "";
 
   @override
   void initState() {
     super.initState();
-    _fetchProfile();
+    fetchUserProfile();
   }
 
-  Future<void> _fetchProfile() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? accessToken = prefs.getString('accessToken');
-    if (accessToken != null) {
-      final String serverEndpoint =
-          'https://tripadmin.onrender.com/api/users/userProfile';
-      final Map<String, String> headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      };
+  Future<void> fetchUserProfile() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('accessToken');
+
+      if (token == null) {
+        Get.snackbar("Error", "No access token found. Please log in again.");
+        return;
+      }
 
       final response = await http.get(
-        Uri.parse(serverEndpoint),
-        headers: headers,
+        Uri.parse(loginController.userProfileUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
       );
 
+      print("Response Status: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        loginController.userData.value = responseData;
+
         setState(() {
-          userDetails = data;
-          isLoading = false;
+          fullName =
+              '${responseData['firstName'] ?? ''} ${responseData['middleName'] ?? ''}${responseData['lastName'] ?? ''}';
+          gender = responseData['gender'] ?? '';
+          dateOfBirth = responseData['dob'] ?? '';
+          emailId = responseData['email'] ?? '';
+          phoneNumber = responseData['phoneNumber'] ?? '';
         });
       } else {
-        setState(() {
-          isLoading = false;
-        });
-        print('Failed to fetch customer details: ${response.statusCode}');
-        throw Exception('Failed to fetch customer details');
+        Get.snackbar("Error", "Failed to fetch user profile.");
       }
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      print('Access token not found');
+    } catch (error) {
+      print("Error: $error");
+      Get.snackbar("Error", "An error occurred: $error");
     }
   }
 
@@ -90,7 +98,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           fontSize: 18,
         ),
       ),
-      body: isLoading
+      body: Obx(() => loginController.isLoading.value
           ? Center(child: CircularProgressIndicator())
           : ScrollConfiguration(
               behavior: MyBehavior(),
@@ -103,18 +111,41 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                       onTap: () {
                         Get.to(() => EditProfileScreen());
                       },
-                      leading:
-                          Image.asset(myAccountImage, height: 70, width: 70),
+                      leading: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: redCA0.withOpacity(0.1),
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: 40,
+                          color: redCA0,
+                        ),
+                      ),
                       title: CommonTextWidget.PoppinsMedium(
-                        // text: userDetails?['name'] ?? 'Ellison Perry',
-                        text: user?.displayName ?? "Guest User",
+                        text: fullName.isNotEmpty ? fullName : "Guest User",
                         color: black2E2,
                         fontSize: 18,
                       ),
-                      subtitle: CommonTextWidget.PoppinsMedium(
-                        text: "Edit Profile",
-                        color: redCA0,
-                        fontSize: 12,
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (emailId.isNotEmpty)
+                            Text(
+                              emailId,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          CommonTextWidget.PoppinsMedium(
+                            text: "Edit Profile",
+                            color: redCA0,
+                            fontSize: 12,
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 18),
@@ -166,7 +197,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   ],
                 ),
               ),
-            ),
+            )),
     );
   }
 }

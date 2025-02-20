@@ -26,6 +26,24 @@ class TrainAndBusDetailController extends GetxController {
     ][date.weekday - 1]}, ${date.day}";
   });
 
+  // Filter-related properties
+  final RxList<dynamic> _filteredTrains = RxList<dynamic>([]);
+  
+  // Getter for filtered trains
+  List<dynamic> get filteredTrains => _filteredTrains;
+
+  // Method to apply filters
+  void applyFilters(List<dynamic> trains) {
+    // Start with all trains
+    _filteredTrains.value = List.from(trains);
+    
+    // Add your filter logic here if needed
+    // For example:
+    // if (someFilterCondition) {
+    //   _filteredTrains.value = _filteredTrains.where((train) => /* filter condition */).toList();
+    // }
+  }
+
   void setStations(String? fromStation, String? toStation) {
     this.fromStation = fromStation;
     this.toStation = toStation;
@@ -49,23 +67,33 @@ class TrainAndBusDetailController extends GetxController {
     try {
       final fromStnCode = fromStation.split(' - ').last;
       final toStnCode = toStation.split(' - ').last;
+      final formattedDate = DateFormat('yyyyMMdd').format(DateTime.parse(date).toLocal());
+      
+      print("API Request - From: $fromStnCode, To: $toStnCode, Date: $formattedDate");
 
       final requestBody = {
         'fromStnCode': fromStnCode,
         'toStnCode': toStnCode,
-        'journeyDate':
-            DateFormat('yyyyMMdd').format(DateTime.parse(date).toLocal())
+        'journeyDate': formattedDate
       };
 
+      print("Request body: $requestBody");
+
       final response = await http.post(
-        Uri.parse('http://192.168.0.57:3002/api/trains/getTrains'),
+        Uri.parse('http://192.168.1.108:3002/api/trains/getTrains'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        print("API Response data: $data");
         trains.value = data['trainBtwnStnsList'] ?? [];
+        applyFilters(trains.value);
+        // Print first train's availability if exists
+        if (trains.value.isNotEmpty) {
+          print("First train availability: ${trains.value[0]['availabilities']}");
+        }
       } else {
         print('Failed to fetch trains: ${response.statusCode}');
         Get.snackbar('Error', 'Failed to fetch trains');
