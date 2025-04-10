@@ -16,7 +16,7 @@ class TrainContactInformationController extends GetxController {
   static final RegExp usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
 
   // API endpoint
-  static const String baseUrl = 'http://192.168.1.108:3002';
+  static const String baseUrl = 'http://192.168.1.110:3002';
 
   // Validate username
   void validateUsername(String value) {

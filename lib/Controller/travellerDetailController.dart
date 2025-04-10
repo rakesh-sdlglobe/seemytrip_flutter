@@ -13,7 +13,7 @@ class TravellerDetailController extends GetxController {
   var selectedItems = <String>[].obs;
 
   // Base URL for API
-  final String baseUrl = 'http://192.168.1.108:3002';
+  final String baseUrl = 'http://192.168.1.110:3002';
 
   // Update the selected items
   void updateSelectedItems(List<String> items) {
@@ -47,12 +47,19 @@ class TravellerDetailController extends GetxController {
 
       // Prepare the data
       final Map<String, dynamic> travellerData = {
-        "name": name,
-        "age": age,
-        "gender": gender,
-        "nationality": nationality,
-        "berthPreferences": berthPreferences,
+        "passengerName": name,
+        "passengerAge": age,
+        "passengerGender": gender,
+        "passengerBerthChoice": berthPreferences.join(', '),
+        "country": "",
+        "passengerBedrollChoice": "",
+        "passengerNationality": "IN",
       };
+
+    // Print the travellerData
+    print('Traveller Data: $travellerData');
+    Get.snackbar("Success", "Traveller Data: $travellerData");
+      
 
       // Make API call
       final response = await http.post(

@@ -717,7 +717,28 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
                     // Hide seat if its quota is not in the selected quotas
                     return SizedBox.shrink();
                   }
-                  
+
+                  // Replace the commented availability filter section with this:
+                  // Apply availability filter
+                  if (filterController.isAvailabilityFilterEnabled.value) {
+                    // Check if seat has availability data
+                    if (seat['avlDayList'] == null ||
+                        seat['avlDayList'].isEmpty ||
+                        !seat['avlDayList'].any((avlDay) {
+                          String status = avlDay['availablityStatus']
+                                  ?.toString()
+                                  .toUpperCase() ??
+                              '';
+                          // Only show if status contains AVAILABLE and doesn't contain RAC or WL
+                          return status.contains('AVAILABLE') &&
+                              !status.contains('RAC') &&
+                              !status.contains('WL')&&
+                              !status.contains('NOT AVAILABLE');
+                        })) {
+                      // Hide seat if not available or has RAC/WL status
+                      return SizedBox.shrink();
+                    }
+                  }
 
                   // Apply availability filter
                   // if (filterController.isAvailabilityFilterEnabled.value) {

@@ -31,6 +31,7 @@ import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/mobile_wallet_
 import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/net_banking_screen.dart';
 import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/pay_by_card_screen.dart';
 import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/pay_by_upi_screen.dart';
+import 'package:makeyourtripapp/Screens/TransactionHistory/transaction_history_screen.dart';
 import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
 import 'package:makeyourtripapp/Screens/Where2GoScreen/international_screen.dart';
 
@@ -1597,6 +1598,13 @@ class Lists {
         Get.to(() => MyTripScreen());
       },
     },
+     {
+      "image": tagIcon,
+      "text": "Transaction History",
+      "onTap": () {
+        Get.to(() => TransactionHistoryScreen());
+      },
+    },
     {
       "image": heartIcon,
       "text": "Wishlist",
@@ -1719,6 +1727,13 @@ class Lists {
       "text": "View/Manage Trips",
       "onTap": () {
         Get.to(() => MyTripScreen());
+      },
+    },
+    {
+      "image" : tagIcon,
+      "text": "Transaction History",
+      "onTap": () {
+        Get.to(() => TransactionHistoryScreen());
       },
     },
     {

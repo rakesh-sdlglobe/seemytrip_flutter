@@ -21,10 +21,10 @@ class LoginController extends GetxController {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  final String loginApiUrl = 'http://192.168.1.108:3002/api/login';
-  final String signUpApiUrl = 'http://192.168.1.108:3002/api/signup';
+  final String loginApiUrl = 'http://192.168.1.110:3002/api/login';
+  final String signUpApiUrl = 'http://192.168.1.110:3002/api/signup';
   final String userProfileUrl =
-      'http://192.168.1.108:3002/api/users/userProfile';
+      'http://192.168.1.110:3002/api/users/userProfile';
 
   // Firebase Auth and Google Sign-In Instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
