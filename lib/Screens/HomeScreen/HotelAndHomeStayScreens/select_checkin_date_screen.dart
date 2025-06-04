@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Controller/select_checkin_date_controller.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Controller/select_checkin_date_controller.dart';
+import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class SelectCheckInDateScreen extends StatelessWidget {

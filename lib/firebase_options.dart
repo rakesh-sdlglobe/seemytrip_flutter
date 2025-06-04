@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,19 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDXrpt30BxFrJTFva306RiFhsEQeG1aBvE',
-    appId: '1:628330605612:android:2103cd005e16b8d4acb589',
-    messagingSenderId: '628330605612',
-    projectId: 'see-my-trip-1fece',
-    storageBucket: 'see-my-trip-1fece.firebasestorage.app',
+    apiKey: 'AIzaSyBqFw3wf7RZxUumfpToOHLY-aqYSER_S-k',
+    appId: '1:579307150474:android:29ccedb62029ad3310e173',
+    messagingSenderId: '579307150474',
+    projectId: 'seemytrip-78ee6',
+    storageBucket: 'seemytrip-78ee6.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBJspTaplqVFYanCYf24s1mrn2DhXfKh-A',
-    appId: '1:628330605612:ios:221f1e7ff48b91a9acb589',
-    messagingSenderId: '628330605612',
-    projectId: 'see-my-trip-1fece',
-    storageBucket: 'see-my-trip-1fece.firebasestorage.app',
-    iosBundleId: 'com.example.makeyourtripapp',
+    apiKey: 'AIzaSyAQCYB5GErw-Ab5ObpJlk7kH2sYO0ux7n0',
+    appId: '1:579307150474:ios:173df959abd14db410e173',
+    messagingSenderId: '579307150474',
+    projectId: 'seemytrip-78ee6',
+    storageBucket: 'seemytrip-78ee6.firebasestorage.app',
+    iosBundleId: 'com.example.seemytrip',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyB5atD2yyVmwBj8owvgWmbkS3Gq_SSbwCw',
+    appId: '1:579307150474:web:37e3521977be666810e173',
+    messagingSenderId: '579307150474',
+    projectId: 'seemytrip-78ee6',
+    authDomain: 'seemytrip-78ee6.firebaseapp.com',
+    storageBucket: 'seemytrip-78ee6.firebasestorage.app',
+    measurementId: 'G-06BR5ZEQ4D',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyAQCYB5GErw-Ab5ObpJlk7kH2sYO0ux7n0',
+    appId: '1:579307150474:ios:173df959abd14db410e173',
+    messagingSenderId: '579307150474',
+    projectId: 'seemytrip-78ee6',
+    storageBucket: 'seemytrip-78ee6.firebasestorage.app',
+    iosBundleId: 'com.example.seemytrip',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyB5atD2yyVmwBj8owvgWmbkS3Gq_SSbwCw',
+    appId: '1:579307150474:web:53e83732c1d2d70710e173',
+    messagingSenderId: '579307150474',
+    projectId: 'seemytrip-78ee6',
+    authDomain: 'seemytrip-78ee6.firebaseapp.com',
+    storageBucket: 'seemytrip-78ee6.firebasestorage.app',
+    measurementId: 'G-6C7NP05S6G',
+  );
+
 }

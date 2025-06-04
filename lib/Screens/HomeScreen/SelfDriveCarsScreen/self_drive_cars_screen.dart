@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/AirportCabsScreens/select_travell_date_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/SelfDriveCarsScreen/search_pickup_area_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/SelfDriveCarsScreen/self_drive_cars_select_dates_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/HomeScreen/SelfDriveCarsScreen/search_pickup_area_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/SelfDriveCarsScreen/self_drive_cars_select_dates_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class SelfDriveCarsScreen extends StatelessWidget {
    SelfDriveCarsScreen({Key? key}) : super(key: key);

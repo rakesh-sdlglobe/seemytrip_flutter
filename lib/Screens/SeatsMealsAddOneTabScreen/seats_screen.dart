@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/SeatsMealsAddOneTabScreen/seats.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/SeatsMealsAddOneTabScreen/seats.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 import 'package:get/get.dart';
 
 class SeatsScreen extends StatelessWidget {

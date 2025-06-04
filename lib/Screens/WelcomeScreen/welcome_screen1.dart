@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/Screens/WelcomeScreen/welcome_screen2.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/Screens/WelcomeScreen/welcome_screen2.dart';
 
 class WelcomeScreen1 extends StatefulWidget {
   WelcomeScreen1({Key? key}) : super(key: key);

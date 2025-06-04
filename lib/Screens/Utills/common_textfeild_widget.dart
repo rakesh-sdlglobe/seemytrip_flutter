@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
 
 class CommonTextFieldWidget {
   static TextFormField1({

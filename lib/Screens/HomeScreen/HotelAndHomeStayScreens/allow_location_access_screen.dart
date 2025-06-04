@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/hotel_and_home_stay_tab_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/hotel_and_home_stay_tab_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class AllowLocationAccessScreen extends StatelessWidget {
   AllowLocationAccessScreen({Key? key}) : super(key: key);

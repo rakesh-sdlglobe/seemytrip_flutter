@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_container_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_container_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class PriceRangeScreen extends StatelessWidget {
   PriceRangeScreen({Key? key}) : super(key: key);

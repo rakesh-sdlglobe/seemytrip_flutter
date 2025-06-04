@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class FlightBookController extends GetxController
     with GetSingleTickerProviderStateMixin {

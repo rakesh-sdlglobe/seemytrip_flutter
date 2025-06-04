@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/edit_your_search_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/package_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/edit_your_search_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/package_screen.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 
 import '../../Utills/common_text_widget.dart';
 

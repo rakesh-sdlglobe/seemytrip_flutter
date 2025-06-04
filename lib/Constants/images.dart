@@ -415,3 +415,12 @@ const String seatsImage2 = "assets/images/seatsImage2.png";
 const String seatsCrossImage = "assets/images/seatsCrossImage.png";
 const String seatsXlImage = "assets/images/seatsXlImage.png";
 const String multicityImage = "assets/images/multicityImage.png";
+
+
+//comp-logo
+const String compLogo = "assets/images/comp_logo.png";
+
+//splash background image
+
+const String splashBackgroundImage = "assets/images/back-img.png";
+

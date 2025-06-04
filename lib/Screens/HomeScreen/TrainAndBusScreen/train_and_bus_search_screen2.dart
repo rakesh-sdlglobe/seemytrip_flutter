@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Controller/travellerDetailController.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/review_booking_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/traveller_detail_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_textfeild_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Controller/travellerDetailController.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/review_booking_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen_password.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen_username.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/traveller_detail_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_textfeild_widget.dart';
+import 'package:seemytrip/components/irctcs_webview.dart';
+import 'package:seemytrip/main.dart';
 import 'package:intl/intl.dart';
 
 class TrainAndBusSearchScreen2 extends StatefulWidget {
@@ -64,7 +67,6 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
     final DateTime parsedTime = inputFormat.parse(time);
     return outputFormat.format(parsedTime);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -312,16 +314,50 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CommonTextWidget.PoppinsMedium(
-          text: "CREATE NEW IRCTC ACCOUNT",
-          color: redCA0,
-          fontSize: 12,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => IRCTCWebView()),
+            );
+          },
+          child: CommonTextWidget.PoppinsMedium(
+            text: "CREATE NEW IRCTC ACCOUNT",
+            color: redCA0,
+            fontSize: 12,
+          ),
         ),
         SizedBox(height: 10),
-        CommonTextWidget.PoppinsMedium(
-          text: "FORGOT USERNAME",
-          color: redCA0,
-          fontSize: 12,
+        GestureDetector(
+          onTap: () {
+            Get.bottomSheet(
+              ForgotIRCTCUsernameScreen(),
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+            );
+          },
+          child: CommonTextWidget.PoppinsMedium(
+            text: "FORGOT USERNAME",
+            color: redCA0,
+            fontSize: 12,
+          ),
+        ),
+        SizedBox(height: 10),
+        GestureDetector(
+          onTap: () {
+            Get.bottomSheet(
+              ForgotIRCTCPasswordScreen(
+                username: irctcUsername,
+              ),
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+            );
+          },
+          child: CommonTextWidget.PoppinsMedium(
+            text: "FORGOT IRCTC PASSWORD",
+            color: redCA0,
+            fontSize: 12,
+          ),
         ),
       ],
     );
@@ -352,22 +388,26 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
   }
 
   Widget _buildSavedTravellers() {
-    final TravellerDetailController controller =
-        Get.find<TravellerDetailController>();
+    final TravellerDetailController controller = Get.find<TravellerDetailController>();
 
     return Obx(
       () => Column(
         children: controller.travellers.map((traveller) {
-          final isSelected = selectedTravellers.contains(traveller['name']);
+          // Safely access the traveller data with null checks
+          final name = traveller['passengerName'] ?? 'Unknown';
+          final age = traveller['passengerAge'] ?? 'N/A';
+          final gender = traveller['passengerGender'] ?? 'N/A';
+          final isSelected = selectedTravellers.contains(name);
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 5.0),
             child: GestureDetector(
               onTap: () {
                 setState(() {
                   if (isSelected) {
-                    selectedTravellers.remove(traveller['name']);
+                    selectedTravellers.remove(name);
                   } else {
-                    selectedTravellers.add(traveller['name']);
+                    selectedTravellers.add(name);
                   }
                 });
               },
@@ -378,8 +418,7 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
                   color: isSelected ? redCA0.withOpacity(0.2) : greyE2E,
                 ),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -387,14 +426,13 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsMedium(
-                            text: traveller['name'],
+                            text: name,
                             color: black2E2,
                             fontSize: 14,
                           ),
                           const SizedBox(height: 5),
                           CommonTextWidget.PoppinsMedium(
-                            text:
-                                "Age: ${traveller['age']}, Gender: ${traveller['gender']}",
+                            text: "Age: $age, Gender: $gender",
                             color: grey717,
                             fontSize: 12,
                           ),
@@ -402,8 +440,8 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // Handle edit functionality here
-                          print("Edit tapped for ${traveller['name']}");
+                          // Handle edit functionality
+                          print("Edit tapped for $name");
                         },
                         child: Icon(Icons.edit, color: redCA0, size: 16),
                       ),

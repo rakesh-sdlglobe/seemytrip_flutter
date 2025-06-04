@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/Screens/Where2GoScreen/international_detail_screen1.dart';
-import 'package:makeyourtripapp/Screens/Where2GoScreen/international_select_city_screen.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/Screens/Where2GoScreen/international_detail_screen1.dart';
+import 'package:seemytrip/Screens/Where2GoScreen/international_select_city_screen.dart';
+import 'package:seemytrip/main.dart';
 
 class InterNationalScreen extends StatelessWidget {
   InterNationalScreen({Key? key}) : super(key: key);

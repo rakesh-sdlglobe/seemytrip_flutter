@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Controller/train_sort_and_filter_controller.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Controller/train_sort_and_filter_controller.dart';
 
 class TrainFilterScreen extends StatelessWidget {
   TrainFilterScreen({Key? key}) : super(key: key);

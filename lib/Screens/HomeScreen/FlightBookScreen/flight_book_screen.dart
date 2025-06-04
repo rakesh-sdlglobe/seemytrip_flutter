@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/flight_book_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/CalendarScreen/calender_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightModifySearch/flight_modify_search.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/cheapest_list_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/keep_track_price_screen.dart';
-import 'package:makeyourtripapp/Screens/SortAndFilterScreen/sort_and_filter_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/flight_book_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/CalendarScreen/calender_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightModifySearch/flight_modify_search.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/cheapest_list_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/keep_track_price_screen.dart';
+import 'package:seemytrip/Screens/SortAndFilterScreen/sort_and_filter_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 
-import '../TrainAndBusScreen/train_and_bus_modify_search_screen.dart';
 
 class FlightBookScreen extends StatelessWidget {
   FlightBookScreen({Key? key}) : super(key: key);

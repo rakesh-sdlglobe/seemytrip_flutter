@@ -1,14 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class FlightFromScreen extends StatefulWidget {
   @override
@@ -17,7 +12,7 @@ class FlightFromScreen extends StatefulWidget {
 
 class _FlightFromScreenState extends State<FlightFromScreen> {
   bool _isEditingFrom = false;
-  TextEditingController _fromController = TextEditingController();
+  final TextEditingController _fromController = TextEditingController();
   List<dynamic> airports = [];
   List<dynamic> filteredAirports = [];
   bool isLoading = true;
@@ -41,7 +36,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
   Future<void> fetchAirports() async {
     final dio = Dio();
     final url =
-        'http://192.168.1.103:3002/api/trains/getStation'; // Replace with your API
+        'https://tripadmin.seemytrip.com/api/trains/getStation'; // Replace with your API
 
     try {
       final response = await dio.get(url);

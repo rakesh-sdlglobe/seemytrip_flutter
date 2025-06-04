@@ -1,38 +1,79 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Screens/WelcomeScreen/welcome_screen1.dart';
-import 'package:makeyourtripapp/Screens/NavigationSCreen/navigation_screen.dart';
+import 'package:seemytrip/Screens/WelcomeScreen/welcome_screen1.dart';
+import 'package:seemytrip/Screens/NavigationSCreen/navigation_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashController extends GetxController
     with SingleGetTickerProviderMixin {
   late AnimationController animationController;
   late Animation<double> scaleAnimation;
+  late Animation<double> rotateAnimation;
+  late Animation<double> fadeAnimation;
 
   @override
   void onInit() {
     super.onInit();
 
-    // Initialize AnimationController
+    // Initialize AnimationController with longer duration
     animationController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 4),
       vsync: this,
     );
 
-    // Define the scale animation
-    scaleAnimation = Tween<double>(begin: 0.5, end: 1.2).animate(
-      CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
+    // Create sequence of animations
+    fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+      ),
     );
 
-    // Start the animation
+    scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.0, end: 1.2)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 40.0,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.2, end: 1.0)
+            .chain(CurveTween(curve: Curves.elasticOut)),
+        weight: 60.0,
+      ),
+    ]).animate(animationController);
+
+    rotateAnimation = Tween<double>(begin: 0.0, end: 0.1).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeInOut),
+      ),
+    );
+
+    // Start the animation with repeat
     animationController.forward();
 
     // Check login status and navigate accordingly
     Timer(
-      const Duration(seconds: 6),
+      const Duration(seconds: 7),
       () => checkLoginStatus(),
     );
+  }
+
+  void startAnimation() {
+    if (!animationController.isAnimating) {
+      animationController.forward();
+    }
+  }
+
+  void resetAnimation() {
+    animationController.reset();
+  }
+
+  void pauseAnimation() {
+    if (animationController.isAnimating) {
+      animationController.stop();
+    }
   }
 
   Future<void> checkLoginStatus() async {

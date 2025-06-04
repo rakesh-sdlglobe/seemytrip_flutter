@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/allow_location_access_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/allow_location_access_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
 
 class SearchCityScreen extends StatelessWidget {
   SearchCityScreen({Key? key}) : super(key: key);

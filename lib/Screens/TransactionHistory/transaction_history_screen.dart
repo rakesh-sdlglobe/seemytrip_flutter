@@ -1,67 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
+import 'package:seemytrip/Constants/colors.dart';
 
 class TransactionHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transaction History', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
+        title:
+            Text('Transaction History', style: TextStyle(color: Colors.white)),
+        // centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: redCA0,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              print('sorting button clicked');
+            },
+            child: Icon(Icons.sort),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(
           itemCount: 10, // Replace with the actual number of transactions
           itemBuilder: (context, index) {
-            return Card(
-              elevation: 4,
-              margin: EdgeInsets.symmetric(vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+            return Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: 0.1),
+                borderRadius: BorderRadius.circular(20.0),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1), spreadRadius: 5, blurRadius: 7, offset: Offset(0, 3)
+                  )
+                ]
               ),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: redCA0,
-                  child: Icon(Icons.receipt, color: Colors.white),
-                ),
-                title: Text(
-                  'Transaction $index',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                subtitle: Text(
-                  'Details of transaction $index',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                  ),
-                ),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '\₹900', // Replace with actual transaction amount
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: redCA0,
+              margin: EdgeInsets.symmetric(vertical: 6.0),
+              padding: EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.red.shade100,
+                        maxRadius: 30,
+                        child: Icon(
+                          Icons.train,
+                          color: Colors.red,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Completed',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 12,
+                      SizedBox(width: 20.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Mum to Deli Mum to Del...",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold)),
+                          Text("₹ 678",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.red)),
+                          Text("12th Sept",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold)),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.green.shade100,
+                        child: Icon(
+                          Icons.check,
+                          color: Colors.green,
+                        ),
+                      )
+                    ],
+                  )
+                ],
               ),
             );
           },

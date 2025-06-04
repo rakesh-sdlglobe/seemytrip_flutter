@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
 
 class TrainAndBusDetailController extends GetxController {
   var isLoading = false.obs;
@@ -51,7 +50,7 @@ class TrainAndBusDetailController extends GetxController {
   }
 
   void setDate(DateTime date) {
-    this.travelDate = date;
+    travelDate = date;
     _performLogic();
   }
 
@@ -80,7 +79,7 @@ class TrainAndBusDetailController extends GetxController {
       print("Request body: $requestBody");
 
       final response = await http.post(
-        Uri.parse('http://192.168.1.110:3002/api/trains/getTrains'),
+        Uri.parse('https://tripadmin.seemytrip.com/api/trains/getTrains'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );

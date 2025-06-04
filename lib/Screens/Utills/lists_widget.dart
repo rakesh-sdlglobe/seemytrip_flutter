@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/login_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/DrawerScreen/setting_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_from_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_to_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/budget_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/duration_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/hotel_choice_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/suitable_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_and_homestay.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/localitiy_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/popular_filter_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/price_range_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/property_type_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/rooms_and_guest_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/search_city_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/OffersScreen/offer_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/SelfDriveCarsScreen/self_drive_cars_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/VisaServicesScreen/apply_tourist_visa_screen.dart';
-import 'package:makeyourtripapp/Screens/MyAccountScreen/my_giftcard_screen.dart';
-import 'package:makeyourtripapp/Screens/MyAccountScreen/my_wishlist_screen.dart';
-import 'package:makeyourtripapp/Screens/MyTripScreen/my_trip_screen.dart';
-import 'package:makeyourtripapp/Screens/NotificationScreen/notification_screen.dart';
-import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/mobile_wallet_screen.dart';
-import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/net_banking_screen.dart';
-import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/pay_by_card_screen.dart';
-import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/pay_by_upi_screen.dart';
-import 'package:makeyourtripapp/Screens/TransactionHistory/transaction_history_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Where2GoScreen/international_screen.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/login_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/DrawerScreen/setting_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_from_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_to_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/budget_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/duration_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/hotel_choice_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/suitable_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_and_homestay.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/localitiy_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/popular_filter_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/price_range_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/property_type_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/rooms_and_guest_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/search_city_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/OffersScreen/offer_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/SelfDriveCarsScreen/self_drive_cars_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/VisaServicesScreen/apply_tourist_visa_screen.dart';
+import 'package:seemytrip/Screens/MyAccountScreen/my_giftcard_screen.dart';
+import 'package:seemytrip/Screens/MyAccountScreen/my_wishlist_screen.dart';
+import 'package:seemytrip/Screens/MyTripScreen/my_trip_screen.dart';
+import 'package:seemytrip/Screens/NotificationScreen/notification_screen.dart';
+import 'package:seemytrip/Screens/SelectPaymentMethodScreen/mobile_wallet_screen.dart';
+import 'package:seemytrip/Screens/SelectPaymentMethodScreen/net_banking_screen.dart';
+import 'package:seemytrip/Screens/SelectPaymentMethodScreen/pay_by_card_screen.dart';
+import 'package:seemytrip/Screens/SelectPaymentMethodScreen/pay_by_upi_screen.dart';
+import 'package:seemytrip/Screens/TransactionHistory/transaction_history_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Where2GoScreen/international_screen.dart';
 
 class Lists {
   final LoginController loginController = Get.find<LoginController>();
@@ -126,28 +126,28 @@ class Lists {
   static List<Map> homeList1 = [
     {
       "image": offerIcon,
-      "text": "Offers",
+      "text": "offers".tr,
       "onTap": () {
         Get.to(() => OfferScreen());
       },
     },
     {
       "image": selfDrive,
-      "text": "Self Drive",
+      "text": "selfDrive".tr,
       "onTap": () {
         Get.to(() => SelfDriveCarsScreen());
       },
     },
     {
       "image": visaServices,
-      "text": "Visa services",
+      "text": "visaServices".tr,
       "onTap": () {
         Get.to(() => ApplyTouristVisaScreen());
       },
     },
     {
       "image": flightStatus,
-      "text": "Flight Status",
+      "text": "flightStatus".tr,
       "onTap": () {},
     },
   ];

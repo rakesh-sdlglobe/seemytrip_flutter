@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/flight_search_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/multicity_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/one_way_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/round_trip_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/flight_search_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/multicity_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/one_way_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/round_trip_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class FlightSearchScreen extends StatelessWidget {
   FlightSearchScreen({Key? key}) : super(key: key);

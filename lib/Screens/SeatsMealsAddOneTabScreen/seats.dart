@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 RxBool seatSelected = false.obs;
 seatsRow({index, image1, image2, image3, image4, image5, image6}) {

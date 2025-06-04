@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Controller/login_controller.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Controller/login_controller.dart';
 
 class LoginSignupBottomSheet extends StatefulWidget {
   @override

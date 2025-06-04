@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:makeyourtripapp/Screens/AuthScreens/Login_bottom_sheet.dart';
-import 'package:makeyourtripapp/Screens/AuthScreens/login_screen.dart';
-import 'package:makeyourtripapp/Screens/NavigationSCreen/navigation_screen.dart';
+import 'package:seemytrip/Screens/AuthScreens/login_screen.dart';
+import 'package:seemytrip/Screens/NavigationSCreen/navigation_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,71 +20,84 @@ class LoginController extends GetxController {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  final String loginApiUrl = 'http://192.168.1.110:3002/api/login';
-  final String signUpApiUrl = 'http://192.168.1.110:3002/api/signup';
+  final String loginApiUrl = 'https://tripadmin.seemytrip.com/api/login';
+  final String signUpApiUrl = 'https://tripadmin.seemytrip.com/api/signup';
   final String userProfileUrl =
-      'http://192.168.1.110:3002/api/users/userProfile';
+      'http://192.168.137.102:3002/api/users/userProfile';
 
   // Firebase Auth and Google Sign-In Instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // Google Sign-In Logic
-  Future<void> signInWithGoogle() async {
-    try {
-      isSigningIn(true); // Show loading indicator
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        isSigningIn(false);
-        Get.snackbar("Sign In", "Google Sign-In was canceled.");
-        return;
-      }
+Future<void> signInWithGoogle() async {
+  try {
+    isSigningIn(true); // Show loading indicator
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await _auth.signInWithCredential(credential);
-
-      // Collect user data
-      final user = _auth.currentUser;
-      final userData = {
-        "name": user?.displayName,
-        "email": user?.email,
-        "photoUrl": user?.photoURL,
-        "uid": user?.uid,
-        "phoneNumber": user?.phoneNumber,
-        // "providerData": user?.providerData.map((e) => e.toMap()).toList(),
-        "creationTime": user?.metadata.creationTime?.toIso8601String(),
-        "lastSignInTime": user?.metadata.lastSignInTime?.toIso8601String(),
-      };
-
-      // Send user data to backend
-      final response = await http.post(
-        Uri.parse('http://192.168.1.103:3002/api/auth/googleUserData'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(userData),
-      );
-
-      if (response.statusCode == 200) {
-        print('User data sent successfully: ${response.body}');
-      } else {
-        print('Failed to send user data: ${response.body}');
-      }
-
-      Get.snackbar("Success", "Signed in as ${user?.displayName}");
-      Get.to(() => NavigationScreen());
-    } catch (e) {
-      Get.snackbar("Error", "Failed to sign in: $e");
-      print("Failed to sign in: $e");
-    } finally {
-      isSigningIn(false); // Hide loading indicator
+    // Step 1: Start Google Sign-In
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      isSigningIn(false);
+      Get.snackbar("Sign In", "Google Sign-In was canceled.");
+      return;
     }
+
+    // Step 2: Authenticate with Firebase
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    await _auth.signInWithCredential(credential);
+
+    // Step 3: Collect user data from Firebase
+    final user = _auth.currentUser;
+    final userData = {
+      "name": user?.displayName,
+      "email": user?.email,
+      "photoUrl": user?.photoURL,
+      "uid": user?.uid,
+      "phoneNumber": user?.phoneNumber,
+      "creationTime": user?.metadata.creationTime?.toIso8601String(),
+      "lastSignInTime": user?.metadata.lastSignInTime?.toIso8601String(),
+      "isEmailVerified": user?.emailVerified ?? false,
+    };
+
+    // Step 4: Send user data to your backend
+    final response = await http.post(
+      Uri.parse('http://192.168.137.102:3002/api/auth/googleUserData'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(userData),
+    );
+
+    // Step 5: Handle backend response
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      if (responseData['token'] != null) {
+        final token = responseData['token'];
+
+        // Step 6: Save token securely
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('accessToken', token);
+
+        print('✅ Access Token Saved: $token');
+        Get.snackbar("Success", "Signed in as ${user?.displayName}");
+        Get.offAll(() => NavigationScreen()); // Go to main app screen
+      } else {
+        Get.snackbar("Error", "No token received from server.");
+        print("❌ Token not found in backend response");
+      }
+    } else {
+      print('❌ Failed to send user data: ${response.body}');
+      Get.snackbar("Error", "Failed to sign in. ${response.body}");
+    }
+  } catch (e) {
+    print("🚨 Sign-in error: $e");
+    Get.snackbar("Error", "Google Sign-In failed: $e");
+  } finally {
+    isSigningIn(false); // Hide loading indicator
   }
+}
 
   // Check if input text is empty
   void validateInput(String input) {

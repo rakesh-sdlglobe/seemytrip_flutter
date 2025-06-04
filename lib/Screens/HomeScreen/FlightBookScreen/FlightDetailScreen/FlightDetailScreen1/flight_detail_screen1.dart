@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/DotedScreen/doted_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/AddTravellerScreen/add_traveller_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/ApplyPromoCodeScreen/apply_promocode_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/CheckInBaggageScreen/check_in_baggage_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/FareBreakUpScreen1/fare_break_up_screen1.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/refund_policy_tab_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/contact_information_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/gst_information_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/review_detail_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/DotedScreen/doted_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/AddTravellerScreen/add_traveller_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/ApplyPromoCodeScreen/apply_promocode_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/CheckInBaggageScreen/check_in_baggage_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/FareBreakUpScreen1/fare_break_up_screen1.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/refund_policy_tab_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/contact_information_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/gst_information_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/review_detail_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/main.dart';
 
 class FlightDetailScreen1 extends StatelessWidget {
   FlightDetailScreen1({Key? key}) : super(key: key);

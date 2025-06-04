@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
+import 'package:seemytrip/Constants/colors.dart';
 
 class MyDotSeparator extends StatelessWidget {
   final double height;

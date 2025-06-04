@@ -2,21 +2,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/AirportCabsScreens/cab_search_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/DrawerScreen/drawer_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_search_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/holiday_packages_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HomeStayScreen/home_stay_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/hotel_and_home_stay_tab_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/OutStationCabsScreen/out_station_cab_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/home_search_screen.dart';
-import 'package:makeyourtripapp/Screens/NotificationScreen/notification_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/HomeScreen/AirportCabsScreens/cab_search_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/DrawerScreen/drawer_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_search_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/holiday_packages_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HomeStayScreen/home_stay_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/hotel_and_home_stay_tab_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/OutStationCabsScreen/out_station_cab_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/home_search_screen.dart';
+import 'package:seemytrip/Screens/NotificationScreen/notification_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -78,6 +78,7 @@ class HomeScreen extends StatelessWidget {
                           InkWell(
                             onTap: () {
                               Get.to(() => NotificationScreen());
+                              //  Get.to(()=>OtpScreen());
                             },
                             child: Image.asset(notificationIcon,
                                 height: 42, width: 42),
@@ -142,7 +143,7 @@ class HomeScreen extends StatelessWidget {
                                       height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Airport & \nCabs",
+                                    text: "airportCabs".tr,
                                     color: black2E2,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
@@ -160,7 +161,7 @@ class HomeScreen extends StatelessWidget {
                                   Image.asset(homeStays, height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Home\nStays",
+                                    text: "homeStays".tr,
                                     color: black2E2,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
@@ -179,7 +180,7 @@ class HomeScreen extends StatelessWidget {
                                       height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Outstation\nCabs",
+                                    text: "outstationCabs".tr,
                                     color: black2E2,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
@@ -198,7 +199,7 @@ class HomeScreen extends StatelessWidget {
                                       height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Hourly\nStays",
+                                    text: "hourlyStays".tr,
                                     color: black2E2,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
@@ -264,7 +265,7 @@ class HomeScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "Welcome Offers for you!",
+                          text: "Welcome Offers for you!".tr,
                           color: black2E2,
                           fontSize: 16,
                         ),
@@ -296,7 +297,7 @@ class HomeScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "Tourism Flagship stores",
+                          text: "Tourism Flagship stores".tr,
                           color: black2E2,
                           fontSize: 16,
                         ),
@@ -528,7 +529,7 @@ class HomeScreen extends StatelessWidget {
                               Image.asset(flight, height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Flight",
+                                text: "flight".tr,
                                 color: black2E2,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,
@@ -545,7 +546,7 @@ class HomeScreen extends StatelessWidget {
                               Image.asset(train, height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Trains &\nBus",
+                                text: "trainAndBus".tr,
                                 color: black2E2,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,
@@ -562,7 +563,7 @@ class HomeScreen extends StatelessWidget {
                               Image.asset(hotel, height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Hotel",
+                                text: "hotel".tr,
                                 color: black2E2,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,
@@ -580,7 +581,7 @@ class HomeScreen extends StatelessWidget {
                                   height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Holiday\nPackages",
+                                text: "holidayPackages".tr,
                                 color: black2E2,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,

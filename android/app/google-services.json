@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "628330605612",
-    "project_id": "see-my-trip-1fece",
-    "storage_bucket": "see-my-trip-1fece.firebasestorage.app"
+    "project_number": "579307150474",
+    "project_id": "seemytrip-78ee6",
+    "storage_bucket": "seemytrip-78ee6.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:628330605612:android:2103cd005e16b8d4acb589",
+        "mobilesdk_app_id": "1:579307150474:android:29ccedb62029ad3310e173",
         "android_client_info": {
-          "package_name": "com.example.makeyourtripapp"
+          "package_name": "com.example.seemytrip"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDXrpt30BxFrJTFva306RiFhsEQeG1aBvE"
+          "current_key": "AIzaSyBqFw3wf7RZxUumfpToOHLY-aqYSER_S-k"
         }
       ],
       "services": {

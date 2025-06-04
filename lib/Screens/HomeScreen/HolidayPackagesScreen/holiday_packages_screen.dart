@@ -2,16 +2,16 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/holiday_package_slider_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/explore_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/holiday_package_detail_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/search_destination_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/start_from_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/holiday_package_slider_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/explore_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/holiday_package_detail_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/search_destination_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/start_from_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 
 class HolidayPackagesScreen extends StatelessWidget {
   HolidayPackagesScreen({Key? key}) : super(key: key);

@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/welcome2_controller.dart';
-import 'package:makeyourtripapp/Screens/AuthScreens/login_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/welcome2_controller.dart';
+import 'package:seemytrip/Screens/AuthScreens/login_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
 
 class WelcomeScreen2 extends StatelessWidget {
   WelcomeScreen2({Key? key}) : super(key: key);
+
+  // Add language list
+  final List<Map<String, String>> languageList = [
+    {"name": "English", "code": "en", "native": "English"},
+    {"name": "हिन्दी", "code": "hi", "native": "Hindi"},
+    {"name": "தமிழ்", "code": "ta", "native": "Tamil"},
+    {"name": "ಕನ್ನಡ", "code": "kn", "native": "Kannada"},
+    {"name": "తెలుగు", "code": "te", "native": "Telugu"},
+    {"name": "ଓଡ଼ିଆ", "code": "or", "native": "Odia"},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +28,7 @@ class WelcomeScreen2 extends StatelessWidget {
       backgroundColor: white,
       body: Stack(
         children: [
+          // Top Image Container
           Container(
             height: 350,
             width: Get.width,
@@ -80,10 +91,11 @@ class WelcomeScreen2 extends StatelessWidget {
               ],
             ),
           ),
+
+          // Scrollable Content
           Padding(
             padding: EdgeInsets.only(top: 320),
             child: Container(
-              height: Get.height,
               width: Get.width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -93,83 +105,90 @@ class WelcomeScreen2 extends StatelessWidget {
                 color: white,
               ),
               child: Padding(
-                padding:
-                    EdgeInsets.only(top: 20, left: 24, right: 24, bottom: 70),
-                child: Column(
-                  children: [
-                    GetBuilder<Welcome2Controller>(
-                      init: Welcome2Controller(),
-                      builder: (controller) => ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: Lists.welcome2List.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: EdgeInsets.only(
-                            bottom: 15,
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              controller.onIndexChange(index);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    color: controller.selectedIndex == index
-                                        ? redCA0
-                                        : greyB9B,
-                                    width: 1),
+                padding: EdgeInsets.only(
+                  top: 20,
+                  left: 24,
+                  right: 24,
+                  bottom: 100, // Added extra padding for button
+                ),
+                child: GetBuilder<Welcome2Controller>(
+                  init: Welcome2Controller(),
+                  builder: (controller) => ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: languageList.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: EdgeInsets.only(bottom: 15),
+                      child: InkWell(
+                        onTap: () {
+                          controller.onIndexChange(index);
+                          Get.updateLocale(Locale(languageList[index]["code"]!));
+                        },
+                        child: Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
                                 color: controller.selectedIndex == index
-                                    ? redF9E
-                                    : white,
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                    ? redCA0
+                                    : greyB9B,
+                                width: 1),
+                            color: controller.selectedIndex == index
+                                ? redF9E
+                                : white,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                            controller.selectedIndex == index
-                                                ? selectedIcon
-                                                : unSelectedIcon),
-                                        SizedBox(width: 20),
-                                        CommonTextWidget.PoppinsMedium(
-                                          text: Lists.welcome2List[index]
-                                              ["text1"],
-                                          color: black2E2,
-                                          fontSize: 14,
-                                        ),
-                                      ],
-                                    ),
+                                    SvgPicture.asset(
+                                        controller.selectedIndex == index
+                                            ? selectedIcon
+                                            : unSelectedIcon),
+                                    SizedBox(width: 20),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: Lists.welcome2List[index]["text2"],
-                                      color: controller.selectedIndex == index
-                                          ? redCA0
-                                          : greyC8C,
-                                      fontSize: 29,
+                                      text: languageList[index]["name"]!,
+                                      color: black2E2,
+                                      fontSize: 14,
                                     ),
                                   ],
                                 ),
-                              ),
+                                CommonTextWidget.PoppinsMedium(
+                                  text: languageList[index]["native"]!,
+                                  color: controller.selectedIndex == index
+                                      ? redCA0
+                                      : greyC8C,
+                                  fontSize: 16,
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
-                    Spacer(),
-                    CommonButtonWidget.button(
-                      text: "CONTINUE",
-                      buttonColor: redCA0,
-                      onTap: () {
-                        Get.to(() => LogInScreen());
-                      },
-                    ),
-                  ],
+                  ),
                 ),
+              ),
+            ),
+          ),
+
+          // Fixed Bottom Button
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: white,
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: CommonButtonWidget.button(
+                text: "CONTINUE".tr,
+                buttonColor: redCA0,
+                onTap: () {
+                  Get.to(() => LogInScreen());
+                },
               ),
             ),
           ),

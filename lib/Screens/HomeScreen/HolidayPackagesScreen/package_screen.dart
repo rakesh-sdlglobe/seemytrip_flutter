@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/holiday_package_review_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HolidayPackagesScreen/holiday_package_traveller_detail_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/holiday_package_review_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/holiday_package_traveller_detail_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 
 class PackageDetailScreen extends StatelessWidget {
   PackageDetailScreen({Key? key}) : super(key: key);

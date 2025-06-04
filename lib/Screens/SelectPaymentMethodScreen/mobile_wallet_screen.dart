@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/mobile_wallet_controller.dart';
-import 'package:makeyourtripapp/Controller/net_banking_controller.dart';
-import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/fare_breakUp_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/mobile_wallet_controller.dart';
+import 'package:seemytrip/Controller/net_banking_controller.dart';
+import 'package:seemytrip/Screens/SelectPaymentMethodScreen/fare_breakUp_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 
 class MobileWalletScreen extends StatelessWidget {
   MobileWalletScreen({Key? key}) : super(key: key);

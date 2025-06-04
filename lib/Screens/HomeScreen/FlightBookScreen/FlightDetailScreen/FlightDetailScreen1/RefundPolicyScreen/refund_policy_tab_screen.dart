@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/refund_policy_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/baggage_refund_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/cancellation_refund_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/date_change_refund_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/refund_policy_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/baggage_refund_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/cancellation_refund_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightDetailScreen/FlightDetailScreen1/RefundPolicyScreen/date_change_refund_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/main.dart';
 
 class RefundPolicyTabScreen extends StatelessWidget {
   RefundPolicyTabScreen({Key? key}) : super(key: key);

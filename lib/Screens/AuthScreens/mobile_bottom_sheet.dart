@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Controller/mobile_otp_controller.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Controller/mobile_otp_controller.dart';
 
 class MobileOtpBottomSheet extends StatelessWidget {
   final MobileOtpController otpController = Get.put(MobileOtpController());

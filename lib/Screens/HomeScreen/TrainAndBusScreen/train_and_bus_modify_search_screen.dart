@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/train_and_bus_detail_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_detail_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/train_and_bus_detail_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_detail_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class TrainAndBusModifySearchScreen extends StatefulWidget {
   final String startStation;

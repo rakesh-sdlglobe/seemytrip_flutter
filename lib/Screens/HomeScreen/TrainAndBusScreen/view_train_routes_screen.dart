@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Controller/view_train_routes_controller.dart';
-import 'package:timelines/timelines.dart';
+import 'package:seemytrip/Controller/view_train_routes_controller.dart';
+import 'package:timelines_plus/timelines_plus.dart';
 
 class ViewTrainRoutes extends StatelessWidget {
   final String trainNumber;
   final String fromStation;
   final String toStation;
-  final ViewTrainRoutesController viewRouteController =
-      Get.put(ViewTrainRoutesController());
+  final ViewTrainRoutesController viewRouteController = Get.put(ViewTrainRoutesController());
 
   ViewTrainRoutes({required this.trainNumber, required this.fromStation, required this.toStation}) {
     viewRouteController.fetchTrainSchedule(trainNumber);
   }
 
+
   @override
   Widget build(BuildContext context) {
-    print("From: $fromStation, To: $toStation");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Obx(() => Text(
-            viewRouteController.trainSchedule['trainName'] ?? "Train Routes")),
+        title: Obx(() => Text(viewRouteController.trainSchedule['trainName'] ?? "Train Routes")),
         centerTitle: true,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -61,46 +59,25 @@ class ViewTrainRoutes extends StatelessWidget {
                 return Center(child: Text("No data available"));
               }
 
-              final stationList =
-                  viewRouteController.trainSchedule['stationList'];
-              final firstStation = stationList.first;
-              final lastStation = stationList.last;
+              final stationList = viewRouteController.trainSchedule['stationList'];
 
-              return ListView.builder(
-                padding: EdgeInsets.only(right: 12.0),
-                itemCount: stationList.length,
-                itemBuilder: (context, index) {
+              return Timeline.tileBuilder(
+                theme: TimelineThemeData(
+                  nodePosition: 0.1,
+                  connectorTheme: ConnectorThemeData(
+                    thickness: 2.0,
+                    color: Colors.grey.shade400,
+                  ),
+                ),
+                builder: TimelineTileBuilder.connected(
+                  connectionDirection: ConnectionDirection.before,
+                  itemCount: stationList.length,
+                  contentsBuilder: (_, index) {
                     final stop = stationList[index];
                     final isFirst = stop['stationName'] == fromStation;
                     final isLast = stop['stationName'] == toStation;
 
-                  return TimelineTile(
-                    node: TimelineNode(
-                      indicator: DotIndicator(
-                        color: isFirst
-                            ? Colors.red
-                            : isLast
-                                ? Colors.blue
-                                : Colors.grey,
-                        child: Icon(
-                          isFirst || isLast
-                              ? Icons.train
-                              : Icons.circle,
-                          color: Colors.white,
-                          size: 23,
-                        ),
-                      ),
-                      startConnector: SolidLineConnector(
-                        color: Colors.grey.shade400,
-                        thickness: 2,
-                      ),
-                      endConnector: SolidLineConnector(
-                        color: Colors.grey.shade400,
-                        thickness: 2,
-                      ),
-                    ),
-                    nodePosition: 0.1,
-                    contents: Padding(
+                    return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
                       child: Card(
                         color: isFirst
@@ -109,7 +86,7 @@ class ViewTrainRoutes extends StatelessWidget {
                                 ? Colors.blue.shade100
                                 : Colors.white,
                         elevation: 2,
-                        margin: EdgeInsets.symmetric(vertical: 6.0),
+                        margin: EdgeInsets.fromLTRB(8, 0, 12, 0),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Column(
@@ -129,38 +106,47 @@ class ViewTrainRoutes extends StatelessWidget {
                               ),
                               SizedBox(height: 4),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("Arr: ${stop['arrivalTime']}",
-                                      style: TextStyle(fontSize: 12)),
-                                  Text("Dep: ${stop['departureTime']}",
-                                      style: TextStyle(fontSize: 12)),
-                                  Text("Halt: ${stop['haltTime']} min",
-                                      style: TextStyle(fontSize: 12)),
+                                  Text("Arr: ${stop['arrivalTime']}", style: TextStyle(fontSize: 12)),
+                                  Text("Dep: ${stop['departureTime']}", style: TextStyle(fontSize: 12)),
+                                  Text("Halt: ${stop['haltTime']} min", style: TextStyle(fontSize: 12)),
                                 ],
                               ),
                               SizedBox(height: 4),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("Distance: ${stop['distance']} km",
-                                      style: TextStyle(fontSize: 12)),
-                                  Text("Day: ${stop['dayCount']}",
-                                      style: TextStyle(fontSize: 12)),
+                                  Text("Distance: ${stop['distance']} km", style: TextStyle(fontSize: 12)),
+                                  Text("Day: ${stop['dayCount']}", style: TextStyle(fontSize: 12)),
                                 ],
                               ),
                             ],
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                  indicatorBuilder: (_, index) {
+                    final stop = stationList[index];
+                    final isFirst = stop['stationName'] == fromStation;
+                    final isLast = stop['stationName'] == toStation;
+
+                    return DotIndicator(
+                      size: 24,
+                      color: isFirst ? Colors.red : isLast ? Colors.blue : Colors.grey,
+                      child: Icon(
+                        isFirst || isLast ? Icons.train : Icons.circle,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    );
+                  },
+                  connectorBuilder: (_, index, __) => SolidLineConnector(),
+                ),
               );
             }),
-          )
+          ),
         ],
       ),
     );

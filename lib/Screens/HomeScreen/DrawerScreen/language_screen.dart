@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Controller/language_controller.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Controller/language_controller.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 
 class LanguageScreen extends StatelessWidget {
   LanguageScreen({Key? key}) : super(key: key);
 
+  final Map<String, Locale> languageMap = {
+    'English': Locale('en'),
+    'हिन्दी': Locale('hi'),
+    'தமிழ்': Locale('ta'),
+    'ಕನ್ನಡ': Locale('kn'),
+    'తెలుగు': Locale('te'),
+    'ଓଡ଼ିଆ': Locale('or'),
+  };
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(LanguageController());
+    
     return Scaffold(
       backgroundColor: white,
       appBar: AppBar(
@@ -18,11 +27,9 @@ class LanguageScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        leading: InkWell(
-          onTap: () {
-            Get.back();
-          },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: Icon(Icons.arrow_back, color: white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: "Language",
@@ -30,41 +37,42 @@ class LanguageScreen extends StatelessWidget {
           fontSize: 18,
         ),
       ),
-      body: ScrollConfiguration(
-        behavior: MyBehavior(),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20),
-                CommonTextWidget.PoppinsSemiBold(
-                  text: "Suggested",
-                  color: black2E2,
-                  fontSize: 16,
-                ),
-                SizedBox(height: 30),
-                GetBuilder<LanguageController>(
-                  init: LanguageController(),
-                  builder: (controller) => ListView.builder(
-                    itemCount: Lists.languageSuggestedList.length,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) => Padding(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              CommonTextWidget.PoppinsSemiBold(
+                text: "Select Language",
+                color: black2E2,
+                fontSize: 16,
+              ),
+              SizedBox(height: 30),
+              GetBuilder<LanguageController>(
+                builder: (controller) => ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: languageMap.length,
+                  itemBuilder: (context, index) {
+                    final languageName = languageMap.keys.elementAt(index);
+                    final locale = languageMap[languageName]!;
+                    
+                    return Padding(
                       padding: EdgeInsets.only(bottom: 30),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CommonTextWidget.PoppinsMedium(
-                            text: Lists.languageSuggestedList[index],
+                            text: languageName,
                             color: grey717,
                             fontSize: 14,
                           ),
                           InkWell(
                             onTap: () {
-                              controller.onIndexChange(index);
+                              controller.onLanguageSelected(locale);
+                              Get.updateLocale(locale);
                             },
                             child: Container(
                               height: 18,
@@ -75,78 +83,25 @@ class LanguageScreen extends StatelessWidget {
                                 border: Border.all(color: redCA0),
                               ),
                               alignment: Alignment.center,
-                              child: controller.selectedIndex == index
+                              child: Get.locale == locale
                                   ? Container(
                                       height: 10,
                                       width: 10,
                                       decoration: BoxDecoration(
-                                          color: redCA0,
-                                          shape: BoxShape.circle),
+                                        color: redCA0,
+                                        shape: BoxShape.circle,
+                                      ),
                                     )
                                   : SizedBox.shrink(),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-                Divider(color: greyE2E, thickness: 1),
-                SizedBox(height: 25),
-                CommonTextWidget.PoppinsSemiBold(
-                  text: "Language",
-                  color: black2E2,
-                  fontSize: 16,
-                ),
-                SizedBox(height: 30),
-                GetBuilder<LanguageController>(
-                  init: LanguageController(),
-                  builder: (controller) => ListView.builder(
-                    itemCount: Lists.languageList.length,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(bottom: 30),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CommonTextWidget.PoppinsMedium(
-                            text: Lists.languageList[index],
-                            color: grey717,
-                            fontSize: 14,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              controller.onIndexChange1(index);
-                            },
-                            child: Container(
-                              height: 18,
-                              width: 18,
-                              decoration: BoxDecoration(
-                                color: white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: redCA0),
-                              ),
-                              alignment: Alignment.center,
-                              child: controller.selectedIndex1 == index
-                                  ? Container(
-                                      height: 10,
-                                      width: 10,
-                                      decoration: BoxDecoration(
-                                          color: redCA0,
-                                          shape: BoxShape.circle),
-                                    )
-                                  : SizedBox.shrink(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

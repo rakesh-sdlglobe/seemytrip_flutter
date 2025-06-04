@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class TrainContactInformationController extends GetxController {
   // Observable variables
   final RxString username = ''.obs;
@@ -16,7 +18,7 @@ class TrainContactInformationController extends GetxController {
   static final RegExp usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
 
   // API endpoint
-  static const String baseUrl = 'http://192.168.1.110:3002';
+  static const String baseUrl = 'https://tripadmin.seemytrip.com';
 
   // Validate username
   void validateUsername(String value) {
@@ -64,6 +66,13 @@ class TrainContactInformationController extends GetxController {
 
   // Verify IRCTC username
   Future<bool> verifyIRCTCUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('accessToken');
+
+    if (accessToken == null) {
+      throw Exception('Access token not found');
+    }
+
     if (!isUsernameValid.value) {
       return false;
     }
@@ -72,11 +81,13 @@ class TrainContactInformationController extends GetxController {
       isLoading.value = true;
       successMessage.value = '';
 
-      final response = await http
-          .get(
+      final response = await http.get(
         Uri.parse('$baseUrl/api/trains/getUsernameFromIRCTC/${username.value}'),
-      )
-          .timeout(
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      ).timeout(
         Duration(seconds: 10),
         onTimeout: () {
           throw Exception('Connection timeout. Please try again.');

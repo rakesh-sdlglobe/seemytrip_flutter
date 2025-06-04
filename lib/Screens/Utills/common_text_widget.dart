@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
+import 'package:seemytrip/Constants/font_family.dart';
 
 class CommonTextWidget {
   static PoppinsBold(

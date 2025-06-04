@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/cab_terminal2_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/coupon_code_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/select_gust_screen.dart';
-import 'package:makeyourtripapp/Screens/SelectPaymentMethodScreen/select_payment_method_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_button_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_textfeild_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/cab_terminal2_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/coupon_code_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/select_gust_screen.dart';
+import 'package:seemytrip/Screens/SelectPaymentMethodScreen/select_payment_method_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Utills/common_textfeild_widget.dart';
+import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/main.dart';
 
 class HotelReviewBookingScreen extends StatelessWidget {
   HotelReviewBookingScreen({Key? key}) : super(key: key);

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/FlightBookScreen/FlightModifySearch/round_trip1.dart';
+import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightModifySearch/round_trip1.dart';
 import '../../../../Constants/colors.dart';
 import '../../../../Constants/images.dart';
 import '../../../../Controller/flight_modify_search_controller.dart';

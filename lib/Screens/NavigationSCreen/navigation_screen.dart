@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/navigation_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/home_screen.dart';
-import 'package:makeyourtripapp/Screens/MyAccountScreen/my_account_screen.dart';
-import 'package:makeyourtripapp/Screens/MyTripScreen/my_trip_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Where2GoScreen/where_2_go_screen.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/navigation_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/home_screen.dart';
+import 'package:seemytrip/Screens/MyAccountScreen/my_account_screen.dart';
+import 'package:seemytrip/Screens/MyTripScreen/my_trip_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Screens/Where2GoScreen/where_2_go_screen.dart';
 
 import '../HomeScreen/DrawerScreen/drawer_screen.dart';
 
 class NavigationScreen extends StatelessWidget {
+  final String? token;
+  NavigationScreen({this.token});
+
+  @override
   final NavigationController navigationController =
       Get.put(NavigationController());
 

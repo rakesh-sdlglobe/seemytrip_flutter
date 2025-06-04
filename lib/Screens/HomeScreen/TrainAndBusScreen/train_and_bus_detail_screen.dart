@@ -2,23 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/font_family.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/train_and_bus_detail_controller.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_modify_search_screen.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_search_screen2.dart';
-import 'package:makeyourtripapp/Screens/HomeScreen/TrainAndBusScreen/view_train_routes_screen.dart';
-import 'package:makeyourtripapp/Screens/SortAndFilterScreen/trainFiltter_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
-import 'package:makeyourtripapp/Screens/Utills/lists_widget.dart';
-import 'package:makeyourtripapp/main.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/train_and_bus_detail_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_modify_search_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_search_screen2.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/view_train_routes_screen.dart';
+import 'package:seemytrip/Screens/SortAndFilterScreen/trainFiltter_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/main.dart';
 
 import '../../../Controller/train_sort_and_filter_controller.dart';
 
 class TrainAndBusDetailScreen extends StatefulWidget {
   final List<dynamic> trains;
-  final DateTime selectedDate;
+  DateTime selectedDate;
   final String fromStation;
   final String toStation;
 
@@ -267,9 +266,11 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
                               );
 
                               setState(() {
-                                filteredTrains = filterController
-                                    .applyFilters(controller.trains);
-                                isLoading = false; // Stop loading
+                                // Update widget.selectedDate to match the new date
+                                widget.selectedDate = date;
+                                // Apply filters to the new train data
+                                filteredTrains = filterController.applyFilters(controller.trains);
+                                isLoading = false;
                               });
 
                               Get.forceAppUpdate(); // Restart the page
@@ -495,7 +496,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
     final DateTime now = DateTime.now();
     filterController.applyFilters(widget.trains);
 
-    DateTime? _parseDate(String date) {
+    DateTime? parseDate(String date) {
       try {
         final parts = date.split('-');
         if (parts.length == 3) {
@@ -511,11 +512,11 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
       return null;
     }
 
-    List<Widget> _buildAvailabilityWidgets(List<dynamic> availabilityDayList) {
+    List<Widget> buildAvailabilityWidgets(List<dynamic> availabilityDayList) {
       return availabilityDayList.map((availability) {
         final String availabilityDateString =
             availability['availablityDate'] ?? '';
-        final DateTime? availabilityDate = _parseDate(availabilityDateString);
+        final DateTime? availabilityDate = parseDate(availabilityDateString);
 
         if (availabilityDate == null ||
             availabilityDate.year != widget.selectedDate.year ||
@@ -840,7 +841,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
                                   ),
                                   CommonTextWidget.PoppinsMedium(
                                     text: seat['totalFare'] != null
-                                        ? "\₹${seat['totalFare']}"
+                                        ? "₹${seat['totalFare']}"
                                         : "Regret",
                                     color: Colors.black,
                                     fontSize: 13,
@@ -870,7 +871,7 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
                                   ),
                                 ),
                               // Build the availability widgets
-                              ..._buildAvailabilityWidgets(
+                              ...buildAvailabilityWidgets(
                                   seat['avlDayList'] ?? []),
                             ],
                           ),

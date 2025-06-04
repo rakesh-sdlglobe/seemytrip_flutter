@@ -1,0 +1,103 @@
+import 'package:get/get.dart';
+
+class AppTranslations extends Translations {
+  @override
+  Map<String, Map<String, String>> get keys => {
+        'en': {
+          'flight': 'Flight',
+          'trainAndBus': 'Trains &\nBus',
+          'hotel': 'Hotel',
+          'holidayPackages': 'Holiday\nPackages',
+          'airportCabs': 'Airport\nCabs',
+          'homeStays': 'Home\nStays',
+          'outstationCabs': 'Outstation\nCabs',
+          'hourlyStays': 'Hourly\nStays',
+          'offers': 'Offers',          
+          'Welcome Offers for you!': 'Welcome Offers for you!',          
+          'Tourism Flagship stores': 'Tourism Flagship stores',
+          'selfDrive': 'Self\nDrive',
+          'visaServices': 'Visa\nServices',
+          'flightStatus': 'Flight\nStatus'
+        },
+        'hi': {
+          'flight': 'उड़ान',
+          'trainAndBus': 'ट्रेन और\nबस',
+          'hotel': 'होटल',
+          'holidayPackages': 'छुट्टी के\nपैकेज',
+          'airportCabs': 'एयरपोर्ट\nकैब',
+          'homeStays': 'होम\nस्टे',
+          'outstationCabs': 'आउटस्टेशन\nकैब',
+          'hourlyStays': 'प्रति घंटा\nस्टे',
+          'offers': 'ऑफर',          
+          'Welcome Offers for you!': 'आपके लिए स्वागत प्रस्ताव!',          
+          'Tourism Flagship stores': 'पर्यटन फ्लैगशिप स्टोर',
+          'selfDrive': 'सेल्फ\nड्राइव',
+          'visaServices': 'वीज़ा\nसेवाएं',
+          'flightStatus': 'उड़ान की\nस्थिति'
+        },
+        'ta': {
+          'flight': 'விமானம்',
+          'trainAndBus': 'ரயில் &\nபேருந்து',
+          'hotel': 'ஹோட்டல்',
+          'holidayPackages': 'விடுமுறை\nதொகுப்புகள்',
+          'airportCabs': 'விமான நிலைய\nடாக்ஸிகள்',
+          'homeStays': 'வீட்டு\nதங்குமிடங்கள்',
+          'outstationCabs': 'வெளியூர்\nடாக்ஸிகள்',
+          'hourlyStays': 'மணிநேர\nதங்குமிடங்கள்',
+          'offers': 'சலுகைகள்',          
+          'Welcome Offers for you!': 'உங்களுக்கான வரவேற்பு சலுகைகள்!',          
+          'Tourism Flagship stores': 'சுற்றுலா முதன்மை கடைகள்',
+          'selfDrive': 'சுய\nஓட்டம்',
+          'visaServices': 'விசா\nசேவைகள்',
+          'flightStatus': 'விமான\nநிலை'
+        },
+        'kn': {
+          'flight': 'ವಿಮಾನ',
+          'trainAndBus': '್ರೈಲು ಮತ್ತು\nಬಸ್',
+          'hotel': 'ಹೋಟೇಲ್',
+          'holidayPackages': 'ರಜಾದಿನದ\nಪ್ಯಾಕೇಜ್‌ಗಳು',
+          'airportCabs': 'ವಿಮಾನ ನಿಲ್ದಾಣ\nಕ್ಯಾಬ್‌ಗಳು',
+          'homeStays': 'ಮನೆ\nತಂಗುವಿಕೆ',
+          'outstationCabs': 'ಹೊರಗಿನ\nಕ್ಯಾಬ್‌ಗಳು',
+          'hourlyStays': 'ಗಂಟೆಗೊಮ್ಮೆ\nತಂಗುವಿಕೆ',
+          'offers': 'ಆಫರ್‌ಗಳು',          
+          'Welcome Offers for you!': 'ನಿಮಗಾಗಿ ಸ್ವಾಗತ ಕೊಡುಗೆಗಳು!',          
+          'Tourism Flagship stores': 'ಪ್ರವಾಸೋದ್ಯಮ ಪ್ರಮುಖ ಮಳಿಗೆಗಳು',
+          'selfDrive': 'ಸ್ವಯಂ\nಚಾಲನೆ',
+          'visaServices': 'ವೀಸಾ\nಸೇವೆಗಳು',
+          'flightStatus': 'ವಿಮಾನದ\nಸ್ಥಿತಿ'
+        },
+        'te': {
+          'flight': 'విమానం',
+          'trainAndBus': 'రైలు & \nబస్సు',
+          'hotel': 'హోటల్',
+          'holidayPackages': 'సెలవు\nప్యాకేజీలు',
+          'airportCabs': 'విమానాశ్రయ\nక్యాబ్‌లు',
+          'homeStays': 'హోమ్\nస్టేలు',
+          'outstationCabs': 'అవుట్‌స్టేషన్\nక్యాబ్‌లు',
+          'hourlyStays': 'గంటల\nస్టేలు',
+          'offers': 'ఆఫర్‌లు',          
+          'Welcome Offers for you!': 'మీ కోసం స్వాగత ఆఫర్‌లు!',          
+          'Tourism Flagship stores': 'పర్యాటక ప్రధాన దుకాణాలు',
+          'selfDrive': 'స్వీయ\nడ్రైవ్',
+          'visaServices': 'వీసా\nసేవలు',
+          'flightStatus': 'విమాన\nస్థితి'
+        },
+        'or': {
+          'flight': 'ବିମାନ',
+          'trainAndBus': 'ଟ୍ରେନ୍ ଏବଂ\nବସ୍',
+          'hotel': 'ହୋଟେଲ୍',
+          'holidayPackages': 'ଛୁଟିଦିନ\nପ୍ୟାକେଜ୍',
+          'airportCabs': 'ବିମାନବନ୍ଦର\nକ୍ୟାବ୍',
+          'homeStays': 'ଘର\nରହଣି',
+          'outstationCabs': 'ଆଉଟଷ୍ଟେସନ୍\nକ୍ୟାବ୍',
+          'hourlyStays': 'ଘଣ୍ଟା\nରହଣି',
+          'offers': 'ଅଫର୍',          
+          'Welcome Offers for you!': 'ଆପଣଙ୍କ ପାଇଁ ସ୍ୱାଗତ ଅଫର୍!',          
+          'Tourism Flagship stores': 'ପର୍ଯ୍ୟଟନ ଫ୍ଲାଗସିପ୍ ଷ୍ଟୋରଗୁଡିକ',
+          'selfDrive': 'ନିଜେ\nଚଲାନ୍ତୁ',
+          'visaServices': 'ଭିସା\nସେବା',
+          'flightStatus': 'ବିମାନ\nସ୍ଥିତି'
+        },
+      };
+}

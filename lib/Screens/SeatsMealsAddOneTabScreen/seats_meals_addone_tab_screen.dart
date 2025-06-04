@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:makeyourtripapp/Constants/colors.dart';
-import 'package:makeyourtripapp/Constants/images.dart';
-import 'package:makeyourtripapp/Controller/seats_meals_addone_controller.dart';
-import 'package:makeyourtripapp/Screens/SeatsMealsAddOneTabScreen/add_one_screen.dart';
-import 'package:makeyourtripapp/Screens/SeatsMealsAddOneTabScreen/meals_screen.dart';
-import 'package:makeyourtripapp/Screens/SeatsMealsAddOneTabScreen/seats.dart';
-import 'package:makeyourtripapp/Screens/SeatsMealsAddOneTabScreen/seats_screen.dart';
-import 'package:makeyourtripapp/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/seats_meals_addone_controller.dart';
+import 'package:seemytrip/Screens/SeatsMealsAddOneTabScreen/add_one_screen.dart';
+import 'package:seemytrip/Screens/SeatsMealsAddOneTabScreen/meals_screen.dart';
+import 'package:seemytrip/Screens/SeatsMealsAddOneTabScreen/seats.dart';
+import 'package:seemytrip/Screens/SeatsMealsAddOneTabScreen/seats_screen.dart';
+import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 import '../SelectPaymentMethodScreen/select_payment_method_screen.dart';
 
 class SeatsMealsAddOneTabScreen extends StatelessWidget {

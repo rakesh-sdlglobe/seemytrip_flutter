@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -5,33 +6,35 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TravellerDetailController extends GetxController {
-  // Observable list to store traveller details
-  var travellers = <Map<String, dynamic>>[].obs;
-  var isLoading = false.obs;
+  final travellers = <Map<String, dynamic>>[].obs;
+  final isLoading = false.obs;
+  final String baseUrl = 'https://tripadmin.seemytrip.com';
 
-  // Observable properties for selected items
-  var selectedItems = <String>[].obs;
+  final Map<String, String> _berthAbbreviations = {
+    "Lower Berth": "LB",
+    "Middle Berth": "MB",
+    "Upper Berth": "UB",
+    "Side Lower Berth": "SL",
+    "Side Upper Berth": "SU",
+    "No Preference": "NP",
+  };
 
-  // Base URL for API
-  final String baseUrl = 'http://192.168.1.110:3002';
-
-  // Update the selected items
-  void updateSelectedItems(List<String> items) {
-    selectedItems.value = items;
+  @override
+  void onInit() {
+    super.onInit();
+    fetchTravelers();
   }
 
-  // Function to save traveller details
   Future<void> saveTravellerDetails({
     required String name,
-    required String age,
-    required String gender,
-    required String nationality,
-    required List<String> berthPreferences,
+    String? age,
+    String? gender,
+    String? nationality,
+    String? berthPreference,
   }) async {
     try {
       isLoading.value = true;
 
-      // Get the access token
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('accessToken');
 
@@ -42,26 +45,33 @@ class TravellerDetailController extends GetxController {
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
+        isLoading.value = false;
         return;
       }
 
-      // Prepare the data
+      if (name.trim().isEmpty) {
+        Get.snackbar(
+          "Error",
+          "Traveler name is required",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        isLoading.value = false;
+        return;
+      }
+
+      String berthChoiceCode = _berthAbbreviations[berthPreference ?? ''] ?? '';
+
       final Map<String, dynamic> travellerData = {
-        "passengerName": name,
-        "passengerAge": age,
-        "passengerGender": gender,
-        "passengerBerthChoice": berthPreferences.join(', '),
-        "country": "",
+        "passengerName": name.trim(),
+        "passengerAge": age?.trim() ?? '',
+        "passengerGender": (gender == "Male" ? "M" : (gender == "Female" ? "F" : "O")),
+        "passengerBerthChoice": berthChoiceCode,
+        "country": 'IN',
         "passengerBedrollChoice": "",
-        "passengerNationality": "IN",
+        "passengerNationality": 'IN',
       };
 
-    // Print the travellerData
-    print('Traveller Data: $travellerData');
-    Get.snackbar("Success", "Traveller Data: $travellerData");
-      
-
-      // Make API call
       final response = await http.post(
         Uri.parse('$baseUrl/api/users/addTraveler'),
         headers: {
@@ -69,61 +79,74 @@ class TravellerDetailController extends GetxController {
           'Authorization': 'Bearer $token',
         },
         body: json.encode(travellerData),
+      ).timeout(
+        Duration(seconds: 15),
+        onTimeout: () {
+          throw TimeoutException('Connection timed out. Please try again.');
+        },
       );
 
-      print('Response Status: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Add to local list
-        travellers.add(travellerData);
-
-        // Show success message
-        Get.snackbar(
-          "Success",
-          "Traveller added successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
-
-        // Clear form or navigate back
-        Get.back();
+        try {
+          final responseData = json.decode(response.body);
+          travellers.add({
+            ...travellerData,
+          });
+          Get.back();
+          Get.snackbar(
+            "Success",
+            "Traveller added successfully!",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        } catch (e) {
+          travellers.add(travellerData);
+          Get.back();
+          Get.snackbar(
+            "Success",
+            "Traveller added (response format unclear).",
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
       } else {
-        // Parse error message from response if available
-        Map<String, dynamic> errorResponse = json.decode(response.body);
-        String errorMessage = errorResponse['message'] ?? 'Failed to add traveler';
-        
-        Get.snackbar(
-          "Error",
-          errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        try {
+          final errorResponse = json.decode(response.body);
+          throw Exception(errorResponse['message'] ?? 'Failed to add traveler (Code: ${response.statusCode})');
+        } catch (e) {
+          throw Exception('Failed to add traveler (Code: ${response.statusCode})');
+        }
       }
+    } on TimeoutException {
+      throw Exception('Connection timed out. Please try again.');
+    } on FormatException {
+      throw Exception('Invalid response format from server');
+    } on http.ClientException {
+      throw Exception('Network error. Please check your connection.');
     } catch (error) {
-      print('Error adding traveler: $error');
       Get.snackbar(
         "Error",
-        "An error occurred while adding traveler",
+        error.toString().replaceFirst('Exception: ', ''),
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: Duration(seconds: 4),
+        snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Function to fetch all travelers
   Future<void> fetchTravelers() async {
     try {
       isLoading.value = true;
-
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('accessToken');
 
       if (token == null) {
-        Get.snackbar("Error", "Please login to view travelers");
+        isLoading.value = false;
         return;
       }
 
@@ -132,31 +155,27 @@ class TravellerDetailController extends GetxController {
         headers: {
           'Authorization': 'Bearer $token',
         },
-      );
+      ).timeout(Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-        travellers.value = List<Map<String, dynamic>>.from(data);
+        travellers.value = List<Map<String, dynamic>>.from(data.map((item) => item is Map<String, dynamic> ? item : {}));
       } else {
-        Get.snackbar("Error", "Failed to fetch travelers");
+        Get.snackbar("Error", "Failed to fetch travelers (Code: ${response.statusCode})");
       }
     } catch (error) {
-      print('Error fetching travelers: $error');
       Get.snackbar("Error", "An error occurred while fetching travelers");
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Toggle selection state for a traveller
   void toggleSelection(int index) {
-    travellers[index]['selected'] = !(travellers[index]['selected'] as bool);
-    travellers.refresh(); // Notify observers of the change
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    fetchTravelers(); // Fetch travelers when controller is initialized
+    if (travellers[index].containsKey('selected') && travellers[index]['selected'] is bool) {
+      travellers[index]['selected'] = !travellers[index]['selected'];
+    } else {
+      travellers[index]['selected'] = true;
+    }
+    travellers.refresh();
   }
 }
