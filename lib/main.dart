@@ -7,7 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:seemytrip/translations/app_translations.dart' show AppTranslations;
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:seemytrip/l10n/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/images.dart';
 import 'package:seemytrip/Controller/hotel_and_homestay_controller.dart';
+import 'package:seemytrip/Controller/search_city_controller.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/5pluse_rooms_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/upto5_rooms_screen.dart';
@@ -14,6 +15,7 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
 
   final HotelAndHomeStayTabController hotelAndHomeStayTabController =
       Get.put(HotelAndHomeStayTabController());
+  final SearchCityController searchCityController = Get.put(SearchCityController());
 
   @override
   Widget build(BuildContext context) {
@@ -96,20 +98,22 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            bottom: 40,
-            left: 24,
-            right: 24,
-            child: CommonButtonWidget.button(
-              text: "SEARCH HOTELS",
-              onTap: () {
-                Get.to(() => HotelScreen());
-              },
-              buttonColor: redCA0,
-            ),
-          ),
         ],
       ),
     );
+  }
+}
+
+// Create a separate widget for the tab view content
+class TabViewContent extends GetView<SearchCityController> {
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => TabBarView(
+      controller: Get.find<HotelAndHomeStayTabController>().controller,
+      children: [
+        UpTo5RoomsScreen(),
+        FivePlusRoomsScreen(),
+      ],
+    ));
   }
 }

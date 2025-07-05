@@ -793,11 +793,11 @@ class Lists {
       "text2": "1 Rooms, 2 Adults",
       "text3": "",
       "onTap": () {
-        Get.bottomSheet(
-          RoomsAndGuestScreen(),
-          backgroundColor: Colors.transparent,
-          isScrollControlled: true,
-        );
+        // Get.bottomSheet(
+        //   RoomsAndGuestScreen(),
+        //   backgroundColor: Colors.transparent,
+        //   isScrollControlled: true,
+        // );
       },
     },
   ];
@@ -838,11 +838,11 @@ class Lists {
       "text1": "Add Rooms & Guests",
       "text2": "Minimum 6 rooms",
       "onTap": () {
-        Get.bottomSheet(
-          RoomsAndGuestScreen(),
-          backgroundColor: Colors.transparent,
-          isScrollControlled: true,
-        );
+        // Get.bottomSheet(
+        //   // RoomsAndGuestScreen(),
+        //   backgroundColor: Colors.transparent,
+        //   isScrollControlled: true,
+        // );
       },
     },
   ];

@@ -4,17 +4,32 @@ import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/images.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_detail_search_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_image_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/rate_plan_detail_screen.dart';
+import 'package:seemytrip/Controller/search_city_controller.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
-import 'package:seemytrip/Screens/Utills/lists_widget.dart';
 import 'package:seemytrip/main.dart';
 
 class HotelDetailScreen extends StatelessWidget {
-  HotelDetailScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic> hotelDetails;
+
+  HotelDetailScreen({Key? key, required this.hotelDetails}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final hotelDetail = hotelDetails['HotelDetail'] ?? {};
+    final hotelName = hotelDetail['HotelName'] ?? 'Hotel';
+    final hotelRooms = List<Map<String, dynamic>>.from(hotelDetail['HotelRooms'] ?? []);
+    final hotelId = hotelDetail['HotelProviderSearchId']?.toString() ?? '';
+    final starRating = hotelDetail['StarRating'] ?? '0';
+    final double rating = starRating is String
+        ? double.tryParse(starRating) ?? 0.0
+        : (starRating as num).toDouble();
+    final checkIn = hotelDetail['CheckInDate'] ?? '';
+    final checkOut = hotelDetail['CheckOutDate'] ?? '';
+    final guests = hotelDetail['Guests']?.toString() ?? '2 Adults';
+
     return Scaffold(
       backgroundColor: white,
       body: ScrollConfiguration(
@@ -23,223 +38,662 @@ class HotelDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Hotel Images Carousel with overlayed controls
               Container(
                 height: 250,
                 width: Get.width,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(hotelDetailTopImage),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 24, right: 24, top: 55),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child:
-                                SvgPicture.asset(internationalDetailBackImage),
-                          ),
-                          Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Get.to(() => HotelDetailSearchScreen());
-                                },
-                                child: SvgPicture.asset(
-                                    internationalDetailSearchImage),
-                              ),
-                              SizedBox(width: 20),
-                              SvgPicture.asset(hotelDetailHeartIcon),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.bottomRight,
-                          child: Image.asset(hotelDetailTopImage2,
-                              height: 26, width: 103),
+                  image: hotelDetail['HotelImages'] != null &&
+                          hotelDetail['HotelImages'] is List &&
+                          hotelDetail['HotelImages'].isNotEmpty
+                      ? null
+                      : DecorationImage(
+                          image: AssetImage(hotelDetailTopImage),
+                          fit: BoxFit.fill,
                         ),
-                      ),
-                      SizedBox(height: 15),
-                    ],
-                  ),
                 ),
-              ),
-              SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Image.asset(hotelDetailImage3, height: 163, width: 327),
-              ),
-              SizedBox(height: 20),
-              Divider(color: greyE8E, thickness: 1),
-              SizedBox(height: 15),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(hotelDetailImage4, height: 23, width: 134),
-                    InkWell(
-                      onTap: () {
-                        Get.to(() => SelectCheckInDateScreen());
-                      },
-                      child: Row(
+                child: hotelDetail['HotelImages'] != null &&
+                        hotelDetail['HotelImages'] is List &&
+                        hotelDetail['HotelImages'].isNotEmpty
+                    ? Stack(
                         children: [
-                          CommonTextWidget.PoppinsMedium(
-                            text: "View Calendar",
-                            color: redCA0,
-                            fontSize: 11,
-                          ),
-                          Icon(Icons.arrow_forward_ios,
-                              color: redCA0, size: 10),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 15),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: Lists.hotelDetailList1.length,
-                physics: NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                itemBuilder: (context, index) => Padding(
-                  padding: EdgeInsets.only(bottom: 15),
-                  child: InkWell(
-                    onTap: Lists.hotelDetailList1[index]["onTap"],
-                    child: Container(
-                      width: Get.width,
-                      decoration: BoxDecoration(
-                        color: grey9B9.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(width: 1, color: greyE2E),
-                      ),
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                                Lists.hotelDetailList1[index]["image"]),
-                            SizedBox(width: 15),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CommonTextWidget.PoppinsMedium(
-                                  text: Lists.hotelDetailList1[index]["text1"],
-                                  color: grey888,
-                                  fontSize: 14,
+                          PageView.builder(
+                            itemCount: hotelDetail['HotelImages'].length,
+                            itemBuilder: (context, index) {
+                              final images = hotelDetail['HotelImages'];
+                              return Image.network(
+                                images[index],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                                errorBuilder: (context, error, stackTrace) => Container(
+                                  color: Colors.grey[300],
+                                  child: Icon(Icons.broken_image, color: Colors.grey),
                                 ),
-                                CommonTextWidget.PoppinsMedium(
-                                  text: Lists.hotelDetailList1[index]["text2"],
-                                  color: black2E2,
-                                  fontSize: 12,
+                              );
+                            },
+                          ),
+                          // Dots indicator
+                          Positioned(
+                            bottom: 10,
+                            left: 0,
+                            right: 0,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  hotelDetail['HotelImages'].length,
+                                  (dotIndex) => Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 3),
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Back, search, heart, and View All
+                          Positioned(
+                            top: 30,
+                            left: 24,
+                            right: 24,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: SvgPicture.asset(internationalDetailBackImage),
+                                ),
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        Get.to(() => HotelDetailSearchScreen());
+                                      },
+                                      child: SvgPicture.asset(internationalDetailSearchImage),
+                                    ),
+                                    SizedBox(width: 20),
+                                    SvgPicture.asset(hotelDetailHeartIcon),
+                                    SizedBox(width: 20),
+                                    MaterialButton(
+                                      onPressed: () {
+                                        final SearchCityController searchCtrl = Get.find();
+                                        searchCtrl.fetchHotelImages(hotelId);
+                                      },
+                                      color: Colors.black.withOpacity(0.5),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: CommonTextWidget.PoppinsMedium(
+                                        text: "View All",
+                                        color: white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Padding(
+                        padding: EdgeInsets.only(left: 24, right: 24, top: 55),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: SvgPicture.asset(internationalDetailBackImage),
+                            ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Get.to(() => HotelDetailSearchScreen());
+                                  },
+                                  child: SvgPicture.asset(internationalDetailSearchImage),
+                                ),
+                                SizedBox(width: 20),
+                                SvgPicture.asset(hotelDetailHeartIcon),
+                                SizedBox(width: 20),
+                                MaterialButton(
+                                  onPressed: () {
+                                    final SearchCityController searchCtrl = Get.find();
+                                    searchCtrl.fetchHotelImages(hotelId);
+                                  },
+                                  color: Colors.black.withOpacity(0.5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: CommonTextWidget.PoppinsMedium(
+                                    text: "View All",
+                                    color: white,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ],
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                ),
               ),
-              SizedBox(height: 15),
-              Divider(color: greyE8E, thickness: 1),
-              SizedBox(height: 15),
-              Image.asset(hotelDetailImage5),
-              SizedBox(height: 15),
+              // Hotel Name, Address, Rating, Dates, Guests
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Image.asset(hotelDetailImage6, height: 25, width: 240),
-              ),
-              SizedBox(height: 15),
-              SizedBox(
-                height: 150,
-                child: ListView.builder(
-                  padding: EdgeInsets.only(left: 24, right: 9),
-                  shrinkWrap: true,
-                  itemCount: Lists.hotelDetailList2.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: Image.asset(Lists.hotelDetailList2[index],
-                        height: 150, width: 150),
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
-              Padding(
-                padding: EdgeInsets.only(bottom: 40),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: Get.width,
-                        color: black2E2,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 10),
+                    CommonTextWidget.PoppinsSemiBold(
+                      text: hotelName,
+                      color: black2E2,
+                      fontSize: 20,
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Icon(Icons.location_on, size: 18, color: redCA0),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonTextWidget.PoppinsMedium(
+                          text: hotelDetail['HotelAddress']?['City'] ?? 'Unknown City',
+                          color: black2E2,
+                          fontSize: 15,
+                          ),
+                          SizedBox(height: 2),
+                          CommonTextWidget.PoppinsRegular(
+                          text: hotelDetail['HotelAddress']?['Address'] ?? 'Unknown Address',
+                          color: grey717,
+                          fontSize: 13,
+                          ),
+                        ],
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      if (hotelDetail['HotelAddress']?['Latitude'] != null &&
+                        hotelDetail['HotelAddress']?['Longitude'] != null)
+                        InkWell(
+                        onTap: () {
+                          // You can implement map opening logic here
+                        },
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                          color: greyE8E,
+                          borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.map, size: 15, color: redCA0),
+                            SizedBox(width: 4),
+                            Text(
+                            "View Map",
+                            style: TextStyle(
+                              color: redCA0,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
+                            ),
+                          ],
+                          ),
+                        ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                      // Show stars according to rating
+                      ...List.generate(
+                        rating.floor(),
+                        (index) => Icon(Icons.star, color: Colors.amber, size: 18),
+                      ),
+                      if (rating - rating.floor() >= 0.5)
+                        Icon(Icons.star_half, color: Colors.amber, size: 18),
+                      SizedBox(width: 8),
+                      CommonTextWidget.PoppinsMedium(
+                        text: "${rating.toStringAsFixed(1)}/5",
+                        color: black2E2,
+                        fontSize: 14,
+                      ),
+                      CommonTextWidget.PoppinsRegular(
+                        text: " (245 Reviews)",
+                        color: grey717,
+                        fontSize: 14,
+                      )
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_today, size: 16, color: redCA0),
+                          SizedBox(width: 8),
+                          CommonTextWidget.PoppinsMedium(
+                            text: "Travel Dates: ",
+                            color: black2E2,
+                            fontSize: 13,
+                          ),
+                          Text(
+                            checkIn.isNotEmpty && checkOut.isNotEmpty
+                                ? "$checkIn - $checkOut"
+                                : "N/A",
+                            // "6 Jul - 8 Jul",
+                            style: TextStyle(
+                              color: black2E2,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Icon(Icons.person, size: 16, color: redCA0),
+                          SizedBox(width: 4),
+                          CommonTextWidget.PoppinsMedium(
+                            text: "Guests: ",
+                            color: black2E2,
+                            fontSize: 13,
+                          ),
+                          Text(
+                            guests,
+                            style: TextStyle(
+                              color: black2E2,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          // Modify icon/button
+                          InkWell(
+                            onTap: () {
+                              // Implement modify logic, e.g., open date/guest selection
+                              Get.to(() => SelectCheckInDateScreen());
+                            },
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: greyE8E,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
                                 children: [
-                                  CommonTextWidget.PoppinsSemiBold(
-                                    text: "₹ 7,950",
-                                    color: white,
-                                    fontSize: 16,
-                                  ),
-                                  CommonTextWidget.PoppinsRegular(
-                                    text: "+ ₹870 taxes & service fees",
-                                    color: white,
-                                    fontSize: 10,
-                                  ),
-                                  CommonTextWidget.PoppinsRegular(
-                                    text: "Per Night (2 Adults)",
-                                    color: white,
-                                    fontSize: 10,
+                                  Icon(Icons.edit, size: 16, color: redCA0),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    "Modify",
+                                    style: TextStyle(
+                                      color: redCA0,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Poppins',
+                                    ),
                                   ),
                                 ],
                               ),
-                              MaterialButton(
-                                onPressed: () {
-                                  Get.to(() => RatePlanDetailScreen());
-                                },
-                                height: 40,
-                                minWidth: 140,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(40),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 7),
+              Divider(color: greyE8E, thickness: 1),
+              // Room List - modern card design
+              if (hotelRooms.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonTextWidget.PoppinsMedium(
+                        text: "Rooms",
+                        color: black2E2,
+                        fontSize: 19,
+                      ),
+                      ...hotelRooms.map((room) {
+                        final roomName = room['Name'] ?? '';
+                        final imageUrl = room['Image']?['ImageUrl'] ?? '';
+                        final description = room['Description'] ?? '';
+                        final price = room['Price']?.toString() ?? hotelDetail['Price']?.toString() ?? 'N/A';
+                        final taxes = room['TaxesAndFees']?.toString() ?? hotelDetail['TaxesAndFees']?.toString() ?? '0';
+                        final amenities = room['Amenities'] as List<dynamic>? ?? [];
+
+                        // Split description into points (assuming separated by . or \n)
+                        final List<String> descPoints = description
+                            .replaceAll(RegExp(r'<[^>]*>'), '')
+                            .split(RegExp(r'[.\n]'))
+                            .map((e) => e.trim())
+                            .where((e) => e is String && e.isNotEmpty)
+                            .cast<String>()
+                            .toList();
+
+                        return Container(
+                          margin: EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: greyE8E, width: 1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.06),
+                                blurRadius: 12,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (imageUrl.isNotEmpty)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    topRight: Radius.circular(16),
+                                  ),
+                                  child: Image.network(
+                                    imageUrl,
+                                    width: double.infinity,
+                                    height: 150,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => Container(
+                                      width: double.infinity,
+                                      height: 150,
+                                      color: Colors.grey[300],
+                                      child: Icon(Icons.broken_image, color: Colors.grey),
+                                    ),
+                                  ),
                                 ),
-                                color: redCA0,
-                                child: CommonTextWidget.PoppinsSemiBold(
-                                  fontSize: 16,
-                                  text: "SELECT ROOM",
-                                  color: white,
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.king_bed_rounded, color: redCA0, size: 20),
+                                        SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            roomName,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              color: black2E2,
+                                              fontFamily: 'Poppins',
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 8),
+                                    if (descPoints.isNotEmpty)
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          ...descPoints.take(3).map((point) => Row(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("• ", style: TextStyle(fontSize: 13, color: grey717)),
+                                                  Expanded(
+                                                    child: Text(
+                                                      point,
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        color: grey717,
+                                                        fontFamily: 'Poppins',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                          if (descPoints.length > 3)
+                                            GestureDetector(
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+                                                  ),
+                                                  builder: (ctx) => Padding(
+                                                    padding: const EdgeInsets.all(20),
+                                                    child: SingleChildScrollView(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(roomName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                                                          SizedBox(height: 10),
+                                                          if (imageUrl.isNotEmpty)
+                                                            ClipRRect(
+                                                              borderRadius: BorderRadius.circular(12),
+                                                              child: Image.network(imageUrl, height: 160, fit: BoxFit.cover),
+                                                            ),
+                                                          SizedBox(height: 14),
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: descPoints
+                                                                .map((point) => Row(
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      children: [
+                                                                        Text("• ", style: TextStyle(fontSize: 13, color: grey717)),
+                                                                        Expanded(
+                                                                          child: Text(
+                                                                            point,
+                                                                            style: TextStyle(
+                                                                              fontSize: 13,
+                                                                              color: grey717,
+                                                                              fontFamily: 'Poppins',
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ))
+                                                                .toList(),
+                                                          ),
+                                                          SizedBox(height: 14),
+                                                          if (amenities.isNotEmpty)
+                                                            Wrap(
+                                                              spacing: 8,
+                                                              runSpacing: 8,
+                                                              children: amenities.map((a) => Chip(
+                                                                label: Text(a.toString(), style: TextStyle(fontSize: 12)),
+                                                                backgroundColor: greyE8E,
+                                                              )).toList(),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 2.0, top: 2.0),
+                                                child: Text(
+                                                  "More",
+                                                  style: TextStyle(
+                                                    color: redCA0,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13,
+                                                    decoration: TextDecoration.underline,
+                                                    fontFamily: 'Poppins',
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    SizedBox(height: 10),
+                                    if (amenities.isNotEmpty)
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: amenities.take(4).map((a) => Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          decoration: BoxDecoration(
+                                            color: greyE8E,
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.check_circle, size: 13, color: redCA0),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                a.toString(),
+                                                style: TextStyle(
+                                                  color: black2E2,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )).toList(),
+                                      ),
+                                    SizedBox(height: 14),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "₹ $price",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 17,
+                                                color: black2E2,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            ),
+                                            Text(
+                                              "+ ₹$taxes taxes & fees",
+                                              style: TextStyle(
+                                                color: grey717,
+                                                fontSize: 11,
+                                                fontFamily: 'Poppins',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        // You can add a badge or offer here if needed
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Divider(color: greyE8E, height: 1, thickness: 1),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Get.to(() => RatePlanDetailScreen());
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: redCA0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(22),
+                                      ),
+                                      padding: EdgeInsets.symmetric(vertical: 12),
+                                      elevation: 0,
+                                    ),
+                                    child: Text(
+                                      "SELECT",
+                                      style: TextStyle(
+                                        color: white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ),
+                        );
+                      }).toList(),
                     ],
                   ),
                 ),
+              SizedBox(height: 30),
+              // Price and Select Room Button
+              Padding(
+                padding: EdgeInsets.only(bottom: 40),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: Get.width,
+                    color: black2E2,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CommonTextWidget.PoppinsSemiBold(
+                                text: "₹ ${hotelDetail['Price']?.toString() ?? 'N/A'}",
+                                color: white,
+                                fontSize: 16,
+                              ),
+                              CommonTextWidget.PoppinsRegular(
+                                text: "+ ₹${hotelDetail['TaxesAndFees']?.toString() ?? '0'} taxes & service fees",
+                                color: white,
+                                fontSize: 10,
+                              ),
+                              CommonTextWidget.PoppinsRegular(
+                                text: "Per Night (${hotelDetail['Guests']?.toString() ?? '2 Adults'})",
+                                color: white,
+                                fontSize: 10,
+                              ),
+                            ],
+                          ),
+                          MaterialButton(
+                            onPressed: () {
+                              Get.to(() => RatePlanDetailScreen());
+                            },
+                            height: 40,
+                            minWidth: 140,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            color: redCA0,
+                            child: CommonTextWidget.PoppinsSemiBold(
+                              fontSize: 16,
+                              text: "SELECT ROOM",
+                              color: white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              // SizedBox(height: 0),
             ],
           ),
         ),
