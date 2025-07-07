@@ -158,7 +158,7 @@ class SearchCityScreen extends StatelessWidget {
                                 controller.searchText.value = '';
                                 textController.clear();
                                 Get.back();
-                                Get.to(() => UpTo5RoomsScreen());
+                                Get.to(() => HotelAndHomeStayTabScreen());
                               },
                             ),
                           );
