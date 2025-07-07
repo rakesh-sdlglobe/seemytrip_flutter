@@ -211,7 +211,10 @@ class SearchCityController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         hotelDetails.value = Map<String, dynamic>.from(data);
-        Get.to(() => HotelDetailScreen(hotelDetails: data));
+        Get.to(() => HotelDetailScreen(hotelDetails: data,  
+          hotelId: hotelId,
+          searchParams: searchParams,
+        ));
         print('Hotel Details: $data');
       } else {
         throw Exception('API call failed with status code ${response.statusCode}');

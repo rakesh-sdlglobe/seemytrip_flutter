@@ -283,7 +283,24 @@ class UpTo5RoomsScreen extends StatelessWidget {
         ),
       ),
       child: Obx(() => _searchCtrl.isLoading.value 
-        ? const CircularProgressIndicator(color: Colors.white)
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
+              ),
+              SizedBox(width: 14),
+              Text(
+                'Searching...',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            ],
+          )
         : const Text(
             'SEARCH HOTELS',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
