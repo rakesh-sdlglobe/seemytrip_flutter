@@ -107,8 +107,8 @@ class UpTo5RoomsScreen extends StatelessWidget {
                         backgroundColor: Colors.transparent,
                         isScrollControlled: true,
                       );
-                      if (result is List<Map<String, String>>) {
-                        _rgCtrl.roomGuestData.assignAll(result);
+                      if (result is List<Map<String, dynamic>>) {
+                        _rgCtrl.onDone(result);
                       }
                     },
                     icon: user,
@@ -181,6 +181,7 @@ class UpTo5RoomsScreen extends StatelessWidget {
           border: Border.all(width: 1, color: greyE2E),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start, // <-- add this line
           children: [
             SvgPicture.asset(icon),
             const SizedBox(width: 15),
@@ -217,78 +218,104 @@ class UpTo5RoomsScreen extends StatelessWidget {
   }
 
   Widget _buildSearchButton() {
-    return ElevatedButton(
-      onPressed: () {
-        final city = _searchCtrl.selectedCity.value;
-        final checkIn = _searchCtrl.checkInDate.value;
-        final checkOut = _searchCtrl.checkOutDate.value;
-        
-        // Validation checks
-        if (city == null || city.id.isEmpty) {
-          Get.snackbar(
-            'Error',
-            'Please select a city first',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return;
-        }
+    return Obx(() => Stack(
+      alignment: Alignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            final city = _searchCtrl.selectedCity.value;
+            final checkIn = _searchCtrl.checkInDate.value;
+            final checkOut = _searchCtrl.checkOutDate.value;
 
-        if (checkIn == null || checkOut == null) {
-          Get.snackbar(
-            'Error',
-            'Please select check-in and check-out dates',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return;
-        }
+            // Validation checks
+            if (city == null || city.id.isEmpty) {
+              Get.snackbar(
+                'Error',
+                'Please select a city first',
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+              return;
+            }
 
-        if (_rgCtrl.roomGuestData.isEmpty) {
-          Get.snackbar(
-            'Error',
-            'Please select rooms and guests',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return;
-        }
+            if (checkIn == null || checkOut == null) {
+              Get.snackbar(
+                'Error',
+                'Please select check-in and check-out dates',
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+              return;
+            }
 
-        try {
-          _searchCtrl.fetchHotelDetails(
-            cityId: city.id,
-            cityName: city.name,
-            checkIn: checkIn,
-            checkOut: checkOut,
-            rooms: _rgCtrl.roomGuestData.length,
-            adults: 2,
-            children: 1,
-          );
-        } catch (e) {
-          print('Error calling fetchHotelDetails: $e');
-          Get.snackbar(
-            'Error',
-            'Something went wrong. Please try again.',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: redCA0,
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 104),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      child: Obx(() => _searchCtrl.isLoading.value 
-        ? const CircularProgressIndicator(color: Colors.white)
-        : const Text(
-            'SEARCH HOTELS',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            if (_rgCtrl.roomGuestData.isEmpty) {
+              Get.snackbar(
+                'Error',
+                'Please select rooms and guests',
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+              return;
+            }
+
+            // Build dynamic rooms list for API
+            final List<Map<String, dynamic>> roomsList = _rgCtrl.roomGuestData.map((room) {
+              return {
+                "RoomNo": room["RoomNo"],
+                "Adults": room["Adults"],
+                "Children": room["Children"],
+              };
+            }).toList();
+
+            final totalAdults = roomsList.fold<int>(0, (sum, r) => sum + ((r["Adults"] as int? ?? 0)));
+            final totalChildren = roomsList.fold<int>(0, (sum, r) => sum + ((r["Children"] as int? ?? 0)));
+
+            try {
+              _searchCtrl.fetchHotelDetails(
+                cityId: city.id,
+                cityName: city.name,
+                checkIn: checkIn,
+                checkOut: checkOut,
+                rooms: roomsList.length,
+                adults: totalAdults,
+                children: totalChildren,
+                roomsList: roomsList,
+              );
+            } catch (e) {
+              _searchCtrl.isLoading.value = false;
+              print('Error calling fetchHotelDetails: $e');
+              Get.snackbar(
+                'Error',
+                'Something went wrong. Please try again.',
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: redCA0,
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 104),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
-      ),
-    );
+          child: _searchCtrl.isLoading.value
+              ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              : const Text(
+                  'SEARCH HOTELS',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+        ),
+        if (_searchCtrl.isLoading.value)
+          Positioned.fill(
+            child: Container(
+              color: Colors.transparent,
+              alignment: Alignment.center,
+            ),
+          ),
+      ],
+    ));
   }
 }
+

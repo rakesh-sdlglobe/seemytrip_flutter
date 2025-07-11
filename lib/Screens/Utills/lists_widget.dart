@@ -2089,4 +2089,6 @@ class Lists {
     seatsCrossImage,
     seatsCrossImage,
   ];
+
+  static var busTypeList;
 }

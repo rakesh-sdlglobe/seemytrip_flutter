@@ -5,11 +5,14 @@ import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/images.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/gallery_view.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_and_homestay.dart';
-import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_detail_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/hotel_and_home_stay_tab_screen.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 import 'package:seemytrip/Controller/search_city_controller.dart';
+import 'package:seemytrip/Controller/hotel_filter_controller.dart';
 import 'package:seemytrip/Screens/Utills/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+import 'widgets/hotel_list_filter_bar.dart';
+import 'widgets/hotel_list_card.dart';
+import 'widgets/hotel_filter_bar_full.dart';
 
 class HotelScreen extends GetView<SearchCityController> {
   final String cityId;
@@ -26,6 +29,7 @@ class HotelScreen extends GetView<SearchCityController> {
   @override
   Widget build(BuildContext context) {
     final SearchCityController searchCtrl = Get.find();
+    final HotelFilterController filterCtrl = Get.put(HotelFilterController());
     final hotels = List<Map<String, dynamic>>.from(hotelDetails['Hotels'] ?? []);
     final checkInDate = searchCtrl.checkInDate.value;
     final checkOutDate = searchCtrl.checkOutDate.value;
@@ -38,322 +42,131 @@ class HotelScreen extends GetView<SearchCityController> {
     final guestInfo =
         "$roomCount Room, $adultCount Adults${childCount > 0 ? ', $childCount Children' : ''}";
 
+    // Always initialize filter on first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (filterCtrl.filteredHotels.isEmpty) {
+        filterCtrl.initHotels(hotels);
+      }
+    });
+
     return Scaffold(
       backgroundColor: redF9E,
       body: Stack(
         children: [
           Column(
             children: [
-              // Print the incoming data for debugging
-              Builder(
-                builder: (context) {
-                  // Print all HotelProviderSearchId values for debugging
-                  if (hotelDetails['Hotels'] != null && hotelDetails['Hotels'].isNotEmpty) {
-                    print('HotelProviderSearchId: ${hotelDetails['Hotels'][0]['HotelProviderSearchId']}');
-                  }
-                  print('cityId: $cityId');
-                  print('cityName: $cityName');
-                  print('hotelDetails: $hotelDetails');
-                  return SizedBox.shrink();
-                },
+              _HotelScreenHeader(
+                cityName: cityName,
+                dateRange: dateRange,
+                guestInfo: guestInfo,
               ),
+              // --- Hotel Filter Section (Ixigo/Train style) ---
               Container(
-                height: 155,
-                width: Get.width,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(hotelAndHomeStayTopImage),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 10),
+                color: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Obx(() => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        flex: 5,
-                        child: Container(
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                            color: white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: ListTile(
-                            horizontalTitleGap: -5,
-                            leading: InkWell(
-                              onTap: () => Get.back(),
-                              child: Icon(Icons.arrow_back, color: grey888, size: 20),
-                            ),
-                            title: CommonTextWidget.PoppinsMedium(
-                              text: cityName,
-                              color: black2E2,
-                              fontSize: 15,
-                            ),
-                            subtitle: CommonTextWidget.PoppinsRegular(
-                              text: "$dateRange, $guestInfo",
-                              color: grey717,
-                              fontSize: 12,
-                            ),
-                            trailing: InkWell(
-                              onTap: () => Get.to(() => HotelAndHomeStay()),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SvgPicture.asset(draw),
-                                  SizedBox(height: 10),
-                                  CommonTextWidget.PoppinsMedium(
-                                    text: "Edit",
-                                    color: redCA0,
-                                    fontSize: 12,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                      _HotelFilterChip(
+                        label: "All",
+                        icon: Icons.list,
+                        selected: filterCtrl.selectedFilter.value == 'all',
+                        onTap: () => filterCtrl.applyFilter('all', hotels),
                       ),
-                      SizedBox(width: 10),
-                      Expanded(
+                      _HotelFilterChip(
+                        label: "Low Price",
+                        icon: Icons.arrow_downward,
+                        selected: filterCtrl.selectedFilter.value == 'low_price',
+                        onTap: () => filterCtrl.applyFilter('low_price', hotels),
+                      ),
+                      _HotelFilterChip(
+                        label: "High Price",
+                        icon: Icons.arrow_upward,
+                        selected: filterCtrl.selectedFilter.value == 'high_price',
+                        onTap: () => filterCtrl.applyFilter('high_price', hotels),
+                      ),
+                      _HotelFilterChip(
+                        label: "Star Rating",
+                        icon: Icons.star,
+                        selected: filterCtrl.selectedFilter.value == 'star_rating',
+                        onTap: () => filterCtrl.applyFilter('star_rating', hotels),
+                      ),
+                      // Add more filter chips as needed
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8, right: 8),
                         child: InkWell(
-                          onTap: () {},
-                          child: Container(
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                              color: white,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.location_on, color: redCA0),
-                                  CommonTextWidget.PoppinsMedium(
-                                    text: "Map",
-                                    color: redCA0,
-                                    fontSize: 12,
-                                  ),
-                                ],
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
                               ),
+                              builder: (ctx) => _HotelFilterBottomSheet(
+                                filterCtrl: filterCtrl,
+                                hotels: hotels,
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: redCA0.withOpacity(0.08),
+                              shape: BoxShape.circle,
                             ),
+                            child: Icon(Icons.filter_alt, color: redCA0, size: 22),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-              Container(
-                height: 50,
-                width: Get.width,
-                color: white,
-                child: ListView.builder(
-                  padding: EdgeInsets.only(left: 24, right: 19, top: 1, bottom: 10),
-                  shrinkWrap: true,
-                  itemCount: Lists.hotelList1.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => Padding(
-                    padding: EdgeInsets.only(right: 5),
-                    child: InkWell(
-                      onTap: Lists.hotelList1[index]["onTap"],
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: white,
-                          border: Border.all(color: greyE2E, width: 1),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                          child: Row(
-                            children: [
-                              CommonTextWidget.PoppinsMedium(
-                                text: Lists.hotelList1[index]["text"],
-                                color: grey717,
-                                fontSize: 12,
-                              ),
-                              SizedBox(width: 7),
-                              SvgPicture.asset(arrowDownIcon, color: grey717),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                )),
               ),
               SizedBox(height: 15),
               Expanded(
-                child: hotels.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.hotel_outlined, size: 48, color: grey717.withOpacity(0.5)),
-                            SizedBox(height: 16),
-                            Text(
-                              'No hotels found for these dates',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: grey717,
-                                fontFamily: 'Poppins',
-                              ),
+                child: Obx(() {
+                  final filteredHotels = filterCtrl.filteredHotels;
+                  // If filter applied and no hotels, show "No hotels found for selected filters"
+                  if (filteredHotels.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.hotel_outlined, size: 48, color: grey717.withOpacity(0.5)),
+                          SizedBox(height: 16),
+                          Text(
+                            filterCtrl.selectedFilter.value != 'all' && hotels.isNotEmpty
+                                ? 'No hotels found for selected filters'
+                                : 'No hotels found for these dates',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: grey717,
+                              fontFamily: 'Poppins',
                             ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: hotels.length,
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        itemBuilder: (context, index) {
-                          final hotel = hotels[index];
-                          return Card(
-                            margin: EdgeInsets.only(bottom: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        flex: 4,
-                                        child: Column(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius: BorderRadius.circular(8),
-                                              child: AspectRatio(
-                                                aspectRatio: 16 / 9,
-                                                child: _buildHotelImage(hotel),
-                                              ),
-                                            ),
-                                            SizedBox(height: 8),
-                                            _buildThumbnailGallery(context, hotel),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 12),
-                                      Expanded(
-                                        flex: 6,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: CommonTextWidget.PoppinsSemiBold(
-                                                    text: hotel['HotelName'] ?? 'Unknown Hotel',
-                                                    color: black2E2,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                _buildStarRating(hotel['StarRating']),
-                                              ],
-                                            ),
-                                            SizedBox(height: 8),
-                                            _buildLocationInfo(hotel, cityName),
-                                            SizedBox(height: 12),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    CommonTextWidget.PoppinsRegular(
-                                                      text: 'Starting from',
-                                                      color: grey717,
-                                                      fontSize: 12,
-                                                    ),
-                                                    if (_hasDiscount(hotel))
-                                                      Text(
-                                                        '₹${_getOriginalPrice(hotel)}',
-                                                        style: TextStyle(
-                                                          color: grey717,
-                                                          fontSize: 12,
-                                                          decoration: TextDecoration.lineThrough,
-                                                          fontFamily: 'Poppins',
-                                                        ),
-                                                      ),
-                                                  ],
-                                                ),
-                                                CommonTextWidget.PoppinsBold(
-                                                  text: '₹${_getHotelPrice(hotel)}',
-                                                  color: redCA0,
-                                                  fontSize: 20,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
-                                          child: CommonTextWidget.PoppinsMedium(
-                                            text: hotel['CancellationPolicy'] ?? 'Free Cancellation',
-                                            color: Colors.green,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: searchCtrl.isLoading.value
-                                              ? null
-                                              : () async {
-                                                  final searchParams = {
-                                                    'cityId': cityId,
-                                                    'checkInDate': searchCtrl.checkInDate.value?.toIso8601String().split('T')[0],
-                                                    'checkOutDate': searchCtrl.checkOutDate.value?.toIso8601String().split('T')[0],
-                                                    'Rooms': searchCtrl.roomsCount.value.toString(),
-                                                    'adults': searchCtrl.adultsCount.value.toString(),
-                                                    'children': searchCtrl.childrenCount.value.toString(),
-                                                  };
-                                                  searchCtrl.isLoading.value = true;
-                                                  try {
-                                                    await searchCtrl.fetchHotelDetailsWithPrice(
-                                                      hotelId: hotel['HotelProviderSearchId'].toString(),
-                                                      searchParams: searchParams,
-                                                    );
-                                                  } finally {
-                                                    searchCtrl.isLoading.value = false;
-                                                  }
-                                                },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: redCA0,
-                                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: CommonTextWidget.PoppinsMedium(
-                                            text: 'See Availability',
-                                            color: white,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: filteredHotels.length,
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    itemBuilder: (context, index) {
+                      final hotel = filteredHotels[index];
+                      return HotelListCard(
+                        hotel: hotel,
+                        cityName: cityName,
+                        cityId: cityId,
+                        searchCtrl: searchCtrl,
+                      );
+                    },
+                  );
+                }),
               ),
             ],
           ),
-          // Screen loader overlay
           Obx(() => searchCtrl.isLoading.value
               ? Container(
                   color: Colors.black.withOpacity(0.2),
@@ -376,260 +189,334 @@ class HotelScreen extends GetView<SearchCityController> {
     ];
     return months[month - 1];
   }
+}
 
-  String _getHotelPrice(Map<String, dynamic> hotel) {
-    if (hotel['HotelServices'] != null &&
-        hotel['HotelServices'].isNotEmpty &&
-        hotel['HotelServices'][0]['ServicePrice'] != null) {
-      return hotel['HotelServices'][0]['ServicePrice'].toString();
-    }
-    return hotel['MinPrice']?.toString() ?? '0';
-  }
+// --- Header Widget ---
+class _HotelScreenHeader extends StatelessWidget {
+  final String cityName;
+  final String dateRange;
+  final String guestInfo;
 
-  bool _hasDiscount(Map<String, dynamic> hotel) {
-    return hotel['HotelServices'] != null &&
-        hotel['HotelServices'].isNotEmpty &&
-        hotel['HotelServices'][0]['ServicePriceBeforePromotion'] != null &&
-        hotel['HotelServices'][0]['ServicePriceBeforePromotion'] > 0;
-  }
+  const _HotelScreenHeader({
+    Key? key,
+    required this.cityName,
+    required this.dateRange,
+    required this.guestInfo,
+  }) : super(key: key);
 
-  String _getOriginalPrice(Map<String, dynamic> hotel) {
-    if (hotel['HotelServices'] != null &&
-        hotel['HotelServices'].isNotEmpty &&
-        hotel['HotelServices'][0]['ServicePriceBeforePromotion'] != null) {
-      return hotel['HotelServices'][0]['ServicePriceBeforePromotion'].toString();
-    }
-    return hotel['MinPrice']?.toString() ?? '0';
-  }
-
-  Widget _buildHotelImage(Map<String, dynamic> hotel) {
-    final images = List<String>.from(hotel['HotelImages'] ?? []);
-    final imageUrl = images.isNotEmpty ? images.first : null;
-    if (imageUrl == null || imageUrl.isEmpty) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(8),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 155,
+      width: Get.width,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(hotelAndHomeStayTopImage),
+          fit: BoxFit.fill,
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              flex: 5,
+              child: Container(
+                width: Get.width,
+                decoration: BoxDecoration(
+                  color: white,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: ListTile(
+                  horizontalTitleGap: -5,
+                  leading: InkWell(
+                    onTap: () => Get.back(),
+                    child: Icon(Icons.arrow_back, color: grey888, size: 20),
+                  ),
+                  title: CommonTextWidget.PoppinsMedium(
+                    text: cityName,
+                    color: black2E2,
+                    fontSize: 15,
+                  ),
+                  subtitle: CommonTextWidget.PoppinsRegular(
+                    text: "$dateRange, $guestInfo",
+                    color: grey717,
+                    fontSize: 12,
+                  ),
+                  trailing: InkWell(
+                    onTap: () => Get.to(() => HotelAndHomeStayTabScreen()),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(draw),
+                        SizedBox(height: 10),
+                        CommonTextWidget.PoppinsMedium(
+                          text: "Edit",
+                          color: redCA0,
+                          fontSize: 12,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: InkWell(
+                onTap: () {},
+                child: Container(
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: white,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.location_on, color: redCA0),
+                        CommonTextWidget.PoppinsMedium(
+                          text: "Map",
+                          color: redCA0,
+                          fontSize: 12,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// --- Filter Chip Widget ---
+class _HotelFilterChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _HotelFilterChip({
+    Key? key,
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 180),
+          margin: EdgeInsets.symmetric(vertical: 4),
+          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: selected ? redCA0.withOpacity(0.12) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: selected ? redCA0 : greyE2E,
+              width: 1,
+            ),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: redCA0.withOpacity(0.08),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    )
+                  ]
+                : [],
+          ),
+          child: Row(
             children: [
-              Icon(Icons.hotel, size: 40, color: grey717),
+              Icon(icon, color: selected ? redCA0 : grey717, size: 17),
+              SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: selected ? redCA0 : grey717,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+              if (selected)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Icon(Icons.check, color: redCA0, size: 15),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// --- Bottom Sheet for More Filters ---
+class _HotelFilterBottomSheet extends StatefulWidget {
+  final HotelFilterController filterCtrl;
+  final List<Map<String, dynamic>> hotels;
+
+  const _HotelFilterBottomSheet({
+    Key? key,
+    required this.filterCtrl,
+    required this.hotels,
+  }) : super(key: key);
+
+  @override
+  State<_HotelFilterBottomSheet> createState() => _HotelFilterBottomSheetState();
+}
+
+class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
+  RangeValues priceRange = RangeValues(0, 10000);
+  int selectedStar = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    // Calculate min/max price from hotels list
+    final prices = widget.hotels
+        .map((h) => (h['HotelServices'] != null &&
+                h['HotelServices'].isNotEmpty &&
+                h['HotelServices'][0]['ServicePrice'] != null)
+            ? double.tryParse(h['HotelServices'][0]['ServicePrice'].toString().replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0
+            : double.tryParse(h['MinPrice']?.toString() ?? '0') ?? 0)
+        .toList();
+    final minPrice = prices.isNotEmpty ? prices.reduce((a, b) => a < b ? a : b) : 0;
+    final maxPrice = prices.isNotEmpty ? prices.reduce((a, b) => a > b ? a : b) : 10000;
+
+    // Set initial range only once
+    if (priceRange.start == 0 && priceRange.end == 10000 && minPrice != maxPrice) {
+      priceRange = RangeValues(minPrice as double, maxPrice as double);
+    }
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("All Filters", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              SizedBox(height: 18),
+              // Price Range Filter
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Price Range (₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()})",
+                  style: TextStyle(fontWeight: FontWeight.w500)),
+              ),
+              RangeSlider(
+                min: minPrice.toDouble(),
+                max: maxPrice == minPrice ? minPrice.toDouble() + 1 : maxPrice.toDouble(),
+                values: priceRange,
+                divisions: maxPrice > minPrice ? 20 : 1,
+                labels: RangeLabels(
+                  "₹${priceRange.start.toInt()}",
+                  "₹${priceRange.end.toInt()}",
+                ),
+                onChanged: (v) {
+                  setState(() {
+                    priceRange = v;
+                  });
+                },
+              ),
+              SizedBox(height: 18),
+              // Star Rating Filter
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Star Rating", style: TextStyle(fontWeight: FontWeight.w500)),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: List.generate(5, (i) {
+                  final star = i + 1;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedStar = selectedStar == star ? 0 : star;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 180),
+                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: selectedStar >= star ? redCA0.withOpacity(0.15) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: selectedStar >= star ? redCA0 : greyE2E,
+                          width: 1,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.star,
+                        color: selectedStar >= star ? Colors.amber : greyE2E,
+                        size: 28,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              SizedBox(height: 28),
+              // Add more filter widgets here (e.g. amenities, meal plan, cancellation, etc.)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Apply price and star rating filter
+                    final filtered = widget.hotels.where((hotel) {
+                      // Price filter
+                      double price = (hotel['HotelServices'] != null &&
+                              hotel['HotelServices'].isNotEmpty &&
+                              hotel['HotelServices'][0]['ServicePrice'] != null)
+                          ? double.tryParse(hotel['HotelServices'][0]['ServicePrice'].toString().replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0
+                          : double.tryParse(hotel['MinPrice']?.toString() ?? '0') ?? 0;
+                      bool priceMatch = price >= priceRange.start && price <= priceRange.end;
+
+                      // Star rating filter
+                      double star = double.tryParse(hotel['StarRating']?.toString() ?? '0') ?? 0;
+                      bool starMatch = selectedStar == 0 || star.floor() == selectedStar;
+
+                      return priceMatch && starMatch;
+                    }).toList();
+
+                    widget.filterCtrl.filteredHotels.assignAll(filtered);
+                    widget.filterCtrl.selectedFilter.value = "custom";
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: redCA0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    "Apply Filters",
+                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.2),
+                  ),
+                ),
+              ),
               SizedBox(height: 8),
-              CommonTextWidget.PoppinsRegular(
-                text: 'No image available',
-                color: grey717,
-                fontSize: 12,
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text("Cancel", style: TextStyle(color: redCA0, fontWeight: FontWeight.w500)),
               ),
             ],
           ),
         ),
-      );
-    }
-    return Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Center(
-          child: CircularProgressIndicator(
-            value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-                : null,
-          ),
-        );
-      },
-      errorBuilder: (_, __, ___) => Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Center(
-          child: Icon(Icons.error_outline, color: grey717),
-        ),
       ),
     );
-  }
-
-  Widget _buildThumbnailGallery(BuildContext context, Map<String, dynamic> hotel) {
-    final images = List<String>.from(hotel['HotelImages'] ?? []);
-    if (images.isEmpty) return SizedBox();
-    return SizedBox(
-      height: 70,
-      child: Row(
-        children: [
-          ...images.take(3).map((url) => Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: InkWell(
-                    onTap: () => _showImageGallery(context, images, images.indexOf(url)),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: greyE2E),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          url,
-                          height: 70,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(child: CircularProgressIndicator());
-                          },
-                          errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey[200],
-                            child: Icon(Icons.image, color: grey717),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )),
-          if (images.length > 3)
-            Expanded(
-              child: InkWell(
-                onTap: () => _showImageGallery(context, images, 3),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: greyE2E),
-                  ),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          images[3],
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey[200],
-                            child: Icon(Icons.image, color: grey717),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: Colors.black.withOpacity(0.6),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.photo_library, color: white, size: 20),
-                              SizedBox(height: 4),
-                              CommonTextWidget.PoppinsMedium(
-                                text: '+${images.length - 3}',
-                                color: white,
-                                fontSize: 12,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  void _showImageGallery(BuildContext context, List<String> images, int initialIndex) {
-    Get.to(() => GalleryView(
-          images: images,
-          initialIndex: initialIndex,
-        ));
-  }
-
-  Widget _buildStarRating(dynamic rating) {
-    if (rating == null) return SizedBox();
-    final double starRating = rating is String
-        ? double.tryParse(rating) ?? 0.0
-        : (rating as num).toDouble();
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.star, color: Colors.amber, size: 16),
-        SizedBox(width: 4),
-        Text(
-          starRating.toStringAsFixed(1),
-          style: TextStyle(
-            color: black2E2,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLocationInfo(Map<String, dynamic> hotel, String cityName) {
-    final location = hotel['Location'] ?? cityName;
-    return Row(
-      children: [
-        Icon(Icons.location_on, size: 14, color: grey717),
-        SizedBox(width: 4),
-        Expanded(
-          child: CommonTextWidget.PoppinsRegular(
-            text: location,
-            color: grey717,
-            fontSize: 12,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRatingBadge(Map<String, dynamic> hotel) {
-    final rating = hotel['StarRating'];
-    if (rating == null) return SizedBox();
-    final double starRating = rating is String
-        ? double.tryParse(rating) ?? 0.0
-        : (rating as num).toDouble();
-    if (starRating <= 0) return SizedBox();
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: redCA0,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.star, color: white, size: 16),
-          SizedBox(width: 4),
-          Text(
-            starRating.toStringAsFixed(1),
-            style: TextStyle(
-              color: white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  int _calculateDiscount(Map<String, dynamic> hotel) {
-    if (hotel['HotelServices'] != null &&
-        hotel['HotelServices'].isNotEmpty &&
-        hotel['HotelServices'][0]['ServicePriceBeforePromotion'] != null &&
-        hotel['HotelServices'][0]['ServicePrice'] != null) {
-      final originalPrice = hotel['HotelServices'][0]['ServicePriceBeforePromotion'];
-      final discountedPrice = hotel['HotelServices'][0]['ServicePrice'];
-      final discount = ((originalPrice - discountedPrice) / originalPrice * 100).round();
-      return discount;
-    }
-    return 0;
   }
 }

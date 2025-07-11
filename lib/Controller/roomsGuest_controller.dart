@@ -2,17 +2,13 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class RoomsGuestController extends GetxController {
-  RxList<Map<String, String>> roomGuestData = <Map<String, String>>[
+  // Dynamic room/guest data, default: 1 room, 2 adults, 0 children
+  RxList<Map<String, dynamic>> roomGuestData = <Map<String, dynamic>>[
     {
-      "text1": "Room 1",
-      "text2": "2 Adults, 1 Child",
-      "text3": "Edit",
-    },
-    {
-      "text1": "Room 2",
-      "text2": "1 Adult",
-      "text3": "Edit",
-    },
+      "RoomNo": 1,
+      "Adults": 2,
+      "Children": 0,
+    }
   ].obs;
 
   String get subtitleSummary {
@@ -21,28 +17,44 @@ class RoomsGuestController extends GetxController {
     int totalChildren = 0;
 
     for (var room in roomGuestData) {
-      String? text2 = room["text2"];
-      if (text2 != null) {
-        RegExp exp = RegExp(r'(\d+)\s*Adult');
-        RegExp expChild = RegExp(r'(\d+)\s*Child');
-
-        var match = exp.firstMatch(text2);
-        if (match != null) {
-          totalAdults += int.tryParse(match.group(1)!) ?? 0;
-        }
-
-        var matchChild = expChild.firstMatch(text2);
-        if (matchChild != null) {
-          totalChildren += int.tryParse(matchChild.group(1)!) ?? 0;
-        }
-      }
+      totalAdults += (room["Adults"] as int? ?? 0);
+      totalChildren += (room["Children"] as int? ?? 0);
     }
 
     String summary = "$totalRooms Room${totalRooms > 1 ? 's' : ''}, $totalAdults Adult${totalAdults > 1 ? 's' : ''}";
     if (totalChildren > 0) {
       summary += ", $totalChildren Child${totalChildren > 1 ? 'ren' : ''}";
     }
-
     return summary;
+  }
+
+  void addRoom() {
+    roomGuestData.add({
+      "RoomNo": roomGuestData.length + 1,
+      "Adults": 2,
+      "Children": 0,
+    });
+  }
+
+  void removeRoom(int index) {
+    if (roomGuestData.length > 1) {
+      roomGuestData.removeAt(index);
+      // Re-number rooms
+      for (int i = 0; i < roomGuestData.length; i++) {
+        roomGuestData[i]["RoomNo"] = i + 1;
+      }
+    }
+  }
+
+  void updateRoom(int index, {int? adults, int? children}) {
+    if (index >= 0 && index < roomGuestData.length) {
+      if (adults != null) roomGuestData[index]["Adults"] = adults;
+      if (children != null) roomGuestData[index]["Children"] = children;
+      roomGuestData.refresh();
+    }
+  }
+
+  void onDone(List<Map<String, dynamic>> updatedRooms) {
+    roomGuestData.assignAll(updatedRooms);
   }
 }

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/images.dart';
 import 'package:seemytrip/Screens/HomeScreen/AirportCabsScreens/cab_search_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/BusScreen/bus_home_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/DrawerScreen/drawer_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/FlightBookScreen/FlightSearchScreen/flight_search_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HolidayPackagesScreen/holiday_packages_screen.dart';
@@ -571,17 +572,35 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        InkWell(
+                        // InkWell(
+                        //   onTap: () {
+                        //     Get.to(() => HolidayPackagesScreen());
+                        //   },
+                        //   child: Column(
+                        //     children: [
+                        //       Image.asset(holidayPakages,
+                        //           height: 55, width: 55),
+                        //       SizedBox(height: 8),
+                        //       CommonTextWidget.PoppinsMedium(
+                        //         text: "holidayPackages".tr,
+                        //         color: black2E2,
+                        //         fontSize: 12,
+                        //         textAlign: TextAlign.center,
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                         InkWell(
                           onTap: () {
-                            Get.to(() => HolidayPackagesScreen());
+                            Get.to(() => BusHomeScreen());
                           },
                           child: Column(
                             children: [
-                              Image.asset(holidayPakages,
+                              Image.asset(trainsAndBus,
                                   height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "holidayPackages".tr,
+                                text: "Bus".tr,
                                 color: black2E2,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,

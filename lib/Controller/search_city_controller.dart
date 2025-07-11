@@ -65,7 +65,7 @@ class SearchCityController extends GetxController {
     errorMessage.value = '';
     try {
       final response = await dio.post(
-        'http://192.168.137.102:3002/api/hotels/getHotelCities',
+        'http://192.168.2.2:3002/api/hotels/getHotelCities',
         options: Options(
           sendTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
@@ -139,44 +139,66 @@ class SearchCityController extends GetxController {
     required int rooms,
     required int adults,
     required int children,
+    int? pageNo,
+    String? sessionId,
+    Map<String, dynamic>? filter,
+    Map<String, dynamic>? sort,
+    List<Map<String, dynamic>>? roomsList, // <-- dynamic rooms
   }) async {
+    isLoading.value = true;
     try {
       final checkInStr = checkIn.toLocal().toString().split(' ')[0];
       final checkOutStr = checkOut.toLocal().toString().split(' ')[0];
+      final List<Map<String, dynamic>> apiRooms = roomsList ??
+          [
+            {
+              'RoomNo': rooms.toString(),
+              'Adults': adults,
+              'Children': children,
+            }
+          ];
       final requestData = {
-        'cityId': int.parse(cityId),
+        'cityId': cityId,
         'checkInDate': checkInStr,
         'checkOutDate': checkOutStr,
-        'Rooms': [
-          {
-            'RoomNo': '1',
-            'Adults': adults.toString(),
-            'Children': children.toString()
-          }
-        ]
+        'Rooms': apiRooms,
+        'PageNo': pageNo ?? 1,
+        'SessionID': sessionId,
+        'Filter': filter,
+        'Sort': sort ?? { "SortBy": "StarRating", "SortOrder": "Desc" },
       };
+      print("==============> Fetching hotels list from API");
+      print("City ID: $cityId");
+      print("Check-in Date: $checkInStr");
+      print("Check-out Date: $checkOutStr");
+      print("Rooms: $apiRooms");
+      print("Adults: $adults");
+      print("Children: $children");
+      print('Request Data: ${jsonEncode(requestData)}');
+
       final response = await dio.post(
-        'http://192.168.137.102:3002/api/hotels/getHotelsList',
+        'http://192.168.2.2:3002/api/hotels/getHotelsList',
         options: Options(
           headers: {'Content-Type': 'application/json'},
           validateStatus: (status) => status! < 500,
         ),
         data: requestData,
       );
-      if (response.statusCode == 200 && response.data != null) {
+      print("Response from hotels list API: ${response.data}");
+      if (response.data != null && response.data['Hotels'] != null) {
+        print(" *** Yeah , count for hotels is ${response.data['Hotels'].length}");
         hotelDetails.value = Map<String, dynamic>.from(response.data);
+        hotelDetails.refresh();
         Get.to(() => HotelScreen(
           cityId: cityId,
           cityName: cityName,
-          hotelDetails: response.data,
+          hotelDetails: Map<String, dynamic>.from(response.data),
         ));
       } else {
-        final errorMsg = response.data is Map ?
-          response.data['error'] ?? 'Unknown error' :
-          'Failed to fetch hotels';
-        _setError(errorMsg);
+        _setError("No hotels found for the given criteria");
       }
     } catch (e) {
+      print("Error fetching hotels list: $e");
       _setError(e.toString());
     } finally {
       isLoading.value = false;
@@ -202,7 +224,7 @@ class SearchCityController extends GetxController {
         ]
       };
       final response = await http.post(
-        Uri.parse('http://192.168.137.102:3002/api/hotels/getHoteldetails'),
+        Uri.parse('http://192.168.2.2:3002/api/hotels/getHoteldetails'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -211,7 +233,9 @@ class SearchCityController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         hotelDetails.value = Map<String, dynamic>.from(data);
-        Get.to(() => HotelDetailScreen(hotelDetails: data,  
+        // Fix: Ensure you import the correct HotelDetailScreen and pass all required arguments
+        Get.to(() => HotelDetailScreen(
+          hotelDetails: Map<String, dynamic>.from(data),
           hotelId: hotelId,
           searchParams: searchParams,
         ));
@@ -228,7 +252,7 @@ class SearchCityController extends GetxController {
     print('Fetching images for hotelProviderSearchId: $hotelProviderSearchId');
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.137.102:3002/api/hotels/getHotelImages'),
+        Uri.parse('http://192.168.2.2:3002/api/hotels/getHotelImages'),
         headers: {'Content-Type': 'application/json'},
         // The backend expects "HotelProviderSearchId" not "HotelId"
         body: jsonEncode({'HotelProviderSearchId': hotelProviderSearchId ?? ''}),
