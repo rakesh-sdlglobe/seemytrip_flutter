@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/booking_preview_page.dart';
-import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
-import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/rate_plan_detail_screen.dart';
+import 'package:flutter_html/flutter_html.dart';
+
 
 class RoomsPage extends StatelessWidget {
   final Map<String, dynamic> hotelDetails;
@@ -137,102 +137,32 @@ class RoomsPage extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: 8),
-                            if (descPoints.isNotEmpty)
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ...descPoints.take(3).map((point) => Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("• ", style: TextStyle(fontSize: 13, color: Colors.grey[700])),
-                                          Expanded(
-                                            child: Text(
-                                              point,
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.grey[700],
-                                                fontFamily: 'Poppins',
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                  if (descPoints.length > 3)
-                                    GestureDetector(
-                                      onTap: () {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-                                          ),
-                                          builder: (ctx) => Padding(
-                                            padding: const EdgeInsets.all(20),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(roomName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                                                  SizedBox(height: 10),
-                                                  if (imageUrl.isNotEmpty)
-                                                    ClipRRect(
-                                                      borderRadius: BorderRadius.circular(12),
-                                                      child: Image.network(imageUrl, height: 160, fit: BoxFit.cover),
-                                                    ),
-                                                  SizedBox(height: 14),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: descPoints
-                                                        .map((point) => Row(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Text("• ", style: TextStyle(fontSize: 13, color: Colors.grey[700])),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    point,
-                                                                    style: TextStyle(
-                                                                      fontSize: 13,
-                                                                      color: Colors.grey[700],
-                                                                      fontFamily: 'Poppins',
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ))
-                                                        .toList(),
-                                                  ),
-                                                  SizedBox(height: 14),
-                                                  if (amenities.isNotEmpty)
-                                                    Wrap(
-                                                      spacing: 8,
-                                                      runSpacing: 8,
-                                                      children: amenities.map((a) => Chip(
-                                                        label: Text(a.toString(), style: TextStyle(fontSize: 12)),
-                                                        backgroundColor: Colors.grey[200],
-                                                      )).toList(),
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(left: 2.0, top: 2.0),
-                                        child: Text(
-                                          "More",
-                                          style: TextStyle(
-                                            color: redCA0,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 13,
-                                            decoration: TextDecoration.underline,
-                                            fontFamily: 'Poppins',
-                                          ),
-                                        ),
-                                      ),
+                            if (description != null &&
+                                description.toString().isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Html(
+                                  data: description,
+                                  style: {
+                                    "body": Style(
+                                      fontSize: FontSize(13),
+                                      fontFamily: 'Poppins',
+                                      color: Colors.grey[700],
+                                      margin: Margins.zero,
+                                      padding: HtmlPaddings.zero,
                                     ),
-                                ],
+                                    "strong": Style(
+                                      fontWeight: FontWeight.bold,
+                                      color: black2E2,
+                                    ),
+                                    "b": Style(
+                                      fontWeight: FontWeight.bold,
+                                      color: black2E2,
+                                    ),
+                                  },
+                                ),
                               ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 8),
                             if (amenities.isNotEmpty)
                               Wrap(
                                 spacing: 8,

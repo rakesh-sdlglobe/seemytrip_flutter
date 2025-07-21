@@ -42,7 +42,8 @@ class HotelDetailScreen extends StatelessWidget {
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  urlTemplate:
+                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                   subdomains: const ['a', 'b', 'c'],
                   userAgentPackageName: 'com.example.seemytrip',
                 ),
@@ -87,10 +88,13 @@ class HotelDetailScreen extends StatelessWidget {
 
     final formattedCheckIn = formatDate(checkIn);
     final formattedCheckOut = formatDate(checkOut);
+    final servicePrice =
+        hotelDetails['HotelDetail']?['HotelServices']?[0]?['ServicePrice'];
+
+    print("ServicePrice: $servicePrice");
 
     final hotelServicePrice =
-        hotelDetails['HotelServices']?[0]?['ServicePrice']?.toString() ?? '0';
-    print("hotelServicePrice: $hotelServicePrice");
+        servicePrice?.toString() ?? '0';
 
     return Scaffold(
       backgroundColor: white,
