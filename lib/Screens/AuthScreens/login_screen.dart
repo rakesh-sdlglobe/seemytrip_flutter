@@ -31,7 +31,7 @@ class LogInScreen extends StatelessWidget {
 
     isLoading = true;
 
-    final String apiUrl = 'https://tripadmin.seemytrip.com/api/login';
+    final String apiUrl = 'http://192.168.137.150:3002/api/login';
 
     final Map<String, dynamic> data = {
       'email': numberController.text,
@@ -52,7 +52,10 @@ class LogInScreen extends StatelessWidget {
 
           SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString('accessToken', responseData['token']);
-
+          
+          // Print the token after successful login
+          print('User Token: ${responseData['token']}');
+          
           Get.to(NavigationScreen());
         } else {
           print('Invalid credentials');

@@ -20,10 +20,10 @@ class LoginController extends GetxController {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
-  final String loginApiUrl = 'https://tripadmin.seemytrip.com/api/login';
-  final String signUpApiUrl = 'https://tripadmin.seemytrip.com/api/signup';
+  final String loginApiUrl = 'http://192.168.137.150:3002/api/login';
+  final String signUpApiUrl = 'http://192.168.137.150:3002/api/signup';
   final String userProfileUrl =
-      'http://192.168.137.102:3002/api/users/userProfile';
+      'http://192.168.137.150:3002/api/users/userProfile';
 
   // Firebase Auth and Google Sign-In Instances
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -64,7 +64,7 @@ Future<void> signInWithGoogle() async {
 
     // Step 4: Send user data to your backend
     final response = await http.post(
-      Uri.parse('http://192.168.137.102:3002/api/auth/googleUserData'),
+        Uri.parse('http://192.168.137.150:3002/api/auth/googleUserData'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(userData),
     );

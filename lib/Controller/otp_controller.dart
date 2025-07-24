@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class OtpController extends GetxController {
-  final String baseUrl = 'https://tripadmin.seemytrip.com';
+  final String baseUrl = 'http://192.168.137.150:3002';
   
   // Observable variables
   final RxBool isLoading = false.obs;
@@ -127,7 +127,18 @@ class OtpController extends GetxController {
         return false;
       }
 
-      print('Verifying OTP: Email=${email.value}, OTP=$otp'); // Debug log
+      print('=== OTP Verification Debug ===');
+      print('Endpoint: $baseUrl/api/verify-otp');
+      print('Email: ${email.value}');
+      print('OTP: $otp');
+      print('=============================');
+      
+      final requestBody = {
+        'email': email.value,
+        'otp': otp
+      };
+      
+      print('Request Body: ${json.encode(requestBody)}');
 
       final response = await http.post(
         Uri.parse('$baseUrl/api/verify-otp'),
@@ -145,18 +156,27 @@ class OtpController extends GetxController {
         },
       );
 
-      print('Response Status: ${response.statusCode}'); // Debug log
-      print('Response Body: ${response.body}'); // Debug log
+      print('=== Response Debug ===');
+      print('Status Code: ${response.statusCode}');
+      print('Headers: ${response.headers}');
+      print('Body: ${response.body}');
+      print('======================');
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        
-        // Save the received token
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('accessToken', data['token']);
-        await prefs.setString('userEmail', data['email']);
-        if (data['firstName'] != null) {
-          await prefs.setString('firstName', data['firstName']);
+        // First try to parse as JSON
+        try {
+          final data = json.decode(response.body);
+          
+          // Save the received token
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('accessToken', data['token']);
+          await prefs.setString('userEmail', data['email']);
+          if (data['firstName'] != null) {
+            await prefs.setString('firstName', data['firstName']);
+          }
+        } catch (e) {
+          print('Error parsing response: $e');
+          throw Exception('Invalid response format from server');
         }
 
         countdownTimer?.cancel();
@@ -171,8 +191,17 @@ class OtpController extends GetxController {
          Get.offAll(() => NavigationScreen()); // Adjust route as needed
         return true;
       } else {
-        final errorData = json.decode(response.body);
-        throw Exception(errorData is String ? errorData : 'Failed to verify OTP');
+        String errorMessage = 'Failed to verify OTP. Status: ${response.statusCode}';
+        try {
+          final errorData = json.decode(response.body);
+          errorMessage = errorData['message'] ?? errorData.toString();
+        } catch (e) {
+          // If response is not JSON, use the raw response body
+          errorMessage = response.body.isNotEmpty 
+              ? response.body 
+              : 'Server error occurred';
+        }
+        throw Exception(errorMessage);
       }
     } catch (e) {
       print('Error verifying OTP: $e'); // Debug log

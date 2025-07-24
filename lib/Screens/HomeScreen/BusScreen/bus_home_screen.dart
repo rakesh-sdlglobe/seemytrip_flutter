@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
-import 'package:seemytrip/Constants/images.dart';
+import 'package:seemytrip/Controller/bus_controller.dart';
 import 'package:seemytrip/Screens/HomeScreen/BusScreen/bus_leaving_from_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/BusScreen/bus_result_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/BusScreen/bus_going_to_screen.dart';
-// import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
-import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
-// import 'package:seemytrip/Screens/Utills/date_picker_widget.dart';
-import 'package:seemytrip/Screens/Utills/lists_widget.dart' as lists_widget;
+import 'package:seemytrip/Screens/HomeScreen/BusScreen/widgets/bus_calendar_widget.dart';
+
+class BusCity {
+  final int cityId;
+  final String cityName;
+
+  BusCity({required this.cityId, required this.cityName});
+
+  factory BusCity.fromJson(Map<String, dynamic> json) {
+    return BusCity(
+      cityId: json['CityId'] ?? 0,
+      cityName: json['CityName'] ?? '',
+    );
+  }
+}
+
 
 class BusHomeScreen extends StatefulWidget {
   const BusHomeScreen({Key? key}) : super(key: key);
@@ -19,16 +29,71 @@ class BusHomeScreen extends StatefulWidget {
 }
 
 class _BusHomeScreenState extends State<BusHomeScreen> {
-  int selectedDateIndex = 0;
   int selectedBottomNavIndex = 0;
+  
+  // Date selection state
+  DateTime _selectedDate = DateTime.now();
+  bool _showCalendar = false;
 
-  final List<Map<String, dynamic>> dates = [
-    {'day': '08', 'weekday': 'TUE'},
-    {'day': '09', 'weekday': 'WED'},
-    {'day': '10', 'weekday': 'THU'},
-    {'day': '11', 'weekday': 'FRI'},
-    {'day': '12', 'weekday': 'SAT'},
-  ];
+  // Generate dates for the next 7 days
+  late final List<Map<String, dynamic>> dates;
+
+  @override
+  void initState() {
+    super.initState();
+    dates = List.generate(7, (index) {
+      final date = DateTime.now().add(Duration(days: index));
+      return {
+        'date': date,
+        'day': date.day.toString().padLeft(2, '0'),
+        'weekday': _getWeekday(date.weekday),
+      };
+    });
+  }
+
+  String _getWeekday(int weekday) {
+    switch (weekday) {
+      case 1:
+        return 'MON';
+      case 2:
+        return 'TUE';
+      case 3:
+        return 'WED';
+      case 4:
+        return 'THU';
+      case 5:
+        return 'FRI';
+      case 6:
+        return 'SAT';
+      case 7:
+        return 'SUN';
+      default:
+        return '';
+    }
+  }
+
+  final BusController controller = Get.put(BusController());
+  RxString selectedDepartureCity = 'Enter departure city'.obs;
+  RxString selectedDestinationCity = 'Enter destination city'.obs;
+
+  // Helper method to get month name
+  String _getMonthName(int month) {
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC'
+    ];
+    return months[month - 1];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,18 +264,29 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Container(
-                              height: 40,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Enter departure city',
-                                  hintStyle: TextStyle(
-                                    color: Colors.red[200],
+                            GestureDetector(
+                              onTap: () async {
+                                final selectedCity =
+                                    await Get.to<Map<String, dynamic>>(
+                                        () => const BusLeavingFromScreen());
+                                if (selectedCity != null) {
+                                  selectedDepartureCity.value =
+                                      selectedCity['name'] ?? 'Select city';
+                                }
+                              },
+                              child: Container(
+                                height: 40,
+                                alignment: Alignment.centerLeft,
+                                child: Obx(() => Text(
+                                      selectedDepartureCity.value,
+                                      style: TextStyle(
                                     fontSize: 16,
+                                        color: selectedDepartureCity.value ==
+                                                'Enter departure city'
+                                            ? Colors.red[200]
+                                            : black2E2,
                                   ),
-                                ),
-                                style: TextStyle(fontSize: 16, color: black2E2),
+                                    )),
                               ),
                             ),
                           ],
@@ -252,18 +328,29 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
                               ),
                             ),
                             SizedBox(height: 4),
-                            Container(
-                              height: 40,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Enter destination city',
-                                  hintStyle: TextStyle(
-                                    color: Colors.red[200],
+                            GestureDetector(
+                              onTap: () async {
+                                final selectedCity =
+                                    await Get.to<Map<String, dynamic>>(
+                                        () => const BusGoingToScreen());
+                                if (selectedCity != null) {
+                                  selectedDestinationCity.value =
+                                      selectedCity['name'] ?? 'Select city';
+                                }
+                              },
+                              child: Container(
+                                height: 40,
+                                alignment: Alignment.centerLeft,
+                                child: Obx(() => Text(
+                                      selectedDestinationCity.value,
+                                      style: TextStyle(
                                     fontSize: 16,
+                                        color: selectedDestinationCity.value ==
+                                                'Enter destination city'
+                                            ? Colors.red[200]
+                                            : black2E2,
                                   ),
-                                ),
-                                style: TextStyle(fontSize: 16, color: black2E2),
+                                    )),
                               ),
                             ),
                           ],
@@ -283,97 +370,126 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
                   ),
                   SizedBox(height: 12),
                   // Date selector
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Container(
-                          height: 80,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: dates.length,
-                            itemBuilder: (context, index) {
-                              bool isSelected = selectedDateIndex == index;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedDateIndex = index;
-                                  });
-                                },
-                                child: Container(
-                                  width: 60,
-                                  margin: EdgeInsets.only(right: 12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? redCA0
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: isSelected ? redCA0 : Colors.red[100]!,
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        dates[index]['day'],
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: isSelected
-                                              ? Colors.white
-                                              : black2E2,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        dates[index]['weekday'],
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: isSelected
-                                              ? Colors.white
-                                              : redCA0,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
+                      // Date chips
+                      SizedBox(
+                        height: 80,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: dates.length,
+                          itemBuilder: (context, index) {
+                            final date = dates[index];
+                            final isSelected =
+                                _selectedDate.day == date['date'].day &&
+                                    _selectedDate.month == date['date'].month &&
+                                    _selectedDate.year == date['date'].year;
+
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedDate = date['date'];
+                                  _showCalendar = false;
+                                });
+                              },
+                              child: Container(
+                                width: 60,
+                                margin: EdgeInsets.only(right: 12),
+                                decoration: BoxDecoration(
+                                  color:
+                                      isSelected ? redCA0 : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color:
+                                        isSelected ? redCA0 : Colors.red[100]!,
+                                    width: 1.5,
                                   ),
                                 ),
-                              );
-                            },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      date['day'],
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : black2E2,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      date['weekday'],
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color:
+                                            isSelected ? Colors.white : redCA0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      
+                      // Calendar toggle button
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showCalendar = !_showCalendar;
+                          });
+                        },
+                        child: Container(
+                          width: 160,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          margin: EdgeInsets.only(top: 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: redCA0),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${_getMonthName(_selectedDate.month)} ${_selectedDate.year}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: redCA0,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                  _showCalendar
+                                      ? Icons.keyboard_arrow_up
+                                      : Icons.keyboard_arrow_down,
+                                  size: 20,
+                                  color: redCA0),
+                            ],
                           ),
                         ),
                       ),
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: redCA0),
-                          borderRadius: BorderRadius.circular(8),
+                      
+                      // Calendar widget
+                      if (_showCalendar)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: BusCalendarWidget(
+                            selectedDate: _selectedDate,
+                            onDateSelected: (date) {
+                              setState(() {
+                                _selectedDate = date;
+                                _showCalendar = false;
+                              });
+                            },
+                          ),
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Jul',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: redCA0,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Icon(Icons.keyboard_arrow_down, size: 20, color: redCA0),
-                            SizedBox(width: 8),
-                            Text(
-                              '2025',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: redCA0,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                   SizedBox(height: 24),
@@ -421,11 +537,7 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image:
-                            NetworkImage('https://via.placeholder.com/80x80'),
-                        fit: BoxFit.cover,
-                      ),
+                      color: Colors.red[100], // Light red background color
                     ),
                   ),
                   SizedBox(width: 16),

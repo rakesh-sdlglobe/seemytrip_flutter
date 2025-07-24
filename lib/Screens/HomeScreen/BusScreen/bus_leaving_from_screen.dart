@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
-import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
-import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:seemytrip/Controller/bus_controller.dart';
 
-class Lists {
-  // your existing code
 
-  static List<String> busCities = [
-    // Add your list of city names here, for example:
-    'New York',
-    'Los Angeles',
-    'Chicago',
-    'Houston',
-    'Phoenix',
-    // ... add more cities as needed
-  ];
-}
 
 class BusLeavingFromScreen extends StatefulWidget {
   const BusLeavingFromScreen({Key? key}) : super(key: key);
@@ -26,13 +13,15 @@ class BusLeavingFromScreen extends StatefulWidget {
 }
 
 class _BusLeavingFromScreenState extends State<BusLeavingFromScreen> {
-  TextEditingController searchController = TextEditingController();
-  List<String> filteredCities = [];
+  final BusController controller = Get.find<BusController>();
+  final TextEditingController searchController = TextEditingController();
+  final RxList<dynamic> filteredCities = <dynamic>[].obs;
 
   @override
   void initState() {
     super.initState();
-    filteredCities = Lists.busCities;
+    // Initialize with all cities
+    filteredCities.value = List.from(controller.cityList);
     searchController.addListener(_filterCities);
   }
 
@@ -45,71 +34,208 @@ class _BusLeavingFromScreenState extends State<BusLeavingFromScreen> {
 
   void _filterCities() {
     final query = searchController.text.toLowerCase();
-    setState(() {
-      filteredCities = Lists.busCities
-          .where((city) => city.toLowerCase().contains(query))
-          .toList();
-    });
+    if (query.isEmpty) {
+      filteredCities.value = List.from(controller.cityList);
+    } else {
+      filteredCities.value = controller.cityList.where((city) {
+        final cityName = city['CityName']?.toString().toLowerCase() ?? '';
+        return cityName.contains(query);
+      }).toList();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        title: const Text(
+          'Select City',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => Get.back(),
+        ),
         backgroundColor: redCA0,
         elevation: 0,
-        automaticallyImplyLeading: false,
         centerTitle: true,
-        leading: InkWell(
-          onTap: () => Get.back(),
-          child: Icon(Icons.close, color: white, size: 20),
-        ),
-        title: CommonTextWidget.PoppinsSemiBold(
-          text: "Leaving From",
-          color: white,
-          fontSize: 18,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16),
+          ),
         ),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText: " Search City",
-                  prefixIcon: Icon(Icons.search, color: grey888),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+      body: Column(
+        children: [
+          // Search Bar
+          Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
+              ],
+            ),
+            child: TextField(
+              controller: searchController,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              decoration: InputDecoration(
+                hintText: "Search for a city...",
+                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 15),
+                prefixIcon: Icon(Icons.search_rounded, color: redCA0, size: 24),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
+          ),
+
+          // Available Cities Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(
+              children: [
+                Text(
+                  'Available Cities',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: redCA0.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Obx(() => Text(
+                        '${filteredCities.length} cities',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: redCA0,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )),
+                ),
+              ],
+            ),
+          ),
+          
+          // Cities List
+          Expanded(
+            child: Obx(() {
+              if (filteredCities.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_city_rounded,
+                        size: 64,
+                        color: Colors.grey[300],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No cities found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[500],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Try a different search term',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.separated(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: filteredCities.length,
+                separatorBuilder: (context, index) => Divider(
+                  height: 1,
+                  color: Colors.grey[200],
+                  indent: 16,
+                  endIndent: 16,
+                ),
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: CommonTextWidget.PoppinsMedium(
-                      text: filteredCities[index],
-                      color: black2E2,
-                      fontSize: 16,
+                  final city = filteredCities[index];
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        Get.back(result: {
+                          'name': city['CityName'],
+                          'id': city['CityId'].toString(),
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: redCA0.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.place_rounded,
+                                color: redCA0,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Text(
+                              city['CityName'] ?? 'Unknown City',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const Spacer(),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: Colors.grey[400],
+                              size: 24,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    onTap: () {
-                      Get.back(result: filteredCities[index]);
-                    },
                   );
                 },
-              ),
-            ),
-          ],
-        ),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }
