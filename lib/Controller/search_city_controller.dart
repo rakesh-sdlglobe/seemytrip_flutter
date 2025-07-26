@@ -65,7 +65,7 @@ class SearchCityController extends GetxController {
     errorMessage.value = '';
     try {
       final response = await dio.post(
-        'http://192.168.137.150:3002/api/hotels/getHotelCities',
+        'http://192.168.1.114:3002/api/hotels/getHotelCities',
         options: Options(
           sendTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
@@ -177,7 +177,7 @@ class SearchCityController extends GetxController {
       print('Request Data: ${jsonEncode(requestData)}');
 
       final response = await dio.post(
-        'http://192.168.137.150:3002/api/hotels/getHotelsList',
+        'http://192.168.1.114:3002/api/hotels/getHotelsList',
         options: Options(
           headers: {'Content-Type': 'application/json'},
           validateStatus: (status) => status! < 500,
@@ -224,7 +224,7 @@ class SearchCityController extends GetxController {
         ]
       };
       final response = await http.post(
-        Uri.parse('http://192.168.137.150:3002/api/hotels/getHoteldetails'),
+        Uri.parse('http://192.168.1.114:3002/api/hotels/getHoteldetails'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -252,7 +252,7 @@ class SearchCityController extends GetxController {
     print('Fetching images for hotelProviderSearchId: $hotelProviderSearchId');
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.137.150:3002/api/hotels/getHotelImages'),
+        Uri.parse('http://192.168.1.114:3002/api/hotels/getHotelImages'),
         headers: {'Content-Type': 'application/json'},
         // The backend expects "HotelProviderSearchId" not "HotelId"
         body: jsonEncode({'HotelProviderSearchId': hotelProviderSearchId ?? ''}),

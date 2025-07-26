@@ -31,7 +31,7 @@ class LogInScreen extends StatelessWidget {
 
     isLoading = true;
 
-    final String apiUrl = 'http://192.168.137.150:3002/api/login';
+    final String apiUrl = 'http://192.168.1.114:3002/api/login';
 
     final Map<String, dynamic> data = {
       'email': numberController.text,

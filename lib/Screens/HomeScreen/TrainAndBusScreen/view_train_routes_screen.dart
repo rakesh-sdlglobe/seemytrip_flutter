@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Controller/view_train_routes_controller.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
@@ -19,10 +20,13 @@ class ViewTrainRoutes extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Obx(() => Text(viewRouteController.trainSchedule['trainName'] ?? "Train Routes")),
+        title: Obx(() => Text(
+              viewRouteController.trainSchedule['trainName'] ?? "Train Routes",
+              style: TextStyle(color: Colors.white),
+            )),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: redCA0,
+        foregroundColor: white,
         elevation: 1,
         actions: [
           IconButton(

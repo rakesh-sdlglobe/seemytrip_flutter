@@ -91,15 +91,15 @@ class TrustIndicator extends StatelessWidget {
             '10 crore+ ',
             style: TextStyle(
               color: redCA0,
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
             'Indian travellers ',
-            style: TextStyle(color: redCA0, fontSize: 16),
+            style: TextStyle(color: redCA0, fontSize: 14),
           ),
-          Text('🇮🇳', style: TextStyle(fontSize: 16)),
+          Text('🇮🇳', style: TextStyle(fontSize: 14)),
         ],
       ),
     );
@@ -132,7 +132,7 @@ class DiscountBanner extends StatelessWidget {
           const Text(
             'Save upto ₹300* on Bus Bookings',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: redCA0,
             ),

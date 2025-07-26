@@ -39,6 +39,7 @@ dependencies:
   flutter_map: ^8.1.1
   html: ^0.15.4
   flutter_html: ^3.0.0
+  google_fonts: ^6.1.0
 
 
 dev_dependencies:

@@ -28,7 +28,7 @@ class TrainToSearchController extends GetxController {
 
   Future<void> fetchStations() async {
     final dio = Dio();
-    final url = 'https://tripadmin.seemytrip.com/api/trains/getStation';
+    final url = 'http://192.168.1.114:3002/api/trains/getStation';
 
     try {
       final response = await dio.get(url);

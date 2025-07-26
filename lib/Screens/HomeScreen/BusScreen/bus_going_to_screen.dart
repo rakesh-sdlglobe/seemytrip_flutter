@@ -18,9 +18,42 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize with all cities
-    filteredCities.value = List.from(controller.cityList);
+    // Initialize with all cities if already loaded
+    if (controller.cityList.isNotEmpty) {
+      filteredCities.value = List.from(controller.cityList);
+    } else {
+      // If cities are not loaded yet, fetch them
+      _loadCities();
+    }
     searchController.addListener(_filterCities);
+  }
+
+  Future<void> _loadCities() async {
+    try {
+      // Access the values from Rx variables
+      final tokenId = controller.tokenId.value;
+      final endUserIp = controller.endUserIp.value;
+
+      if (tokenId.isNotEmpty && endUserIp.isNotEmpty) {
+        await controller.fetchCities(tokenId, endUserIp);
+        // Update the filtered list after cities are loaded
+        if (mounted) {
+          filteredCities.value = List.from(controller.cityList);
+        }
+      } else {
+        throw Exception('Invalid session. Please try again.');
+      }
+    } catch (e) {
+      if (mounted) {
+        Get.snackbar(
+          'Error',
+          e.toString().replaceAll('Exception: ', ''),
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+      }
+    }
   }
 
   @override
@@ -62,6 +95,7 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
         backgroundColor: redCA0,
         elevation: 0,
         centerTitle: true,
+        foregroundColor: white,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(16),
@@ -135,13 +169,76 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
           // Cities List
           Expanded(
             child: Obx(() {
+              // Show loading indicator when cities are being loaded
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(redCA0),
+                          strokeWidth: 3,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading cities...',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Show error state if loading failed
+              if (controller.cityList.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline_rounded,
+                        size: 64,
+                        color: Colors.red[300],
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Failed to load cities',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: _loadCities,
+                        icon: const Icon(Icons.refresh_rounded, size: 20),
+                        label: const Text('Retry'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: redCA0,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              // Show empty state when no cities match search
               if (filteredCities.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.location_city_rounded,
+                        Icons.search_off_rounded,
                         size: 64,
                         color: Colors.grey[300],
                       ),
@@ -150,7 +247,7 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                         'No cities found',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.grey[500],
+                          color: Colors.grey[600],
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -215,6 +312,8 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black87,
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const Spacer(),
                             Icon(

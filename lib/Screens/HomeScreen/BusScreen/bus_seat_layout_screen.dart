@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 // Make sure this path is correct for your project structure
 import '../../../Controller/bus_controller.dart';
+import 'boarding_point_screen.dart';
 
 // --- THEME & STYLES ---
 class AppColors {
@@ -27,10 +28,14 @@ class AppColors {
 }
 
 class AppStyles {
-  static const TextStyle heading1 = TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: AppColors.textDark);
-  static const TextStyle heading2 = TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.textDark);
-  static const TextStyle body = TextStyle(fontSize: 14, color: AppColors.textLight);
-  static const TextStyle bodyBold = TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textDark);
+  static const TextStyle heading1 = TextStyle(
+      fontWeight: FontWeight.bold, fontSize: 20, color: AppColors.textDark);
+  static const TextStyle heading2 = TextStyle(
+      fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.textDark);
+  static const TextStyle body =
+      TextStyle(fontSize: 14, color: AppColors.textLight);
+  static const TextStyle bodyBold = TextStyle(
+      fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textDark);
 }
 
 // --- DATA MODELS (Updated) ---
@@ -93,7 +98,8 @@ class BusSeatLayoutScreen extends StatefulWidget {
   State<BusSeatLayoutScreen> createState() => _BusSeatLayoutScreenState();
 }
 
-class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTickerProviderStateMixin {
+class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
+    with SingleTickerProviderStateMixin {
   List<List<Seat>> _lowerDeckLayout = [];
   List<List<Seat>> _upperDeckLayout = [];
   final List<Seat> _selectedSeats = [];
@@ -121,7 +127,8 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
   Future<void> _loadSeatData() async {
     await Future.delayed(const Duration(milliseconds: 800));
     try {
-      final seatLayout = await _busController.getBusSeatLayout(widget.args.traceId, widget.args.resultIndex);
+      final seatLayout = await _busController.getBusSeatLayout(
+          widget.args.traceId, widget.args.resultIndex);
       _processSeatLayout(seatLayout);
     } catch (e) {
       debugPrint('Error loading seat layout: $e');
@@ -134,13 +141,28 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
   }
 
   void _loadSeatDataFromJson() {
-    const jsonData = '''{"SeatLayouts":{"LowerDeck":[[{"SeatName":"L1","SeatStatus":true,"IsLadiesSeat":false,"Price":{"PublishedPrice":1262},"IsUpper":false},null,{"SeatName":"L2","SeatStatus":true,"Price":{"PublishedPrice":1011},"IsUpper":false},{"SeatName":"L3","SeatStatus":false,"IsMalesSeat":true,"Price":{"PublishedPrice":687},"IsUpper":false}],[null,null,{"SeatName":"L4","SeatStatus":true,"Price":{"PublishedPrice":588},"IsUpper":false},{"SeatName":"L5","SeatStatus":true,"Price":{"PublishedPrice":642},"IsUpper":false}],[{"SeatName":"L6","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":1677},"IsUpper":false},null,{"SeatName":"L7","SeatStatus":true,"Price":{"PublishedPrice":573},"IsUpper":false},{"SeatName":"L8","SeatStatus":true,"Price":{"PublishedPrice":692},"IsUpper":false}]],"UpperDeck":[[{"SeatName":"U1","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},null,{"SeatName":"U2","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":700},"IsUpper":true},{"SeatName":"U3","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":700},"IsUpper":true}],[{"SeatName":"U4","SeatStatus":true,"Price":{"PublishedPrice":1493},"IsUpper":true},null,{"SeatName":"U5","SeatStatus":true,"Price":{"PublishedPrice":1169},"IsUpper":true},null],[{"SeatName":"U6","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},null,{"SeatName":"U7","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},{"SeatName":"U8","SeatStatus":false,"Price":{"PublishedPrice":700},"IsUpper":true}]]}}''';
+    const jsonData =
+        '''{"SeatLayouts":{"LowerDeck":[[{"SeatName":"L1","SeatStatus":true,"IsLadiesSeat":false,"Price":{"PublishedPrice":1262},"IsUpper":false},null,{"SeatName":"L2","SeatStatus":true,"Price":{"PublishedPrice":1011},"IsUpper":false},{"SeatName":"L3","SeatStatus":false,"IsMalesSeat":true,"Price":{"PublishedPrice":687},"IsUpper":false}],[null,null,{"SeatName":"L4","SeatStatus":true,"Price":{"PublishedPrice":588},"IsUpper":false},{"SeatName":"L5","SeatStatus":true,"Price":{"PublishedPrice":642},"IsUpper":false}],[{"SeatName":"L6","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":1677},"IsUpper":false},null,{"SeatName":"L7","SeatStatus":true,"Price":{"PublishedPrice":573},"IsUpper":false},{"SeatName":"L8","SeatStatus":true,"Price":{"PublishedPrice":692},"IsUpper":false}]],"UpperDeck":[[{"SeatName":"U1","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},null,{"SeatName":"U2","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":700},"IsUpper":true},{"SeatName":"U3","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":700},"IsUpper":true}],[{"SeatName":"U4","SeatStatus":true,"Price":{"PublishedPrice":1493},"IsUpper":true},null,{"SeatName":"U5","SeatStatus":true,"Price":{"PublishedPrice":1169},"IsUpper":true},null],[{"SeatName":"U6","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},null,{"SeatName":"U7","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},{"SeatName":"U8","SeatStatus":false,"Price":{"PublishedPrice":700},"IsUpper":true}]]}}''';
     final parsedJson = jsonDecode(jsonData);
     final layouts = parsedJson['SeatLayouts'];
-    Seat emptySeat(bool isUpper) => Seat(seatName:'EMPTY', isAvailable:false, isLadiesSeat:false, isSleeper:false, price:0, isUpperDeck:isUpper);
+    Seat emptySeat(bool isUpper) => Seat(
+        seatName: 'EMPTY',
+        isAvailable: false,
+        isLadiesSeat: false,
+        isSleeper: false,
+        price: 0,
+        isUpperDeck: isUpper);
     setState(() {
-      _lowerDeckLayout = (layouts['LowerDeck'] as List).map<List<Seat>>((r) => (r as List).map<Seat>((s) => s == null ? emptySeat(false) : Seat.fromJson(s)).toList()).toList();
-      _upperDeckLayout = (layouts['UpperDeck'] as List).map<List<Seat>>((r) => (r as List).map<Seat>((s) => s == null ? emptySeat(true) : Seat.fromJson(s)).toList()).toList();
+      _lowerDeckLayout = (layouts['LowerDeck'] as List)
+          .map<List<Seat>>((r) => (r as List)
+              .map<Seat>((s) => s == null ? emptySeat(false) : Seat.fromJson(s))
+              .toList())
+          .toList();
+      _upperDeckLayout = (layouts['UpperDeck'] as List)
+          .map<List<Seat>>((r) => (r as List)
+              .map<Seat>((s) => s == null ? emptySeat(true) : Seat.fromJson(s))
+              .toList())
+          .toList();
       _isLoading = false;
     });
   }
@@ -155,7 +177,8 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
         _selectedSeats.add(seat);
         _totalPrice += seat.price;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('You can select a maximum of 6 seats.')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('You can select a maximum of 6 seats.')));
       }
 
       if (_selectedSeats.isEmpty) {
@@ -173,12 +196,16 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
         backgroundColor: AppColors.card,
         elevation: 1,
         shadowColor: AppColors.primary.withOpacity(0.1),
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: AppColors.primary), onPressed: () => Get.back()),
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+            onPressed: () => Get.back()),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${widget.args.fromLocation} → ${widget.args.toLocation}', style: AppStyles.heading2),
-            Text(DateFormat('E, d MMM yyyy').format(widget.args.travelDate), style: AppStyles.body.copyWith(fontSize: 12)),
+            Text('${widget.args.fromLocation} → ${widget.args.toLocation}',
+                style: AppStyles.heading2),
+            Text(DateFormat('E, d MMM yyyy').format(widget.args.travelDate),
+                style: AppStyles.body.copyWith(fontSize: 12)),
           ],
         ),
       ),
@@ -191,10 +218,15 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 500),
                   child: _isLoading
-                      ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                              color: AppColors.primary))
                       : TabBarView(
                           controller: _tabController,
-                          children: [_buildDeckWidget(_lowerDeckLayout), _buildDeckWidget(_upperDeckLayout)],
+                          children: [
+                            _buildDeckWidget(_lowerDeckLayout),
+                            _buildDeckWidget(_upperDeckLayout)
+                          ],
                         ),
                 ),
               ),
@@ -211,7 +243,8 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       decoration: BoxDecoration(
         color: AppColors.card,
-        border: Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
+        border:
+            Border(bottom: BorderSide(color: Colors.grey.shade200, width: 1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,14 +269,16 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
 
   Widget _buildDeckWidget(List<List<Seat>> layout) {
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(16, 24, 16, 150 + MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.fromLTRB(
+          16, 24, 16, 150 + MediaQuery.of(context).padding.bottom),
       child: Stack(
         children: [
           // The bus outline and the seats within it
           CustomPaint(
             painter: BusOutlinePainter(),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -262,8 +297,8 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
             top: 8,
             right: 12,
             child: Icon(
-              Icons.drive_eta_rounded,
-              color: AppColors.textLight.withOpacity(0.5),
+              Icons.directions_bus,
+              color: AppColors.textLight.withValues(alpha: 0.5),
               size: 32,
             ),
           ),
@@ -276,7 +311,9 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(layout.length, (rowIndex) {
-        final seat = (columnIndex < layout[rowIndex].length) ? layout[rowIndex][columnIndex] : null;
+        final seat = (columnIndex < layout[rowIndex].length)
+            ? layout[rowIndex][columnIndex]
+            : null;
         if (seat == null || seat.seatName == 'EMPTY') {
           return const SizedBox(width: 52, height: 68); // Placeholder
         }
@@ -299,7 +336,12 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         decoration: BoxDecoration(
           color: AppColors.card,
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0,-5))],
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, -5))
+          ],
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -314,14 +356,21 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                         Text('₹${_totalPrice.toStringAsFixed(0)}', style: AppStyles.heading1.copyWith(color: AppColors.accent)),
-                         Text('${_selectedSeats.length} Seat${_selectedSeats.length > 1 ? 's' : ''} Selected', style: AppStyles.body),
+                        Text('₹${_totalPrice.toStringAsFixed(0)}',
+                            style: AppStyles.heading1
+                                .copyWith(color: AppColors.accent)),
+                        Text(
+                            '${_selectedSeats.length} Seat${_selectedSeats.length > 1 ? 's' : ''} Selected',
+                            style: AppStyles.body),
                       ],
                     ),
                   ),
                   TextButton.icon(
-                    onPressed: () => setState(() => _isSummaryExpanded = !_isSummaryExpanded),
-                    icon: Icon(_isSummaryExpanded ? Icons.expand_more : Icons.expand_less),
+                    onPressed: () => setState(
+                        () => _isSummaryExpanded = !_isSummaryExpanded),
+                    icon: Icon(_isSummaryExpanded
+                        ? Icons.expand_more
+                        : Icons.expand_less),
                     label: const Text("Details"),
                   ),
                 ],
@@ -332,7 +381,9 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
               curve: Curves.easeInOut,
               child: Container(
                 constraints: const BoxConstraints(maxHeight: 150),
-                child: _isSummaryExpanded ? _buildSelectedSeatsList() : const SizedBox(width: double.infinity),
+                child: _isSummaryExpanded
+                    ? _buildSelectedSeatsList()
+                    : const SizedBox(width: double.infinity),
               ),
             ),
             Padding(
@@ -342,10 +393,33 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
                   backgroundColor: AppColors.accent,
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   textStyle: AppStyles.bodyBold,
                 ),
-                onPressed: () { /* TODO: Navigation logic */ },
+                onPressed: () {
+                  debugPrint(
+                      'Navigating to BoardingPointScreen with traceId: ${widget.args.traceId}');
+                  debugPrint(
+                      'Selected seats: ${_selectedSeats.map((s) => s.seatName).toList()}');
+
+                  // Navigate to boarding point selection screen
+                  Get.to(
+                    () => BoardingPointScreen(
+                      traceId: widget.args.traceId,
+                      resultIndex: widget.args.resultIndex,
+                      busName: widget.args.busName,
+                      fromCity: widget.args.fromLocation,
+                      toCity: widget.args.toLocation,
+                      journeyDate: DateFormat('d MMM yyyy')
+                          .format(widget.args.travelDate),
+                      fare: _totalPrice.toStringAsFixed(0),
+                      selectedSeats: _selectedSeats,
+                    ),
+                  );
+                  print(
+                      'Navigating to BoardingPointScreen with traceId: ${widget.args.traceId}, resultIndex: ${widget.args.resultIndex}, busName: ${widget.args.busName}, fromCity: ${widget.args.fromLocation}, toCity: ${widget.args.toLocation}, journeyDate: ${DateFormat('d MMM yyyy').format(widget.args.travelDate)}, fare: ${_totalPrice.toStringAsFixed(0)}, selectedSeats: ${_selectedSeats.map((s) => s.seatName).toList()}');
+                },
                 child: const Text('Continue'),
               ),
             ),
@@ -366,12 +440,16 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen> with SingleTi
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
             children: [
-              Icon(seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined, color: AppColors.primary, size: 20),
+              Icon(seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined,
+                  color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
-              Expanded(child: Text('Seat ${seat.seatName}', style: AppStyles.bodyBold)),
+              Expanded(
+                  child:
+                      Text('Seat ${seat.seatName}', style: AppStyles.bodyBold)),
               Text('₹${seat.price.toStringAsFixed(0)}', style: AppStyles.body),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: AppColors.textLight, size: 20),
+                icon: const Icon(Icons.close_rounded,
+                    color: AppColors.textLight, size: 20),
                 onPressed: () => _onSeatTap(seat),
               ),
             ],
@@ -388,7 +466,11 @@ class SeatWidget extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const SeatWidget({super.key, required this.seat, required this.isSelected, required this.onTap});
+  const SeatWidget(
+      {super.key,
+      required this.seat,
+      required this.isSelected,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -415,7 +497,8 @@ class SeatWidget extends StatelessWidget {
     }
 
     return Tooltip(
-      message: seat.isAvailable ? '₹${seat.price.toStringAsFixed(0)}' : 'Booked',
+      message:
+          seat.isAvailable ? '₹${seat.price.toStringAsFixed(0)}' : 'Booked',
       child: GestureDetector(
         onTap: seat.isAvailable ? onTap : null,
         child: AnimatedScale(
@@ -440,7 +523,9 @@ class SeatWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  seat.isAvailable ? '₹${seat.price.toStringAsFixed(0)}' : seat.seatName,
+                  seat.isAvailable
+                      ? '₹${seat.price.toStringAsFixed(0)}'
+                      : seat.seatName,
                   style: TextStyle(
                     color: contentColor,
                     fontSize: 10,
@@ -462,9 +547,11 @@ class SeatInfoLegend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 16.0, runSpacing: 8.0,
+      spacing: 16.0,
+      runSpacing: 8.0,
       children: [
-        const LegendItem(color: AppColors.seatAvailableBorder, text: 'Available'),
+        const LegendItem(
+            color: AppColors.seatAvailableBorder, text: 'Available'),
         LegendItem(color: AppColors.seatBooked, text: 'Booked'),
         const LegendItem(color: AppColors.seatLadies, text: 'Ladies'),
         const LegendItem(color: AppColors.seatSelected, text: 'Selected'),
@@ -476,14 +563,20 @@ class SeatInfoLegend extends StatelessWidget {
 class LegendItem extends StatelessWidget {
   final Color color;
   final String text;
-  const LegendItem({super.key,required this.color,required this.text});
+  const LegendItem({super.key, required this.color, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 12, height: 12, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2), border: Border.all(color: Colors.grey.shade300, width: 0.5))),
+        Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(2),
+                border: Border.all(color: Colors.grey.shade300, width: 0.5))),
         const SizedBox(width: 6),
         Text(text, style: AppStyles.body.copyWith(fontSize: 12)),
       ],
@@ -497,7 +590,9 @@ class BusOutlinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var paint = Paint()..color = AppColors.card..style = PaintingStyle.fill;
+    var paint = Paint()
+      ..color = AppColors.card
+      ..style = PaintingStyle.fill;
     var shadowPaint = Paint()
       ..color = Colors.black.withOpacity(0.08)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
@@ -505,8 +600,8 @@ class BusOutlinePainter extends CustomPainter {
     double cornerRadius = 24.0;
 
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            Rect.fromLTWH(0, 0, size.width, size.height), Radius.circular(cornerRadius)),
+        RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height),
+            Radius.circular(cornerRadius)),
         shadowPaint);
 
     path.moveTo(cornerRadius, 0);

@@ -295,7 +295,8 @@ class UpTo5RoomsScreen extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             backgroundColor: redCA0,
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 104),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 70),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

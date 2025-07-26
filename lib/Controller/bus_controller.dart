@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 
 import 'package:seemytrip/Models/bus_models.dart';
@@ -12,6 +13,7 @@ class BusController extends GetxController {
   var busCities = <BusCity>[].obs;
   var cityList = [].obs;
   var isLoading = false.obs;
+  var boardingPointsResponse = Rxn<BoardingPointResponse>();
 
   @override
   void onInit() {
@@ -23,7 +25,7 @@ class BusController extends GetxController {
     isLoading(true);
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.137.150:3002/api/bus/authenticateBusAPI"),
+        Uri.parse("http://192.168.1.114:3002/api/bus/authenticateBusAPI"),
         headers: {"Content-Type": "application/json"},
       );
 
@@ -48,7 +50,7 @@ class BusController extends GetxController {
   Future<void> fetchCities(String tokenId, String endUserIp) async {
     isLoading.value = true;
 
-    final url = Uri.parse('http://192.168.137.150:3002/api/bus/getBusCityList');
+    final url = Uri.parse('http://192.168.1.114:3002/api/bus/getBusCityList');
 
     final headers = {
       'Content-Type': 'application/json',
@@ -112,7 +114,7 @@ class BusController extends GetxController {
     required String tokenId,
     required String preferredCurrency,
   }) async {
-    final url = Uri.parse("http://192.168.137.150:3002/api/bus/busSearch");
+    final url = Uri.parse("http://192.168.1.114:3002/api/bus/busSearch");
 
     final headers = {
       "Content-Type": "application/json",
@@ -288,7 +290,7 @@ class BusController extends GetxController {
 
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.137.150:3002/api/bus/getBusSeatLayOut"),
+        Uri.parse("http://192.168.1.114:3002/api/bus/getBusSeatLayOut"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -324,6 +326,112 @@ class BusController extends GetxController {
         duration: const Duration(seconds: 4),
       );
       return null;
+    }
+  }
+
+  // Fetch boarding point details for a specific bus
+  Future<BoardingPointResponse?> getBoardingPoints({
+    required String traceId,
+    required int resultIndex,
+  }) async {
+    try {
+      isLoading(true);
+      print("getBoardingPoints called with: ");
+      print("traceId: $traceId");
+      print("resultIndex: $resultIndex");
+      print("tokenId: ${tokenId.value}");
+      print("endUserIp: ${endUserIp.value}");
+
+      final response = await http.post(
+        Uri.parse(
+            "http://192.168.1.114:3002/api/bus/getBoardingPointDetails"),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'EndUserIp': endUserIp.value,
+          'ResultIndex': resultIndex,
+          'TraceId': traceId,
+          'TokenId': tokenId.value,
+        }),
+      );
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final result = responseData['GetBusRouteDetailResult'];
+
+        if (result != null && result['ResponseStatus'] == 1) {
+          // Parse boarding points
+          final boardingPoints = (result['BoardingPointsDetails'] as List? ?? []).map((bp) {
+            return BoardingPoint(
+              id: bp['CityPointIndex']?.toString() ?? '',
+              location: bp['CityPointLocation'] ?? '',
+              address: bp['CityPointAddress'] ?? '',
+              contactNumber: bp['CityPointContactNumber'] ?? '',
+              time: bp['CityPointTime'] ?? '--:--',
+              landmark: bp['CityPointLandmark'] ?? '',
+              name: bp['CityPointName'] ?? 'Unknown',
+              latitude: 0.0,
+              longitude: 0.0,
+              isDefault: bp['IsDefault'] ?? false,
+            );
+          }).toList();
+
+          // Parse dropping points
+          final droppingPoints = (result['DroppingPointsDetails'] as List? ?? []).map((dp) {
+            return BoardingPoint(
+              id: dp['CityPointIndex']?.toString() ?? '',
+              location: dp['CityPointLocation'] ?? '',
+              address: dp['CityPointAddress'] ?? '',
+              contactNumber: dp['CityPointContactNumber'] ?? '',
+              time: dp['CityPointTime'] ?? '--:--',
+              landmark: dp['CityPointLandmark'] ?? '',
+              name: dp['CityPointName'] ?? 'Unknown',
+              latitude: 0.0,
+              longitude: 0.0,
+              isDefault: dp['IsDefault'] ?? false,
+            );
+          }).toList();
+
+          // Create a response object with both boarding and dropping points
+          final boardingResponse = BoardingPointResponse(
+            status: true,
+            boardingPoints: boardingPoints,
+            droppingPoints: droppingPoints,
+            message: 'Successfully loaded boarding and dropping points',
+          );
+
+          boardingPointsResponse.value = boardingResponse;
+          print("Successfully parsed ${boardingPoints.length} boarding points and ${droppingPoints.length} dropping points");
+          return boardingResponse;
+        } else {
+          final errorMsg = result?['Error']?['ErrorMessage'] ??
+              'Failed to load boarding points';
+          print("Failed to load boarding points: $errorMsg");
+          Get.snackbar(
+            'Error',
+            errorMsg,
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return null;
+        }
+      } else {
+        throw Exception(
+            'Failed to load boarding points: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Error fetching boarding points: $e");
+      Get.snackbar(
+        'Error',
+        'An error occurred while fetching boarding points: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return null;
+    } finally {
+      isLoading(false);
     }
   }
 }

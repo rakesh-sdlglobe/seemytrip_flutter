@@ -100,7 +100,8 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
       print('Preferred Currency: INR');
       print('===========================');
 
-      _busController.searchBuses(
+      // --- FIX: Await the searchBuses call to wait for completion ---
+      await _busController.searchBuses(
         dateOfJourney: dateStr,
         originId: departureCityId.value,
         destinationId: destinationCityId.value,
@@ -117,6 +118,7 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
+      // This will now only run after the await is finished
       _isLoading.value = false;
     }
   }
@@ -125,45 +127,64 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
+      // --- FIX: Wrap the body in Obx and Stack to show a loading overlay ---
+      body: Obx(
+        () => Stack(
           children: [
-            // Top banner with back button
-            TopBanner(onBackPressed: () => Get.back()),
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Top banner with back button
+                  TopBanner(onBackPressed: () => Get.back()),
 
-            const TrustIndicator(),
-            const DiscountBanner(),
+                  const TrustIndicator(),
+                  const DiscountBanner(),
 
-            // Search form
-            SearchForm(
-              selectedDate: _selectedDate,
-              onDateSelected: _onDateSelected,
-              onSearchPressed: _onSearchPressed,
-              departureCity: selectedDepartureCity,
-              destinationCity: selectedDestinationCity,
-              onDepartureTap: _selectDepartureCity,
-              onDestinationTap: _selectDestinationCity,
-              onSwapPressed: _swapCities,
-              isLoading: _isLoading.value,
+                  // Search form
+                  SearchForm(
+                    selectedDate: _selectedDate,
+                    onDateSelected: _onDateSelected,
+                    onSearchPressed: _onSearchPressed,
+                    departureCity: selectedDepartureCity,
+                    destinationCity: selectedDestinationCity,
+                    onDepartureTap: _selectDepartureCity,
+                    onDestinationTap: _selectDestinationCity,
+                    onSwapPressed: _swapCities,
+                    isLoading: _isLoading.value,
+                  ),
+
+                  const PromoSection(),
+
+                  SpecialOffersHeader(
+                    onViewAll: () {
+                      // TODO: Implement offer viewing
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
 
-            const PromoSection(),
-
-            SpecialOffersHeader(
-              onViewAll: () {
-                // TODO: Implement offer viewing
-              },
-            ),
-            const SizedBox(height: 20),
+            // --- FIX: Add a conditional loading overlay ---
+            if (_isLoading.value)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
-      // bottomNavigationBar: BusBottomNavBar(
+    );
+  }
+}
+
+// bottomNavigationBar: BusBottomNavBar(
       //   selectedIndex: selectedBottomNavIndex,
       //   onItemTapped: (index) {
       //     setState(() => selectedBottomNavIndex = index);
       //   },
       // ),
-    );
-  }
-}

@@ -79,7 +79,7 @@ class TrainAndBusDetailController extends GetxController {
       print("Request body: $requestBody");
 
       final response = await http.post(
-        Uri.parse('https://tripadmin.seemytrip.com/api/trains/getTrains'),
+        Uri.parse('http://192.168.1.114:3002/api/trains/getTrains'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
