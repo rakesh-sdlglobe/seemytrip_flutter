@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/booking_preview_page.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class RoomsPage extends StatelessWidget {
@@ -16,6 +19,82 @@ class RoomsPage extends StatelessWidget {
     required this.hotelId,
     required this.searchParams,
   }) : super(key: key);
+
+  // Load image from cache or network
+  Widget _buildCachedImage(String imageUrl, {double height = 150}) {
+    return FutureBuilder<SharedPreferences>(
+      future: SharedPreferences.getInstance(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _buildShimmerEffect(height: height);
+        }
+
+        final prefs = snapshot.data!;
+        final cachedImage =
+            prefs.getString('cached_image_${Uri.encodeComponent(imageUrl)}');
+
+        if (cachedImage != null) {
+          return Image.network(
+            cachedImage,
+            width: double.infinity,
+            height: height,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) =>
+                _buildErrorWidget(height: height),
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return _buildShimmerEffect(height: height);
+            },
+          );
+        }
+
+        // Cache the image URL for future use
+        prefs.setString(
+            'cached_image_${Uri.encodeComponent(imageUrl)}', imageUrl);
+
+        return CachedNetworkImage(
+          imageUrl: imageUrl,
+          width: double.infinity,
+          height: height,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => _buildShimmerEffect(height: height),
+          errorWidget: (context, url, error) =>
+              _buildErrorWidget(height: height),
+        );
+      },
+    );
+  }
+
+  Widget _buildShimmerEffect({required double height}) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: double.infinity,
+        height: height,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildErrorWidget({required double height}) {
+    return Container(
+      width: double.infinity,
+      height: height,
+      color: Colors.grey[200],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.broken_image, size: 40, color: Colors.grey[400]),
+          SizedBox(height: 8),
+          Text(
+            'Failed to load image',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,61 +156,71 @@ class RoomsPage extends StatelessWidget {
                     .toList();
 
                 return Container(
-                  margin: EdgeInsets.only(bottom: 18),
+                  margin: EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey[200]!, width: 1),
+                    borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
-                        blurRadius: 12,
-                        offset: Offset(0, 4),
+                        color: Colors.black.withOpacity(0.03),
+                        blurRadius: 15,
+                        offset: Offset(0, 6),
                       ),
                     ],
+                    border: Border.all(color: Colors.grey[100]!),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (imageUrl.isNotEmpty)
                         ClipRRect(
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(16),
                             topRight: Radius.circular(16),
                           ),
-                          child: Image.network(
-                            imageUrl,
-                            width: double.infinity,
-                            height: 150,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              width: double.infinity,
-                              height: 150,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.broken_image, color: Colors.grey),
-                            ),
-                          ),
+                          child: _buildCachedImage(imageUrl),
                         ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(16, 14, 16, 0),
+                        padding: EdgeInsets.all(18),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.king_bed_rounded, color: redCA0, size: 20),
-                                SizedBox(width: 8),
+                                Container(
+                                  padding: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: redCA0.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(Icons.king_bed_rounded,
+                                      color: redCA0, size: 20),
+                                ),
+                                SizedBox(width: 12),
                                 Expanded(
-                                  child: Text(
-                                    roomName,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: black2E2,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        roomName,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 17,
+                                          color: Colors.black87,
+                                          letterSpacing: -0.2,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        '${searchParams['adults'] ?? 2} Adults • ${searchParams['rooms'] ?? 1} Room',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -163,26 +252,40 @@ class RoomsPage extends StatelessWidget {
                                 ),
                               ),
                             SizedBox(height: 8),
-                            if (amenities.isNotEmpty)
+                            if (amenities.isNotEmpty) ...[
+                              SizedBox(height: 16),
+                              Text(
+                                'Room Amenities',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 8),
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: amenities.take(4).map((a) => Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[200],
+                                            color: Colors.grey[50],
                                     borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(
+                                                color: Colors.grey[200]!),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.check_circle, size: 13, color: redCA0),
-                                      SizedBox(width: 4),
+                                              Icon(Icons.check_circle,
+                                                  size: 14, color: redCA0),
+                                              SizedBox(width: 6),
                                       Text(
                                         a.toString(),
                                         style: TextStyle(
-                                          color: black2E2,
-                                          fontSize: 11,
+                                                  color: Colors.grey[800],
+                                                  fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -190,49 +293,84 @@ class RoomsPage extends StatelessWidget {
                                   ),
                                 )).toList(),
                               ),
-                            SizedBox(height: 14),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "₹ $price",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 19,
-                                        color: redCA0,
-                                        fontFamily: 'Poppins',
+                            ],
+                            SizedBox(height: 16),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[50],
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: Colors.grey[100]!),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Starting from',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      "+ ₹$taxes taxes & fees",
-                                      style: TextStyle(
-                                        color: Colors.grey[700],
-                                        fontSize: 11,
-                                        fontFamily: 'Poppins',
+                                      SizedBox(height: 4),
+                                      RichText(
+                                        text: TextSpan(
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            color: redCA0,
+                                          ),
+                                          children: [
+                                            TextSpan(text: '₹$price '),
+                                            TextSpan(
+                                              text: 'per night',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                if (room['Offer'] != null)
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green[100],
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      room['Offer'],
-                                      style: TextStyle(
-                                        color: Colors.green[800],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                      SizedBox(height: 4),
+                                      Text(
+                                        '+ ₹$taxes taxes & fees',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 11,
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                              ],
+                                  if (room['Offer'] != null)
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green[50],
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            color: Colors.green[100]!),
+                                      ),
+                                      child: Text(
+                                        room['Offer'],
+                                        style: TextStyle(
+                                          color: Colors.green[800],
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -240,38 +378,67 @@ class RoomsPage extends StatelessWidget {
                       SizedBox(height: 10),
                       Divider(color: Colors.grey[200], height: 1, thickness: 1),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Get.to(() => BookingPreviewPage(
-                                hotelDetails: hotelDetails,
-                                hotelId: hotelId,
-                                searchParams: searchParams,
-                                selectedRoom: room,
-                                price: price,
-                                taxes: taxes,
-                              ));
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: redCA0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              "Reserve 1 Room",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                                fontFamily: 'Poppins',
+                        padding: const EdgeInsets.all(16)
+                            .copyWith(top: 12, bottom: 12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Total for your stay',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    '₹${(double.tryParse(price) ?? 0) + (double.tryParse(taxes) ?? 0)}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
+                            Expanded(
+                              flex: 2,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.to(() => BookingPreviewPage(
+                                        hotelDetails: hotelDetails,
+                                        hotelId: hotelId,
+                                        searchParams: searchParams,
+                                        selectedRoom: room,
+                                        price: price,
+                                        taxes: taxes,
+                                      ));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: redCA0,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  'Book Now',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

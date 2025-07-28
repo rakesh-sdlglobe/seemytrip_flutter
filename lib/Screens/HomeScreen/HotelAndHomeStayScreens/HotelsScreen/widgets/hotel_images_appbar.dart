@@ -10,12 +10,18 @@ import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 class HotelImagesAppBar extends StatefulWidget {
   final List<dynamic>? images;
   final String hotelId;
+  final bool isFavorite;
+  final VoidCallback onFavoritePressed;
 
   const HotelImagesAppBar({
     Key? key,
     required this.images,
     required this.hotelId,
+    required this.isFavorite,
+    required this.onFavoritePressed,
   }) : super(key: key);
+  
+  
 
   @override
   State<HotelImagesAppBar> createState() => _HotelImagesAppBarState();
@@ -23,6 +29,7 @@ class HotelImagesAppBar extends StatefulWidget {
 
 class _HotelImagesAppBarState extends State<HotelImagesAppBar> {
   int _currentPage = 0;
+  bool _isFavorite = false;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +112,22 @@ class _HotelImagesAppBarState extends State<HotelImagesAppBar> {
                             child: SvgPicture.asset(internationalDetailSearchImage),
                           ),
                           SizedBox(width: 20),
-                          SvgPicture.asset(hotelDetailHeartIcon),
+                          InkWell(
+                            onTap: widget.onFavoritePressed,
+                            child: Container(
+                              padding: EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.3),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Icon(
+                                widget.isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                           SizedBox(width: 20),
                           MaterialButton(
                             onPressed: () {
@@ -150,7 +172,22 @@ class _HotelImagesAppBarState extends State<HotelImagesAppBar> {
                         child: SvgPicture.asset(internationalDetailSearchImage),
                       ),
                       SizedBox(width: 20),
-                      SvgPicture.asset(hotelDetailHeartIcon),
+                      Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Icon(
+                          widget.isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: redCA0,
+                        ),
+                      ),
                       SizedBox(width: 20),
                       MaterialButton(
                         onPressed: () {

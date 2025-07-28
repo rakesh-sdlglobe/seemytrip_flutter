@@ -1,322 +1,404 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import 'package:seemytrip/Constants/colors.dart';
-import 'package:seemytrip/Constants/images.dart';
 import 'package:seemytrip/Controller/search_city_controller.dart';
 import 'package:seemytrip/Controller/roomsGuest_controller.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/rooms_and_guest_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/search_city_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart';
-import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
-import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
-import 'package:seemytrip/Screens/Utills/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+// Design Constants
+const Color _primaryColor = Color(0xFFCA0B0B);
+const Color _cardColor = Colors.white;
+const Color _textPrimary = Color(0xFF2D2D2D);
+const Color _textSecondary = Color(0xFF666666);
+const Color _borderColor = Color(0xFFE0E0E0);
+const double _cardElevation = 2.0;
+const double _borderRadius = 12.0;
 
 class UpTo5RoomsScreen extends StatelessWidget {
   UpTo5RoomsScreen({Key? key}) : super(key: key);
 
   // find the shared controller
-  final SearchCityController _searchCtrl = Get.find();
-  final RoomsGuestController _rgCtrl = Get.put(RoomsGuestController());
+  final SearchCityController _searchCtrl = Get.put(SearchCityController());
+  final RoomsGuestController _roomsGuestController =
+      Get.put(RoomsGuestController());
+
+  // Build an engaging search card widget with modern UI elements
+  Widget _buildSearchCard({
+    required VoidCallback onTap,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    bool showDivider = false,
+    bool isHalfWidth = false,
+  }) {
+    // Add a subtle animation for the card
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 300),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.95 + (0.05 * value),
+          child: Opacity(
+            opacity: value,
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        width: isHalfWidth ? null : double.infinity,
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.grey.shade50,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: _primaryColor.withOpacity(0.08),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+              spreadRadius: 1,
+            ),
+          ],
+          border: Border.all(
+            color: Colors.grey.shade100,
+            width: 1,
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(16),
+            splashColor: _primaryColor.withValues(alpha: 0.1),
+            highlightColor: _primaryColor.withValues(alpha: 0.05),
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Row(
+                children: [
+                  // Icon with gradient background
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          _primaryColor.withOpacity(0.9),
+                          _primaryColor.withOpacity(0.7),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: _primaryColor.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title with subtle animation
+                        AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 200),
+                          style: TextStyle(
+                            color: _textSecondary.withOpacity(0.8),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
+                          ),
+                          child: Text(
+                            title.toUpperCase(),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        // Subtitle with better typography
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: _textPrimary,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            height: 1.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Right side elements
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (showDivider)
+                        Container(
+                          width: 1,
+                          height: 36,
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.grey.shade300,
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (showDivider)
+                        Obx(() {
+                          final city = _searchCtrl.selectedCity.value;
+                          return Text(
+                            city?.country ?? 'India',
+                            style: TextStyle(
+                              color: _textSecondary.withValues(alpha: 0.8),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          );
+                        }),
+                      const SizedBox(width: 12),
+                      // Animated chevron icon
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        duration: const Duration(milliseconds: 300),
+                        builder: (context, value, child) {
+                          return Transform.rotate(
+                            angle: value * 0.5,
+                            child: child,
+                          );
+                        },
+                        child: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                          color: _primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Post‐frame prints for debug
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   final city = _searchCtrl.selectedCity.value;
-    //   print('>>>> Current selection:');
-    //   print('   City ID: ${city?.id ?? "none"}');
-    //   print('   City Name: ${city?.name ?? "none"}');
-    //   print('   Check-in: ${_searchCtrl.checkInDate.value}');
-    //   print('   Check-out: ${_searchCtrl.checkOutDate.value}');
-    //   // print('   Nights: ${_searchCtrl.numberOfNights.value}');
-    // });
-
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F8F8),
       body: Obx(() {
-        // Wrap entire scroll view so it rebuilds when any Rx changes
+        // ADDED: A reactive flag to determine if the search button should be enabled.
+        final bool isSearchEnabled = _searchCtrl.selectedCity.value != null &&
+            _searchCtrl.checkInDate.value != null &&
+            _searchCtrl.checkOutDate.value != null &&
+            _roomsGuestController.roomGuestData.isNotEmpty;
+
         return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 30),
-
-              // 1) City selector card
-              _buildCard(
+              // Search Card
+              _buildSearchCard(
                 onTap: () => Get.to(() => SearchCityScreen()),
-                icon: mapPin,
-                title: "Add City/Area/Landmark",
-                subtitle: _searchCtrl.selectedCity.value?.name
-                          ?? "Choose your destination",
-                extraText: "India",
+                title: 'Where to?',
+                subtitle: _searchCtrl.selectedCity.value?.name ??
+                    'Select city or hotel',
+                icon: Icons.location_on_outlined,
+                showDivider: true,
               ),
-
-              const SizedBox(height: 16),
-
-              // 2) Check-in card
-              _buildCard(
-                onTap: () async {
-                  final result = await Get.to(() => SelectCheckInDateScreen());
-                  if (result is Map<String, dynamic>) {
-                    _searchCtrl.checkInDate.value = result['startDate'];
-                    _searchCtrl.checkOutDate.value = result['endDate'];
-                    // _searchCtrl.numberOfNights.value = result['numberOfNights'];
-                  }
-                },
-                icon: calendarPlus,
-                title: "Check-In Date",
-                subtitle: _searchCtrl.checkInDate.value == null
-                    ? "Date & Month"
-                    : DateFormat('dd MMM yyyy')
-                        .format(_searchCtrl.checkInDate.value!),
-              ),
-
-              const SizedBox(height: 16),
-
-              // 3) Check-out card
-              _buildCard(
-                onTap: () async {
-                  final result = await Get.to(() => SelectCheckInDateScreen());
-                  if (result is Map<String, dynamic>) {
-                    _searchCtrl.checkInDate.value = result['startDate'];
-                    _searchCtrl.checkOutDate.value = result['endDate'];
-                    // _searchCtrl.numberOfNights.value = result['numberOfNights'];
-                  }
-                },
-                icon: calendarPlus,
-                title: "Check-Out Date",
-                subtitle: _searchCtrl.checkOutDate.value == null
-                    ? "Date & Month"
-                    : DateFormat('dd MMM yyyy')
-                        .format(_searchCtrl.checkOutDate.value!),
-              ),
-
-              const SizedBox(height: 16),
-
-              // 4) Rooms & Guests card
-              Obx(() => _buildCard(
-                    onTap: () async {
-                      final result = await Get.bottomSheet(
-                        RoomsAndGuestScreen(
-                          roomGuestData: _rgCtrl.roomGuestData,
-                        ),
-                        backgroundColor: Colors.transparent,
-                        isScrollControlled: true,
-                      );
-                      if (result is List<Map<String, dynamic>>) {
-                        _rgCtrl.onDone(result);
-                      }
-                    },
-                    icon: user,
-                    title: "Add Rooms & Guests",
-                    subtitle: _rgCtrl.subtitleSummary,
-                  )),
-
-              const SizedBox(height: 25),
-              CommonTextWidget.PoppinsMedium(
-                text: "Improve Your Search",
-                color: grey888,
-                fontSize: 14,
-              ),
-
               const SizedBox(height: 12),
-              SizedBox(
-                height: 50,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: Lists.improveYorSearchList.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
-                  itemBuilder: (_, i) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: greyE2E),
-                        borderRadius: BorderRadius.circular(5),
-                        color: white,
+
+              // Check-in/Check-out Row
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildSearchCard(
+                      onTap: () async {
+                        final result =
+                            await Get.to(() => SelectCheckInDateScreen());
+                        if (result is Map<String, dynamic>) {
+                          _searchCtrl.checkInDate.value = result['startDate'];
+                          _searchCtrl.checkOutDate.value = result['endDate'];
+                        }
+                      },
+                      title: 'Check-in',
+                      subtitle: _searchCtrl.checkInDate.value == null
+                          ? 'Add date'
+                          : DateFormat('EEE, MMM d')
+                              .format(_searchCtrl.checkInDate.value!),
+                      icon: Icons.calendar_today_outlined,
+                      isHalfWidth: true,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildSearchCard(
+                      onTap: () async {
+                        final result =
+                            await Get.to(() => SelectCheckInDateScreen());
+                        if (result is Map<String, dynamic>) {
+                          _searchCtrl.checkInDate.value = result['startDate'];
+                          _searchCtrl.checkOutDate.value = result['endDate'];
+                        }
+                      },
+                      title: 'Check-out',
+                      subtitle: _searchCtrl.checkOutDate.value == null
+                          ? 'Add date'
+                          : DateFormat('EEE, MMM d')
+                              .format(_searchCtrl.checkOutDate.value!),
+                      icon: Icons.calendar_today_outlined,
+                      isHalfWidth: true,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              const SizedBox(height: 16),
+
+              // Rooms & Guests card
+              _buildSearchCard(
+                onTap: () async {
+                  final result = await Get.bottomSheet(
+                    RoomsAndGuestScreen(
+                      roomGuestData: _roomsGuestController.roomGuestData,
+                    ),
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                  );
+                  if (result is List<Map<String, dynamic>>) {
+                    _roomsGuestController.onDone(result);
+                  }
+                },
+                title: 'Rooms & Guests',
+                subtitle: _roomsGuestController.subtitleSummary,
+                icon: Icons.people_outline,
+              ),
+
+              const SizedBox(height: 24),
+
+              // CHANGED: The entire search button logic is updated.
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: 1.0),
+                duration: const Duration(milliseconds: 400),
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: 0.98 + (0.02 * value),
+                    child: Opacity(opacity: value, child: child),
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        // Dim the shadow if disabled
+                        color: isSearchEnabled
+                            ? _primaryColor.withOpacity(0.2)
+                            : Colors.grey.withOpacity(0.1),
+                        blurRadius: 15,
+                        offset: const Offset(0, 6),
+                        spreadRadius: 0,
                       ),
-                      alignment: Alignment.center,
-                      child: CommonTextWidget.PoppinsMedium(
-                        text: Lists.improveYorSearchList[i],
-                        color: grey5F5,
-                        fontSize: 14,
+                    ],
+                  ),
+                  child: Material(
+                    // Use grey color when disabled
+                    color:
+                        isSearchEnabled ? _primaryColor : Colors.grey.shade400,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      // Disable onTap if not enabled or if loading
+                      onTap: (isSearchEnabled && !_searchCtrl.isLoading.value)
+                          ? () async {
+                              // SIMPLIFIED: Delegate the entire process to the controller.
+                              await _searchCtrl.performSearch(
+                                  _roomsGuestController.roomGuestData);
+                            }
+                          : null,
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        child: Center(
+                          // Show loader or text based on controller's loading state
+                          child: _searchCtrl.isLoading.value
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.search_rounded,
+                                      color: Colors.white,
+                                      size: 22,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'SEARCH HOTELS',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.8,
+                                        shadows: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            offset: const Offset(0, 1),
+                                            blurRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
             ],
           ),
         );
       }),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 40.0),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: _buildSearchButton(),
-        ),
-      ),
     );
-  }
-
-  Widget _buildCard({
-    required VoidCallback onTap,
-    required String icon,
-    required String title,
-    required String subtitle,
-    String? extraText,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        width: Get.width,
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-        decoration: BoxDecoration(
-          color: grey9B9.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(width: 1, color: greyE2E),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start, // <-- add this line
-          children: [
-            SvgPicture.asset(icon),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CommonTextWidget.PoppinsMedium(
-                    text: title,
-                    color: grey888,
-                    fontSize: 14,
-                  ),
-                  const SizedBox(height: 2),
-                  CommonTextWidget.PoppinsSemiBold(
-                    text: subtitle,
-                    color: black2E2,
-                    fontSize: 18,
-                  ),
-                  if (extraText != null) ...[
-                    const SizedBox(height: 2),
-                    CommonTextWidget.PoppinsRegular(
-                      text: extraText,
-                      color: grey888,
-                      fontSize: 12,
-                    ),
-                  ]
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchButton() {
-    return Obx(() => Stack(
-      alignment: Alignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            final city = _searchCtrl.selectedCity.value;
-            final checkIn = _searchCtrl.checkInDate.value;
-            final checkOut = _searchCtrl.checkOutDate.value;
-
-            // Validation checks
-            if (city == null || city.id.isEmpty) {
-              Get.snackbar(
-                'Error',
-                'Please select a city first',
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
-              return;
-            }
-
-            if (checkIn == null || checkOut == null) {
-              Get.snackbar(
-                'Error',
-                'Please select check-in and check-out dates',
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
-              return;
-            }
-
-            if (_rgCtrl.roomGuestData.isEmpty) {
-              Get.snackbar(
-                'Error',
-                'Please select rooms and guests',
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
-              return;
-            }
-
-            // Build dynamic rooms list for API
-            final List<Map<String, dynamic>> roomsList = _rgCtrl.roomGuestData.map((room) {
-              return {
-                "RoomNo": room["RoomNo"],
-                "Adults": room["Adults"],
-                "Children": room["Children"],
-              };
-            }).toList();
-
-            final totalAdults = roomsList.fold<int>(0, (sum, r) => sum + ((r["Adults"] as int? ?? 0)));
-            final totalChildren = roomsList.fold<int>(0, (sum, r) => sum + ((r["Children"] as int? ?? 0)));
-
-            try {
-              _searchCtrl.fetchHotelDetails(
-                cityId: city.id,
-                cityName: city.name,
-                checkIn: checkIn,
-                checkOut: checkOut,
-                rooms: roomsList.length,
-                adults: totalAdults,
-                children: totalChildren,
-                roomsList: roomsList,
-              );
-            } catch (e) {
-              _searchCtrl.isLoading.value = false;
-              print('Error calling fetchHotelDetails: $e');
-              Get.snackbar(
-                'Error',
-                'Something went wrong. Please try again.',
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: redCA0,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 14, horizontal: 70),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: _searchCtrl.isLoading.value
-              ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : const Text(
-                  'SEARCH HOTELS',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-        ),
-        if (_searchCtrl.isLoading.value)
-          Positioned.fill(
-            child: Container(
-              color: Colors.transparent,
-              alignment: Alignment.center,
-            ),
-          ),
-      ],
-    ));
   }
 }
-

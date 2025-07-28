@@ -16,7 +16,7 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
   final HotelAndHomeStayTabController hotelAndHomeStayTabController =
       Get.put(HotelAndHomeStayTabController());
   final SearchCityController searchCityController = Get.put(SearchCityController());
-
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +26,7 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
           Column(
             children: [
               Container(
-                height: 155,
+                height: 255,
                 width: Get.width,
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -55,49 +55,50 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(
-                child: TabBarView(
-                  controller: hotelAndHomeStayTabController.controller,
-                  children: [
-                    UpTo5RoomsScreen(),
-                    FivePlusRoomsScreen(),
-                  ],
-                ),
-              ),
+              Expanded(child: UpTo5RoomsScreen()),
+              // Expanded(
+              //   child: TabBarView(
+              //     controller: hotelAndHomeStayTabController.controller,
+              //     children: [
+              //       UpTo5RoomsScreen(),
+              //       FivePlusRoomsScreen(),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 130, left: 24, right: 24),
-            child: Container(
-              height: 45,
-              width: Get.width,
-              decoration: BoxDecoration(
-                color: white,
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: grey757.withOpacity(0.25),
-                    blurRadius: 6,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: TabBar(
-                indicatorSize: TabBarIndicatorSize.label,
-                padding: EdgeInsets.only(bottom: 7),
-                tabs: hotelAndHomeStayTabController.myTabs,
-                unselectedLabelColor: grey5F5,
-                labelStyle:
-                    TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 14),
-                unselectedLabelStyle:
-                    TextStyle(fontFamily: "PoppinsMedium", fontSize: 14),
-                labelColor: redCA0,
-                controller: hotelAndHomeStayTabController.controller,
-                indicatorColor: redCA0,
-                indicatorWeight: 2.5,
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.only(top: 130, left: 24, right: 24),
+          //   child: Container(
+          //     height: 45,
+          //     width: Get.width,
+          //     decoration: BoxDecoration(
+          //       color: white,
+          //       borderRadius: BorderRadius.circular(5),
+          //       boxShadow: [
+          //         BoxShadow(
+          //           color: grey757.withOpacity(0.25),
+          //           blurRadius: 6,
+          //           offset: Offset(0, 1),
+          //         ),
+          //       ],
+          //     ),
+          //     // child: TabBar(
+          //     //   indicatorSize: TabBarIndicatorSize.label,
+          //     //   padding: EdgeInsets.only(bottom: 7),
+          //     //   tabs: hotelAndHomeStayTabController.myTabs,
+          //     //   unselectedLabelColor: grey5F5,
+          //     //   labelStyle:
+          //     //       TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 14),
+          //     //   unselectedLabelStyle:
+          //     //       TextStyle(fontFamily: "PoppinsMedium", fontSize: 14),
+          //     //   labelColor: redCA0,
+          //     //   controller: hotelAndHomeStayTabController.controller,
+          //     //   indicatorColor: redCA0,
+          //     //   indicatorWeight: 2.5,
+          //     // ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -105,15 +106,15 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
 }
 
 // Create a separate widget for the tab view content
-class TabViewContent extends GetView<SearchCityController> {
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() => TabBarView(
-      controller: Get.find<HotelAndHomeStayTabController>().controller,
-      children: [
-        UpTo5RoomsScreen(),
-        FivePlusRoomsScreen(),
-      ],
-    ));
-  }
-}
+// class TabViewContent extends GetView<SearchCityController> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Obx(() => TabBarView(
+//       controller: Get.find<HotelAndHomeStayTabController>().controller,
+//       children: [
+//         UpTo5RoomsScreen(),
+//         FivePlusRoomsScreen(),
+//       ],
+//     ));
+//   }
+// }

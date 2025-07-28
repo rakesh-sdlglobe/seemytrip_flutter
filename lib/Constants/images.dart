@@ -423,4 +423,5 @@ const String compLogo = "assets/images/comp_logo.png";
 //splash background image
 
 const String splashBackgroundImage = "assets/images/back-img.png";
+const String hotelDetailHeartFillIcon = "assets/images/hotelDetailHeartFillIcon.svg";
 

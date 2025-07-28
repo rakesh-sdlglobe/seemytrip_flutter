@@ -10,9 +10,11 @@ import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 import 'package:seemytrip/Controller/search_city_controller.dart';
 import 'package:seemytrip/Controller/hotel_filter_controller.dart';
 import 'package:seemytrip/Screens/Utills/lists_widget.dart';
+import 'package:shimmer/shimmer.dart';
 import 'widgets/hotel_list_filter_bar.dart';
 import 'widgets/hotel_list_card.dart';
 import 'widgets/hotel_filter_bar_full.dart';
+import 'widgets/shimmer_hotel_card.dart';
 
 class HotelScreen extends GetView<SearchCityController> {
   final String cityId;
@@ -50,7 +52,8 @@ class HotelScreen extends GetView<SearchCityController> {
     });
 
     return Scaffold(
-      backgroundColor: redF9E,
+      backgroundColor: const Color(
+          0xFFE2E2E2), // Light gray background to match card shadows
       body: Stack(
         children: [
           Column(
@@ -113,7 +116,7 @@ class HotelScreen extends GetView<SearchCityController> {
                           child: Container(
                             padding: EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: redCA0.withOpacity(0.08),
+                                  color: redCA0.withValues(alpha: 0.08),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(Icons.filter_alt, color: redCA0, size: 22),
@@ -127,6 +130,15 @@ class HotelScreen extends GetView<SearchCityController> {
               SizedBox(height: 15),
               Expanded(
                 child: Obx(() {
+                  if (searchCtrl.isLoading.value) {
+                    // Show circular loader while loading
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(redCA0),
+                      ),
+                    );
+                  }
+
                   final filteredHotels = filterCtrl.filteredHotels;
                   // If filter applied and no hotels, show "No hotels found for selected filters"
                   if (filteredHotels.isEmpty) {
@@ -152,7 +164,7 @@ class HotelScreen extends GetView<SearchCityController> {
                   }
                   return ListView.builder(
                     itemCount: filteredHotels.length,
-                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                     itemBuilder: (context, index) {
                       final hotel = filteredHotels[index];
                       return HotelListCard(
@@ -160,6 +172,7 @@ class HotelScreen extends GetView<SearchCityController> {
                         cityName: cityName,
                         cityId: cityId,
                         searchCtrl: searchCtrl,
+                        
                       );
                     },
                   );
@@ -167,16 +180,7 @@ class HotelScreen extends GetView<SearchCityController> {
               ),
             ],
           ),
-          Obx(() => searchCtrl.isLoading.value
-              ? Container(
-                  color: Colors.black.withOpacity(0.2),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: redCA0,
-                    ),
-                  ),
-                )
-              : SizedBox.shrink()),
+          // Loading overlay is now handled by the shimmer effect in the list
         ],
       ),
     );

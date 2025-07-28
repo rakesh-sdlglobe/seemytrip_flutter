@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -10,18 +11,26 @@ import 'dart:convert';
 class City {
   final String id;
   final String name;
+  final String country;
 
-  City({required this.id, required this.name});
+  City({required this.id, required this.name, this.country = ''});
 
   factory City.fromJson(Map<String, dynamic> json) {
+    // Try to extract country from the name if it's in the format "City, Country"
+    final name = json['Name'].toString();
+    final parts = name.split(',');
+    final cityName = parts[0].trim();
+    final countryName = parts.length > 1 ? parts[1].trim() : '';
+
     return City(
       id: json['Id'].toString(),
-      name: json['Name'].toString(),
+      name: cityName,
+      country: countryName,
     );
   }
 
   @override
-  String toString() => name;
+  String toString() => '$name, $country';
 }
 
 class SearchCityController extends GetxController {
@@ -145,7 +154,12 @@ class SearchCityController extends GetxController {
     Map<String, dynamic>? sort,
     List<Map<String, dynamic>>? roomsList, // <-- dynamic rooms
   }) async {
+    // Set loading to true to show shimmer effect
     isLoading.value = true;
+    
+    // Add a 5-second delay before making the API call
+    await Future.delayed(Duration(seconds: 5));
+    
     try {
       final checkInStr = checkIn.toLocal().toString().split(' ')[0];
       final checkOutStr = checkOut.toLocal().toString().split(' ')[0];
@@ -232,14 +246,30 @@ class SearchCityController extends GetxController {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        hotelDetails.value = Map<String, dynamic>.from(data);
-        // Fix: Ensure you import the correct HotelDetailScreen and pass all required arguments
-        Get.to(() => HotelDetailScreen(
-          hotelDetails: Map<String, dynamic>.from(data),
-          hotelId: hotelId,
-          searchParams: searchParams,
-        ));
-        print('Hotel Details: $data');
+        print('Raw hotel details response: $data'); // Debug print
+
+        // Validate the response structure
+        if (data is Map && data['HotelDetail'] != null) {
+          final hotelDetail = Map<String, dynamic>.from(data);
+          hotelDetails.value = hotelDetail;
+
+          // Add default values if missing
+          if (!hotelDetail.containsKey('HotelName')) {
+            hotelDetail['HotelName'] = 'No Name Available';
+          }
+          if (!hotelDetail.containsKey('StarRating')) {
+            hotelDetail['StarRating'] = 0;
+          }
+
+          Get.to(() => HotelDetailScreen(
+                hotelDetails: hotelDetail,
+                hotelId: hotelId,
+                searchParams: searchParams,
+              ));
+        } else {
+          _setError('Invalid hotel details response from API');
+          throw Exception('Invalid hotel details response');
+        }
       } else {
         throw Exception('API call failed with status code ${response.statusCode}');
       }
@@ -287,6 +317,77 @@ class SearchCityController extends GetxController {
     }
   }
 
+  // ADDED: A centralized method to handle the entire search logic.
+  Future<void> performSearch(List<Map<String, dynamic>> roomGuestData) async {
+    // 1. Validation Checks
+    if (selectedCity.value == null || selectedCity.value!.id.isEmpty) {
+      _showErrorSnackbar('Please select a city first');
+      return;
+    }
+    if (checkInDate.value == null || checkOutDate.value == null) {
+      _showErrorSnackbar('Please select check-in and check-out dates');
+      return;
+    }
+    if (roomGuestData.isEmpty) {
+      _showErrorSnackbar('Please select rooms and guests');
+      return;
+    }
 
+    try {
+      // 2. Set Loading State to true
+      isLoading.value = true;
+
+      // 3. Prepare API Payload
+      final city = selectedCity.value!;
+      final checkIn = checkInDate.value!;
+      final checkOut = checkOutDate.value!;
+
+      final List<Map<String, dynamic>> roomsList = roomGuestData.map((room) {
+        return {
+          "RoomNo": room["RoomNo"],
+          "Adults": room["Adults"],
+          "Children": room["Children"],
+        };
+      }).toList();
+
+      final totalAdults =
+          roomsList.fold<int>(0, (sum, r) => sum + (r["Adults"] as int? ?? 0));
+      final totalChildren = roomsList.fold<int>(
+          0, (sum, r) => sum + (r["Children"] as int? ?? 0));
+
+      // 4. Call your existing fetch method
+      // Assuming fetchHotelDetails handles navigation on success.
+      await fetchHotelDetails(
+        cityId: city.id,
+        cityName: city.name,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        rooms: roomsList.length,
+        adults: totalAdults,
+        children: totalChildren,
+        roomsList: roomsList,
+      );
+    } catch (e) {
+      debugPrint('Error during performSearch: $e');
+      _showErrorSnackbar('Something went wrong. Please try again.');
+    } finally {
+      // 5. Set Loading State to false
+      isLoading.value = false;
+    }
+  }
+
+  // Helper method for showing styled snackbars
+  void _showErrorSnackbar(String message) {
+    Get.snackbar(
+      'Error',
+      message,
+      backgroundColor: Colors.red.shade600,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16),
+      borderRadius: 12,
+      snackPosition: SnackPosition.BOTTOM,
+      icon: const Icon(Icons.error_outline, color: Colors.white),
+    );
+  }
   
 }

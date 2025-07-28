@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/rooms_page.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/widgets/hotel_images_appbar.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart';
@@ -12,17 +13,24 @@ import 'widgets/hotel_detail_header.dart';
 import 'widgets/hotel_detail_overview.dart';
 import 'widgets/hotel_detail_amenities.dart';
 
-class HotelDetailScreen extends StatelessWidget {
+class HotelDetailScreen extends StatefulWidget {
   final Map<String, dynamic> hotelDetails;
   final String hotelId;
   final Map<String, dynamic> searchParams;
 
-  HotelDetailScreen({
+  const HotelDetailScreen({
     Key? key,
     required this.hotelDetails,
     required this.hotelId,
     required this.searchParams,
   }) : super(key: key);
+
+  @override
+  State<HotelDetailScreen> createState() => _HotelDetailScreenState();
+}
+
+class _HotelDetailScreenState extends State<HotelDetailScreen> {
+  bool _isFavorite = false;
 
   void _showMapDialog(BuildContext context, double latitude, double longitude) {
     showDialog(
@@ -75,332 +83,575 @@ class HotelDetailScreen extends StatelessWidget {
     }
   }
 
+  void _toggleFavorite() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    // TODO: Add your favorite toggle logic here (e.g., API call)
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hotelDetail = hotelDetails['HotelDetail'] ?? {};
-    final hotelName = hotelDetail['HotelName'] ?? 'No Name';
-    final checkIn = searchParams['checkInDate'] ?? '';
-    final checkOut = searchParams['checkOutDate'] ?? '';
-    final guests = searchParams['Guests']?.toString() ?? '2 Adults';
+    // Get hotel details with null checks and default values
+    final hotelDetail = widget.hotelDetails['HotelDetail'] ?? {};
+    final hotelName =
+        hotelDetail['HotelName']?.toString() ?? 'No Name Available';
+    final checkIn = widget.searchParams['checkInDate']?.toString() ?? '';
+    final checkOut = widget.searchParams['checkOutDate']?.toString() ?? '';
+    final guests = widget.searchParams['Guests']?.toString() ?? '2 Adults';
+    // Get rating with proper type casting
     final rating = hotelDetail['StarRating'] != null
         ? double.tryParse(hotelDetail['StarRating'].toString()) ?? 0.0
         : 0.0;
 
+    // Format dates
     final formattedCheckIn = formatDate(checkIn);
     final formattedCheckOut = formatDate(checkOut);
     final servicePrice =
-        hotelDetails['HotelDetail']?['HotelServices']?[0]?['ServicePrice'];
+        widget.hotelDetails['HotelDetail']?['HotelServices']
+        ?[0]?['ServicePrice'];
 
     print("ServicePrice: $servicePrice");
 
-    final hotelServicePrice =
-        servicePrice?.toString() ?? '0';
+    // Get service price with proper formatting
+    final hotelServicePrice = servicePrice?.toString() ?? '0';
 
     return Scaffold(
-      backgroundColor: white,
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HotelImagesAppBar(
-                  images: hotelDetail['HotelImages'],
-                  hotelId: hotelId,
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonTextWidget.PoppinsSemiBold(
-                        text: hotelName,
-                        color: black2E2,
-                        fontSize: 20,
-                      ),
-                      SizedBox(height: 4),
-                      Row(
+        backgroundColor: white,
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HotelImagesAppBar(
+                    images: hotelDetail['HotelImages'],
+                    hotelId: widget.hotelId,
+                    isFavorite: _isFavorite,
+                    onFavoritePressed: _toggleFavorite,
+                  ),
+                  // Hotel Header Card
+                  Container(
+                    margin: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.location_on, size: 18, color: redCA0),
-                          SizedBox(width: 6),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CommonTextWidget.PoppinsMedium(
-                                  text: hotelDetail['HotelAddress']?['City'] ??
-                                      'Unknown City',
-                                  color: black2E2,
-                                  fontSize: 15,
+                          Text(
+                            hotelName,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: redCA0.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                                SizedBox(height: 2),
-                                CommonTextWidget.PoppinsRegular(
-                                  text: hotelDetail['HotelAddress']
-                                          ?['Address'] ??
-                                      'Unknown Address',
-                                  color: grey717,
+                                child: Icon(Icons.location_on,
+                                    size: 20, color: redCA0),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      hotelDetail['HotelAddress']?['City'] ??
+                                          'Unknown City',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      hotelDetail['HotelAddress']?['Address'] ??
+                                          'Unknown Address',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (hotelDetail['HotelAddress']?['Latitude'] !=
+                                      null &&
+                                  hotelDetail['HotelAddress']?['Longitude'] !=
+                                      null)
+                                InkWell(
+                                  onTap: () {
+                                    final lat = hotelDetail['HotelAddress']
+                                        ?['Latitude'];
+                                    final lng = hotelDetail['HotelAddress']
+                                        ?['Longitude'];
+                                    double? dLat =
+                                        double.tryParse(lat.toString());
+                                    double? dLng =
+                                        double.tryParse(lng.toString());
+                                    if (dLat != null && dLng != null) {
+                                      _showMapDialog(context, dLat, dLng);
+                                    } else {
+                                      Get.snackbar(
+                                          "Error", "Invalid coordinates.");
+                                    }
+                                  },
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: redCA0.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: redCA0.withOpacity(0.2)),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.map_outlined,
+                                            size: 16, color: redCA0),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          "View on Map",
+                                          style: TextStyle(
+                                            color: redCA0,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          // Rating Row
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ...List.generate(
+                                      rating.floor(),
+                                      (index) => Icon(Icons.star,
+                                          color: Colors.amber, size: 16),
+                                    ),
+                                    if (rating - rating.floor() >= 0.5)
+                                      Icon(Icons.star_half,
+                                          color: Colors.amber, size: 16),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      rating.toStringAsFixed(1),
+                                      style: TextStyle(
+                                        color: Colors.amber[800],
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                "(245 Reviews)",
+                                style: TextStyle(
+                                  color: Colors.grey[600],
                                   fontSize: 13,
                                 ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          if (hotelDetail['HotelAddress']?['Latitude'] !=
-                                  null &&
-                              hotelDetail['HotelAddress']?['Longitude'] != null)
-                            InkWell(
-                              onTap: () {
-                                final lat =
-                                    hotelDetail['HotelAddress']?['Latitude'];
-                                final lng =
-                                    hotelDetail['HotelAddress']?['Longitude'];
-                                double? dLat = double.tryParse(lat.toString());
-                                double? dLng = double.tryParse(lng.toString());
-                                if (dLat != null && dLng != null) {
-                                  _showMapDialog(context, dLat, dLng);
-                                } else {
-                                  Get.snackbar("Error", "Invalid coordinates.");
-                                }
-                              },
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: greyE8E,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.map, size: 15, color: redCA0),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      "View Map",
-                                      style: TextStyle(
-                                        color: redCA0,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
-                            ),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      Row(
-                        children: [
-                          ...List.generate(
-                              rating.floor(),
-                              (index) => Icon(Icons.star,
-                                  color: Colors.amber, size: 18)),
-                          if (rating - rating.floor() >= 0.5)
-                            Icon(Icons.star_half,
-                                color: Colors.amber, size: 18),
-                          SizedBox(width: 8),
-                          CommonTextWidget.PoppinsMedium(
-                            text: "${rating.toStringAsFixed(1)}/5",
-                            color: black2E2,
-                            fontSize: 14,
+                            ],
                           ),
-                          CommonTextWidget.PoppinsRegular(
-                            text: " (245 Reviews)",
-                            color: grey717,
-                            fontSize: 14,
-                          )
                         ],
                       ),
-                      SizedBox(height: 12),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
+                    ),
+                  ),
+
+                  // Travel Dates Card
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Icon(Icons.calendar_today, size: 16, color: redCA0),
-                            SizedBox(width: 8),
-                            CommonTextWidget.PoppinsMedium(
-                              text: "Travel Dates: ",
-                              color: black2E2,
-                              fontSize: 12,
+                            Container(
+                              padding: EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(Icons.calendar_month_outlined,
+                                  size: 20, color: Colors.blue),
                             ),
-                            Text(
-                              checkIn.isNotEmpty && checkOut.isNotEmpty
-                                  ? "$formattedCheckIn - $formattedCheckOut"
-                                  : "N/A",
-                              style: TextStyle(
-                                color: black2E2,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Travel Dates',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    checkIn.isNotEmpty && checkOut.isNotEmpty
+                                        ? '$formattedCheckIn - $formattedCheckOut'
+                                        : 'Select dates',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 10),
-                            Icon(Icons.person, size: 16, color: redCA0),
-                            SizedBox(width: 4),
-                            CommonTextWidget.PoppinsMedium(
-                              text: "Guests: ",
-                              color: black2E2,
-                              fontSize: 13,
-                            ),
-                            Text(
-                              guests,
-                              style: TextStyle(
-                                color: black2E2,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            InkWell(
-                              onTap: () {
+                            IconButton(
+                              onPressed: () {
                                 Get.to(() => SelectCheckInDateScreen());
                               },
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: greyE8E,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.edit, size: 16, color: redCA0),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      "Modify",
-                                      style: TextStyle(
-                                        color: redCA0,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'Poppins',
-                                      ),
+                              icon: Icon(Icons.edit_outlined,
+                                  color: redCA0, size: 20),
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                          ],
+                        ),
+                        Divider(
+                            height: 24, thickness: 1, color: Colors.grey[200]),
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(Icons.people_outline,
+                                  size: 20, color: Colors.green),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Guests',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    guests,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                HotelDetailHeader(
-                  hotelDetail: hotelDetail,
-                  hotelName: hotelName,
-                  rating: rating,
-                  checkIn: checkIn,
-                  checkOut: checkOut,
-                  guests: guests,
-                  formattedCheckIn: formattedCheckIn,
-                  formattedCheckOut: formattedCheckOut,
-                ),
-                SizedBox(height: 7),
-                Divider(color: greyE8E, thickness: 1),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      HotelDetailOverview(hotelDetail: hotelDetail),
-                      SizedBox(height: 22),
-                      HotelDetailAmenities(hotelDetail: hotelDetail),
-                      SizedBox(height: 22),
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.amber, size: 18),
-                          SizedBox(width: 6),
-                          Text("4.5/5",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          SizedBox(width: 8),
-                          Text("(245 Reviews)",
-                              style: TextStyle(color: grey717)),
-                        ],
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        "\"Great location, clean rooms, friendly staff.\"",
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic, color: grey717),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 6,
-              offset: Offset(0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Total Price',
-                    style: TextStyle(
-                      color: grey717,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      ],
                     ),
                   ),
-                  Text(
-                    '₹${hotelServicePrice}',
-                    style: TextStyle(
-                      color: redCA0,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
+                  HotelDetailHeader(
+                    hotelDetail: hotelDetail,
+                    hotelName: hotelName,
+                    rating: rating,
+                    checkIn: checkIn,
+                    checkOut: checkOut,
+                    guests: guests,
+                    formattedCheckIn: formattedCheckIn,
+                    formattedCheckOut: formattedCheckOut,
+                  ),
+                  // Overview Card
+                  HotelDetailOverview(hotelDetail: hotelDetail),
+
+                  // Amenities Card
+                  HotelDetailAmenities(hotelDetail: hotelDetail),
+
+                  // Reviews Card
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(Icons.star_rate_rounded,
+                                  size: 20, color: Colors.amber),
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              'Guest Reviews',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ...List.generate(
+                                    4,
+                                    (index) => Icon(Icons.star,
+                                        color: Colors.amber, size: 16),
+                                  ),
+                                  Icon(Icons.star_half,
+                                      color: Colors.amber, size: 16),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '4.5/5',
+                                    style: TextStyle(
+                                      color: Colors.amber[800],
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              "(245 Reviews)",
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "\"Great location, clean rooms, and friendly staff. The service was excellent and the amenities were top-notch. Highly recommended!\"",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              // TODO: Navigate to all reviews
+                            },
+                            child: Text(
+                              'View All Reviews',
+                              style: TextStyle(
+                                color: redCA0,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(width: 16),
-            ElevatedButton(
-              onPressed: () {
-                Get.to(() => RoomsPage(
-                      hotelDetails: hotelDetails,
-                      hotelId: hotelId,
-                      searchParams: searchParams,
-                    ));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: redCA0,
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                'Select Room',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
           ],
         ),
-      ),
-    );
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: Offset(0, -2),
+              ),
+            ],
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
+          ),
+          child: SafeArea(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Starting from',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '₹${hotelServicePrice}',
+                            style: TextStyle(
+                              color: redCA0,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                              height: 1.1,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 2),
+                            child: Text(
+                              'per night',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        'Incl. of taxes & fees',
+                        style: TextStyle(
+                          color: Colors.green[600],
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    padding: const EdgeInsets.only(right: 16, left: 8),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.to(() => RoomsPage(
+                              hotelDetails: widget.hotelDetails,
+                              hotelId: widget.hotelId,
+                              searchParams: widget.searchParams,
+                            ));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: redCA0,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.king_bed_outlined, size: 18),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Select Room',
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 }
