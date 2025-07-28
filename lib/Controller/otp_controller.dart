@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class OtpController extends GetxController {
-  final String baseUrl = 'http://192.168.1.114:3002';
+  final String baseUrl = 'http://192.168.137.150:3002';
   
   // Observable variables
   final RxBool isLoading = false.obs;

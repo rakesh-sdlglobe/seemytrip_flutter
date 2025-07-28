@@ -25,7 +25,7 @@ class BusController extends GetxController {
     isLoading(true);
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.1.114:3002/api/bus/authenticateBusAPI"),
+        Uri.parse("http://192.168.137.150:3002/api/bus/authenticateBusAPI"),
         headers: {"Content-Type": "application/json"},
       );
 
@@ -50,7 +50,7 @@ class BusController extends GetxController {
   Future<void> fetchCities(String tokenId, String endUserIp) async {
     isLoading.value = true;
 
-    final url = Uri.parse('http://192.168.1.114:3002/api/bus/getBusCityList');
+    final url = Uri.parse('http://192.168.137.150:3002/api/bus/getBusCityList');
 
     final headers = {
       'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ class BusController extends GetxController {
     required String tokenId,
     required String preferredCurrency,
   }) async {
-    final url = Uri.parse("http://192.168.1.114:3002/api/bus/busSearch");
+    final url = Uri.parse("http://192.168.137.150:3002/api/bus/busSearch");
 
     final headers = {
       "Content-Type": "application/json",
@@ -290,7 +290,7 @@ class BusController extends GetxController {
 
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.1.114:3002/api/bus/getBusSeatLayOut"),
+        Uri.parse("http://192.168.137.150:3002/api/bus/getBusSeatLayOut"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -344,7 +344,7 @@ class BusController extends GetxController {
 
       final response = await http.post(
         Uri.parse(
-            "http://192.168.1.114:3002/api/bus/getBoardingPointDetails"),
+            "http://192.168.137.150:3002/api/bus/getBoardingPointDetails"),
         headers: {
           'Content-Type': 'application/json',
         },
