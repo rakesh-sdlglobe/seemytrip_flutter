@@ -126,7 +126,7 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade200,
       // --- FIX: Wrap the body in Obx and Stack to show a loading overlay ---
       body: Obx(
         () => Stack(
@@ -137,13 +137,15 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
                   // Top banner with back button
                   TopBanner(onBackPressed: () => Get.back()),
 
-                  const TrustIndicator(),
-                  const DiscountBanner(),
+                  // const TrustIndicator(),
+                  // const DiscountBanner(),
 
                   // Search form
                   SearchForm(
-                    selectedDate: _selectedDate,
-                    onDateSelected: _onDateSelected,
+                    selectedDates: [
+                      _selectedDate
+                    ], // Wrap in a list since it expects List<DateTime>
+                    onDateTapped: _onDateSelected,
                     onSearchPressed: _onSearchPressed,
                     departureCity: selectedDepartureCity,
                     destinationCity: selectedDestinationCity,
@@ -153,28 +155,28 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
                     isLoading: _isLoading.value,
                   ),
 
-                  const PromoSection(),
+                  // const PromoSection(),
 
-                  SpecialOffersHeader(
-                    onViewAll: () {
-                      // TODO: Implement offer viewing
-                    },
-                  ),
+                  // SpecialOffersHeader(
+                  //   onViewAll: () {
+                  //     // TODO: Implement offer viewing
+                  //   },
+                  // ),
                   const SizedBox(height: 20),
                 ],
               ),
             ),
 
             // --- FIX: Add a conditional loading overlay ---
-            if (_isLoading.value)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                ),
-              ),
+            // if (_isLoading.value)
+            //   Container(
+            //     color: Colors.black.withOpacity(0.5),
+            //     child: const Center(
+            //       child: CircularProgressIndicator(
+            //         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            //       ),
+            //     ),
+            //   ),
           ],
         ),
       ),

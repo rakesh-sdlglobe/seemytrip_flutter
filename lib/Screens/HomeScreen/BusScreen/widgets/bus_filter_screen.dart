@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/Constants/colors.dart';
-import 'package:seemytrip/Models/bus_models.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// Models and other imports
+import 'package:seemytrip/Models/bus_models.dart' show BusSearchResult;
+
+// --- RED THEME COLORS ---
+const Color kPrimaryColor = Color(0xFFD32F2F);
+const Color kPrimaryDarkColor = Color(0xFFB71C1C);
+const Color kPrimaryLightColor = Color(0xFFFFEBEE);
+const Color kTextPrimaryColor = Color(0xFF212529);
+const Color kTextSecondaryColor = Color(0xFF6C757D);
+const Color kCardBackground = Color(0xFFFFFFFF);
+const Color kDividerColor = Color(0xFFE9ECEF);
 
 class BusFilterScreen extends StatefulWidget {
   final List<BusSearchResult> results;
   final Function(List<BusSearchResult>) onApplyFilters;
+  final ScrollController scrollController; // For DraggableScrollableSheet
 
   const BusFilterScreen({
     Key? key,
     required this.results,
     required this.onApplyFilters,
+    required this.scrollController,
   }) : super(key: key);
 
   @override
@@ -18,677 +31,85 @@ class BusFilterScreen extends StatefulWidget {
 }
 
 class _BusFilterScreenState extends State<BusFilterScreen> {
-  // Filter states
-  RangeValues _priceRange = const RangeValues(0, 10000);
-  bool _onlyAvailable = false;
-  bool _onlyAC = false;
-  bool _onlyNonAC = false;
-  bool _onlySleeper = false;
-  bool _onlySeater = false;
-  bool _onlyExpress = false;
-  bool _onlySuperLuxury = false;
-  bool _onlyVolvo = false;
-  bool _onlySemiSleeper = false;
-  bool _onlyACSleeper = false;
-  bool _onlyACSeater = false;
-  bool _onlyNonACSeater = false;
-  bool _onlyNonACSleeper = false;
-  bool _onlySemiSleeperAC = false;
-  bool _onlySemiSleeperNonAC = false;
-  bool _onlyVolvoSleeper = false;
-  bool _onlyVolvoSeater = false;
-  bool _onlyVolvoSemiSleeper = false;
-  bool _onlyACExpress = false;
-  bool _onlyNonACExpress = false;
-  bool _onlySleeperExpress = false;
-  bool _onlySeaterExpress = false;
+  // --- Simplified and Centralized State ---
+  late String _currentSort;
+  late RangeValues _priceRange;
+  late Set<String> _selectedBusTypes;
+  late Set<String> _selectedSeatTypes;
+  late Set<String> _selectedAmenities;
 
-  // Sort states
-  String _currentSort = 'Fare (Low to High)';
+  // --- Filter Options ---
   final List<String> _sortOptions = [
-    'Fare (Low to High)',
-    'Fare (High to Low)',
+    'Price: Low to High',
+    'Price: High to Low',
     'Departure Time',
     'Arrival Time',
     'Duration',
-    'Seats Available',
+    'Seats Available'
+  ];
+  final List<String> _busTypeOptions = ['AC', 'Non-AC'];
+  final List<String> _seatTypeOptions = ['Seater', 'Sleeper', 'Semi-Sleeper'];
+  final List<String> _amenityOptions = [
+    'WiFi',
+    'Charger',
+    'Blanket',
+    'Water Bottle'
   ];
 
-  // Amenities
-  bool _wifi = false;
-  bool _charger = false;
-  bool _blanket = false;
-  bool _waterBottle = false;
-  bool _snacks = false;
-  bool _ac = false;
-  bool _sleeper = false;
-  bool _seater = false;
-  bool _express = false;
-  bool _volvo = false;
-
-  // Price options
-  List<String> _priceOptions = ['₹0-₹1000', '₹1000-₹2000', '₹2000-₹3000', '₹3000+'];
-  String _selectedPriceOption = '₹0-₹1000';
-
-  // Duration options
-  List<String> _durationOptions = ['0-4H', '4-8H', '8-12H', '12H+'];
-  String _selectedDurationOption = '0-4H';
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Header
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.filter_list, color: redCA0, size: 24),
-                const SizedBox(width: 12),
-                const Text(
-                  'Filters',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 24),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ],
-            ),
-          ),
-
-          // Tab Bar
-          SizedBox(
-            height: 400, // Set a reasonable height for the filter sheet
-            child: DefaultTabController(
-              length: 4,
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TabBar(
-                      indicator: BoxDecoration(
-                        color: redCA0,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      indicatorSize: TabBarIndicatorSize.label,
-                      labelStyle: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        height: 1.2,
-                        letterSpacing: 0.2,
-                      ),
-                      labelColor: Colors.white,
-                      unselectedLabelStyle: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        height: 1.2,
-                        letterSpacing: 0.2,
-                      ),
-                      unselectedLabelColor: Colors.black87,
-                      tabs: [
-                        Tab(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                'Sort',
-                                style: const TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 14,
-                                  height: 1.2,
-                                  letterSpacing: 0.2,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Tab(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                'Price',
-                                style: const TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 14,
-                                  height: 1.2,
-                                  letterSpacing: 0.2,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Tab(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                'Bus Type',
-                                style: const TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 14,
-                                  height: 1.2,
-                                  letterSpacing: 0.2,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Tab(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                'Amenities',
-                                style: const TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: 14,
-                                  height: 1.2,
-                                  letterSpacing: 0.2,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        // Sort Tab
-                        _buildSortTab(),
-                        
-                        // Price Tab
-                        _buildPriceTab(),
-                        
-                        // Bus Type Tab
-                        _buildBusTypeTab(),
-                        
-                        // Amenities Tab
-                        _buildAmenitiesTab(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Apply Filters Button
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: ElevatedButton(
-              onPressed: _applyFilters,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: redCA0,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'Apply Filters',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,  
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  void initState() {
+    super.initState();
+    _resetFilters(isInitial: true);
   }
-
-  Widget _buildSortTab() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _sortOptions.map((option) {
-          final isSelected = _currentSort == option;
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _currentSort = option;
-              });
-            },
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: isSelected ? redCA0 : Colors.transparent,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    color: isSelected ? Colors.white : Colors.black87,
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-
-  Widget _buildPriceTab() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // Price Range Slider
-        Text(
-          'Price Range',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        RangeSlider(
-          values: _priceRange,
-          min: 0,
-          max: 10000,
-          divisions: 20,
-          labels: RangeLabels(
-            '₹${_priceRange.start.round()}',
-            '₹${_priceRange.end.round()}',
-          ),
-          onChanged: (values) {
-            setState(() {
-              _priceRange = values;
-            });
-          },
-        ),
-        const SizedBox(height: 16),
-
-        // Price Options
-        Text(
-          'Price Options',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _priceOptions.map((option) {
-            return FilterChip(
-              label: Text(option),
-              selected: _selectedPriceOption == option,
-              onSelected: (selected) {
-                setState(() {
-                  _selectedPriceOption = option;
-                  _updatePriceRangeFromOption(option);
-                });
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _selectedPriceOption == option ? redCA0 : Colors.black87,
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 16),
-
-        // Only Available
-        SwitchListTile(
-          title: const Text('Only Available Buses'),
-          value: _onlyAvailable,
-          onChanged: (value) {
-            setState(() {
-              _onlyAvailable = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBusTypeTab() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        // AC/Non-AC
-        Text(
-          'AC Options',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilterChip(
-              label: const Text('AC Only'),
-              selected: _onlyAC,
-              onSelected: (selected) {
-                setState(() {
-                  _onlyAC = selected;
-                  if (selected) {
-                    _onlyNonAC = false;
-                  }
-                });
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _onlyAC ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Non-AC Only'),
-              selected: _onlyNonAC,
-              onSelected: (selected) {
-                setState(() {
-                  _onlyNonAC = selected;
-                  if (selected) {
-                    _onlyAC = false;
-                  }
-                });
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _onlyNonAC ? redCA0 : Colors.black87,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Seat Type
-        Text(
-          'Seat Type',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilterChip(
-              label: const Text('Sleeper Only'),
-              selected: _onlySleeper,
-              onSelected: (selected) {
-                setState(() {
-                  _onlySleeper = selected;
-                  if (selected) {
-                    _onlySeater = false;
-                  }
-                });
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _onlySleeper ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Seater Only'),
-              selected: _onlySeater,
-              onSelected: (selected) {
-                setState(() {
-                  _onlySeater = selected;
-                  if (selected) {
-                    _onlySleeper = false;
-                  }
-                });
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _onlySeater ? redCA0 : Colors.black87,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Bus Type
-        Text(
-          'Bus Type',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilterChip(
-              label: const Text('Express'),
-              selected: _onlyExpress,
-              onSelected: (selected) {
-                setState(() => _onlyExpress = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _onlyExpress ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Super Luxury'),
-              selected: _onlySuperLuxury,
-              onSelected: (selected) {
-                setState(() => _onlySuperLuxury = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _onlySuperLuxury ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Volvo'),
-              selected: _onlyVolvo,
-              onSelected: (selected) {
-                setState(() => _onlyVolvo = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _onlyVolvo ? redCA0 : Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAmenitiesTab() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Text(
-          'Amenities',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilterChip(
-              label: const Text('WiFi'),
-              selected: _wifi,
-              onSelected: (selected) {
-                setState(() => _wifi = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _wifi ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Charger'),
-              selected: _charger,
-              onSelected: (selected) {
-                setState(() => _charger = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _charger ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Blanket'),
-              selected: _blanket,
-              onSelected: (selected) {
-                setState(() => _blanket = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _blanket ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Water Bottle'),
-              selected: _waterBottle,
-              onSelected: (selected) {
-                setState(() => _waterBottle = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _waterBottle ? redCA0 : Colors.black87,
-              ),
-            ),
-            FilterChip(
-              label: const Text('Snacks'),
-              selected: _snacks,
-              onSelected: (selected) {
-                setState(() => _snacks = selected);
-              },
-              selectedColor: redCA0.withOpacity(0.2),
-              checkmarkColor: redCA0,
-              labelStyle: TextStyle(
-                color: _snacks ? redCA0 : Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  void _updatePriceRangeFromOption(String option) {
-    switch (option) {
-      case '₹0-₹1000':
-        _priceRange = const RangeValues(0, 1000);
-        break;
-      case '₹1000-₹2000':
-        _priceRange = const RangeValues(1000, 2000);
-        break;
-      case '₹2000-₹3000':
-        _priceRange = const RangeValues(2000, 3000);
-        break;
-      case '₹3000+':
-        _priceRange = const RangeValues(3000, 10000);
-        break;
+  
+  void _resetFilters({bool isInitial = false}) {
+    setState(() {
+      _currentSort = _sortOptions.first;
+      _priceRange = const RangeValues(0, 10000);
+      _selectedBusTypes = {};
+      _selectedSeatTypes = {};
+      _selectedAmenities = {};
+    });
+    if (!isInitial) {
+      widget.onApplyFilters(widget.results);
+      Get.back();
     }
   }
 
   void _applyFilters() {
-    // Filter results based on selected criteria
     List<BusSearchResult> filteredResults = widget.results.where((bus) {
-      // Price filter
       final price = double.tryParse(bus.fare) ?? 0;
-      if (price < _priceRange.start || price > _priceRange.end) {
+      if (price < _priceRange.start || price > _priceRange.end) return false;
+
+      final busTypeLower = bus.busType.toLowerCase();
+      if (_selectedBusTypes.isNotEmpty &&
+          !_selectedBusTypes
+              .any((type) => busTypeLower.contains(type.toLowerCase())))
         return false;
-      }
-
-      // Availability filter
-      if (_onlyAvailable && bus.availableSeats <= 0) {
+      if (_selectedSeatTypes.isNotEmpty &&
+          !_selectedSeatTypes
+              .any((type) => busTypeLower.contains(type.toLowerCase())))
         return false;
-      }
 
-      // AC/Non-AC filter
-      if (_onlyAC && !bus.busType.toLowerCase().contains('ac')) return false;
-      if (_onlyNonAC && bus.busType.toLowerCase().contains('ac')) return false;
-
-      // Seat type filter
-      if (_onlySleeper && !bus.busType.toLowerCase().contains('sleeper')) return false;
-      if (_onlySeater && bus.busType.toLowerCase().contains('sleeper')) return false;
-
-      // Bus type filter
-      if (_onlyExpress && bus.busType != 'Express') return false;
-      if (_onlySuperLuxury && bus.busType != 'Super Luxury') return false;
-      if (_onlyVolvo && bus.busType != 'Volvo') return false;
-
-      // Amenities filter
-      if (_wifi && !bus.hasWiFi) return false;
-      if (_charger && !bus.hasCharger) return false;
-      if (_blanket && !bus.hasBlanket) return false;
-      if (_waterBottle && !bus.hasWaterBottle) return false;
-      if (_snacks && !bus.hasSnacks) return false;
+      // Assuming 'bus' has amenity booleans like bus.hasWiFi, etc.
+      if (_selectedAmenities.contains('WiFi') && !bus.hasWiFi) return false;
+      if (_selectedAmenities.contains('Charger') && !bus.hasCharger)
+        return false;
+      if (_selectedAmenities.contains('Blanket') && !bus.hasBlanket)
+        return false;
+      if (_selectedAmenities.contains('Water Bottle') && !bus.hasWaterBottle)
+        return false;
 
       return true;
     }).toList();
 
-    // Sort results
+    // Sorting Logic
     switch (_currentSort) {
-      case 'Fare (Low to High)':
+      case 'Price: Low to High':
         filteredResults.sort(
             (a, b) => double.parse(a.fare).compareTo(double.parse(b.fare)));
         break;
-      case 'Fare (High to Low)':
+      case 'Price: High to Low':
         filteredResults.sort(
             (a, b) => double.parse(b.fare).compareTo(double.parse(a.fare)));
         break;
@@ -708,8 +129,268 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
         break;
     }
 
-    // Apply filters and close the sheet
     widget.onApplyFilters(filteredResults);
-    Navigator.pop(context);
+    Get.back();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: kCardBackground,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: DefaultTabController(
+        length: 4,
+        child: Column(
+          children: [
+            _buildHeader(),
+            _buildTabBar(),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildSortView(),
+                  _buildFilterSection(
+                      title: 'Bus Type',
+                      options: _busTypeOptions,
+                      selectedSet: _selectedBusTypes),
+                  _buildFilterSection(
+                      title: 'Seat Type',
+                      options: _seatTypeOptions,
+                      selectedSet: _selectedSeatTypes),
+                  _buildFilterSection(
+                      title: 'Amenities',
+                      options: _amenityOptions,
+                      selectedSet: _selectedAmenities,
+                      iconMap: {
+                        'WiFi': Icons.wifi,
+                        'Charger': Icons.power,
+                        'Blanket': Icons.airline_seat_individual_suite_rounded,
+                        'Water Bottle': Icons.local_drink
+                      }),
+                ],
+              ),
+            ),
+            _buildFooter(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+      child: Column(
+        children: [
+          Container(
+            width: 40,
+            height: 5,
+            decoration: BoxDecoration(
+              color: kDividerColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Sort & Filter',
+                style: GoogleFonts.poppins(
+                    fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+              IconButton(
+                icon:
+                    const Icon(Icons.close_rounded, color: kTextSecondaryColor),
+                onPressed: () => Get.back(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return TabBar(
+      labelColor: kPrimaryColor,
+      unselectedLabelColor: kTextSecondaryColor,
+      indicatorColor: kPrimaryColor,
+      indicatorWeight: 3.0,
+      labelStyle:
+          GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
+      tabs: const [
+        Tab(icon: Icon(Icons.sort_rounded), text: 'Sort'),
+        Tab(icon: Icon(Icons.directions_bus_filled_rounded), text: 'Bus Type'),
+        Tab(icon: Icon(Icons.event_seat_rounded), text: 'Seat Type'),
+        Tab(icon: Icon(Icons.widgets_rounded), text: 'Amenities'),
+      ],
+    );
+  }
+  
+  Widget _buildSortView() {
+    return ListView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.all(20),
+      children: _sortOptions.map((option) {
+        return RadioListTile<String>(
+          title: Text(option,
+              style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+          value: option,
+          groupValue: _currentSort,
+          onChanged: (value) {
+            if (value != null) setState(() => _currentSort = value);
+          },
+          activeColor: kPrimaryColor,
+          controlAffinity: ListTileControlAffinity.trailing,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildFilterSection(
+      {required String title,
+      required List<String> options,
+      required Set<String> selectedSet,
+      Map<String, IconData>? iconMap}) {
+    return ListView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.all(20),
+      children: [
+        if (title == "Price Range") ...[
+          _buildPriceSlider(),
+          const SizedBox(height: 20)
+        ],
+        Text(title,
+            style:
+                GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: options.map((option) {
+            return _buildFilterChip(
+              label: option,
+              icon: iconMap?[option],
+              isSelected: selectedSet.contains(option),
+              onSelected: (isSelected) {
+                setState(() {
+                  if (isSelected) {
+                    selectedSet.add(option);
+                  } else {
+                    selectedSet.remove(option);
+                  }
+                });
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterChip(
+      {required String label,
+      IconData? icon,
+      required bool isSelected,
+      required ValueChanged<bool> onSelected}) {
+    return FilterChip(
+      label: Text(label),
+      avatar: icon != null
+          ? Icon(icon,
+              color: isSelected ? Colors.white : kPrimaryColor, size: 18)
+          : null,
+      selected: isSelected,
+      onSelected: onSelected,
+      elevation: 0,
+      pressElevation: 0,
+      backgroundColor: kPrimaryLightColor,
+      selectedColor: kPrimaryColor,
+      checkmarkColor: Colors.white,
+      labelStyle: GoogleFonts.poppins(
+        color: isSelected ? Colors.white : kPrimaryDarkColor,
+        fontWeight: FontWeight.w600,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(
+            color: isSelected ? kPrimaryColor : kDividerColor, width: 1.5),
+      ),
+    );
+  }
+  
+  Widget _buildPriceSlider() {
+    // This can be added to a dedicated "Price" tab if needed
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Price Range',
+            style:
+                GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 10),
+        RangeSlider(
+          values: _priceRange,
+          min: 0,
+          max: 10000,
+          divisions: 20,
+          activeColor: kPrimaryColor,
+          inactiveColor: kPrimaryLightColor,
+          labels: RangeLabels(
+              '₹${_priceRange.start.round()}', '₹${_priceRange.end.round()}'),
+          onChanged: (values) => setState(() => _priceRange = values),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: kCardBackground,
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -5)),
+        ],
+        border: Border(top: BorderSide(color: kDividerColor, width: 1)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () => _resetFilters(),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                side: const BorderSide(color: kPrimaryColor),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text('Reset',
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w700, color: kPrimaryColor)),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: _applyFilters,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: kPrimaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 0,
+              ),
+              child: Text('Apply',
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w700)),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,45 +1,47 @@
 import 'dart:convert';
-import 'dart:ui';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Required for haptic feedback
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-// Make sure this path is correct for your project structure
+
+// Your other imports
 import '../../../Controller/bus_controller.dart';
 import 'boarding_point_screen.dart';
 
 // --- THEME & STYLES ---
 class AppColors {
-  static const Color primary = Color(0xFF0D3B66);
-  static const Color primaryVariant = Color(0xFF2A628F);
-  static const Color accent = Color(0xFFE53B50);
+  static const Color primary = Color(0xFFD32F2F);
+  static const Color primaryVariant = Color(0xFFB71C1C);
+  static const Color accent = Color(0xFFD32F2F);
   static const Color background = Color(0xFFF7F9FB);
-
   static const Color seatAvailable = Color(0xFFFFFFFF);
   static const Color seatAvailableBorder = Color(0xFFD0D5DD);
-  static const Color seatSelected = Color(0xFFE53B50);
-  static const Color seatLadies = Color(0xFFF9A620);
+  static const Color seatSelected = Color(0xFFD32F2F);
+  static const Color seatLadies = Color(0xFFF06292);
   static const Color seatBooked = Color(0xFFEAECF0);
   static const Color seatBookedBorder = Color(0xFFEAECF0);
-
   static const Color textDark = Color(0xFF101828);
   static const Color textLight = Color(0xFF667085);
   static const Color card = Colors.white;
 }
 
 class AppStyles {
-  static const TextStyle heading1 = TextStyle(
+  static final TextStyle heading1 = GoogleFonts.poppins(
       fontWeight: FontWeight.bold, fontSize: 20, color: AppColors.textDark);
-  static const TextStyle heading2 = TextStyle(
+  static final TextStyle heading2 = GoogleFonts.poppins(
       fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.textDark);
-  static const TextStyle body =
-      TextStyle(fontSize: 14, color: AppColors.textLight);
-  static const TextStyle bodyBold = TextStyle(
+  static final TextStyle body =
+      GoogleFonts.poppins(fontSize: 14, color: AppColors.textLight);
+  static final TextStyle bodyBold = GoogleFonts.poppins(
       fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textDark);
 }
 
-// --- DATA MODELS (Updated) ---
+// --- DATA MODELS ---
 class Seat {
+  final int rowNo;
+  final int columnNo;
   final String seatName;
   final bool isAvailable;
   final bool isLadiesSeat;
@@ -48,6 +50,8 @@ class Seat {
   final bool isUpperDeck;
 
   Seat({
+    required this.rowNo,
+    required this.columnNo,
     required this.seatName,
     required this.isAvailable,
     required this.isLadiesSeat,
@@ -58,15 +62,17 @@ class Seat {
 
   factory Seat.fromJson(Map<String, dynamic> json) {
     String seatName = json['SeatName'] ?? 'N/A';
-    bool isSleeper = json['IsUpper'] ?? false;
-
+    bool isSleeper = seatName.toUpperCase().startsWith('U') ||
+        seatName.toUpperCase().startsWith('L');
     return Seat(
+      rowNo: int.tryParse(json['RowNo'] ?? '0') ?? 0,
+      columnNo: int.tryParse(json['ColumnNo'] ?? '0') ?? 0,
       seatName: seatName,
-      isAvailable: json['SeatStatus'] ?? false,
-      isLadiesSeat: json['IsLadiesSeat'] ?? false,
+      isAvailable: !(json['SeatStatus'] as bool? ?? true),
+      isLadiesSeat: json['IsLadiesSeat'] as bool? ?? false,
       isSleeper: isSleeper,
       price: (json['Price']?['PublishedPrice'] as num? ?? 0.0).toDouble(),
-      isUpperDeck: json['IsUpper'] ?? false,
+      isUpperDeck: json['IsUpper'] as bool? ?? false,
     );
   }
 }
@@ -78,6 +84,7 @@ class BusSeatLayoutScreenArguments {
   final String toLocation;
   final DateTime travelDate;
   final String busName;
+  final int availableSeats;
 
   BusSeatLayoutScreenArguments({
     required this.traceId,
@@ -86,6 +93,7 @@ class BusSeatLayoutScreenArguments {
     required this.toLocation,
     required this.travelDate,
     required this.busName,
+    required this.availableSeats,
   });
 }
 
@@ -100,8 +108,8 @@ class BusSeatLayoutScreen extends StatefulWidget {
 
 class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
     with SingleTickerProviderStateMixin {
-  List<List<Seat>> _lowerDeckLayout = [];
-  List<List<Seat>> _upperDeckLayout = [];
+  List<List<Seat?>> _lowerDeckLayout = [];
+  List<List<Seat?>> _upperDeckLayout = [];
   final List<Seat> _selectedSeats = [];
   double _totalPrice = 0.0;
   bool _isLoading = true;
@@ -113,7 +121,6 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _loadSeatData();
   }
 
@@ -125,46 +132,66 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
 
   // --- DATA LOGIC ---
   Future<void> _loadSeatData() async {
-    await Future.delayed(const Duration(milliseconds: 800));
     try {
-      final seatLayout = await _busController.getBusSeatLayout(
+      final seatLayoutResponse = await _busController.getBusSeatLayout(
           widget.args.traceId, widget.args.resultIndex);
-      _processSeatLayout(seatLayout);
+      
+      if (seatLayoutResponse != null &&
+          seatLayoutResponse['GetBusSeatLayOutResult']?['SeatLayoutDetails']
+                  ?['SeatLayout'] !=
+              null) {
+        _processSeatLayout(seatLayoutResponse);
+      } else {
+        throw Exception("Invalid seat layout format received from API.");
+      }
     } catch (e) {
       debugPrint('Error loading seat layout: $e');
-      _loadSeatDataFromJson();
+      if (mounted) {
+        setState(() => _isLoading = false);
+        Get.snackbar("Error", "Could not load seat layout. Please try again.");
+      }
     }
   }
 
-  void _processSeatLayout(dynamic seatLayout) {
-    _loadSeatDataFromJson();
-  }
+  void _processSeatLayout(Map<String, dynamic> apiResponse) {
+    final seatLayoutData = apiResponse['GetBusSeatLayOutResult']
+        ['SeatLayoutDetails']['SeatLayout'];
+    final seatDetailsJson =
+        seatLayoutData['SeatDetails'] as List<dynamic>? ?? [];
 
-  void _loadSeatDataFromJson() {
-    const jsonData =
-        '''{"SeatLayouts":{"LowerDeck":[[{"SeatName":"L1","SeatStatus":true,"IsLadiesSeat":false,"Price":{"PublishedPrice":1262},"IsUpper":false},null,{"SeatName":"L2","SeatStatus":true,"Price":{"PublishedPrice":1011},"IsUpper":false},{"SeatName":"L3","SeatStatus":false,"IsMalesSeat":true,"Price":{"PublishedPrice":687},"IsUpper":false}],[null,null,{"SeatName":"L4","SeatStatus":true,"Price":{"PublishedPrice":588},"IsUpper":false},{"SeatName":"L5","SeatStatus":true,"Price":{"PublishedPrice":642},"IsUpper":false}],[{"SeatName":"L6","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":1677},"IsUpper":false},null,{"SeatName":"L7","SeatStatus":true,"Price":{"PublishedPrice":573},"IsUpper":false},{"SeatName":"L8","SeatStatus":true,"Price":{"PublishedPrice":692},"IsUpper":false}]],"UpperDeck":[[{"SeatName":"U1","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},null,{"SeatName":"U2","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":700},"IsUpper":true},{"SeatName":"U3","SeatStatus":true,"IsLadiesSeat":true,"Price":{"PublishedPrice":700},"IsUpper":true}],[{"SeatName":"U4","SeatStatus":true,"Price":{"PublishedPrice":1493},"IsUpper":true},null,{"SeatName":"U5","SeatStatus":true,"Price":{"PublishedPrice":1169},"IsUpper":true},null],[{"SeatName":"U6","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},null,{"SeatName":"U7","SeatStatus":true,"Price":{"PublishedPrice":700},"IsUpper":true},{"SeatName":"U8","SeatStatus":false,"Price":{"PublishedPrice":700},"IsUpper":true}]]}}''';
-    final parsedJson = jsonDecode(jsonData);
-    final layouts = parsedJson['SeatLayouts'];
-    Seat emptySeat(bool isUpper) => Seat(
-        seatName: 'EMPTY',
-        isAvailable: false,
-        isLadiesSeat: false,
-        isSleeper: false,
-        price: 0,
-        isUpperDeck: isUpper);
+    List<Seat> allSeats = seatDetailsJson
+        .expand(
+            (row) => (row as List).map((seatJson) => Seat.fromJson(seatJson)))
+        .toList();
+
+    List<Seat> lowerDeckSeats = allSeats.where((s) => !s.isUpperDeck).toList();
+    List<Seat> upperDeckSeats = allSeats.where((s) => s.isUpperDeck).toList();
+
     setState(() {
-      _lowerDeckLayout = (layouts['LowerDeck'] as List)
-          .map<List<Seat>>((r) => (r as List)
-              .map<Seat>((s) => s == null ? emptySeat(false) : Seat.fromJson(s))
-              .toList())
-          .toList();
-      _upperDeckLayout = (layouts['UpperDeck'] as List)
-          .map<List<Seat>>((r) => (r as List)
-              .map<Seat>((s) => s == null ? emptySeat(true) : Seat.fromJson(s))
-              .toList())
-          .toList();
+      _lowerDeckLayout = _createGridFromSeats(lowerDeckSeats);
+      _upperDeckLayout = _createGridFromSeats(upperDeckSeats);
+
+      _tabController = TabController(
+          length: _upperDeckLayout.isNotEmpty ? 2 : 1, vsync: this);
       _isLoading = false;
     });
+  }
+  
+  List<List<Seat?>> _createGridFromSeats(List<Seat> seats) {
+    if (seats.isEmpty) return [];
+
+    int maxRow = seats.map((s) => s.rowNo).reduce(max);
+    int maxCol = seats.map((s) => s.columnNo).reduce(max);
+
+    List<List<Seat?>> grid = List.generate(
+        maxRow + 1, (_) => List.generate(maxCol + 1, (_) => null));
+
+    for (var seat in seats) {
+      if (seat.rowNo < grid.length && seat.columnNo < grid[seat.rowNo].length) {
+        grid[seat.rowNo][seat.columnNo] = seat;
+      }
+    }
+    return grid;
   }
 
   void _onSeatTap(Seat seat) {
@@ -177,11 +204,14 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
         _selectedSeats.add(seat);
         _totalPrice += seat.price;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('You can select a maximum of 6 seats.')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: AppColors.accent,
+            content: Text('You can select a maximum of 6 seats.',
+                style: AppStyles.body.copyWith(color: Colors.white))));
       }
-
-      if (_selectedSeats.isEmpty) {
+      if (_selectedSeats.isNotEmpty && !_isSummaryExpanded) {
+        _isSummaryExpanded = true;
+      } else if (_selectedSeats.isEmpty && _isSummaryExpanded) {
         _isSummaryExpanded = false;
       }
     });
@@ -216,7 +246,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
               _buildHeader(),
               Expanded(
                 child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 300),
                   child: _isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
@@ -225,7 +255,8 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                           controller: _tabController,
                           children: [
                             _buildDeckWidget(_lowerDeckLayout),
-                            _buildDeckWidget(_upperDeckLayout)
+                            if (_upperDeckLayout.isNotEmpty)
+                              _buildDeckWidget(_upperDeckLayout),
                           ],
                         ),
                 ),
@@ -250,79 +281,95 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(widget.args.busName, style: AppStyles.heading1),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.event_seat_outlined,
+                  color: AppColors.textLight, size: 16),
+              const SizedBox(width: 8),
+              Text('${widget.args.availableSeats} Seats Available',
+                  style: AppStyles.body),
+            ],
+          ),
           const SizedBox(height: 16),
           const SeatInfoLegend(),
           const SizedBox(height: 8),
-          TabBar(
-            controller: _tabController,
-            indicatorColor: AppColors.accent,
-            indicatorWeight: 3,
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.textLight,
-            labelStyle: AppStyles.bodyBold,
-            tabs: const [Tab(text: 'LOWER DECK'), Tab(text: 'UPPER DECK')],
-          ),
+          if (!_isLoading && _upperDeckLayout.isNotEmpty)
+            TabBar(
+              controller: _tabController,
+              indicatorColor: AppColors.accent,
+              indicatorWeight: 3,
+              labelColor: AppColors.primary,
+              unselectedLabelColor: AppColors.textLight,
+              labelStyle: AppStyles.bodyBold,
+              tabs: const [Tab(text: 'LOWER DECK'), Tab(text: 'UPPER DECK')],
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildDeckWidget(List<List<Seat>> layout) {
+  Widget _buildDeckWidget(List<List<Seat?>> layout) {
+    if (layout.isEmpty) {
+      return Center(
+          child: Text("No layout available for this deck.",
+              style: AppStyles.body));
+    }
+
+    int columnCount = layout.map((row) => row.length).reduce(max);
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-          16, 24, 16, 150 + MediaQuery.of(context).padding.bottom),
-      child: Stack(
-        children: [
-          // The bus outline and the seats within it
-          CustomPaint(
-            painter: BusOutlinePainter(),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildSeatColumn(layout, 0),
-                  _buildSeatColumn(layout, 1),
-                  const SizedBox(width: 24), // Aisle
-                  _buildSeatColumn(layout, 2),
-                  _buildSeatColumn(layout, 3),
-                ],
+          16, 24, 16, 200 + MediaQuery.of(context).padding.bottom),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.seatAvailableBorder),
+                  borderRadius: BorderRadius.circular(16)),
+              child: Column(
+                children: layout
+                    .map((row) => _buildSeatRow(row, columnCount))
+                    .toList(),
               ),
             ),
-          ),
-          // The driver icon positioned on top
-          Positioned(
-            top: 8,
-            right: 12,
-            child: Icon(
-              Icons.directions_bus,
-              color: AppColors.textLight.withValues(alpha: 0.5),
-              size: 32,
+            Padding(
+              padding: const EdgeInsets.only(right: 16, top: 16),
+              child: Icon(
+                Icons.directions_bus,
+                color: AppColors.textLight.withOpacity(0.5),
+                size: 32,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSeatColumn(List<List<Seat>> layout, int columnIndex) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(layout.length, (rowIndex) {
-        final seat = (columnIndex < layout[rowIndex].length)
-            ? layout[rowIndex][columnIndex]
-            : null;
-        if (seat == null || seat.seatName == 'EMPTY') {
-          return const SizedBox(width: 52, height: 68); // Placeholder
-        }
-        return SeatWidget(
-          seat: seat,
-          isSelected: _selectedSeats.contains(seat),
-          onTap: () => _onSeatTap(seat),
-        );
-      }),
+  Widget _buildSeatRow(List<Seat?> row, int totalColumns) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(totalColumns, (index) {
+          final seat = index < row.length ? row[index] : null;
+
+          if (seat == null) {
+            return const SizedBox(
+                width: 52, height: 60); // Aisle or empty space
+          }
+          return SeatWidget(
+            seat: seat,
+            isSelected: _selectedSeats.contains(seat),
+            onTap: () => _onSeatTap(seat),
+          );
+        }),
+      ),
     );
   }
 
@@ -357,10 +404,10 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text('₹${_totalPrice.toStringAsFixed(0)}',
-                            style: AppStyles.heading1
-                                .copyWith(color: AppColors.accent)),
+                            style: AppStyles.heading1.copyWith(
+                                color: AppColors.accent, fontSize: 22)),
                         Text(
-                            '${_selectedSeats.length} Seat${_selectedSeats.length > 1 ? 's' : ''} Selected',
+                            '${_selectedSeats.length} Seat${_selectedSeats.length == 1 ? '' : 's'} Selected',
                             style: AppStyles.body),
                       ],
                     ),
@@ -368,9 +415,10 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                   TextButton.icon(
                     onPressed: () => setState(
                         () => _isSummaryExpanded = !_isSummaryExpanded),
-                    icon: Icon(_isSummaryExpanded
-                        ? Icons.expand_more
-                        : Icons.expand_less),
+                    icon: AnimatedRotation(
+                        duration: const Duration(milliseconds: 200),
+                        turns: _isSummaryExpanded ? 0.5 : 0,
+                        child: const Icon(Icons.expand_less)),
                     label: const Text("Details"),
                   ),
                 ],
@@ -395,32 +443,22 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  textStyle: AppStyles.bodyBold,
+                  textStyle: AppStyles.bodyBold.copyWith(fontSize: 16),
                 ),
                 onPressed: () {
-                  debugPrint(
-                      'Navigating to BoardingPointScreen with traceId: ${widget.args.traceId}');
-                  debugPrint(
-                      'Selected seats: ${_selectedSeats.map((s) => s.seatName).toList()}');
-
-                  // Navigate to boarding point selection screen
-                  Get.to(
-                    () => BoardingPointScreen(
-                      traceId: widget.args.traceId,
-                      resultIndex: widget.args.resultIndex,
-                      busName: widget.args.busName,
-                      fromCity: widget.args.fromLocation,
-                      toCity: widget.args.toLocation,
-                      journeyDate: DateFormat('d MMM yyyy')
-                          .format(widget.args.travelDate),
-                      fare: _totalPrice.toStringAsFixed(0),
-                      selectedSeats: _selectedSeats,
-                    ),
-                  );
-                  print(
-                      'Navigating to BoardingPointScreen with traceId: ${widget.args.traceId}, resultIndex: ${widget.args.resultIndex}, busName: ${widget.args.busName}, fromCity: ${widget.args.fromLocation}, toCity: ${widget.args.toLocation}, journeyDate: ${DateFormat('d MMM yyyy').format(widget.args.travelDate)}, fare: ${_totalPrice.toStringAsFixed(0)}, selectedSeats: ${_selectedSeats.map((s) => s.seatName).toList()}');
+                  Get.to(() => BoardingPointScreen(
+                        traceId: widget.args.traceId,
+                        resultIndex: widget.args.resultIndex,
+                        busName: widget.args.busName,
+                        fromCity: widget.args.fromLocation,
+                        toCity: widget.args.toLocation,
+                        journeyDate: DateFormat('d MMM yyyy')
+                            .format(widget.args.travelDate),
+                        fare: _totalPrice.toStringAsFixed(0),
+                        selectedSeats: _selectedSeats,
+                      ));
                 },
-                child: const Text('Continue'),
+                child: const Text('Select Boarding Point'),
               ),
             ),
           ],
@@ -481,7 +519,7 @@ class SeatWidget extends StatelessWidget {
     if (seat.isAvailable) {
       if (seat.isLadiesSeat) {
         borderColor = AppColors.seatLadies;
-        backgroundColor = AppColors.card;
+        backgroundColor = AppColors.seatLadies.withOpacity(0.1);
         contentColor = AppColors.seatLadies;
       } else {
         borderColor = AppColors.seatAvailableBorder;
@@ -497,12 +535,13 @@ class SeatWidget extends StatelessWidget {
     }
 
     return Tooltip(
-      message:
-          seat.isAvailable ? '₹${seat.price.toStringAsFixed(0)}' : 'Booked',
+      message: seat.isAvailable
+          ? 'Seat ${seat.seatName} | ₹${seat.price.toStringAsFixed(0)}'
+          : 'Booked',
       child: GestureDetector(
         onTap: seat.isAvailable ? onTap : null,
         child: AnimatedScale(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 150),
           scale: isSelected ? 1.1 : 1.0,
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 4),
@@ -510,7 +549,7 @@ class SeatWidget extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               color: backgroundColor,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(seat.isSleeper ? 12 : 8),
               border: Border.all(color: borderColor, width: 1.5),
             ),
             child: Column(
@@ -523,12 +562,10 @@ class SeatWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  seat.isAvailable
-                      ? '₹${seat.price.toStringAsFixed(0)}'
-                      : seat.seatName,
+                  seat.seatName,
                   style: TextStyle(
                     color: contentColor,
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -582,41 +619,4 @@ class LegendItem extends StatelessWidget {
       ],
     );
   }
-}
-
-// --- CUSTOM PAINTER ---
-class BusOutlinePainter extends CustomPainter {
-  BusOutlinePainter();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = AppColors.card
-      ..style = PaintingStyle.fill;
-    var shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.08)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-    Path path = Path();
-    double cornerRadius = 24.0;
-
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height),
-            Radius.circular(cornerRadius)),
-        shadowPaint);
-
-    path.moveTo(cornerRadius, 0);
-    path.lineTo(size.width, 0);
-    path.lineTo(size.width, size.height - cornerRadius);
-    path.quadraticBezierTo(
-        size.width, size.height, size.width - cornerRadius, size.height);
-    path.lineTo(cornerRadius, size.height);
-    path.quadraticBezierTo(0, size.height, 0, size.height - cornerRadius);
-    path.lineTo(0, cornerRadius);
-    path.quadraticBezierTo(0, 0, cornerRadius, 0);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

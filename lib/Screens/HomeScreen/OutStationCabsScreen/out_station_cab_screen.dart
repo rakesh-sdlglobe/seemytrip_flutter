@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/images.dart';
 import 'package:seemytrip/Controller/cab_search_controller.dart';
-import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart' hide white, redCA0, black2E2;
 import 'package:seemytrip/Screens/HomeScreen/OutStationCabsScreen/out_station_cab_from_to_screen.dart';
 import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';

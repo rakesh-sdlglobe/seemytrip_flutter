@@ -1,23 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/Constants/colors.dart';
-import 'package:seemytrip/Screens/HomeScreen/BusScreen/widgets/bus_calendar_widget.dart';
+import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+// --- Modern RED Color Scheme ---
+const Color kPrimaryColor = Color(0xFFD32F2F); // A strong, material red
+const Color kPrimaryLightColor =
+    Color(0xFFFFEBEE); // A light shade of the primary color
+const Color kBackgroundColor = Color(0xFFF8F9FA);
+const Color kCardColor = Colors.white;
+const Color kTextPrimaryColor = Color(0xFF212529);
+const Color kTextSecondaryColor = Color(0xFF6C757D);
+const Color kBorderColor = Color(0xFFDEE2E6);
+const Color kPrimaryDarkColor = Color(0xFFC62828);
+const Color kAccentColor = Color(0xFFDD2C00);
+const Color kScaffoldBackgroundColor = Color(0xFFF8F9FA);
 
 class SearchForm extends StatefulWidget {
-  final DateTime selectedDate;
-  final Function(DateTime) onDateSelected;
+  // CHANGED: Now accepts a list of dates and a toggle function
+  final List<DateTime> selectedDates;
+  final Function(DateTime) onDateTapped;
   final Future<void> Function() onSearchPressed;
   final RxString departureCity;
   final RxString destinationCity;
   final Future<Map<String, dynamic>?> Function() onDepartureTap;
   final Future<Map<String, dynamic>?> Function() onDestinationTap;
   final VoidCallback onSwapPressed;
-  bool isLoading;
+  final bool isLoading;
 
-  SearchForm({
+  const SearchForm({
     Key? key,
-    required this.selectedDate,
-    required this.onDateSelected,
+    required this.selectedDates,
+    required this.onDateTapped,
     required this.onSearchPressed,
     required this.departureCity,
     required this.destinationCity,
@@ -32,253 +47,305 @@ class SearchForm extends StatefulWidget {
 }
 
 class _SearchFormState extends State<SearchForm> {
-  bool _showCalendar = false;
-  late List<Map<String, dynamic>> dates;
-
-  @override
-  void initState() {
-    super.initState();
-    dates = List.generate(7, (index) {
+  // The horizontal list now simply reflects the state passed into the widget
+  List<Map<String, dynamic>> _generateQuickDates() {
+    return List.generate(14, (index) {
       final date = DateTime.now().add(Duration(days: index));
       return {
         'date': date,
-        'day': date.day.toString().padLeft(2, '0'),
-        'weekday': _getWeekday(date.weekday),
+        'day': DateFormat('d').format(date),
+        'weekday': DateFormat('E').format(date).toUpperCase(),
+        // Check if the date exists in the selected dates list
+        'isSelected': widget.selectedDates.any((d) => isSameDay(d, date)),
       };
     });
   }
 
-  String _getWeekday(int weekday) {
-    switch (weekday) {
-      case 1: return 'MON';
-      case 2: return 'TUE';
-      case 3: return 'WED';
-      case 4: return 'THU';
-      case 5: return 'FRI';
-      case 6: return 'SAT';
-      case 7: return 'SUN';
-      default: return '';
-    }
+  /// Shows a dialog with a full calendar for multi-date selection.
+  void _showCalendarPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        contentPadding: const EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          "Select Dates",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        content: SizedBox(
+          width: 350,
+          height: 420,
+          // StatefulBuilder is used to update the dialog's UI without closing it
+          child: StatefulBuilder(
+            builder: (context, setDialogState) {
+              return TableCalendar(
+                focusedDay: widget.selectedDates.isNotEmpty
+                    ? widget.selectedDates.first
+                    : DateTime.now(),
+                firstDay: DateTime.now().subtract(const Duration(days: 30)),
+                lastDay: DateTime.now().add(const Duration(days: 365)),
+                headerStyle: HeaderStyle(
+                  titleTextStyle:
+                      GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                  formatButtonVisible: false,
+                  titleCentered: true,
+                ),
+                calendarStyle: CalendarStyle(
+                  selectedDecoration: const BoxDecoration(
+                    color: kPrimaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  todayDecoration: BoxDecoration(
+                    color: kPrimaryColor.withOpacity(0.3),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                // This predicate determines which days are marked as selected
+                selectedDayPredicate: (day) {
+                  return widget.selectedDates.any((d) => isSameDay(d, day));
+                },
+                onDaySelected: (selectedDay, focusedDay) {
+                  // The parent widget handles the logic for adding/removing dates
+                  widget.onDateTapped(selectedDay);
+                  // Update the dialog's state to show the change immediately
+                  setDialogState(() {});
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Done",
+                style: GoogleFonts.poppins(
+                    color: kPrimaryColor, fontWeight: FontWeight.bold)),
+          )
+        ],
+      ),
+    );
   }
-
-  String _getMonthName(int month) {
-    const months = [
-      'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
-    ];
-    return months[month - 1];
-  }
-
-  
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: kCardColor,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withOpacity(0.07),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
           ),
         ],
-        border: Border.all(color: redCA0.withOpacity(0.12), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildLocationField(
-            icon: Icons.navigation,
-            label: 'Leaving from',
-            value: widget.departureCity,
-            onTap: widget.onDepartureTap,
+          _buildLocationSection(),
+          const SizedBox(height: 24),
+          _buildDateSection(),
+          const SizedBox(height: 24),
+          _buildSearchButton(),
+        ],
+      ),
+    );
+  }
+
+  /// Builds the combined "From" and "To" input section.
+  Widget _buildLocationSection() {
+    // This section remains the same as before
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: kBorderColor),
+      ),
+      child: Stack(
+        alignment: Alignment.centerRight,
+        children: [
+          Column(
+            children: [
+              _buildCityField(
+                label: 'From',
+                city: widget.departureCity,
+                onTap: widget.onDepartureTap,
+                icon: Icons.my_location,
+              ),
+              const Divider(
+                  height: 1, color: kBorderColor, indent: 16, endIndent: 16),
+              _buildCityField(
+                label: 'To',
+                city: widget.destinationCity,
+                onTap: widget.onDestinationTap,
+                icon: Icons.location_on_outlined,
+              ),
+            ],
           ),
-          
-          // Swap button
-          Align(
-            alignment: Alignment.centerRight,
-            child: GestureDetector(
-              onTap: widget.onSwapPressed,
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundColor: redCA0,
-                  child: const Icon(
-                    Icons.swap_vert,
-                    color: Colors.white,
-                    size: 20,
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Material(
+              color: kCardColor,
+              shape: CircleBorder(side: BorderSide(color: kBorderColor)),
+              child: InkWell(
+                onTap: widget.onSwapPressed,
+                borderRadius: BorderRadius.circular(20),
+                child: const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Icon(
+                    Icons.swap_vert_rounded,
+                    color: kPrimaryColor,
+                    size: 24,
                   ),
                 ),
               ),
             ),
           ),
-          
-          _buildLocationField(
-            icon: Icons.location_on,
-            label: 'Going To',
-            value: widget.destinationCity,
-            onTap: widget.onDestinationTap,
-          ),
-          
-          const SizedBox(height: 20),
-          _buildDateSelector(),
-          const SizedBox(height: 24),
-          
-          // Search button
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: widget.isLoading ? null : () async {
-                setState(() {
-                  widget.isLoading = true;
-                });
-                await widget.onSearchPressed();
-                setState(() {
-                  widget.isLoading = false;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: widget.isLoading ? Colors.grey[400] : redCA0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: widget.isLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-                        strokeWidth: 2.5,
-                      ),
-                    )
-                  : const Text(
-                      'SEARCH BUSES',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildLocationField({
-    required IconData icon,
+  /// A reusable widget for a single city input field.
+  Widget _buildCityField({
     required String label,
-    required RxString value,
-    required Future<Map<String, dynamic>?> Function() onTap,
+    required RxString city,
+    required Future<void> Function() onTap,
+    required IconData icon,
   }) {
-    return Row(
-      children: [
-        Icon(icon, color: redCA0, size: 22),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: redCA0,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 4),
-              GestureDetector(
-                onTap: onTap,
-                child: Container(
-                  height: 40,
-                  alignment: Alignment.centerLeft,
-                  child: Obx(() => Text(
-                    value.value,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: value.value.startsWith('Enter ') || value.value.startsWith('Select')
-                          ? Colors.red[200]
-                          : black2E2,
+    // This section remains the same as before
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(icon, color: kPrimaryColor, size: 22),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: kTextSecondaryColor,
+                      fontWeight: FontWeight.w500,
                     ),
-                  )),
-                ),
+                  ),
+                  const SizedBox(height: 2),
+                  Obx(
+                    () => Text(
+                      city.value.isEmpty ? 'Select City' : city.value,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: city.value.isEmpty
+                            ? kTextSecondaryColor.withOpacity(0.7)
+                            : kTextPrimaryColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildDateSelector() {
+  /// Builds the date selection section with a summary, calendar button, and quick-pick list.
+  Widget _buildDateSection() {
+    final quickDates = _generateQuickDates();
+    widget.selectedDates.sort();
+    final formattedDates = widget.selectedDates
+        .map((date) => DateFormat('MMM d').format(date))
+        .join(', ');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Departure',
-          style: TextStyle(
-            color: redCA0,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Dates of Journey',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: kTextPrimaryColor,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.calendar_month_outlined,
+                  color: kPrimaryColor),
+              onPressed: () => _showCalendarPicker(context),
+            )
+          ],
+        ),
+        // Display for selected dates
+        Padding(
+          padding: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 12.0),
+          child: Text(
+            widget.selectedDates.isEmpty
+                ? 'Select one or more dates'
+                : formattedDates,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: widget.selectedDates.isEmpty
+                  ? kTextSecondaryColor
+                  : kPrimaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(height: 12),
-        // Date chips
+        // Horizontal quick-pick list
         SizedBox(
-          height: 80,
+          height: 75,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: dates.length,
+            itemCount: quickDates.length,
             itemBuilder: (context, index) {
-              final date = dates[index];
-              final isSelected = widget.selectedDate.day == date['date'].day &&
-                  widget.selectedDate.month == date['date'].month &&
-                  widget.selectedDate.year == date['date'].year;
-
+              final dateInfo = quickDates[index];
+              final isSelected = dateInfo['isSelected'] as bool;
               return GestureDetector(
-                onTap: () {
-                  widget.onDateSelected(date['date']);
-                  setState(() => _showCalendar = false);
-                },
-                child: Container(
+                onTap: () => widget.onDateTapped(dateInfo['date'] as DateTime),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
                   width: 60,
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
-                    color: isSelected ? redCA0 : Colors.transparent,
+                    color: isSelected ? kPrimaryColor : kPrimaryLightColor,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? redCA0 : Colors.red[100]!,
-                      width: 1.5,
-                    ),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        date['day'],
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : black2E2,
+                        dateInfo['weekday'] as String,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected ? Colors.white : kPrimaryColor,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        date['weekday'],
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isSelected ? Colors.white : redCA0,
-                          fontWeight: FontWeight.w500,
+                        dateInfo['day'] as String,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? Colors.white : kPrimaryColor,
                         ),
                       ),
                     ],
@@ -288,55 +355,75 @@ class _SearchFormState extends State<SearchForm> {
             },
           ),
         ),
-        
-        // Calendar toggle button
-        GestureDetector(
-          onTap: () {
-            setState(() => _showCalendar = !_showCalendar);
-          },
+      ],
+    );
+  }
+
+  /// Builds the gradient search button.
+  Widget _buildSearchButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: widget.isLoading
+            ? null
+            : () async {
+                // MODIFIED: Check if cities or dates are empty
+                if (widget.departureCity.value.isEmpty ||
+                    widget.destinationCity.value.isEmpty ||
+                    widget.selectedDates.isEmpty) {
+                  Get.snackbar(
+                    'Missing Information',
+                    'Please select cities and at least one date.',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.amber[800],
+                    colorText: Colors.white,
+                    margin: const EdgeInsets.all(12),
+                    borderRadius: 12,
+                  );
+                  return;
+                }
+                await widget.onSearchPressed();
+              },
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(0),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 8,
+          shadowColor: kPrimaryColor.withOpacity(0.4),
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFE53935), Color(0xFFC62828)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
           child: Container(
-            width: 160,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            margin: const EdgeInsets.only(top: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: redCA0),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${_getMonthName(widget.selectedDate.month)} ${widget.selectedDate.year}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: redCA0,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            alignment: Alignment.center,
+            child: widget.isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    'Search Buses',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  _showCalendar ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  size: 20,
-                  color: redCA0,
-                ),
-              ],
-            ),
           ),
         ),
-        
-        // Calendar widget
-        if (_showCalendar)
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: BusCalendarWidget(
-              selectedDate: widget.selectedDate,
-              onDateSelected: (date) {
-                widget.onDateSelected(date);
-                setState(() => _showCalendar = false);
-              },
-            ),
-          ),
-      ],
+      ),
     );
   }
 }

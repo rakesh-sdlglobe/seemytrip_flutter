@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:seemytrip/Models/hotel_geolocation_model.dart';
+import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_map_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_detail_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/HotelsScreen/hotel_image_screen.dart';
@@ -46,6 +48,31 @@ class SearchCityController extends GetxController {
   RxString searchText = ''.obs;
 
   var allCities = <City>[].obs;
+  
+  // Search related variables
+  final searchController = TextEditingController();
+  final searchFocusNode = FocusNode();
+  final isSearching = false.obs;
+  final searchQuery = ''.obs;
+
+  // Filter hotels by name
+  List<Map<String, dynamic>> searchHotels(
+      List<Map<String, dynamic>> hotels, String query) {
+    if (query.isEmpty) return hotels;
+
+    final queryLower = query.toLowerCase();
+    return hotels
+        .where((hotel) =>
+            hotel['HotelName'].toString().toLowerCase().contains(queryLower))
+        .toList(growable: false);
+  }
+
+  void clearSearch() {
+    searchController.clear();
+    searchQuery.value = '';
+    isSearching.value = false;
+    update();
+  }
   var filteredCities = <City>[].obs;
   var recentSearches = <City>[].obs;
 
@@ -54,6 +81,10 @@ class SearchCityController extends GetxController {
   var checkOutDate = Rxn<DateTime>();
   var hotelDetails = Rxn<Map<String, dynamic>>();
 
+  // --- ADDED: State for the new Geo Locations feature ---
+  var isGeoLoading = false.obs;
+  final RxList<GeoLocation> geoLocations = <GeoLocation>[].obs;
+  var SessionId = ''.obs;
   var hotelProviderSearchId;
 
   @override
@@ -87,13 +118,17 @@ class SearchCityController extends GetxController {
           return;
         }
         final acList = response.data['AcList'] as List<dynamic>;
-        final cities = acList.map((json) {
-          try {
-            return City.fromJson(Map<String, dynamic>.from(json));
-          } catch (_) {
-            return null;
-          }
-        }).where((city) => city != null).cast<City>().toList();
+        final cities = acList
+            .map((json) {
+              try {
+                return City.fromJson(Map<String, dynamic>.from(json));
+              } catch (_) {
+                return null;
+              }
+            })
+            .where((city) => city != null)
+            .cast<City>()
+            .toList();
         allCities.assignAll(cities);
         filteredCities.assignAll(cities);
       } else {
@@ -117,9 +152,9 @@ class SearchCityController extends GetxController {
         filteredCities.assignAll(allCities);
       } else {
         final lower = query.toLowerCase();
-        final filtered = allCities.where(
-          (city) => city.name.toLowerCase().contains(lower)
-        ).toList();
+        final filtered = allCities
+            .where((city) => city.name.toLowerCase().contains(lower))
+            .toList();
         filteredCities.assignAll(filtered);
       }
     } catch (_) {
@@ -156,10 +191,10 @@ class SearchCityController extends GetxController {
   }) async {
     // Set loading to true to show shimmer effect
     isLoading.value = true;
-    
+
     // Add a 5-second delay before making the API call
     await Future.delayed(Duration(seconds: 5));
-    
+
     try {
       final checkInStr = checkIn.toLocal().toString().split(' ')[0];
       final checkOutStr = checkOut.toLocal().toString().split(' ')[0];
@@ -179,7 +214,7 @@ class SearchCityController extends GetxController {
         'PageNo': pageNo ?? 1,
         'SessionID': sessionId,
         'Filter': filter,
-        'Sort': sort ?? { "SortBy": "StarRating", "SortOrder": "Desc" },
+        'Sort': sort ?? {"SortBy": "StarRating", "SortOrder": "Desc"},
       };
       print("==============> Fetching hotels list from API");
       print("City ID: $cityId");
@@ -200,14 +235,15 @@ class SearchCityController extends GetxController {
       );
       print("Response from hotels list API: ${response.data}");
       if (response.data != null && response.data['Hotels'] != null) {
-        print(" *** Yeah , count for hotels is ${response.data['Hotels'].length}");
+        print(
+            " *** Yeah , count for hotels is ${response.data['Hotels'].length}");
         hotelDetails.value = Map<String, dynamic>.from(response.data);
         hotelDetails.refresh();
         Get.to(() => HotelScreen(
-          cityId: cityId,
-          cityName: cityName,
-          hotelDetails: Map<String, dynamic>.from(response.data),
-        ));
+              cityId: cityId,
+              cityName: cityName,
+              hotelDetails: Map<String, dynamic>.from(response.data),
+            ));
       } else {
         _setError("No hotels found for the given criteria");
       }
@@ -219,10 +255,9 @@ class SearchCityController extends GetxController {
     }
   }
 
-  Future<void> fetchHotelDetailsWithPrice({
-    required String hotelId,
-    required Map<String, dynamic> searchParams
-  }) async {
+  Future<void> fetchHotelDetailsWithPrice(
+      {required String hotelId,
+      required Map<String, dynamic> searchParams}) async {
     try {
       final payload = {
         'HotelId': hotelId,
@@ -271,7 +306,8 @@ class SearchCityController extends GetxController {
           throw Exception('Invalid hotel details response');
         }
       } else {
-        throw Exception('API call failed with status code ${response.statusCode}');
+        throw Exception(
+            'API call failed with status code ${response.statusCode}');
       }
     } catch (err) {
       rethrow;
@@ -285,7 +321,8 @@ class SearchCityController extends GetxController {
         Uri.parse('http://192.168.137.150:3002/api/hotels/getHotelImages'),
         headers: {'Content-Type': 'application/json'},
         // The backend expects "HotelProviderSearchId" not "HotelId"
-        body: jsonEncode({'HotelProviderSearchId': hotelProviderSearchId ?? ''}),
+        body:
+            jsonEncode({'HotelProviderSearchId': hotelProviderSearchId ?? ''}),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -295,7 +332,10 @@ class SearchCityController extends GetxController {
         // The backend returns images in the "Gallery" key as a list of objects, each with a "Url" and "Name"
         if (data is Map && data['Gallery'] is List) {
           images = data['Gallery']
-              .where((item) => item is Map && item['Url'] != null && item['Url'].toString().isNotEmpty)
+              .where((item) =>
+                  item is Map &&
+                  item['Url'] != null &&
+                  item['Url'].toString().isNotEmpty)
               .map<Map<String, String>>((item) => {
                     'url': item['Url'].toString(),
                     'name': (item['Name'] ?? '').toString(),
@@ -303,9 +343,8 @@ class SearchCityController extends GetxController {
               .toList();
         }
         Get.to(() => HotelImageScreen(
-          imageList: images ?? <Map<String, String>>[],
-          
-        ));
+              imageList: images ?? <Map<String, String>>[],
+            ));
         print('Fetched images: $images');
 
         return images.map((img) => img['url'] ?? '').toList();
@@ -314,6 +353,41 @@ class SearchCityController extends GetxController {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  // --- ADDED: New function to fetch Geo Locations ---
+  Future<void> fetchGeoLocations(String sessionId) async {
+    isGeoLoading.value = true;
+    try {
+      final response = await dio.post(
+        'http://192.168.137.150:3002/api/hotels/getGeoList',
+        data: {'SessionId': sessionId},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final locationObjects = response.data;
+        // print('Fetched locations: $locationObjects');
+        // 1. Get the raw list from the map
+        final List<dynamic> rawList =
+            locationObjects['GpsCoordinates'] as List? ?? [];
+
+// 2. Convert the raw list into a List<Location> using your fromMap factory
+        final List<Location> locations = rawList
+            .map((item) => Location.fromMap(item as Map<String, dynamic>))
+            .toList();
+
+        // Navigate to the map screen with the parsed locations.
+        Get.to(() => HotelMapScreen(locations: locations));
+      } else {
+        _setError(
+            'Failed to fetch Geo Locations (Status: ${response.statusCode})');
+      }
+    } catch (e) {
+      _setError('An error occurred while fetching Geo Locations: $e');
+    } finally {
+      isGeoLoading.value = false;
     }
   }
 
@@ -389,5 +463,4 @@ class SearchCityController extends GetxController {
       icon: const Icon(Icons.error_outline, color: Colors.white),
     );
   }
-  
 }

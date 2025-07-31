@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
+import 'package:seemytrip/Constants/font_family.dart';
 import 'package:seemytrip/Constants/images.dart';
 import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_search_screen.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
@@ -19,9 +20,13 @@ class TrainAndBusScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 100,
+            height: 250,
             width: Get.width,
             decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
               image: DecorationImage(
                 image: AssetImage(busAndTrainImage),
                 fit: BoxFit.fill,
@@ -32,16 +37,20 @@ class TrainAndBusScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: () {
+                  IconButton(
+                    onPressed: () {
                       Get.back();
                     },
-                    child: Icon(Icons.arrow_back, color: white, size: 20),
+                    icon: Icon(Icons.arrow_back, color: white, size: 20),
                   ),
-                  CommonTextWidget.PoppinsSemiBold(
-                    text: "Train & Bus",
-                    color: white,
-                    fontSize: 18,
+                  Text(
+                    "Train & Bus",
+                    style: TextStyle(
+                      fontFamily: FontFamily.PoppinsBold,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                      color: white,
+                    ),
                   ),
                   Container(),
                 ],
@@ -63,27 +72,44 @@ class TrainAndBusScreen extends StatelessWidget {
                 child: Container(
                   width: Get.width,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(10),
                     color: white,
                     boxShadow: [
                       BoxShadow(
-                        color: grey515.withOpacity(0.25),
-                        blurRadius: 6,
-                        offset: Offset(0, 1),
+                        color: grey515.withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
                       ),
                     ],
                   ),
-                  child: ListTile(
-                    horizontalTitleGap: -4,
-                    leading: SvgPicture.asset(
-                      Lists.bookBusAndTrainList[index]["image"],
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 15,
                     ),
-                    title: CommonTextWidget.PoppinsMedium(
-                      text: Lists.bookBusAndTrainList[index]["text"],
-                      color: black2E2,
-                      fontSize: 16,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SvgPicture.asset(
+                          Lists.bookBusAndTrainList[index]["image"],
+                          width: 30,
+                          height: 30,
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: CommonTextWidget.PoppinsMedium(
+                            text: Lists.bookBusAndTrainList[index]["text"],
+                            color: black2E2,
+                            fontSize: 16,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: redCA0,
+                        ),
+                      ],
                     ),
-                    trailing: Icon(Icons.arrow_forward, color: redCA0),
                   ),
                 ),
               ),
@@ -97,7 +123,7 @@ class TrainAndBusScreen extends StatelessWidget {
             child: CommonTextWidget.PoppinsMedium(
               color: black2E2,
               text: "Train information Services",
-              fontSize: 16,
+              fontSize: 18,
             ),
           ),
           Expanded(
@@ -119,23 +145,23 @@ class TrainAndBusScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: white,
                       boxShadow: [
                         BoxShadow(
-                          color: grey515.withOpacity(0.25),
-                          offset: Offset(0, 1),
-                          blurRadius: 6,
+                          color: grey515.withValues(alpha: 0.25),
+                          offset: Offset(0, 5),
+                          blurRadius: 15,
                         ),
                       ],
-                      color: white,
-                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Center(
-                        child: CommonTextWidget.PoppinsMedium(
+                        child: CommonTextWidget.PoppinsSemiBold(
                           color: black2E2,
                           text: Lists.trainAndBusInformationServiceList[index],
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                       ),
                     ),

@@ -1,6 +1,12 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/Constants/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// Define your color palette for consistency
+const Color kPrimaryColor = Color(0xFFD32F2F);
+const Color kPrimaryDarkColor = Color(0xFFB71C1C);
+const Color kAccentColor = Color(0xFFFF5252);
 
 class TopBanner extends StatelessWidget {
   final VoidCallback onBackPressed;
@@ -9,56 +15,128 @@ class TopBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          height: 155,
-          width: Get.width,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [redCA0, Colors.red.shade100],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return SizedBox(
+      height: 200, // Slightly sleeker profile
+      child: Stack(
+        children: [
+          // Layer 1: Base Gradient
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [kPrimaryColor, kPrimaryDarkColor],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
-          child: Stack(
-            children: [
-              const Positioned(
-                left: 24,
-                top: 68,
-                child: Text(
-                  "Book Bus Tickets\nAnywhere, Anytime",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    height: 1.2,
-                  ),
-                ),
+
+          // Layer 2: Decorative Abstract Shapes
+          _buildDecorativeShapes(),
+
+          // Layer 3: Glassmorphism Effect with BackdropFilter
+          ClipPath(
+            clipper: WaveClipper(),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(
+                color: Colors.white.withOpacity(0.08),
               ),
-              Positioned(
-                right: 24,
-                bottom: 0,
-                child: Icon(Icons.directions_bus, 
-                    color: Colors.white.withOpacity(0.2), size: 90),
+            ),
+          ),
+
+          // Layer 4: UI Content (Button and Text)
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 15, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildGlassBackButton(),
+                  const Spacer(),
+                  _buildTitleText(),
+                  const SizedBox(height: 30), // Adjust bottom padding
+                ],
               ),
-            ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// A modern, frosted-glass style back button.
+  Widget _buildGlassBackButton() {
+    return GestureDetector(
+      onTap: onBackPressed,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.0),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: Colors.white, size: 20),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The main title text with refined typography.
+  Widget _buildTitleText() {
+    return RichText(
+      text: TextSpan(
+        style: GoogleFonts.poppins(
+          color: Colors.white,
+          fontSize: 26,
+          height: 1.3,
+          shadows: [
+            Shadow(
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 5,
+              offset: const Offset(0, 2),
+            )
+          ],
+        ),
+        children: const [
+          TextSpan(
+            text: "Book Bus Tickets\n",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text: "Anywhere, Anytime",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Adds subtle, layered circles for visual depth.
+  Widget _buildDecorativeShapes() {
+    return Stack(
+      children: [
+        Positioned(
+          top: -50,
+          left: -80,
+          child: CircleAvatar(
+            radius: 100,
+            backgroundColor: kAccentColor.withOpacity(0.1),
           ),
         ),
         Positioned(
-          top: 42,
-          left: 12,
-          child: InkWell(
-            onTap: onBackPressed,
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.18),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
-            ),
+          bottom: -100,
+          right: -60,
+          child: CircleAvatar(
+            radius: 90,
+            backgroundColor: Colors.white.withOpacity(0.07),
           ),
         ),
       ],
@@ -66,212 +144,28 @@ class TopBanner extends StatelessWidget {
   }
 }
 
-class TrustIndicator extends StatelessWidget {
-  const TrustIndicator({Key? key}) : super(key: key);
+/// Custom clipper for a modern wave/curve effect.
+class WaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0, size.height * 0.75);
+
+    var firstControlPoint = Offset(size.width * 0.25, size.height * 0.9);
+    var firstEndPoint = Offset(size.width * 0.5, size.height * 0.7);
+    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy,
+        firstEndPoint.dx, firstEndPoint.dy);
+
+    var secondControlPoint = Offset(size.width * 0.75, size.height * 0.5);
+    var secondEndPoint = Offset(size.width, size.height * 0.6);
+    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy,
+        secondEndPoint.dx, secondEndPoint.dy);
+
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.red[50],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.verified, color: redCA0, size: 20),
-          SizedBox(width: 8),
-          Text(
-            'Trusted by ',
-            style: TextStyle(color: redCA0, fontSize: 16),
-          ),
-          Text(
-            '10 crore+ ',
-            style: TextStyle(
-              color: redCA0,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            'Indian travellers ',
-            style: TextStyle(color: redCA0, fontSize: 14),
-          ),
-          Text('🇮🇳', style: TextStyle(fontSize: 14)),
-        ],
-      ),
-    );
-  }
-}
-
-class DiscountBanner extends StatelessWidget {
-  const DiscountBanner({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: redCA0.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: redCA0,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.percent, color: Colors.white, size: 22),
-          ),
-          const SizedBox(width: 12),
-          const Text(
-            'Save upto ₹300* on Bus Bookings',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: redCA0,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PromoSection extends StatelessWidget {
-  const PromoSection({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [redCA0.withOpacity(0.08), Colors.red[50]!],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.red[100],
-            ),
-          ),
-          const SizedBox(width: 16),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Save up to',
-                  style: TextStyle(fontSize: 16, color: redCA0),
-                ),
-                Text(
-                  '₹300*',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: redCA0,
-                  ),
-                ),
-                Text(
-                  'on your Bus Booking',
-                  style: TextStyle(fontSize: 14, color: redCA0),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  border: Border.all(color: redCA0, width: 2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  'IX300',
-                  style: TextStyle(
-                    color: redCA0,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: redCA0,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'Copy',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SpecialOffersHeader extends StatelessWidget {
-  final VoidCallback onViewAll;
-
-  const SpecialOffersHeader({Key? key, required this.onViewAll}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Special Offers',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: redCA0,
-            ),
-          ),
-          GestureDetector(
-            onTap: onViewAll,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: redCA0),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Text(
-                'View All',
-                style: TextStyle(
-                  color: redCA0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

@@ -1041,10 +1041,10 @@ class Lists {
       "image": bookTrainUndergroundImage,
       "text": "Book Trains Tickets",
     },
-    {
-      "image": bookBusFrontOfBusImage,
-      "text": "Book Bus Tickets",
-    },
+    // {
+    //   "image": bookBusFrontOfBusImage,
+    //   "text": "Book Bus Tickets",
+    // },
   ];
 
   static List trainAndBusInformationServiceList = [

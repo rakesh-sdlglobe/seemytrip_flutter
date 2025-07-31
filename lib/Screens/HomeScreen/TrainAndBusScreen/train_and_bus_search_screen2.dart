@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/font_family.dart';
 import 'package:seemytrip/Controller/travellerDetailController.dart';
@@ -8,11 +9,7 @@ import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_con
 import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen_password.dart';
 import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen_username.dart';
 import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/traveller_detail_screen.dart';
-import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
-import 'package:seemytrip/Screens/Utills/common_textfeild_widget.dart';
 import 'package:seemytrip/components/irctcs_webview.dart';
-import 'package:seemytrip/main.dart';
-import 'package:intl/intl.dart';
 
 class TrainAndBusSearchScreen2 extends StatefulWidget {
   final String? trainName;
@@ -51,7 +48,8 @@ class TrainAndBusSearchScreen2 extends StatefulWidget {
       _TrainAndBusSearchScreen2State();
 }
 
-class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
+class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2>
+    with SingleTickerProviderStateMixin {
   final TravellerDetailController travellerDetailController =
       Get.put(TravellerDetailController());
   final TextEditingController emailController = TextEditingController();
@@ -59,8 +57,30 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
   final TextEditingController promoCodeController = TextEditingController();
   String irctcUsername = '';
   List<String> selectedTravellers = [];
+  late final AnimationController _animationController;
+  late final Animation<double> _scaleAnimation;
 
-  // Function to format time from 24-hour to 12-hour format with AM/PM
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    promoCodeController.dispose();
+    super.dispose();
+  }
+
   String formatTime(String time) {
     final DateFormat inputFormat = DateFormat("HH:mm");
     final DateFormat outputFormat = DateFormat("hh:mm a");
@@ -70,16 +90,17 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
 
   @override
   Widget build(BuildContext context) {
-    print('departure date: ${widget.departure}');
-    print('arrival date: ${widget.arrival}');
     return Scaffold(
-      backgroundColor: redF9E,
-      appBar: _buildAppBar(),
-      body: Stack(
-        children: [
-          _buildBody(),
-          _buildBottomBar(),
-        ],
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+        ),
+        child: Stack(
+          children: [
+            _buildBody(),
+            _buildBottomBar(),
+          ],
+        ),
       ),
     );
   }
@@ -87,108 +108,148 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: redCA0,
-      automaticallyImplyLeading: false,
+      foregroundColor: Colors.white,
       elevation: 0,
+      // leading: IconButton(
+      //   icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 24),
+      //   onPressed: () => Get.back(),
+      // ),
+      title: Text(
+        "Train Booking",
+        style: TextStyle(
+          fontFamily: FontFamily.PoppinsBold,
+          fontSize: 22,
+          color: Colors.white,
+          shadows: [
+            Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))
+          ],
+        ),
+      ),
       centerTitle: true,
-      leading: InkWell(
-        onTap: () {
-          Get.back();
-        },
-        child: Icon(Icons.arrow_back, color: white, size: 20),
-      ),
-      title: CommonTextWidget.PoppinsSemiBold(
-        text: "Train Search",
-        color: white,
-        fontSize: 18,
-      ),
     );
   }
 
   Widget _buildBody() {
-    return ScrollConfiguration(
-      behavior: MyBehavior(),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 10),
-            _buildTrainInfo(),
-            SizedBox(height: 10),
-            _buildIRCTCUsername(),
-            SizedBox(height: 10),
-            _buildTravellerDetails(),
-            SizedBox(height: 10),
-            _buildContactDetails(),
-            SizedBox(height: 10),
-            _buildOffersAndDiscounts(),
-            SizedBox(height: 130),
-          ],
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          backgroundColor: redCA0,
+          elevation: 0,
+          pinned: true,
+          flexibleSpace: _buildAppBar(),
         ),
-      ),
+        SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: _buildTrainInfoCard()),
+        SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: _buildIRCTCCard()),
+        SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: _buildTravellerDetailsCard()),
+        SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: _buildContactDetailsCard()),
+        SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: _buildOffersCard()),
+        SliverToBoxAdapter(child: SizedBox(height: 100)),
+      ],
     );
   }
 
-  Widget _buildTrainInfo() {
-    return Container(
-      width: Get.width,
-      color: white,
+  Widget _buildTrainInfoCard() {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+        ],
+      ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTrainHeader(),
-            SizedBox(height: 20),
-            _buildTrainSchedule(),
-            SizedBox(height: 15),
-            _buildTrainStations(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.trainName ?? 'Unknown Train',
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsBold,
+                    fontSize: 18,
+                    color: black2E2,
+                  ),
+                ),
+                Text(
+                  "#${widget.trainNumber ?? '0000'}",
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsMedium,
+                    fontSize: 14,
+                    color: greyB8B,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildScheduleColumn(
+                    formatTime(widget.departureTime ?? '00:00'),
+                    widget.departure ?? ''),
+                _buildDuration(),
+                _buildScheduleColumn(formatTime(widget.arrivalTime ?? '00:00'),
+                    widget.arrival ?? ''),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.fromStation,
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsMedium,
+                    fontSize: 14,
+                    color: grey717,
+                  ),
+                ),
+                Text(
+                  widget.toStation,
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsMedium,
+                    fontSize: 14,
+                    color: grey717,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTrainHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CommonTextWidget.PoppinsSemiBold(
-          text: widget.trainName ?? 'Unknown Train',
-          color: black2E2,
-          fontSize: 14,
-        ),
-        CommonTextWidget.PoppinsMedium(
-          text: "#${widget.trainNumber ?? '0000'}",
-          color: greyB8B,
-          fontSize: 14,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTrainSchedule() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildScheduleColumn(formatTime(widget.departureTime ?? '00:00'),
-            widget.departure ?? ''),
-        _buildDuration(),
-        _buildScheduleColumn(
-            formatTime(widget.arrivalTime ?? '00:00'), widget.arrival ?? ''),
-      ],
     );
   }
 
   Widget _buildScheduleColumn(String time, String date) {
     return Column(
       children: [
-        CommonTextWidget.PoppinsSemiBold(
-          text: time,
-          color: black2E2,
-          fontSize: 14,
+        Text(
+          time,
+          style: TextStyle(
+            fontFamily: FontFamily.PoppinsBold,
+            fontSize: 18,
+            color: black2E2,
+          ),
         ),
-        CommonTextWidget.PoppinsMedium(
-          text: date,
-          color: greyB8B,
-          fontSize: 14,
+        SizedBox(height: 4),
+        Text(
+          date,
+          style: TextStyle(
+            fontFamily: FontFamily.PoppinsRegular,
+            fontSize: 12,
+            color: greyB8B,
+          ),
         ),
       ],
     );
@@ -199,60 +260,97 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
       children: [
         Container(
           height: 2,
-          width: 30,
-          color: greyDBD,
+          width: 50,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [redCA0, Colors.orangeAccent]),
+          ),
         ),
-        SizedBox(width: 15),
-        CommonTextWidget.PoppinsMedium(
-          text: widget.duration,
-          color: grey717,
-          fontSize: 12,
+        SizedBox(width: 12),
+        Text(
+          widget.duration ?? '',
+          style: TextStyle(
+            fontFamily: FontFamily.PoppinsMedium,
+            fontSize: 14,
+            color: grey717,
+          ),
         ),
-        SizedBox(width: 15),
+        SizedBox(width: 12),
         Container(
           height: 2,
-          width: 30,
-          color: greyDBD,
+          width: 50,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [Colors.orangeAccent, redCA0]),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildTrainStations() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CommonTextWidget.PoppinsMedium(
-          text: widget.fromStation ?? 'Unknown Station',
-          color: grey717,
-          fontSize: 12,
-        ),
-        CommonTextWidget.PoppinsMedium(
-          text: widget.toStation ?? 'Unknown Station',
-          color: grey717,
-          fontSize: 12,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildIRCTCUsername() {
-    return Container(
-      width: Get.width,
-      color: white,
+  Widget _buildIRCTCCard() {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+        ],
+      ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CommonTextWidget.PoppinsSemiBold(
-              text: "IRCTC Username",
-              color: black2E2,
-              fontSize: 14,
+            Text(
+              "IRCTC Username",
+              style: TextStyle(
+                fontFamily: FontFamily.PoppinsBold,
+                fontSize: 18,
+                color: black2E2,
+              ),
             ),
-            SizedBox(height: 10),
-            _buildIRCTCUsernameField(),
-            SizedBox(height: 15),
+            SizedBox(height: 12),
+            InkWell(
+              onTap: () async {
+                final result = await Get.bottomSheet(
+                  TrainAndBusContactInformationScreen(),
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                );
+                if (result != null) {
+                  setState(() {
+                    irctcUsername = result;
+                  });
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200]!.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      irctcUsername.isEmpty
+                          ? "Enter IRCTC Username"
+                          : irctcUsername,
+                      style: TextStyle(
+                        fontFamily: FontFamily.PoppinsMedium,
+                        fontSize: 14,
+                        color: irctcUsername.isEmpty ? grey888 : black2E2,
+                      ),
+                    ),
+                    Icon(Icons.arrow_forward_ios, color: redCA0, size: 18),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 12),
             _buildIRCTCOptions(),
           ],
         ),
@@ -260,127 +358,187 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
     );
   }
 
-  Widget _buildIRCTCUsernameField() {
-    return InkWell(
-      onTap: () async {
-        final result = await Get.bottomSheet(
-          TrainAndBusContactInformationScreen(),
-          backgroundColor: Colors.transparent,
-          isScrollControlled: true,
-        );
-        if (result != null) {
-          setState(() {
-            irctcUsername = result;
-          });
-        }
-      },
-      child: Container(
-        width: Get.width,
-        decoration: BoxDecoration(
-          color: greyE2E,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 17.0, horizontal: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CommonTextWidget.PoppinsMedium(
-                    text: irctcUsername.isEmpty ? "USERNAME" : irctcUsername,
-                    color: grey888,
-                    fontSize: 12,
-                  ),
-                  SizedBox(height: 9.0),
-                  if (irctcUsername.isEmpty)
-                    CommonTextWidget.PoppinsMedium(
-                      text: "Enter IRCTC Username",
-                      color: grey888,
-                      fontSize: 12,
-                    ),
-                ],
-              ),
-              Icon(Icons.arrow_forward_ios, color: grey888, size: 16),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildIRCTCOptions() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
+    final options = [
+      {
+        'title': 'Create New IRCTC Account',
+        'subtitle': 'Register for a new IRCTC account',
+        'icon': Icons.person_add_alt_1_rounded,
+        'onTap': () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => IRCTCWebView()),
-            );
-          },
-          child: CommonTextWidget.PoppinsMedium(
-            text: "CREATE NEW IRCTC ACCOUNT",
-            color: redCA0,
-            fontSize: 12,
-          ),
-        ),
-        SizedBox(height: 10),
-        GestureDetector(
-          onTap: () {
-            Get.bottomSheet(
+            ),
+      },
+      {
+        'title': 'Forgot Username',
+        'subtitle': 'Recover your IRCTC username',
+        'icon': Icons.person_search_rounded,
+        'onTap': () => Get.bottomSheet(
               ForgotIRCTCUsernameScreen(),
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
-            );
-          },
-          child: CommonTextWidget.PoppinsMedium(
-            text: "FORGOT USERNAME",
-            color: redCA0,
-            fontSize: 12,
-          ),
-        ),
-        SizedBox(height: 10),
-        GestureDetector(
-          onTap: () {
-            Get.bottomSheet(
-              ForgotIRCTCPasswordScreen(
-                username: irctcUsername,
-              ),
+            ),
+      },
+      {
+        'title': 'Forgot Password',
+        'subtitle': 'Reset your IRCTC password',
+        'icon': Icons.lock_reset_rounded,
+        'onTap': () => Get.bottomSheet(
+              ForgotIRCTCPasswordScreen(username: irctcUsername),
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
-            );
-          },
-          child: CommonTextWidget.PoppinsMedium(
-            text: "FORGOT IRCTC PASSWORD",
-            color: redCA0,
-            fontSize: 12,
+            ),
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4.0, bottom: 12),
+          child: Text(
+            'Need Help?',
+            style: TextStyle(
+              fontFamily: FontFamily.PoppinsSemiBold,
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+          ),
+        ),
+        ...List.generate(
+          options.length,
+          (index) => _buildOptionCard(
+            title: options[index]['title'] as String,
+            subtitle: options[index]['subtitle'] as String,
+            icon: options[index]['icon'] as IconData,
+            onTap: options[index]['onTap'] as VoidCallback,
+            isLast: index == options.length - 1,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTravellerDetails() {
-    return Container(
-      width: Get.width,
-      color: white,
+  Widget _buildOptionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required VoidCallback onTap,
+    bool isLast = false,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Ink(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[200]!),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: redCA0.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: redCA0,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: FontFamily.PoppinsSemiBold,
+                          fontSize: 15,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontFamily: FontFamily.PoppinsRegular,
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: Colors.grey[400],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTravellerDetailsCard() {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+        ],
+      ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CommonTextWidget.PoppinsSemiBold(
-              text: "Traveller Details",
-              color: black2E2,
-              fontSize: 14,
+            Text(
+              "Traveller Details",
+              style: TextStyle(
+                fontFamily: FontFamily.PoppinsBold,
+                fontSize: 18,
+                color: black2E2,
+              ),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 12),
             _buildSavedTravellers(),
-            SizedBox(height: 15),
-            _buildAddTravellerDetails(),
+            SizedBox(height: 12),
+            GestureDetector(
+              onTap: () => Get.to(() => TravellerDetailScreen()),
+              child: Text(
+                "+ ADD TRAVELLER",
+                style: TextStyle(
+                  fontFamily: FontFamily.PoppinsMedium,
+                  fontSize: 14,
+                  color: redCA0,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -388,19 +546,17 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
   }
 
   Widget _buildSavedTravellers() {
-    final TravellerDetailController controller = Get.find<TravellerDetailController>();
-
+    final TravellerDetailController controller =
+        Get.find<TravellerDetailController>();
     return Obx(
       () => Column(
         children: controller.travellers.map((traveller) {
-          // Safely access the traveller data with null checks
           final name = traveller['passengerName'] ?? 'Unknown';
           final age = traveller['passengerAge'] ?? 'N/A';
           final gender = traveller['passengerGender'] ?? 'N/A';
           final isSelected = selectedTravellers.contains(name);
-
           return Padding(
-            padding: const EdgeInsets.only(bottom: 5.0),
+            padding: EdgeInsets.only(bottom: 12),
             child: GestureDetector(
               onTap: () {
                 setState(() {
@@ -411,39 +567,46 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
                   }
                 });
               },
-              child: Container(
-                width: Get.width,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(3),
-                  color: isSelected ? redCA0.withOpacity(0.2) : greyE2E,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Container(
+                  padding: EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: isSelected
+                        ? redCA0.withOpacity(0.15)
+                        : Colors.grey[200]!.withOpacity(0.8),
+                    border: Border.all(
+                        color: isSelected ? redCA0 : Colors.grey[300]!),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CommonTextWidget.PoppinsMedium(
-                            text: name,
-                            color: black2E2,
-                            fontSize: 14,
+                          Text(
+                            name,
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsMedium,
+                              fontSize: 16,
+                              color: black2E2,
+                            ),
                           ),
-                          const SizedBox(height: 5),
-                          CommonTextWidget.PoppinsMedium(
-                            text: "Age: $age, Gender: $gender",
-                            color: grey717,
-                            fontSize: 12,
+                          SizedBox(height: 4),
+                          Text(
+                            "Age: $age, Gender: $gender",
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsRegular,
+                              fontSize: 12,
+                              color: grey717,
+                            ),
                           ),
                         ],
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          // Handle edit functionality
-                          print("Edit tapped for $name");
-                        },
-                        child: Icon(Icons.edit, color: redCA0, size: 16),
+                      IconButton(
+                        icon: Icon(Icons.edit, color: redCA0, size: 20),
+                        onPressed: () => print("Edit tapped for $name"),
                       ),
                     ],
                   ),
@@ -456,37 +619,35 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
     );
   }
 
-  Widget _buildAddTravellerDetails() {
-    return InkWell(
-      onTap: () {
-        Get.to(() => TravellerDetailScreen());
-      },
-      child: CommonTextWidget.PoppinsMedium(
-        text: "+ TRAVELLER DETAILS",
-        color: redCA0,
-        fontSize: 12,
+  Widget _buildContactDetailsCard() {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+        ],
       ),
-    );
-  }
-
-  Widget _buildContactDetails() {
-    return Container(
-      width: Get.width,
-      color: white,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CommonTextWidget.PoppinsSemiBold(
-              text: "Contact Details",
-              color: black2E2,
-              fontSize: 14,
+            Text(
+              "Contact Details",
+              style: TextStyle(
+                fontFamily: FontFamily.PoppinsBold,
+                fontSize: 18,
+                color: black2E2,
+              ),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 12),
             _buildContactField("Email ID", "Eg. abc@gmail.com", emailController,
                 TextInputType.emailAddress),
-            SizedBox(height: 15),
+            SizedBox(height: 12),
             _buildContactField("Phone Number", "95********", phoneController,
                 TextInputType.phone),
           ],
@@ -500,131 +661,136 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CommonTextWidget.PoppinsMedium(
-          text: label,
-          color: grey717,
-          fontSize: 12,
-        ),
-        SizedBox(height: 5),
-        CommonTextFieldWidget.TextFormField4(
-          hintText: hintText,
-          controller: controller,
-          keyboardType: keyboardType,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOffersAndDiscounts() {
-    return Container(
-      width: Get.width,
-      color: white,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CommonTextWidget.PoppinsSemiBold(
-              text: "Offers & Discounts",
-              color: black2E2,
-              fontSize: 14,
-            ),
-            SizedBox(height: 20),
-            _buildZeroCancellationFee(),
-            SizedBox(height: 15),
-            _buildPromoCodeField(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildZeroCancellationFee() {
-    return Row(
-      children: [
-        Radio(
-          value: 1,
-          groupValue: 1,
-          onChanged: (value) {},
-          activeColor: redCA0,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CommonTextWidget.PoppinsRegular(
-              text: "Zero Cancellation Fee",
-              color: grey717,
-              fontSize: 12,
-            ),
-            SizedBox(height: 7),
-            CommonTextWidget.PoppinsRegular(
-              text: "Save Rs. 50 on cancellation fee",
-              color: grey717,
-              fontSize: 12,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPromoCodeField() {
-    return TextFormField(
-      keyboardType: TextInputType.text,
-      cursorColor: black2E2,
-      controller: promoCodeController,
-      style: TextStyle(
-        color: black2E2,
-        fontSize: 14,
-        fontFamily: FontFamily.PoppinsRegular,
-      ),
-      decoration: InputDecoration(
-        hintText: "Enter promo code here",
-        hintStyle: TextStyle(
-          color: grey717,
-          fontSize: 12,
-          fontFamily: FontFamily.PoppinsRegular,
-        ),
-        suffixIcon: Padding(
-          padding: EdgeInsets.all(14),
-          child: CommonTextWidget.PoppinsMedium(
-            color: redCA0,
+        Text(
+          label,
+          style: TextStyle(
+            fontFamily: FontFamily.PoppinsMedium,
             fontSize: 14,
-            text: "APPLY",
+            color: black2E2,
           ),
         ),
-        filled: true,
-        fillColor: white,
-        contentPadding: EdgeInsets.only(left: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: grey717, width: 1),
+        SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(
+              fontFamily: FontFamily.PoppinsRegular,
+              fontSize: 14,
+              color: grey717,
+            ),
+            filled: true,
+            fillColor: Colors.grey[200]!.withOpacity(0.8),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          ),
+          style: TextStyle(
+            fontFamily: FontFamily.PoppinsRegular,
+            fontSize: 14,
+            color: black2E2,
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildBottomBar() {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 40),
-      child: Align(
-        alignment: Alignment.bottomCenter,
+  Widget _buildOffersCard() {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      margin: EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black12, blurRadius: 10, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 60,
-              width: Get.width,
-              color: black2E2,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Text(
+              "Offers & Discounts",
+              style: TextStyle(
+                fontFamily: FontFamily.PoppinsBold,
+                fontSize: 18,
+                color: black2E2,
+              ),
+            ),
+            SizedBox(height: 12),
+            Row(
+              children: [
+                Radio(
+                  value: 1,
+                  groupValue: 1,
+                  onChanged: (value) {},
+                  activeColor: redCA0,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildPriceInfo(),
-                    _buildContinueButton(),
+                    Text(
+                      "Zero Cancellation Fee",
+                      style: TextStyle(
+                        fontFamily: FontFamily.PoppinsMedium,
+                        fontSize: 14,
+                        color: black2E2,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "Save Rs. 50 on cancellation fee",
+                      style: TextStyle(
+                        fontFamily: FontFamily.PoppinsRegular,
+                        fontSize: 12,
+                        color: grey717,
+                      ),
+                    ),
                   ],
                 ),
+              ],
+            ),
+            SizedBox(height: 12),
+            TextFormField(
+              controller: promoCodeController,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                hintText: "Enter promo code here",
+                hintStyle: TextStyle(
+                  fontFamily: FontFamily.PoppinsRegular,
+                  fontSize: 14,
+                  color: grey717,
+                ),
+                filled: true,
+                fillColor: Colors.grey[200]!.withOpacity(0.8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                suffixIcon: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    "APPLY",
+                    style: TextStyle(
+                      fontFamily: FontFamily.PoppinsMedium,
+                      fontSize: 14,
+                      color: redCA0,
+                    ),
+                  ),
+                ),
+              ),
+              style: TextStyle(
+                fontFamily: FontFamily.PoppinsRegular,
+                fontSize: 14,
+                color: black2E2,
               ),
             ),
           ],
@@ -633,46 +799,93 @@ class _TrainAndBusSearchScreen2State extends State<TrainAndBusSearchScreen2> {
     );
   }
 
-  Widget _buildPriceInfo() {
-    return Column(
-      children: [
-        CommonTextWidget.PoppinsSemiBold(
-          text: "₹ ${widget.price?.toString() ?? '0'}",
-          color: white,
-          fontSize: 16,
+  Widget _buildBottomBar() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.95),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black12, blurRadius: 10, offset: Offset(0, -4)),
+          ],
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
-        CommonTextWidget.PoppinsMedium(
-          text: "PER PERSON",
-          color: white,
-          fontSize: 10,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "₹ ${widget.price?.toStringAsFixed(2) ?? '0.00'}",
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsBold,
+                    fontSize: 20,
+                    color: black2E2,
+                  ),
+                ),
+                Text(
+                  "PER PERSON",
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsRegular,
+                    fontSize: 12,
+                    color: grey717,
+                  ),
+                ),
+              ],
+            ),
+            GestureDetector(
+              onTapDown: (_) => _animationController.forward(),
+              onTapUp: (_) => _animationController.reverse(),
+              onTapCancel: () => _animationController.reverse(),
+              onTap: () {
+                Get.to(() => ReviewBookingScreen(
+                      trainName: widget.trainName ?? 'Unknown Train',
+                      trainNumber: widget.trainNumber ?? '0000',
+                      startStation: widget.startStation ?? 'Unknown Station',
+                      endStation: widget.endStation ?? 'Unknown Station',
+                      seatClass: widget.seatClass ?? 'Unknown Class',
+                      price: widget.price ?? 0.0,
+                    ));
+              },
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                  decoration: BoxDecoration(
+                    gradient:
+                        LinearGradient(colors: [redCA0, Colors.orangeAccent]),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                          color: redCA0.withOpacity(0.4),
+                          blurRadius: 8,
+                          offset: Offset(0, 4)),
+                    ],
+                  ),
+                  child: Text(
+                    "CONTINUE",
+                    style: TextStyle(
+                      fontFamily: FontFamily.PoppinsBold,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildContinueButton() {
-    return MaterialButton(
-      onPressed: () {
-        Get.to(() => ReviewBookingScreen(
-              trainName: widget.trainName ?? 'Unknown Train',
-              trainNumber: widget.trainNumber ?? '0000',
-              startStation: widget.startStation ?? 'Unknown Station',
-              endStation: widget.endStation ?? 'Unknown Station',
-              seatClass: widget.seatClass ?? 'Unknown Class',
-              price: widget.price ?? 0.0,
-            ));
-      },
-      height: 40,
-      minWidth: 140,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(40),
-      ),
-      color: redCA0,
-      child: CommonTextWidget.PoppinsSemiBold(
-        fontSize: 16,
-        text: "CONTINUE",
-        color: white,
       ),
     );
   }
 }
+
+// class MyBehavior extends ScrollBehavior {
+//   @override
+//   Widget buildOverscrollIndicator(BuildContext context, Widget child, ScrollableDetails details) {
+//     return child;
+//   }
+// }

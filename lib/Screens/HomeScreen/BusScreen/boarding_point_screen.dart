@@ -44,7 +44,6 @@ class BoardingPointStyles {
 
 
 class BoardingPointScreen extends StatefulWidget {
-  // --- FIX: Made properties nullable to prevent crash on null arguments ---
   final String? traceId;
   final int? resultIndex;
   final String? busName;
@@ -87,8 +86,8 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
   
   late final TabController _tabController;
 
-  // --- FIX: State variable to hold the map's center coordinate ---
-  LatLng _mapCenter = const LatLng(20.5937, 78.9629); // Default to India
+  LatLng _mapCenter =
+      const LatLng(20.5937, 78.9629); // Default to center of India
   bool _isMapReady = false;
 
   @override
@@ -134,7 +133,6 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
               (p) => p.isDefault, 
               orElse: () => response.boardingPoints.first,
             );
-            // --- FIX: Set the initial map center to the first boarding point ---
             _mapCenter = LatLng(_selectedBoardingPoint!.latitude, _selectedBoardingPoint!.longitude);
             _isMapReady = true;
           }
@@ -144,9 +142,8 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
               orElse: () => response.droppingPoints.first,
             );
           }
-         
+          
           _updateAllMarkers(response);
-          // No need to animate on initial load, map is already centered
         });
       }
     } catch (e) {
@@ -163,9 +160,10 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
           child: GestureDetector(
             onTap: () => setState(() {
               _selectedBoardingPoint = point;
-               if (_busController.boardingPointsResponse.value != null) {
-                 _updateAllMarkers(_busController.boardingPointsResponse.value!);
-               }
+                  if (_busController.boardingPointsResponse.value != null) {
+                    _updateAllMarkers(
+                        _busController.boardingPointsResponse.value!);
+                  }
               _animateToSelectedPoint();
             }),
             child: Icon(
@@ -208,7 +206,6 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     }
     
     if (target != null) {
-      // Animate the map to the new target.
       _mapController.move(target, 15.0);
     }
   }
@@ -291,14 +288,13 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
           ? FlutterMap(
               mapController: _mapController,
               options: MapOptions(
-                // --- FIX: Use state variable for center and a better zoom level ---
                 initialCenter: _mapCenter,
                 initialZoom: 15.0,
               ),
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app', // Recommended for tile server policy
+                  userAgentPackageName: 'com.example.seemytrip',
                 ),
                 MarkerLayer(markers: _tabController.index == 0 ? _boardingMarkers : _droppingMarkers),
               ],
@@ -514,7 +510,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
 
   Widget _buildContinueButton() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: BoardingPointColors.card,
         boxShadow: [
@@ -534,11 +530,17 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
         children: [
           Row(
             children: [
-               if (_selectedBoardingPoint != null)
-                Expanded(child: _buildSelectedPointCard('Boarding', _selectedBoardingPoint!, BoardingPointColors.accent)),
-               const SizedBox(width: 12),
-               if (_selectedDroppingPoint != null)
-                Expanded(child: _buildSelectedPointCard('Dropping', _selectedDroppingPoint!, BoardingPointColors.accentDropping)),
+              if (_selectedBoardingPoint != null)
+                Expanded(
+                    child: _buildSelectedPointCard('Boarding',
+                        _selectedBoardingPoint!, BoardingPointColors.accent)),
+              const SizedBox(width: 12),
+              if (_selectedDroppingPoint != null)
+                Expanded(
+                    child: _buildSelectedPointCard(
+                        'Dropping',
+                        _selectedDroppingPoint!,
+                        BoardingPointColors.accentDropping)),
             ],
           ),
           const SizedBox(height: 16),
@@ -612,18 +614,15 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
       return;
     }
 
-    // Convert fare to double and handle null case
     double fare = 0.0;
     if (widget.fare != null && widget.fare!.isNotEmpty) {
       fare = double.tryParse(widget.fare!) ?? 0.0;
     }
 
-    // Ensure selectedSeats is not null and properly typed
     final List<String> selectedSeats = widget.selectedSeats != null 
         ? List<String>.from(widget.selectedSeats!.map((e) => e.toString())) 
         : [];
 
-    // Navigate to BusPassengerDetailsScreen with all required data
     Get.to(
       () => BusPassengerDetailsScreen(
         fromCity: widget.fromCity ?? 'Unknown',

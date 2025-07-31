@@ -305,17 +305,18 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            Text(
-                              city['CityName'] ?? 'Unknown City',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
+                            Expanded(
+                              child: Text(
+                                city['CityName'] ?? 'Unknown City',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                            const Spacer(),
                             Icon(
                               Icons.chevron_right_rounded,
                               color: Colors.grey[400],

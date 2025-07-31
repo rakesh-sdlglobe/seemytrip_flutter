@@ -30,11 +30,14 @@ class HotelScreen extends GetView<SearchCityController> {
 
   @override
   Widget build(BuildContext context) {
-    final SearchCityController searchCtrl = Get.find();
+    final SearchCityController searchCtrl = Get.put(SearchCityController());
     final HotelFilterController filterCtrl = Get.put(HotelFilterController());
-    final hotels = List<Map<String, dynamic>>.from(hotelDetails['Hotels'] ?? []);
+    final hotels =
+        List<Map<String, dynamic>>.from(hotelDetails['Hotels'] ?? []);
     final checkInDate = searchCtrl.checkInDate.value;
     final checkOutDate = searchCtrl.checkOutDate.value;
+    final sessionId = hotelDetails['SessionId'];
+    print("sessionId: $sessionId");
     final dateRange = checkInDate != null && checkOutDate != null
         ? "${checkInDate.day} ${_getMonthName(checkInDate.month)} - ${checkOutDate.day} ${_getMonthName(checkOutDate.month)}"
         : "";
@@ -60,72 +63,136 @@ class HotelScreen extends GetView<SearchCityController> {
             children: [
               _HotelScreenHeader(
                 cityName: cityName,
+                cityId: cityId,
+                searchCtrl: searchCtrl,
+                sessionId: sessionId,
                 dateRange: dateRange,
                 guestInfo: guestInfo,
               ),
-              // --- Hotel Filter Section (Ixigo/Train style) ---
+              // --- Search Bar ---
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TextField(
+                    controller: searchCtrl.searchController,
+                    focusNode: searchCtrl.searchFocusNode,
+                    onChanged: (value) {
+                      searchCtrl.searchQuery.value = value;
+                      // Debounce the search to avoid too many rebuilds
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        if (searchCtrl.searchQuery.value == value) {
+                          filterCtrl.applySearch(value);
+                        }
+                      });
+                    },
+                    onSubmitted: (value) {
+                      searchCtrl.searchQuery.value = value;
+                      filterCtrl.applySearch(value);
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search hotels...',
+                      prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                      suffixIcon: Obx(() {
+                        if (searchCtrl.searchQuery.value.isNotEmpty) {
+                          return IconButton(
+                            icon: Icon(Icons.close, color: Colors.grey[600]),
+                            onPressed: () {
+                              searchCtrl.clearSearch();
+                              filterCtrl.applySearch('');
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 15),
+                    ),
+                  ),
+                ),
+              ),
+              
+              // --- Hotel Filter Section (Train style) ---
               Container(
                 color: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Obx(() => SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _HotelFilterChip(
-                        label: "All",
-                        icon: Icons.list,
-                        selected: filterCtrl.selectedFilter.value == 'all',
-                        onTap: () => filterCtrl.applyFilter('all', hotels),
-                      ),
-                      _HotelFilterChip(
-                        label: "Low Price",
-                        icon: Icons.arrow_downward,
-                        selected: filterCtrl.selectedFilter.value == 'low_price',
-                        onTap: () => filterCtrl.applyFilter('low_price', hotels),
-                      ),
-                      _HotelFilterChip(
-                        label: "High Price",
-                        icon: Icons.arrow_upward,
-                        selected: filterCtrl.selectedFilter.value == 'high_price',
-                        onTap: () => filterCtrl.applyFilter('high_price', hotels),
-                      ),
-                      _HotelFilterChip(
-                        label: "Star Rating",
-                        icon: Icons.star,
-                        selected: filterCtrl.selectedFilter.value == 'star_rating',
-                        onTap: () => filterCtrl.applyFilter('star_rating', hotels),
-                      ),
-                      // Add more filter chips as needed
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8, right: 8),
-                        child: InkWell(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-                              ),
-                              builder: (ctx) => _HotelFilterBottomSheet(
-                                filterCtrl: filterCtrl,
-                                hotels: hotels,
-                              ),
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                  color: redCA0.withValues(alpha: 0.08),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(Icons.filter_alt, color: redCA0, size: 22),
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _HotelFilterChip(
+                            label: "All",
+                            icon: Icons.list,
+                            selected: filterCtrl.selectedFilter.value == 'all',
+                            onTap: () => filterCtrl.applyFilter('all', hotels),
                           ),
-                        ),
+                          _HotelFilterChip(
+                            label: "Low Price",
+                            icon: Icons.arrow_downward,
+                            selected:
+                                filterCtrl.selectedFilter.value == 'low_price',
+                            onTap: () =>
+                                filterCtrl.applyFilter('low_price', hotels),
+                          ),
+                          _HotelFilterChip(
+                            label: "High Price",
+                            icon: Icons.arrow_upward,
+                            selected:
+                                filterCtrl.selectedFilter.value == 'high_price',
+                            onTap: () =>
+                                filterCtrl.applyFilter('high_price', hotels),
+                          ),
+                          _HotelFilterChip(
+                            label: "Star Rating",
+                            icon: Icons.star,
+                            selected: filterCtrl.selectedFilter.value ==
+                                'star_rating',
+                            onTap: () =>
+                                filterCtrl.applyFilter('star_rating', hotels),
+                          ),
+                          // Add more filter chips as needed
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8, right: 8),
+                            child: InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(18)),
+                                  ),
+                                  builder: (ctx) => _HotelFilterBottomSheet(
+                                    filterCtrl: filterCtrl,
+                                    hotels: hotels,
+                                  ),
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: redCA0.withValues(alpha: 0.08),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.filter_alt,
+                                    color: redCA0, size: 22),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
+                    )),
               ),
               SizedBox(height: 15),
               Expanded(
@@ -146,10 +213,12 @@ class HotelScreen extends GetView<SearchCityController> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.hotel_outlined, size: 48, color: grey717.withOpacity(0.5)),
+                          Icon(Icons.hotel_outlined,
+                              size: 48, color: grey717.withOpacity(0.5)),
                           SizedBox(height: 16),
                           Text(
-                            filterCtrl.selectedFilter.value != 'all' && hotels.isNotEmpty
+                            filterCtrl.selectedFilter.value != 'all' &&
+                                    hotels.isNotEmpty
                                 ? 'No hotels found for selected filters'
                                 : 'No hotels found for these dates',
                             style: TextStyle(
@@ -172,7 +241,6 @@ class HotelScreen extends GetView<SearchCityController> {
                         cityName: cityName,
                         cityId: cityId,
                         searchCtrl: searchCtrl,
-                        
                       );
                     },
                   );
@@ -188,8 +256,18 @@ class HotelScreen extends GetView<SearchCityController> {
 
   String _getMonthName(int month) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     return months[month - 1];
   }
@@ -198,14 +276,20 @@ class HotelScreen extends GetView<SearchCityController> {
 // --- Header Widget ---
 class _HotelScreenHeader extends StatelessWidget {
   final String cityName;
+  final String cityId;
   final String dateRange;
   final String guestInfo;
+  final SearchCityController searchCtrl;
+  final String sessionId;
 
   const _HotelScreenHeader({
     Key? key,
     required this.cityName,
+    required this.cityId,
     required this.dateRange,
     required this.guestInfo,
+    required this.searchCtrl,
+    required this.sessionId,
   }) : super(key: key);
 
   @override
@@ -269,8 +353,10 @@ class _HotelScreenHeader extends StatelessWidget {
             SizedBox(width: 10),
             Expanded(
               child: InkWell(
-                onTap: () {},
-                child: Container(
+                onTap: () {
+                  searchCtrl.fetchGeoLocations(sessionId);
+                },
+                child: Container( 
                   width: Get.width,
                   decoration: BoxDecoration(
                     color: white,
@@ -379,7 +465,8 @@ class _HotelFilterBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<_HotelFilterBottomSheet> createState() => _HotelFilterBottomSheetState();
+  State<_HotelFilterBottomSheet> createState() =>
+      _HotelFilterBottomSheetState();
 }
 
 class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
@@ -393,14 +480,21 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
         .map((h) => (h['HotelServices'] != null &&
                 h['HotelServices'].isNotEmpty &&
                 h['HotelServices'][0]['ServicePrice'] != null)
-            ? double.tryParse(h['HotelServices'][0]['ServicePrice'].toString().replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0
+            ? double.tryParse(h['HotelServices'][0]['ServicePrice']
+                    .toString()
+                    .replaceAll(RegExp(r'[^0-9.]'), '')) ??
+                0
             : double.tryParse(h['MinPrice']?.toString() ?? '0') ?? 0)
         .toList();
-    final minPrice = prices.isNotEmpty ? prices.reduce((a, b) => a < b ? a : b) : 0;
-    final maxPrice = prices.isNotEmpty ? prices.reduce((a, b) => a > b ? a : b) : 10000;
+    final minPrice =
+        prices.isNotEmpty ? prices.reduce((a, b) => a < b ? a : b) : 0;
+    final maxPrice =
+        prices.isNotEmpty ? prices.reduce((a, b) => a > b ? a : b) : 10000;
 
     // Set initial range only once
-    if (priceRange.start == 0 && priceRange.end == 10000 && minPrice != maxPrice) {
+    if (priceRange.start == 0 &&
+        priceRange.end == 10000 &&
+        minPrice != maxPrice) {
       priceRange = RangeValues(minPrice as double, maxPrice as double);
     }
 
@@ -411,17 +505,21 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("All Filters", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              Text("All Filters",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               SizedBox(height: 18),
               // Price Range Filter
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Price Range (₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()})",
-                  style: TextStyle(fontWeight: FontWeight.w500)),
+                child: Text(
+                    "Price Range (₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()})",
+                    style: TextStyle(fontWeight: FontWeight.w500)),
               ),
               RangeSlider(
                 min: minPrice.toDouble(),
-                max: maxPrice == minPrice ? minPrice.toDouble() + 1 : maxPrice.toDouble(),
+                max: maxPrice == minPrice
+                    ? minPrice.toDouble() + 1
+                    : maxPrice.toDouble(),
                 values: priceRange,
                 divisions: maxPrice > minPrice ? 20 : 1,
                 labels: RangeLabels(
@@ -438,7 +536,8 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
               // Star Rating Filter
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Star Rating", style: TextStyle(fontWeight: FontWeight.w500)),
+                child: Text("Star Rating",
+                    style: TextStyle(fontWeight: FontWeight.w500)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -455,7 +554,9 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                       margin: EdgeInsets.symmetric(horizontal: 4),
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: selectedStar >= star ? redCA0.withOpacity(0.15) : Colors.transparent,
+                        color: selectedStar >= star
+                            ? redCA0.withOpacity(0.15)
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: selectedStar >= star ? redCA0 : greyE2E,
@@ -483,13 +584,23 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                       double price = (hotel['HotelServices'] != null &&
                               hotel['HotelServices'].isNotEmpty &&
                               hotel['HotelServices'][0]['ServicePrice'] != null)
-                          ? double.tryParse(hotel['HotelServices'][0]['ServicePrice'].toString().replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0
-                          : double.tryParse(hotel['MinPrice']?.toString() ?? '0') ?? 0;
-                      bool priceMatch = price >= priceRange.start && price <= priceRange.end;
+                          ? double.tryParse(hotel['HotelServices'][0]
+                                      ['ServicePrice']
+                                  .toString()
+                                  .replaceAll(RegExp(r'[^0-9.]'), '')) ??
+                              0
+                          : double.tryParse(
+                                  hotel['MinPrice']?.toString() ?? '0') ??
+                              0;
+                      bool priceMatch =
+                          price >= priceRange.start && price <= priceRange.end;
 
                       // Star rating filter
-                      double star = double.tryParse(hotel['StarRating']?.toString() ?? '0') ?? 0;
-                      bool starMatch = selectedStar == 0 || star.floor() == selectedStar;
+                      double star = double.tryParse(
+                              hotel['StarRating']?.toString() ?? '0') ??
+                          0;
+                      bool starMatch =
+                          selectedStar == 0 || star.floor() == selectedStar;
 
                       return priceMatch && starMatch;
                     }).toList();
@@ -508,14 +619,20 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                   ),
                   child: Text(
                     "Apply Filters",
-                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.2),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.2),
                   ),
                 ),
               ),
               SizedBox(height: 8),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text("Cancel", style: TextStyle(color: redCA0, fontWeight: FontWeight.w500)),
+                child: Text("Cancel",
+                    style:
+                        TextStyle(color: redCA0, fontWeight: FontWeight.w500)),
               ),
             ],
           ),

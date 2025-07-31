@@ -201,114 +201,106 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
   Widget _buildDateSelector(TrainAndBusDetailController controller) {
     return Container(
       width: Get.width,
-      color: white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: redCA0,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    bottomLeft: Radius.circular(5),
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                  child: RotatedBox(
-                    quarterTurns: 3,
-                    child: CommonTextWidget.PoppinsMedium(
-                      text: DateFormat('MMM').format(widget.selectedDate),
-                      color: white,
-                      fontSize: 12,
-                    ),
-                  ),
+              padding: const EdgeInsets.only(left: 8.0, bottom: 8),
+              child: Text(
+                'Select Journey Date',
+                style: TextStyle(
+                  fontFamily: FontFamily.PoppinsSemiBold,
+                  fontSize: 14,
+                  color: Colors.black87,
                 ),
               ),
             ),
-            Expanded(
-              child: SizedBox(
-                height: 40,
-                width: Get.width,
-                child: GetBuilder<TrainAndBusDetailController>(
-                  init: TrainAndBusDetailController(),
-                  builder: (controller) => ListView.builder(
-                    controller: ScrollController(
-                      initialScrollOffset:
-                          controller.selectedIndex.value * 60.0,
-                    ),
-                    itemCount: TrainAndBusDetailController
-                        .trainAndBusDetailList1.length,
-                    padding: EdgeInsets.only(left: 6),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final date =
-                          widget.selectedDate.add(Duration(days: index));
-                      return Padding(
-                          padding: EdgeInsets.only(right: 6),
-                          child: InkWell(
-                            onTap: () async {
-                              setState(() {
-                                controller.onIndexChange(index);
-                                controller.setSelectedDate(date);
-                                isLoading = true; // Start loading
-                              });
-
-                              // Fetch data
-                              await controller.getTrains(
-                                widget.trains[0]['fromStnCode'],
-                                widget.trains[0]['toStnCode'],
-                                DateFormat('yyyy-MM-dd').format(date),
-                              );
-
-                              setState(() {
-                                // Update widget.selectedDate to match the new date
-                                widget.selectedDate = date;
-                                // Apply filters to the new train data
-                                filteredTrains = filterController.applyFilters(controller.trains);
-                                isLoading = false;
-                              });
-
-                              Get.forceAppUpdate(); // Restart the page
-                            },
-                            child: Obx(
-                              () => Container(
-                                decoration: BoxDecoration(
-                                  color: controller.selectedIndex.value == index
-                                      ? redCA0
-                                      : white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color:
-                                        controller.selectedIndex.value == index
-                                            ? redCA0
-                                            : greyE2E,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  child: Center(
-                                    child: CommonTextWidget.PoppinsMedium(
-                                      text: DateFormat('dd MMM, EEE')
-                                          .format(date),
-                                      color: controller.selectedIndex.value ==
-                                              index
-                                          ? white
-                                          : grey717,
-                                      fontSize: 10,
-                                    ),
+            SizedBox(
+              height: 80,
+              child: GetBuilder<TrainAndBusDetailController>(
+                init: TrainAndBusDetailController(),
+                builder: (controller) => ListView.builder(
+                  controller: ScrollController(
+                    initialScrollOffset: controller.selectedIndex.value * 80.0,
+                  ),
+                  itemCount: TrainAndBusDetailController.trainAndBusDetailList1.length,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final date = widget.selectedDate.add(Duration(days: index));
+                    final isSelected = controller.selectedIndex.value == index;
+                    
+                    return GestureDetector(
+                      onTap: () async => await _onDateSelected(controller, index, date),
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        margin: EdgeInsets.symmetric(horizontal: 4),
+                        width: 60,
+                        decoration: BoxDecoration(
+                          color: isSelected ? redCA0.withOpacity(0.1) : Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected ? redCA0 : Colors.grey[200]!,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              DateFormat('EEE').format(date),
+                              style: TextStyle(
+                                fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsMedium,
+                                fontSize: 12,
+                                color: isSelected ? redCA0 : Colors.grey[600],
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: isSelected ? redCA0 : Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  DateFormat('d').format(date),
+                                  style: TextStyle(
+                                    fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsMedium,
+                                    fontSize: 14,
+                                    color: isSelected ? Colors.white : Colors.black87,
                                   ),
                                 ),
                               ),
                             ),
-                          ));
-                    },
-                  ),
+                            SizedBox(height: 2),
+                            Text(
+                              DateFormat('MMM').format(date),
+                              style: TextStyle(
+                                fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsRegular,
+                                fontSize: 10,
+                                color: isSelected ? redCA0 : Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -318,15 +310,43 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
     );
   }
 
+  Future<void> _onDateSelected(TrainAndBusDetailController controller, int index, DateTime date) async {
+    setState(() {
+      controller.onIndexChange(index);
+      controller.setSelectedDate(date);
+      isLoading = true;
+    });
+
+    try {
+      await controller.getTrains(
+        widget.trains[0]['fromStnCode'],
+        widget.trains[0]['toStnCode'],
+        DateFormat('yyyy-MM-dd').format(date),
+      );
+
+      setState(() {
+        widget.selectedDate = date;
+        filteredTrains = filterController.applyFilters(controller.trains);
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+      Get.snackbar(
+        'Error',
+        'Failed to load trains. Please try again.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    }
+  }
+
   Widget _buildTrainList() {
-    // final filteredTrains = filterController.applyFilters(widget.trains);
     filteredTrains.removeWhere((train) {
       return train['availabilities'].isEmpty ||
-          train['availabilities'].every((seat) {
-            return seat['totalFare'] == null;
-          });
+          train['availabilities'].every((seat) => seat['totalFare'] == null);
     });
-    return (filteredTrains.isNotEmpty)
+
+    return filteredTrains.isNotEmpty
         ? Expanded(
             child: ScrollConfiguration(
               behavior: MyBehavior(),
@@ -335,28 +355,46 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
                 builder: (controller) {
                   return ListView.builder(
                     shrinkWrap: true,
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(bottom: 16, top: 8),
                     itemCount: filteredTrains.length,
                     itemBuilder: (context, index) {
                       final train = filteredTrains[index];
                       return Padding(
-                        padding: EdgeInsets.only(bottom: 8),
+                        padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
                         child: Container(
-                          width: Get.width,
-                          color: white,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 15),
-                            child: Column(
-                              children: [
-                                _buildTrainHeader(train),
-                                SizedBox(height: 20),
-                                _buildTrainTimings(train),
-                                SizedBox(height: 20),
-                                _buildTrainDistance(train),
-                                SizedBox(height: 20),
-                                _buildSeatAvailability(context, train),
-                              ],
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () {
+                                // Handle train selection
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildTrainHeader(train),
+                                    SizedBox(height: 16),
+                                    _buildTrainTimings(train),
+                                    SizedBox(height: 16),
+                                    _buildTrainDistance(train),
+                                    SizedBox(height: 16),
+                                    _buildSeatAvailability(context, train),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -367,23 +405,57 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
               ),
             ),
           )
-        : Column(
-            children: [
-              SizedBox(height: 170),
-              Icon(
-                Icons.train,
-                color: grey717,
-                size: 50,
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: CommonTextWidget.PoppinsMedium(
-                  text: "No trains available for the selected date",
-                  color: grey717,
-                  fontSize: 14,
+        : Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.train_outlined,
+                  color: Colors.grey[400],
+                  size: 64,
                 ),
-              ),
-            ],
+                SizedBox(height: 16),
+                Text(
+                  'No Trains Available',
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsSemiBold,
+                    fontSize: 18,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'No trains found for the selected date and route.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: FontFamily.PoppinsRegular,
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () {
+                    // Refresh or modify search
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: redCA0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                  child: Text(
+                    'Modify Search',
+                    style: TextStyle(
+                      fontFamily: FontFamily.PoppinsMedium,
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
   }
 
@@ -391,15 +463,58 @@ class _TrainAndBusDetailScreenState extends State<TrainAndBusDetailScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CommonTextWidget.PoppinsSemiBold(
-          text: train['trainName'] ?? 'N/A',
-          color: black2E2,
-          fontSize: 14,
+        Expanded(
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: redCA0.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.train_rounded,
+                  color: redCA0,
+                  size: 20,
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      train['trainName'] ?? 'N/A',
+                      style: TextStyle(
+                        fontFamily: FontFamily.PoppinsSemiBold,
+                        color: black2E2,
+                        fontSize: 16,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Train No: ${train['trainNumber'] ?? 'N/A'}, ${train['trainType'] ?? ''}',
+                      style: TextStyle(
+                        fontFamily: FontFamily.PoppinsRegular,
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-        CommonTextWidget.PoppinsMedium(
-          text: "#${train['trainNumber'] ?? 'N/A'}",
-          color: greyB8B,
-          fontSize: 14,
+        Text(
+          train['trainClass'] ?? 'N/A',
+          style: TextStyle(
+            fontFamily: FontFamily.PoppinsMedium,
+            color: greyB8B,
+            fontSize: 14,
+          ),
         ),
       ],
     );

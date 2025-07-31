@@ -1,20 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
-import 'package:seemytrip/Constants/font_family.dart';
-import 'package:seemytrip/Controller/select_checkin_date_controller.dart';
-import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
-import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
+import 'package:seemytrip/Controller/select_checkin_date_controller.dart'; // Ensure path is correct
 import 'package:table_calendar/table_calendar.dart';
 
-class SelectCheckInDateScreen extends StatelessWidget {
-  final SelectCheckInControllerDesign controller =
-      Get.put(SelectCheckInControllerDesign());
+// --- Mock Data (replace with your actual constants) ---
+// const Color redCA0 = Color(0xFFCA0B0B);
+// const Color white = Colors.white;
+// const Color black2E2 = Color(0xFF2D2D2D);
+// const Color grey717 = Color(0xFF666666);
+// ---
 
-  SelectCheckInDateScreen({Key? key}) : super(key: key);
+class SelectCheckInDateScreen extends StatelessWidget {
+  // MODIFIED: Accept initial dates to show previous selections
+  final DateTime? initialStartDate;
+  final DateTime? initialEndDate;
+
+  final SelectCheckInControllerDesign controller;
+
+  SelectCheckInDateScreen({
+    Key? key,
+    this.initialStartDate,
+    this.initialEndDate,
+  })  : controller = Get.put(SelectCheckInControllerDesign(
+          initialStartDate: initialStartDate,
+          initialEndDate: initialEndDate,
+        )),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Initialize dates when widget is first built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.rangeStart.value == null && initialStartDate != null) {
+        controller.rangeStart.value = initialStartDate;
+        controller.focusedDay.value = initialStartDate!;
+      }
+      if (controller.rangeEnd.value == null && initialEndDate != null) {
+        controller.rangeEnd.value = initialEndDate;
+      }
+    });
+
     return Scaffold(
       backgroundColor: white,
       appBar: AppBar(
@@ -24,31 +50,32 @@ class SelectCheckInDateScreen extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
         ),
-        title: CommonTextWidget.PoppinsSemiBold(
-          text: "Select Your Dates",
-          color: white,
-          fontSize: 18,
-        ),
+        title: Text("Select Your Dates",
+            style: TextStyle(
+                color: white, fontSize: 18, fontWeight: FontWeight.w600)),
         actions: [
           TextButton(
             onPressed: controller.resetSelection,
-            child: CommonTextWidget.PoppinsMedium(
-              text: "Reset",
-              color: white,
-              fontSize: 12,
-            ),
+            child: Text("Reset", style: TextStyle(color: white, fontSize: 14)),
           ),
         ],
       ),
       body: Column(
         children: [
-          _buildCalendarHeader(),
-          _buildCalendar(),
-          _buildDateSelectionInfo(),
-          const Spacer(),
-          _buildBottomButtons(context),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildCalendarHeader(),
+                  _buildCalendar(),
+                  _buildDateSelectionInfo(),
+                ],
+              ),
+            ),
+          ),
+          _buildBottomButton(),
         ],
       ),
     );
@@ -58,136 +85,106 @@ class SelectCheckInDateScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       color: Colors.grey[50],
-      child: GetBuilder<SelectCheckInControllerDesign>(
-        builder: (controller) => Row(
-          children: [
-            Icon(Icons.info_outline, size: 18, color: grey717),
-            const SizedBox(width: 8),
-            Expanded(
-              child: CommonTextWidget.PoppinsRegular(
-                text: "Select check-in and check-out dates",
-                color: grey717,
-                fontSize: 12,
-              ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, size: 18, color: grey717),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              "Select a check-in and check-out date",
+              style: TextStyle(color: grey717, fontSize: 12),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildCalendar() {
-    return GetBuilder<SelectCheckInControllerDesign>(
-      builder: (controller) => TableCalendar(
-        availableCalendarFormats: const {
-          CalendarFormat.month: 'Month',
-        },
-        firstDay: DateTime.now(),
-        lastDay: DateTime.now().add(const Duration(days: 365)),
-        focusedDay: controller.focusedDay,
-        calendarFormat: controller.calendarFormat,
-        rangeStartDay: controller.rangeStart,
-        rangeEndDay: controller.rangeEnd,
+    return Obx(
+      () => TableCalendar(
+        firstDay: DateTime.now().subtract(const Duration(days: 30)),
+        lastDay: DateTime.now().add(const Duration(days: 365 * 2)),
+        focusedDay: controller.focusedDay.value,
+        selectedDayPredicate: (day) =>
+            isSameDay(day, controller.rangeStart.value) ||
+            isSameDay(day, controller.rangeEnd.value),
+        rangeStartDay: controller.rangeStart.value,
+        rangeEndDay: controller.rangeEnd.value,
         rangeSelectionMode: RangeSelectionMode.enforced,
         onRangeSelected: controller.onRangeSelected,
         onPageChanged: (focusedDay) {
-          controller.focusedDay = focusedDay;
+          controller.focusedDay.value = focusedDay;
         },
-        enabledDayPredicate: controller.isDateSelectable,
+        // Enable today and future dates
+        enabledDayPredicate: (day) {
+          final today = DateTime.now();
+          final normalizedToday = DateTime(today.year, today.month, today.day);
+          final normalizedDay = DateTime(day.year, day.month, day.day);
+          return !normalizedDay.isBefore(normalizedToday);
+        },
         calendarStyle: CalendarStyle(
-          selectedDecoration: BoxDecoration(
-            color: redCA0,
-            shape: BoxShape.circle,
-          ),
-          rangeStartDecoration: BoxDecoration(
-            color: redCA0,
-            shape: BoxShape.circle,
-          ),
-          rangeEndDecoration: BoxDecoration(
-            color: redCA0,
-            shape: BoxShape.circle,
-          ),
-          withinRangeDecoration: BoxDecoration(
-            color: redCA0.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
+          rangeHighlightColor: redCA0.withOpacity(0.2),
+          rangeStartDecoration:
+              BoxDecoration(color: redCA0, shape: BoxShape.circle),
+          rangeEndDecoration:
+              BoxDecoration(color: redCA0, shape: BoxShape.circle),
           todayDecoration: BoxDecoration(
-            color: Colors.transparent,
             shape: BoxShape.circle,
-            border: Border.all(color: redCA0, width: 1),
+            border: Border.all(color: redCA0),
           ),
-          defaultDecoration: BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          withinRangeTextStyle: const TextStyle(color: Colors.black),
-          rangeStartTextStyle: const TextStyle(color: Colors.white),
-          rangeEndTextStyle: const TextStyle(color: Colors.white),
           todayTextStyle: TextStyle(color: redCA0),
-          defaultTextStyle: TextStyle(color: black2E2),
-          weekendTextStyle: TextStyle(color: black2E2),
-          outsideTextStyle: TextStyle(color: grey717),
-          rangeHighlightColor: redCA0.withOpacity(0.1),
+          selectedTextStyle: const TextStyle(color: Colors.white),
+          disabledTextStyle: TextStyle(color: Colors.grey.shade400),
           outsideDaysVisible: false,
         ),
         headerStyle: HeaderStyle(
           titleCentered: true,
           formatButtonVisible: false,
-          leftChevronIcon: Icon(Icons.chevron_left, color: black2E2),
-          rightChevronIcon: Icon(Icons.chevron_right, color: black2E2),
           titleTextStyle: TextStyle(
-            color: black2E2,
-            fontSize: 16,
-            fontFamily: FontFamily.PoppinsSemiBold,
-          ),
+              color: black2E2, fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );
   }
 
   Widget _buildDateSelectionInfo() {
-    return GetBuilder<SelectCheckInControllerDesign>(
-      builder: (controller) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (controller.rangeStart != null &&
-                controller.rangeEnd != null) ...[
-              CommonTextWidget.PoppinsSemiBold(
-                text: "Selected Stay: ${controller.formattedRangeDate}",
-                color: black2E2,
-                fontSize: 14,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: Obx(() {
+        if (controller.isRangeSelected) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                "Selected Stay: ${controller.formattedRangeDate}",
+                style: TextStyle(
+                    color: black2E2, fontSize: 14, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 4),
-              CommonTextWidget.PoppinsRegular(
-                text:
-                    "${controller.numberOfNights} night${controller.numberOfNights != 1 ? 's' : ''}",
-                color: grey717,
-                fontSize: 12,
+              Text(
+                "${controller.numberOfNights} night${controller.numberOfNights != 1 ? 's' : ''}",
+                style: TextStyle(color: grey717, fontSize: 12),
               ),
             ],
-            Obx(() {
-              if (controller.errorMessage.isNotEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: CommonTextWidget.PoppinsRegular(
-                    text: controller.errorMessage.value,
-                    color: Colors.red,
-                    fontSize: 12,
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            }),
-          ],
-        ),
-      ),
+          );
+        }
+        // Shows a prompt if only the start date is selected
+        if (controller.rangeStart.value != null) {
+          return Text(
+            "Please select a check-out date",
+            style: TextStyle(color: black2E2, fontSize: 14),
+          );
+        }
+        return const SizedBox.shrink();
+      }),
     );
   }
 
-  Widget _buildBottomButtons(BuildContext context) {
+  // Update the bottom button to return the selected dates
+  Widget _buildBottomButton() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -198,25 +195,35 @@ class SelectCheckInDateScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: CommonButtonWidget.button(
-              onTap: () {
-                if (controller.confirmSelection()) {
-                  Get.back(result: {
-                    'startDate': controller.rangeStart,
-                    'endDate': controller.rangeEnd,
-                    'numberOfNights': controller.numberOfNights,
-                  });
-                }
-              },
-              text: "Confirm Selection",
-              buttonColor: redCA0,
+      child: Obx(() => ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: redCA0,
+              foregroundColor: white,
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              disabledBackgroundColor: Colors.grey.shade400,
             ),
-          ),
-        ],
-      ),
+            onPressed: controller.isRangeSelected
+                ? () {
+                    // Return the selected date range
+                    Get.back(result: {
+                      'startDate': controller.rangeStart.value!,
+                      'endDate': controller.rangeEnd.value!,
+                    });
+                  }
+                : null,
+            child: Text(
+              controller.isRangeSelected
+                  ? 'Confirm ${controller.numberOfNights} Nights'
+                  : 'Select Dates',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          )),
     );
   }
 }
