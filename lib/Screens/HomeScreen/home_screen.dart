@@ -13,7 +13,7 @@ import 'package:seemytrip/Screens/HomeScreen/HomeStayScreen/home_stay_screen.dar
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/hotel_and_home_stay_tab_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/upto5_rooms_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/OutStationCabsScreen/out_station_cab_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/home_search_screen.dart';
 import 'package:seemytrip/Screens/NotificationScreen/notification_screen.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';

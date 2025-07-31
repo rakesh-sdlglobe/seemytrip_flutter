@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/font_family.dart';
 import 'package:seemytrip/Constants/images.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_search_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_search_screen.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 import 'package:seemytrip/Screens/Utills/lists_widget.dart';
 import 'package:seemytrip/main.dart';

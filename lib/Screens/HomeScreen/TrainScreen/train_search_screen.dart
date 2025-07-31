@@ -5,11 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/images.dart';
-import 'package:seemytrip/Controller/train_and_bus_detail_controller.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_detail_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_traveldate_screen.dart';
+import 'package:seemytrip/Controller/train_detail_controller.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_detail_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_from_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_to_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_traveldate_screen.dart';
 import 'package:seemytrip/Screens/Utills/common_button_widget.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 

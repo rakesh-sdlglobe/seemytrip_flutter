@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:seemytrip/Constants/colors.dart';
 import 'package:seemytrip/Constants/font_family.dart';
 import 'package:seemytrip/Controller/travellerDetailController.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/review_booking_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen_password.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_contact_information_screen_username.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/traveller_detail_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/review_booking_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_contact_information_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_contact_information_screen_password.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_contact_information_screen_username.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/traveller_detail_screen.dart';
 import 'package:seemytrip/components/irctcs_webview.dart';
 
 class TrainAndBusSearchScreen2 extends StatefulWidget {

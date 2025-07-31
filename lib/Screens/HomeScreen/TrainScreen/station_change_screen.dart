@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/Constants/colors.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_search_screen2.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_search_screen2.dart';
 import 'package:seemytrip/Screens/Utills/common_text_widget.dart';
 import 'package:intl/intl.dart';
 

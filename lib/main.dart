@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:seemytrip/translations/app_translations.dart' show AppTranslations;
 import 'firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:seemytrip/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,16 +26,20 @@ void main() async {
   await SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  runApp(const seemytrip());
+  runApp(const SeemytripApp());
 }
 
-class seemytrip extends StatelessWidget {
-  const seemytrip({Key? key}) : super(key: key);
+class SeemytripApp extends StatelessWidget {
+  const SeemytripApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'SeeMyTrip',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.light,
       translations: AppTranslations(),
       locale: const Locale('en'), // Default language
       fallbackLocale: const Locale('en'),
@@ -46,8 +51,8 @@ class seemytrip extends StatelessWidget {
         Locale('te'),
         Locale('or'),
       ],
-       localizationsDelegates: const [
-    GlobalMaterialLocalizations.delegate,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
     GlobalWidgetsLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
   ],

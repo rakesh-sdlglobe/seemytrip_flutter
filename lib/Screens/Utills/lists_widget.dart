@@ -20,8 +20,8 @@ import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/search_city
 import 'package:seemytrip/Screens/HomeScreen/HotelAndHomeStayScreens/select_checkin_date_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/OffersScreen/offer_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/SelfDriveCarsScreen/self_drive_cars_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_from_screen.dart';
-import 'package:seemytrip/Screens/HomeScreen/TrainAndBusScreen/train_and_bus_to_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_from_screen.dart';
+import 'package:seemytrip/Screens/HomeScreen/TrainScreen/train_to_screen.dart';
 import 'package:seemytrip/Screens/HomeScreen/VisaServicesScreen/apply_tourist_visa_screen.dart';
 import 'package:seemytrip/Screens/MyAccountScreen/my_giftcard_screen.dart';
 import 'package:seemytrip/Screens/MyAccountScreen/my_wishlist_screen.dart';
