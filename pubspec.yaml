@@ -43,6 +43,9 @@ dependencies:
   shimmer: ^3.0.0
   cached_network_image: ^3.3.1
   dotted_line: ^3.2.3
+  provider: ^6.1.5
+  get_storage: ^2.1.1
+  connectivity_plus: ^6.1.4
 
 
 dev_dependencies:
@@ -50,6 +53,12 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.13.1
+  build_runner: ^2.4.9
+  flutter_dotenv: ^5.1.0
+  test: ^1.25.15
+  mockito: ^5.4.4
+  integration_test:
+    sdk: flutter
 
 flutter_icons:
   android: true

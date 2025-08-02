@@ -10,18 +10,35 @@
 .svn/
 migrate_working_dir/
 
-# IntelliJ related
+# Environment variables
+.env
+.env.*.local
+!.env.example
+
+# IntelliJ/Android Studio
 *.iml
 *.ipr
 *.iws
 .idea/
+.idea_modules/
+*.iml
+*.iws
+*.ipr
+out/
+.idea/
+.idea/*
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/runConfigurations/
+!.idea/templates/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# Flutter/Dart/Pub related
+# Flutter/Dart/Pub
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -31,17 +48,50 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/fvm/
+*.dart.js
+*.js.deps
+*.js.map
+*.info.json
+*.js
 
-# Web related
+# Web
 lib/generated_plugin_registrant.dart
+web/icons/
+web/assets/AssetManifest.json
+web/assets/AssetManifest.json.bin
+web/assets/FontManifest.json
+web/assets/NOTICES
+web/assets/fonts/
+web/assets/packages/
+web/assets/shaders/
 
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
+# Android
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/gradle-wrapper.jar
+/android/gradlew
+/android/gradlew.bat
+/android/local.properties
+/android/settings.gradle
+/android/gradle/
+/android/.gradle/
+/android/app/*.jks
+/android/app/*.keystore
+
+# iOS
+/ios/Flutter/.last_build_id
+/ios/Flutter/App.framework/
+/ios/Flutter/Flutter.framework/
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/app.flx
+/ios/Flutter/app.zip
+/ios/Flutter/flutter_assets/
+/ios/Flutter/flutter_export_environment.sh
+
+# Builds
+build/
+!build/web/
+!build/web/assets/

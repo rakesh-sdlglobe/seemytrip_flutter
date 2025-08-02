@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:seemytrip/Constants/colors.dart'; // Replace with your own color constants
+import 'package:seemytrip/features/auth/presentation/controllers/otp_controller.dart';
+import 'package:seemytrip/core/utils/colors.dart'; // Replace with your own color constants
 import 'package:get/get.dart';
-import '../Controller/otp_controller.dart';
 
 class OtpScreen2 extends StatefulWidget {
   @override
