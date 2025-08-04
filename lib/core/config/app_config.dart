@@ -1,5 +1,5 @@
 class AppConfig {
-  static const String baseUrl = 'http://192.168.1.6:3002/api';
+  static const String baseUrl = 'http://192.168.1.8:3002/api';
   
   // Auth endpoints
   static const String login = '$baseUrl/login';

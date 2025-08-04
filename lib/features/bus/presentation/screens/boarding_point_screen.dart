@@ -185,9 +185,9 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
           SliverAppBar(
             pinned: true,
             title: const Text('Boarding & Dropping'),
-            backgroundColor: AppColors.surface,
+            backgroundColor: AppColors.primary,
             elevation: 1,
-            shadowColor: Colors.black.withOpacity(0.1),
+            shadowColor: Colors.black.withValues(alpha: 0.1),
           ),
           SliverToBoxAdapter(child: _buildJourneySummary()),
           SliverToBoxAdapter(child: _buildMapView()),

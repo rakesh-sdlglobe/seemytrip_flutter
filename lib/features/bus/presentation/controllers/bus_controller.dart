@@ -295,7 +295,7 @@ class BusController extends GetxController {
           'Content-Type': 'application/json',
         },
         body: jsonEncode(<String, Object>{
-          'EndUserIp': endUserIp.value,
+          'IpAddress': endUserIp.value,
           'ResultIndex': resultIndex,
           'TraceId': traceId,
           'TokenId': tokenId.value,
@@ -350,7 +350,7 @@ class BusController extends GetxController {
           'Content-Type': 'application/json',
         },
         body: jsonEncode(<String, Object>{
-          'EndUserIp': endUserIp.value,
+          'IpAddress': endUserIp.value,
           'ResultIndex': resultIndex,
           'TraceId': traceId,
           'TokenId': tokenId.value,

@@ -1,43 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/hotels/presentation/widgets/hotel_list_card.dart';
-import 'package:seemytrip/features/hotels/presentation/controllers/hotel_filter_controller.dart';
-import 'package:seemytrip/features/hotels/presentation/controllers/hotel_controller.dart';
-import 'package:seemytrip/core/theme/app_colors.dart';
-import 'package:seemytrip/core/theme/app_text_styles.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../shared/constants/images.dart';
+import '../controllers/hotel_controller.dart';
+import '../controllers/hotel_filter_controller.dart';
+import '../widgets/hotel_list_card.dart';
 
 class HotelScreen extends GetView<SearchCityController> {
+
+  HotelScreen({
+    required this.cityId, required this.cityName, required this.hotelDetails, Key? key,
+  }) : super(key: key);
   final String cityId;
   final String cityName;
   final Map<String, dynamic> hotelDetails;
-
-  HotelScreen({
-    Key? key,
-    required this.cityId,
-    required this.cityName,
-    required this.hotelDetails,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final SearchCityController searchCtrl = Get.put(SearchCityController());
     final HotelFilterController filterCtrl = Get.put(HotelFilterController());
-    final hotels =
-        List<Map<String, dynamic>>.from(hotelDetails['Hotels'] ?? []);
-    final checkInDate = searchCtrl.checkInDate.value;
-    final checkOutDate = searchCtrl.checkOutDate.value;
+    final List<Map<String, dynamic>> hotels =
+        List<Map<String, dynamic>>.from(hotelDetails['Hotels'] ?? <dynamic>[]);
+    final DateTime? checkInDate = searchCtrl.checkInDate.value;
+    final DateTime? checkOutDate = searchCtrl.checkOutDate.value;
     final sessionId = hotelDetails['SessionId'];
-    print("sessionId: $sessionId");
-    final dateRange = checkInDate != null && checkOutDate != null
-        ? "${checkInDate.day} ${_getMonthName(checkInDate.month)} - ${checkOutDate.day} ${_getMonthName(checkOutDate.month)}"
-        : "";
-    final roomCount = searchCtrl.roomsCount.value;
-    final adultCount = searchCtrl.adultsCount.value;
-    final childCount = searchCtrl.childrenCount.value;
-    final guestInfo =
+    print('sessionId: $sessionId');
+    final String dateRange = checkInDate != null && checkOutDate != null
+        ? '${checkInDate.day} ${_getMonthName(checkInDate.month)} - ${checkOutDate.day} ${_getMonthName(checkOutDate.month)}'
+        : '';
+    final int roomCount = searchCtrl.roomsCount.value;
+    final int adultCount = searchCtrl.adultsCount.value;
+    final int childCount = searchCtrl.childrenCount.value;
+    final String guestInfo =
         "$roomCount Room, $adultCount Adults${childCount > 0 ? ', $childCount Children' : ''}";
 
     // Always initialize filter on first build
@@ -50,9 +47,9 @@ class HotelScreen extends GetView<SearchCityController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
-        children: [
+        children: <Widget>[
           Column(
-            children: [
+            children: <Widget>[
               _HotelScreenHeader(
                 cityName: cityName,
                 cityId: cityId,
@@ -69,7 +66,7 @@ class HotelScreen extends GetView<SearchCityController> {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
+                    boxShadow: <BoxShadow>[
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
                         blurRadius: 4,
@@ -110,15 +107,15 @@ class HotelScreen extends GetView<SearchCityController> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
+                        children: <Widget>[
                           _HotelFilterChip(
-                            label: "All",
+                            label: 'All',
                             icon: Icons.list,
                             selected: filterCtrl.selectedFilter.value == 'all',
                             onTap: () => filterCtrl.applyFilter('all', hotels),
                           ),
                           _HotelFilterChip(
-                            label: "Low Price",
+                            label: 'Low Price',
                             icon: Icons.arrow_downward,
                             selected:
                                 filterCtrl.selectedFilter.value == 'low_price',
@@ -126,7 +123,7 @@ class HotelScreen extends GetView<SearchCityController> {
                                 filterCtrl.applyFilter('low_price', hotels),
                           ),
                           _HotelFilterChip(
-                            label: "High Price",
+                            label: 'High Price',
                             icon: Icons.arrow_upward,
                             selected:
                                 filterCtrl.selectedFilter.value == 'high_price',
@@ -134,7 +131,7 @@ class HotelScreen extends GetView<SearchCityController> {
                                 filterCtrl.applyFilter('high_price', hotels),
                           ),
                           _HotelFilterChip(
-                            label: "Star Rating",
+                            label: 'Star Rating',
                             icon: Icons.star,
                             selected: filterCtrl.selectedFilter.value ==
                                 'star_rating',
@@ -152,7 +149,7 @@ class HotelScreen extends GetView<SearchCityController> {
                                     borderRadius: BorderRadius.vertical(
                                         top: Radius.circular(18)),
                                   ),
-                                  builder: (ctx) => _HotelFilterBottomSheet(
+                                  builder: (BuildContext ctx) => _HotelFilterBottomSheet(
                                     filterCtrl: filterCtrl,
                                     hotels: hotels,
                                   ),
@@ -187,13 +184,13 @@ class HotelScreen extends GetView<SearchCityController> {
                     );
                   }
 
-                  final filteredHotels = filterCtrl.filteredHotels;
+                  final RxList<Map<String, dynamic>> filteredHotels = filterCtrl.filteredHotels;
                   // If filter applied and no hotels, show "No hotels found for selected filters"
                   if (filteredHotels.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                        children: <Widget>[
                           Icon(Icons.hotel_outlined,
                               size: 48, color: AppColors.textSecondary),
                           SizedBox(height: 16),
@@ -215,8 +212,8 @@ class HotelScreen extends GetView<SearchCityController> {
                   return ListView.builder(
                     itemCount: filteredHotels.length,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    itemBuilder: (context, index) {
-                      final hotel = filteredHotels[index];
+                    itemBuilder: (BuildContext context, int index) {
+                      final Map<String, dynamic> hotel = filteredHotels[index];
                       return HotelListCard(
                         hotel: hotel,
                         cityName: cityName,
@@ -236,7 +233,7 @@ class HotelScreen extends GetView<SearchCityController> {
   }
 
   String _getMonthName(int month) {
-    const months = [
+    const List<String> months = <String>[
       'Jan',
       'Feb',
       'Mar',
@@ -256,6 +253,10 @@ class HotelScreen extends GetView<SearchCityController> {
 
 // --- Header Widget ---
 class _HotelScreenHeader extends StatelessWidget {
+
+  const _HotelScreenHeader({
+    required this.cityName, required this.cityId, required this.dateRange, required this.guestInfo, required this.searchCtrl, required this.sessionId, Key? key,
+  }) : super(key: key);
   final String cityName;
   final String cityId;
   final String dateRange;
@@ -263,19 +264,8 @@ class _HotelScreenHeader extends StatelessWidget {
   final SearchCityController searchCtrl;
   final String sessionId;
 
-  const _HotelScreenHeader({
-    Key? key,
-    required this.cityName,
-    required this.cityId,
-    required this.dateRange,
-    required this.guestInfo,
-    required this.searchCtrl,
-    required this.sessionId,
-  }) : super(key: key);
-
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       height: 155,
       width: Get.width,
       decoration: BoxDecoration(
@@ -288,7 +278,7 @@ class _HotelScreenHeader extends StatelessWidget {
         padding: EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: <Widget>[
             Expanded(
               flex: 5,
               child: Container(
@@ -310,7 +300,7 @@ class _HotelScreenHeader extends StatelessWidget {
                     fontSize: 15,
                   ),
                   subtitle: CommonTextWidget.PoppinsRegular(
-                    text: "$dateRange, $guestInfo",
+                    text: '$dateRange, $guestInfo',
                     color: AppColors.textSecondary,
                     fontSize: 12,
                   ),
@@ -321,11 +311,11 @@ class _HotelScreenHeader extends StatelessWidget {
                     },
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
+                      children: <Widget>[
                         SvgPicture.asset(draw),
                         const SizedBox(height: 10),
                         CommonTextWidget.PoppinsMedium(
-                          text: "Edit",
+                          text: 'Edit',
                           color: AppColors.primary,
                           fontSize: 12,
                         ),
@@ -351,10 +341,10 @@ class _HotelScreenHeader extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: [
+                      children: <Widget>[
                         Icon(Icons.location_on, color: AppColors.primary),
                         CommonTextWidget.PoppinsMedium(
-                          text: "Map",
+                          text: 'Map',
                           color: AppColors.primary,
                           fontSize: 12,
                         ),
@@ -368,27 +358,21 @@ class _HotelScreenHeader extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 // --- Filter Chip Widget ---
 class _HotelFilterChip extends StatelessWidget {
+
+  const _HotelFilterChip({
+    required this.label, required this.icon, required this.selected, required this.onTap, Key? key,
+  }) : super(key: key);
   final String label;
   final IconData icon;
   final bool selected;
   final VoidCallback onTap;
 
-  const _HotelFilterChip({
-    Key? key,
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
-  }) : super(key: key);
-
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: GestureDetector(
         onTap: onTap,
@@ -398,7 +382,7 @@ class _HotelFilterChip extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             color: selected
-                ? AppColors.primary.withOpacity(0.12)
+                ? AppColors.primary.withValues(alpha: 0.12)
                 : AppColors.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
@@ -406,17 +390,17 @@ class _HotelFilterChip extends StatelessWidget {
               width: 1,
             ),
             boxShadow: selected
-                ? [
+                ? <BoxShadow>[
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.08),
+                      color: AppColors.primary.withValues(alpha: 0.08),
                       blurRadius: 8,
                       offset: Offset(0, 2),
                     )
                   ]
-                : [],
+                : <BoxShadow>[],
           ),
           child: Row(
-            children: [
+            children: <Widget>[
               Icon(icon,
                   color: selected ? AppColors.primary : AppColors.textSecondary,
                   size: 17),
@@ -439,19 +423,16 @@ class _HotelFilterChip extends StatelessWidget {
         ),
       ),
     );
-  }
 }
 
 // --- Bottom Sheet for More Filters ---
 class _HotelFilterBottomSheet extends StatefulWidget {
-  final HotelFilterController filterCtrl;
-  final List<Map<String, dynamic>> hotels;
 
   const _HotelFilterBottomSheet({
-    Key? key,
-    required this.filterCtrl,
-    required this.hotels,
+    required this.filterCtrl, required this.hotels, Key? key,
   }) : super(key: key);
+  final HotelFilterController filterCtrl;
+  final List<Map<String, dynamic>> hotels;
 
   @override
   State<_HotelFilterBottomSheet> createState() =>
@@ -465,8 +446,8 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
   @override
   Widget build(BuildContext context) {
     // Calculate min/max price from hotels list
-    final prices = widget.hotels
-        .map((h) => (h['HotelServices'] != null &&
+    final List<double> prices = widget.hotels
+        .map((Map<String, dynamic> h) => (h['HotelServices'] != null &&
                 h['HotelServices'].isNotEmpty &&
                 h['HotelServices'][0]['ServicePrice'] != null)
             ? double.tryParse(h['HotelServices'][0]['ServicePrice']
@@ -475,10 +456,10 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                 0
             : double.tryParse(h['MinPrice']?.toString() ?? '0') ?? 0)
         .toList();
-    final minPrice =
-        prices.isNotEmpty ? prices.reduce((a, b) => a < b ? a : b) : 0;
-    final maxPrice =
-        prices.isNotEmpty ? prices.reduce((a, b) => a > b ? a : b) : 10000;
+    final num minPrice =
+        prices.isNotEmpty ? prices.reduce((double a, double b) => a < b ? a : b) : 0;
+    final num maxPrice =
+        prices.isNotEmpty ? prices.reduce((double a, double b) => a > b ? a : b) : 10000;
 
     // Set initial range only once
     if (priceRange.start == 0 &&
@@ -493,15 +474,15 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("All Filters",
+            children: <Widget>[
+              Text('All Filters',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               SizedBox(height: 18),
               // Price Range Filter
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    "Price Range (₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()})",
+                    'Price Range (₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()})',
                     style: TextStyle(fontWeight: FontWeight.w500)),
               ),
               RangeSlider(
@@ -512,10 +493,10 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                 values: priceRange,
                 divisions: maxPrice > minPrice ? 20 : 1,
                 labels: RangeLabels(
-                  "₹${priceRange.start.toInt()}",
-                  "₹${priceRange.end.toInt()}",
+                  '₹${priceRange.start.toInt()}',
+                  '₹${priceRange.end.toInt()}',
                 ),
-                onChanged: (v) {
+                onChanged: (RangeValues v) {
                   setState(() {
                     priceRange = v;
                   });
@@ -525,13 +506,13 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
               // Star Rating Filter
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Star Rating",
+                child: Text('Star Rating',
                     style: TextStyle(fontWeight: FontWeight.w500)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: List.generate(5, (i) {
-                  final star = i + 1;
+                children: List.generate(5, (int i) {
+                  final int star = i + 1;
                   return GestureDetector(
                     onTap: () {
                       setState(() {
@@ -544,7 +525,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: selectedStar >= star
-                            ? AppColors.primary.withOpacity(0.15)
+                            ? AppColors.primary.withValues(alpha: 0.15)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
@@ -572,9 +553,9 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                 child: ElevatedButton(
                   onPressed: () {
                     // Apply price and star rating filter
-                    final filtered = widget.hotels.where((hotel) {
+                    final List<Map<String, dynamic>> filtered = widget.hotels.where((Map<String, dynamic> hotel) {
                       // Price filter
-                      double price = (hotel['HotelServices'] != null &&
+                      final double price = (hotel['HotelServices'] != null &&
                               hotel['HotelServices'].isNotEmpty &&
                               hotel['HotelServices'][0]['ServicePrice'] != null)
                           ? double.tryParse(hotel['HotelServices'][0]
@@ -585,21 +566,21 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                           : double.tryParse(
                                   hotel['MinPrice']?.toString() ?? '0') ??
                               0;
-                      bool priceMatch =
+                      final bool priceMatch =
                           price >= priceRange.start && price <= priceRange.end;
 
                       // Star rating filter
-                      double star = double.tryParse(
+                      final double star = double.tryParse(
                               hotel['StarRating']?.toString() ?? '0') ??
                           0;
-                      bool starMatch =
+                      final bool starMatch =
                           selectedStar == 0 || star.floor() == selectedStar;
 
                       return priceMatch && starMatch;
                     }).toList();
 
                     widget.filterCtrl.filteredHotels.assignAll(filtered);
-                    widget.filterCtrl.selectedFilter.value = "custom";
+                    widget.filterCtrl.selectedFilter.value = 'custom';
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
@@ -611,7 +592,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                     elevation: 0,
                   ),
                   child: const Text(
-                    "Apply Filters",
+                    'Apply Filters',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -625,7 +606,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(
-                  "Cancel",
+                  'Cancel',
                   style: TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w500,

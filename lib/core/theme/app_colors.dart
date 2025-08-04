@@ -31,4 +31,7 @@ class AppColors {
   
   // Transparent
   static const Color transparent = Colors.transparent;
+  static const Color backgroundLight = Color(0xFFF5F5F5);
+  static const Color card = Color.fromARGB(255, 137, 137, 137);
+  
 }
