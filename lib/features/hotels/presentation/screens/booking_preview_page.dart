@@ -2,11 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/constants/images.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../controllers/payment_controller.dart';
 
 class BookingPreviewPage extends StatefulWidget {
   const BookingPreviewPage({
@@ -31,10 +30,36 @@ class BookingPreviewPage extends StatefulWidget {
 }
 
 class _BookingPreviewPageState extends State<BookingPreviewPage> {
+  late final PaymentController _paymentController;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String userName = '';
-  String userEmail = '';
-  String userPhone = '';
+  
+  @override
+  void initState() {
+    super.initState();
+    _paymentController = Get.put(PaymentController());
+  }
+  
+  // Form field controllers
+  late String userName = 'John Doe';
+  late String userEmail = 'john.doe@example.com';
+  late String userPhone = '+919876543210';
+  late String userAddress = '123 Main St';
+  late String userCity = 'Mumbai';
+  late String userPostalCode = '400001';
+  late String userCountry = 'India';
+  late String specialRequests = 'Early check-in if possible';
+  
+  bool _isProcessing = false;
+
+  // Demo traveler details
+  // String userName = 'John Doe';
+  // String userEmail = 'john.doe@example.com';
+  // String userPhone = '+1 (555) 123-4567';
+  // String userAddress = '123 Traveler Street';
+  // String userCity = 'New York';
+  // String userCountry = 'United States';
+  // String userPostalCode = '10001';
+  // String specialRequests = 'Early check-in requested if possible';
 
   // SOLUTION 1: Add a robust parsing function for coordinates.
   double? _parseCoordinate(dynamic value) {
@@ -52,10 +77,11 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
     final String hotelAddress = hotelDetail['HotelAddress']?['Address'] ?? '';
     final String hotelCity = hotelDetail['HotelAddress']?['City'] ?? '';
     final String hotelRating = hotelDetail['StarRating']?.toString() ?? 'N/A';
+    // Default hotel image if none provided
     final String hotelImage = (hotelDetail['HotelImages'] is List &&
             hotelDetail['HotelImages'].isNotEmpty)
         ? hotelDetail['HotelImages'][0]
-        : hotelDetailTopImage;
+        : 'https://via.placeholder.com/800x400?text=Hotel+Image';
 
     // SOLUTION 2: Use the safe parsing function instead of casting.
     final double? latitude =
@@ -435,22 +461,30 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
         ],
       ));
 
-  Widget _buildDetailItem(String label, String value) => Row(
-        children: <Widget>[
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+  Widget _buildDetailItem(String label, String value, {bool isBold = false}) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14, 
+                  color: Colors.grey[600],
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
             ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87),
-          ),
-        ],
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: isBold ? 15 : 14,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+                color: isBold ? AppColors.primary : Colors.black87,
+              ),
+            ),
+          ],
+        ),
       );
 
   Widget _buildFareSummary(double price, double taxes) => AppCard(
@@ -528,28 +562,77 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
               const SizedBox(height: 20),
               _formField(
                 'Full Name',
+                initialValue: 'John Doe',
                 onSaved: (String? v) => userName = v ?? '',
                 validator: (String? v) =>
-                    v!.isEmpty ? 'Please enter your name' : null,
+                    v != null && v.length >= 3 ? null : 'Enter a valid name',
                 prefixIcon: Icons.person_outline,
               ),
               const SizedBox(height: 16),
               _formField(
                 'Email Address',
+                initialValue: 'john.doe@example.com',
                 onSaved: (String? v) => userEmail = v ?? '',
                 validator: (String? v) =>
-                    v != null && v.contains('@') ? null : 'Please enter a valid email',
+                    v != null && v.isEmail ? null : 'Enter a valid email',
                 keyboardType: TextInputType.emailAddress,
                 prefixIcon: Icons.email_outlined,
               ),
               const SizedBox(height: 16),
               _formField(
                 'Phone Number',
+                initialValue: '1234567890',
                 onSaved: (String? v) => userPhone = v ?? '',
                 validator: (String? v) =>
                     v != null && v.length >= 8 ? null : 'Enter a valid phone number',
                 keyboardType: TextInputType.phone,
                 prefixIcon: Icons.phone_outlined,
+              ),
+              const SizedBox(height: 16),
+              _formField(
+                'Address',
+                initialValue: '123 Main St',
+                onSaved: (String? v) => userAddress = v ?? '',
+                prefixIcon: Icons.home_outlined,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: _formField(
+                      'City',
+                      initialValue: 'New York',
+                      onSaved: (String? v) => userCity = v ?? '',
+                      prefixIcon: Icons.location_city_outlined,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _formField(
+                      'Postal Code',
+                      initialValue: '12345',
+                      onSaved: (String? v) => userPostalCode = v ?? '',
+                      keyboardType: TextInputType.number,
+                      prefixIcon: Icons.numbers_outlined,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _formField(
+                'Country',
+                initialValue: 'USA',
+                onSaved: (String? v) => userCountry = v ?? '',
+                prefixIcon: Icons.flag_outlined,
+              ),
+              const SizedBox(height: 16),
+              _formField(
+                'Special Requests (Optional)',
+                initialValue: 'None',
+                onSaved: (String? v) => specialRequests = v ?? '',
+                maxLines: 3,
+                prefixIcon: Icons.note_outlined,
               ),
             ],
           ),
@@ -562,8 +645,12 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
     String? Function(String?)? validator,
     void Function(String?)? onSaved,
     IconData? prefixIcon,
+    String? initialValue,
+    int? maxLines,
   }) =>
       TextFormField(
+        initialValue: initialValue,
+        maxLines: maxLines,
         keyboardType: keyboardType,
         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
@@ -632,7 +719,7 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        _getTotal(price, taxes),
+                        _formatCurrency(price + taxes),
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 22,
@@ -646,15 +733,69 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        _formKey.currentState?.save();
-                        _showBookingConfirmation();
-                      }
-                    },
+                    onPressed: _isProcessing
+                        ? null
+                        : () async {
+                            if (!_formKey.currentState!.validate()) return;
+                            _formKey.currentState!.save();
+                            try {
+                              setState(() => _isProcessing = true);
+                              final double amount = _calculateTotal(
+                                widget.price ?? 0.0,
+                                widget.taxes ?? 0.0,
+                              );
+                              final String formattedAmount = _formatCurrency(amount);
+                              await _paymentController.processPayment(
+                                amount: amount,
+                                name: userName,
+                                email: userEmail,
+                                phone: userPhone,
+                                bookingDetails: {
+                                  'hotelId': widget.hotelDetails['HotelDetail']?['HotelCode'],
+                                  'roomType': widget.selectedRoom['Name'],
+                                  'checkIn': widget.searchParams['checkInDate'] ?? '',
+                                  'checkOut': widget.searchParams['checkOutDate'] ?? '',
+                                  'guests': widget.searchParams['adults'] ?? 2,
+                                  'rooms': widget.searchParams['rooms'] ?? 1,
+                                  'totalAmount': amount,
+                                  'guestDetails': {
+                                    'name': userName,
+                                    'email': userEmail,
+                                    'phone': userPhone,
+                                    'address': userAddress,
+                                    'city': userCity,
+                                    'postalCode': userPostalCode,
+                                    'country': userCountry,
+                                    'specialRequests': specialRequests,
+                                  },
+                                },
+                              );
+                              Get.snackbar(
+                                'Payment Successful!',
+                                'Your booking has been confirmed.',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.green[50],
+                                colorText: Colors.green[800],
+                                icon: const Icon(Icons.check_circle, color: Colors.green),
+                                duration: const Duration(seconds: 5),
+                              );
+                            } catch (e) {
+                              Get.snackbar(
+                                'Payment Error',
+                                e.toString(),
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                            } finally {
+                              if (mounted) {
+                                setState(() => _isProcessing = false);
+                              }
+                            }
+                          },
                     icon: const Icon(Icons.lock_outline, size: 20),
-                    label: const Text(
-                      'Proceed to Pay',
+                    label: Text(
+                      _isProcessing ? 'Processing...' : 'Proceed to Pay',
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -678,76 +819,151 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
         ),
       );
 
+  Future<void> _processPayment() async {
+    // This method is not needed anymore
+  }
+
   void _showBookingConfirmation() {
+    final hotelName = widget.hotelDetails['HotelDetail']?['HotelName'] ?? 'the hotel';
+    final roomType = widget.selectedRoom['Name'] ?? 'Selected Room';
+    final checkIn = widget.searchParams['checkInDate'] ?? 'N/A';
+    final checkOut = widget.searchParams['checkOutDate'] ?? 'N/A';
+    final totalAmount = widget.price + widget.taxes;
+
     Get.dialog(
-      AlertDialog(
+      Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Column(
-          children: <Widget>[
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.green[50],
-                shape: BoxShape.circle,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.green[50],
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.check_circle_outline,
+                      size: 40, color: Colors.green[600]),
+                ),
               ),
-              child: Icon(Icons.check_circle_outline,
-                  size: 40, color: Colors.green[600]),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Confirm Booking',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87),
-            ),
-          ],
-        ),
-        content: Text(
-          "Proceed to payment for your booking at ${widget.hotelDetails['HotelDetail']?['HotelName'] ?? 'the hotel'}?",
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey[700], height: 1.5),
-        ),
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('CANCEL',
-                style: TextStyle(fontWeight: FontWeight.w600)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get..back() // Close the dialog
-              ..snackbar(
-                'Processing Payment',
-                'Redirecting to secure payment gateway...',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.blue[50],
-                colorText: Colors.blue[900],
-                margin: const EdgeInsets.all(16),
-                borderRadius: 12,
-                icon: const Icon(Icons.credit_card, color: Colors.blue),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 16),
+              const Center(
+                child: Text(
+                  'Confirm Booking',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87),
+                ),
               ),
-            ),
-            child: const Text('CONFIRM',
-                style: TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: 20),
+              const Text(
+                'Booking Summary',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 10),
+              _buildDetailItem('Hotel', hotelName),
+              _buildDetailItem('Room Type', roomType),
+              _buildDetailItem('Check-in', checkIn),
+              _buildDetailItem('Check-out', checkOut),
+              const SizedBox(height: 10),
+              const Divider(),
+              const SizedBox(height: 10),
+              const Text(
+                'Traveler Details',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 10),
+              _buildDetailItem('Name', userName),
+              _buildDetailItem('Email', userEmail),
+              _buildDetailItem('Phone', userPhone),
+              _buildDetailItem('Address', userAddress),
+              _buildDetailItem('City', userCity),
+              _buildDetailItem('Postal Code', userPostalCode),
+              _buildDetailItem('Country', userCountry),
+              if (specialRequests.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                const Text(
+                  'Special Requests',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  specialRequests,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              ],
+              const SizedBox(height: 20),
+              _buildDetailItem(
+                'Total Amount',
+                '₹${totalAmount.toStringAsFixed(2)}',
+                isBold: true,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Get.back(),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(color: Colors.grey[300]!),
+                        ),
+                      ),
+                      child: const Text(
+                        'CANCEL',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _processPayment,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'CONFIRM & PAY',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  String _getTotal(double price, double taxes) {
-    final double total = price + taxes;
-    return '₹${total.toStringAsFixed(total.truncateToDouble() == total ? 0 : 2)}';
+  double _calculateTotal(double price, double taxes) {
+    return price + taxes;
+  }
+  
+  String _formatCurrency(double amount) {
+    return '₹${amount.toStringAsFixed(amount.truncateToDouble() == amount ? 0 : 2)}';
   }
 }
 

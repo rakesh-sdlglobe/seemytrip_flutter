@@ -1,15 +1,17 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
-import 'package:seemytrip/core/presentation/screens/splash/splash_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:seemytrip/core/theme/app_theme.dart';
-import 'package:seemytrip/translations/app_translations.dart';
+
+import 'core/presentation/screens/splash/splash_screen.dart';
+import 'core/routes/app_routes.dart';
+import 'core/theme/app_theme.dart';
+import 'core/theme/theme_service.dart';
+import 'features/auth/presentation/controllers/login_controller.dart';
 import 'firebase_options.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:seemytrip/core/theme/theme_service.dart';
+import 'translations/app_translations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,6 +67,10 @@ class SeemytripApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      getPages: [
+        ...AppRoutes.routes,
+      ],
+      initialRoute: '/',
       home: SplashScreen(),
     );
   }

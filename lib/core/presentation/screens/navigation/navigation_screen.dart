@@ -26,8 +26,7 @@ class NavigationScreen extends StatelessWidget {
     MyAccountScreen(),
   ];
 
-  buildMyNavBar(BuildContext context) {
-    return Container(
+  buildMyNavBar(BuildContext context) => Container(
       height: 85,
       decoration: BoxDecoration(
         color: white,
@@ -132,7 +131,6 @@ class NavigationScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,10 +138,10 @@ class NavigationScreen extends StatelessWidget {
     return Scaffold(
         key: key,
         backgroundColor: white,
-        drawer: Drawer(
-          backgroundColor: white,
-          child: DrawerScreen(),
-        ),
+        // drawer: Drawer(
+        //   backgroundColor: white,
+        //   child: DrawerScreen(),
+        // ),
         body: Stack(
           children: [
             Obx(
@@ -155,20 +153,18 @@ class NavigationScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Obx(() {
-              return navigationController.pageIndex.value == 0
+            Obx(() => navigationController.pageIndex.value == 0
                   ? Positioned(
                       top: 65,
                       left: 24,
                       child: InkWell(
-                        onTap: () {
-                          key.currentState!.openDrawer();
-                        },
+                        // onTap: () {
+                        //   key.currentState!.openDrawer();
+                        // },
                         child: Image.asset(menuIcon, height: 42, width: 42),
                       ),
                     )
-                  : SizedBox();
-            }),
+                  : SizedBox()),
           ],
         ));
   }

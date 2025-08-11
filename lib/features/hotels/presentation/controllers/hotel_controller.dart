@@ -1,16 +1,16 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
-import 'package:seemytrip/core/config/app_config.dart';
-import 'package:seemytrip/features/hotels/presentation/screens/hotel_map_screen.dart';
-import 'package:seemytrip/features/hotels/presentation/screens/hotel_screen.dart';
-import 'package:seemytrip/features/hotels/presentation/screens/hotel_detail_screen.dart';
-import 'package:seemytrip/features/hotels/presentation/screens/hotel_image_screen.dart';
 import 'dart:convert';
 
-import 'package:seemytrip/shared/models/hotel_geolocation_model.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../../core/config/app_config.dart';
+import '../../../../shared/models/hotel_geolocation_model.dart';
+import '../screens/hotel_detail_screen.dart';
+import '../screens/hotel_image_screen.dart';
+import '../screens/hotel_map_screen.dart';
+import '../screens/hotel_screen.dart';
 
 class City {
   final String id;
