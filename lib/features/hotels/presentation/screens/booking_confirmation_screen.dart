@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../../home/presentation/screens/home_screen.dart';
 import 'rooms_and_guest_screen.dart' as AppColors;
-import '../../../../core/routes/app_routes.dart';
 
 class BookingConfirmationScreen extends StatelessWidget {
   const BookingConfirmationScreen({super.key});

@@ -1,6 +1,8 @@
 class AppConfig {
-  static const String baseUrl = 'http://192.168.1.8:3002/api';
-  
+  static const String baseUrl = 'http://192.168.1.5:3002/api';
+  static const String googleClientId =
+      '493628196678-cjvhttpbp9c4ha4a35srklc9skvgq324.apps.googleusercontent.com';
+
   // Auth endpoints
   static const String login = '$baseUrl/login';
   static const String signUp = '$baseUrl/signup';

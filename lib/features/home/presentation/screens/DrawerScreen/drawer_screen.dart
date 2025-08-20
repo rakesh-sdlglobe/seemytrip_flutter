@@ -53,7 +53,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-        loginController.userData.value = responseData;
+        // loginController.userData.value = responseData; // userData is not defined in LoginController
         print('✅ User Profile: $responseData');
 
         setState(() {

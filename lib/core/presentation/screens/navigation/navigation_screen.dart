@@ -138,10 +138,10 @@ class NavigationScreen extends StatelessWidget {
     return Scaffold(
         key: key,
         backgroundColor: white,
-        // drawer: Drawer(
-        //   backgroundColor: white,
-        //   child: DrawerScreen(),
-        // ),
+        drawer: Drawer(
+          backgroundColor: white,
+          child: DrawerScreen(),
+        ),
         body: Stack(
           children: [
             Obx(
@@ -158,9 +158,9 @@ class NavigationScreen extends StatelessWidget {
                       top: 65,
                       left: 24,
                       child: InkWell(
-                        // onTap: () {
-                        //   key.currentState!.openDrawer();
-                        // },
+                        onTap: () {
+                          key.currentState!.openDrawer();
+                        },
                         child: Image.asset(menuIcon, height: 42, width: 42),
                       ),
                     )

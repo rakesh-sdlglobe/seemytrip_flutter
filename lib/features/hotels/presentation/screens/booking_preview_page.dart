@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../controllers/payment_controller.dart';
+import '../controllers/hotel_payment_controller.dart';
 
 class BookingPreviewPage extends StatefulWidget {
   const BookingPreviewPage({
@@ -30,13 +30,13 @@ class BookingPreviewPage extends StatefulWidget {
 }
 
 class _BookingPreviewPageState extends State<BookingPreviewPage> {
-  late final PaymentController _paymentController;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final HotelPaymentController _paymentController;
   
   @override
   void initState() {
     super.initState();
-    _paymentController = Get.put(PaymentController());
+    _paymentController = Get.put(HotelPaymentController());
   }
   
   // Form field controllers
@@ -745,7 +745,7 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                                 widget.taxes ?? 0.0,
                               );
                               final String formattedAmount = _formatCurrency(amount);
-                              await _paymentController.processPayment(
+                              await _paymentController.processHotelPayment(
                                 amount: amount,
                                 name: userName,
                                 email: userEmail,
@@ -769,15 +769,6 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                                     'specialRequests': specialRequests,
                                   },
                                 },
-                              );
-                              Get.snackbar(
-                                'Payment Successful!',
-                                'Your booking has been confirmed.',
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: Colors.green[50],
-                                colorText: Colors.green[800],
-                                icon: const Icon(Icons.check_circle, color: Colors.green),
-                                duration: const Duration(seconds: 5),
                               );
                             } catch (e) {
                               Get.snackbar(

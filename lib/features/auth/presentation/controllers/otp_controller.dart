@@ -6,8 +6,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
+import '../../../../core/config/app_config.dart';
+
 class OtpController extends GetxController {
-  final String baseUrl = 'http://192.168.1.8:3002';
+  final String baseUrl = AppConfig.baseUrl;
   
   // Observable variables
   final RxBool isLoading = false.obs;
@@ -68,7 +70,7 @@ class OtpController extends GetxController {
       print('Request body: ${json.encode(requestBody)}'); // Debug log
 
       final response = await http.post(
-        Uri.parse('$baseUrl/api/send-otp'),
+        Uri.parse('$baseUrl/send-otp'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -127,7 +129,7 @@ class OtpController extends GetxController {
       }
 
       print('=== OTP Verification Debug ===');
-      print('Endpoint: $baseUrl/api/verify-otp');
+      print('Endpoint: $baseUrl/verify-otp');
       print('Email: ${email.value}');
       print('OTP: $otp');
       print('=============================');
@@ -140,7 +142,7 @@ class OtpController extends GetxController {
       print('Request Body: ${json.encode(requestBody)}');
 
       final response = await http.post(
-        Uri.parse('$baseUrl/api/verify-otp'),
+        Uri.parse('$baseUrl/verify-otp'),
         headers: {
           'Content-Type': 'application/json',
         },
