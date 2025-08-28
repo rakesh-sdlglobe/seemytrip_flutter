@@ -157,13 +157,77 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildScheduleColumn(
-                      formatTime(widget.departureTime ?? '00:00'),
-                      widget.departure ?? ''),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Departure',
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsMedium,
+                              fontSize: 12,
+                              color: grey717,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            formatTime(widget.departureTime ?? '00:00'),
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsMedium,
+                              fontSize: 14,
+                              color: black2E2,
+                            ),
+                          ),
+                          Text(
+                            widget.departure ?? '',
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsMedium,
+                              fontSize: 12,
+                              color: greyB8B,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   _buildDuration(),
-                  _buildScheduleColumn(
-                      formatTime(widget.arrivalTime ?? '00:00'),
-                      widget.arrival ?? ''),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Arrival',
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsMedium,
+                              fontSize: 12,
+                              color: grey717,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            formatTime(widget.arrivalTime ?? '00:00'),
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsMedium,
+                              fontSize: 14,
+                              color: black2E2,
+                            ),
+                          ),
+                          Text(
+                            widget.arrival ?? '',
+                            style: TextStyle(
+                              fontFamily: FontFamily.PoppinsMedium,
+                              fontSize: 12,
+                              color: greyB8B,
+                              ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 16),
@@ -176,7 +240,8 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                       fontFamily: FontFamily.PoppinsMedium,
                       fontSize: 14,
                       color: grey717,
-                    ),
+                      overflow: TextOverflow.ellipsis,
+                        ),
                   ),
                   Text(
                     widget.toStation,
@@ -184,6 +249,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                       fontFamily: FontFamily.PoppinsMedium,
                       fontSize: 14,
                       color: grey717,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

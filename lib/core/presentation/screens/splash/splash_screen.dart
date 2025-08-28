@@ -12,13 +12,13 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: white,
       body: Stack(
         fit: StackFit.expand,
-        children: [
+        children: <Widget>[
           // Optional: Background image or gradient
           // Container(
           //   decoration: BoxDecoration(
@@ -34,11 +34,9 @@ class SplashScreen extends StatelessWidget {
 
           Center(
             child: GetBuilder<SplashController>(
-              builder: (controller) {
-                return AnimatedBuilder(
+              builder: (SplashController controller) => AnimatedBuilder(
                   animation: controller.scaleAnimation,
-                  builder: (context, child) {
-                    return Transform.scale(
+                  builder: (BuildContext context, Widget? child) => Transform.scale(
                       scale: controller.scaleAnimation.value,
                       child: FadeTransition(
                         opacity: controller.fadeAnimation,
@@ -46,7 +44,7 @@ class SplashScreen extends StatelessWidget {
                           constraints: BoxConstraints(maxWidth: size.width * 0.8),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
+                            children: <Widget>[
                               Image.asset(
                                 compLogo,
                                 width: size.width * 0.5,
@@ -65,7 +63,7 @@ class SplashScreen extends StatelessWidget {
                                   animate: true,
                                   frameRate: FrameRate(60),
                                   onLoaded: (_) => splashController.startAnimation(),
-                                  errorBuilder: (context, error, stackTrace) => Center(
+                                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) => Center(
                                     child: Icon(Icons.error_outline, color: Colors.red, size: 50),
                                   ),
                                 ),
@@ -81,7 +79,7 @@ class SplashScreen extends StatelessWidget {
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 1.3,
-                                  shadows: [
+                                  shadows: <Shadow>[
                                     Shadow(
                                       offset: Offset(0, 1),
                                       blurRadius: 4,
@@ -97,11 +95,11 @@ class SplashScreen extends StatelessWidget {
                                 'Your journey begins here',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: black2E2.withOpacity(0.7),
+                                  color: black2E2.withValues(alpha: 0.7),
                                   fontSize: 18,
                                   // fontStyle: FontStyle.italic,
                                   fontWeight: FontWeight.w400,
-                                  shadows: [
+                                  shadows: <Shadow>[
                                     Shadow(
                                       offset: Offset(0, 1),
                                       blurRadius: 3,
@@ -114,10 +112,8 @@ class SplashScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    );
-                  },
-                );
-              },
+                    ),
+                ),
             ),
           ),
         ],

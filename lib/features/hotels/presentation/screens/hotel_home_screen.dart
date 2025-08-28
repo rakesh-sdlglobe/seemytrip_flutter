@@ -184,32 +184,28 @@ class HotelHomeScreen extends StatelessWidget {
               ),
 
               // 2. CORRECTED: Restored the original two-card date selection UI
-              Row(
+              Column(
                 children: <Widget>[
-                  Expanded(
-                    child: _buildSearchCard(
-                      onTap: _selectDates,
-                      title: 'Check-in',
-                      subtitle: _searchCtrl.checkInDate.value == null
-                          ? 'Add date'
-                          : DateFormat('EEE, dd MMM')
-                              .format(_searchCtrl.checkInDate.value!),
-                      icon: Icons.calendar_today_outlined,
-                      isHalfWidth: true,
-                    ),
+                  _buildSearchCard(
+                    onTap: _selectDates,
+                    title: 'Check-in',
+                    subtitle: _searchCtrl.checkInDate.value == null
+                        ? 'Add date'
+                        : DateFormat('EEE, dd MMM yyyy').format(
+                            _searchCtrl.checkInDate.value!),
+                    icon: Icons.calendar_today_outlined,
+                    isHalfWidth: true,
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildSearchCard(
-                      onTap: _selectDates,
-                      title: 'Check-out',
-                      subtitle: _searchCtrl.checkOutDate.value == null
-                          ? 'Add date'
-                          : DateFormat('EEE, dd MMM')
-                              .format(_searchCtrl.checkOutDate.value!),
-                      icon: Icons.calendar_today_outlined,
-                      isHalfWidth: true,
-                    ),
+                  const SizedBox(height: 12),
+                  _buildSearchCard(
+                    onTap: _selectDates,
+                    title: 'Check-out',
+                    subtitle: _searchCtrl.checkOutDate.value == null
+                        ? 'Add date'
+                        : DateFormat('EEE, dd MMM yyyy').format(
+                            _searchCtrl.checkOutDate.value!),
+                    icon: Icons.calendar_today_outlined,
+                    isHalfWidth: true,
                   ),
                 ],
               ),

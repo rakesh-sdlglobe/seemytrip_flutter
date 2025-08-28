@@ -312,6 +312,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
 
   Widget _buildDateInfo(String formattedDate, String dayOfWeek) => Expanded(
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.calendar_today_outlined,
@@ -319,35 +320,38 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
             size: 22,
           ),
           SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Travel Date",
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[500],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Travel Date",
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[500],
+                  ),
                 ),
-              ),
-              SizedBox(height: 6),
-              Text(
-                formattedDate,
-                style: GoogleFonts.inter(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A1A),
+                SizedBox(height: 6),
+                Text(
+                  formattedDate,
+                  style: GoogleFonts.inter(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1A1A1A),
+                    // overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              Text(
-                dayOfWeek,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey[500],
+                Text(
+                  dayOfWeek,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey[500],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

@@ -12,7 +12,20 @@
           "package_name": "com.example.seemytrip"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "579307150474-c56okjb06g23svbvemd2b78fgskd5fgo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.seemytrip",
+            "certificate_hash": "83751814ddd74883c95479c24b72ee5d064f3c54"
+          }
+        },
+        {
+          "client_id": "579307150474-dle7nf4rsmp6ghb4qqdbc59qob09v9kh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBqFw3wf7RZxUumfpToOHLY-aqYSER_S-k"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579307150474-dle7nf4rsmp6ghb4qqdbc59qob09v9kh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "579307150474-bn3cq6ivk42dvfoqh8ut23apqc1g6m35.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.seemytrip"
+              }
+            }
+          ]
         }
       }
     }

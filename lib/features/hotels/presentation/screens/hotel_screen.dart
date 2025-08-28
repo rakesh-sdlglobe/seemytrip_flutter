@@ -76,6 +76,14 @@ class HotelScreen extends GetView<SearchCityController> {
                   ),
                   child: TextField(
                     controller: searchCtrl.searchController,
+                    onChanged: (query) {
+                      searchCtrl.searchQuery.value = query;
+                      filterCtrl.applySearch(query);
+                    },
+                    onSubmitted: (query) {
+                      searchCtrl.searchQuery.value = query;
+                      filterCtrl.applySearch(query);
+                    },
                     decoration: InputDecoration(
                       hintText: 'Search hotels...',
                       prefixIcon:
@@ -87,7 +95,8 @@ class HotelScreen extends GetView<SearchCityController> {
                             icon: const Icon(Icons.close,
                                 color: AppColors.textSecondary),
                             onPressed: () {
-                              searchCtrl.clearSearch();
+                              searchCtrl.searchController.clear();
+                              searchCtrl.searchQuery.value = '';
                               filterCtrl.applySearch('');
                             },
                           );
