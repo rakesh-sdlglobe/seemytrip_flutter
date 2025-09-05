@@ -14,9 +14,8 @@ class ToStationSelector extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+  Widget build(BuildContext context) => Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24),
       child: GestureDetector(
         onTap: onTap,
         child: Container(
@@ -27,37 +26,29 @@ class ToStationSelector extends StatelessWidget {
             border: Border.all(width: 1, color: greyE2E),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(Lists.flightSearchList1[1]["image"]),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "To",
-                        style: TextStyle(
+                SizedBox(width: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "To",
+                      style: TextStyle(
                           color: Colors.grey[600],
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        selectedToStation ?? "Select To Station",
-                        style: TextStyle(
-                          color: selectedToStation == null ? grey888 : black2E2,
                           fontSize: 16,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    Text(
+                      selectedToStation ?? "Select To Station",
+                      style: TextStyle(
+                        color: selectedToStation == null ? grey888 : black2E2,
+                        fontSize: 16,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -65,5 +56,4 @@ class ToStationSelector extends StatelessWidget {
         ),
       ),
     );
-  }
 }

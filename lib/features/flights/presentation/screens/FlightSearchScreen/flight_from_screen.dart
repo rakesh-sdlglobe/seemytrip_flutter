@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:dio/dio.dart';
 import 'package:seemytrip/core/utils/colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/features/flights/presentation/controllers/flight_controller.dart';
 
 class FlightFromScreen extends StatefulWidget {
   @override
@@ -11,11 +11,10 @@ class FlightFromScreen extends StatefulWidget {
 }
 
 class _FlightFromScreenState extends State<FlightFromScreen> {
-  late FlightController _flightController;
   bool _isEditingFrom = false;
   final TextEditingController _fromController = TextEditingController();
-  List<Map<String, String>> airports = [];
-  List<Map<String, String>> filteredAirports = [];
+  List<dynamic> airports = [];
+  List<dynamic> filteredAirports = [];
   bool isLoading = true;
   bool hasError = false;
   Timer? _debounce;
@@ -23,8 +22,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
   @override
   void initState() {
     super.initState();
-    _flightController = Get.find<FlightController>();
-    _loadAirports();
+    fetchAirports();
     _fromController.addListener(_onSearchChanged);
   }
 
@@ -35,16 +33,26 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
     super.dispose();
   }
 
-  Future<void> _loadAirports() async {
+  Future<void> fetchAirports() async {
+    final dio = Dio();
+    final url =
+        'https://tripadmin.seemytrip.com/api/trains/getStation'; // Replace with your API
+
     try {
-      final airportsList = await _flightController.fetchAirports();
-      setState(() {
-        airports = airportsList;
-        filteredAirports = List.from(airports);
-        isLoading = false;
-      });
+      final response = await dio.get(url);
+      if (response.statusCode == 200) {
+        setState(() {
+          airports = response.data['airports'] ?? [];
+          filteredAirports = airports;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          hasError = true;
+        });
+      }
     } catch (e) {
-      print('Error loading airports: $e');
       setState(() {
         isLoading = false;
         hasError = true;
@@ -62,9 +70,11 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
   void _filterAirports(String query) {
     query = query.toLowerCase();
     setState(() {
-      filteredAirports = airports.where((airport) => (airport["name"]?.toLowerCase().contains(query) ?? false) ||
+      filteredAirports = airports.where((airport) {
+        return (airport["name"]?.toLowerCase().contains(query) ?? false) ||
             (airport["code"]?.toLowerCase().contains(query) ?? false) ||
-            (airport["city"]?.toLowerCase().contains(query) ?? false)).toList();
+            (airport["city"]?.toLowerCase().contains(query) ?? false);
+      }).toList();
     });
   }
 
@@ -76,7 +86,8 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    return Scaffold(
       backgroundColor: white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
@@ -180,8 +191,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
                                   ),
                                   onTap: () {
                                     _selectAirport(
-                                        airport["name"] ?? 'Unknown', 
-                                        airport["code"] ?? '');
+                                        airport["name"], airport["code"]);
                                   },
                                 );
                               },
@@ -191,4 +201,5 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
         ),
       ),
     );
+  }
 }

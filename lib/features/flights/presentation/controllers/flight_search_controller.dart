@@ -5,7 +5,7 @@ class FlightSearchTabController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final List<Tab> myTabs = <Tab>[
     Tab(text: 'ONE WAY'),
-    // Tab(text: 'ROUNDTRIP'),
+    Tab(text: 'ROUNDTRIP'),
     Tab(text: 'MULTICITY'),
   ];
 
