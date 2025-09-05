@@ -16,7 +16,7 @@ class FromStationSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: GestureDetector(
         onTap: onTap,
         child: Container(
@@ -27,29 +27,37 @@ class FromStationSelector extends StatelessWidget {
             border: Border.all(width: 1, color: greyE2E),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(Lists.flightSearchList1[0]["image"]),
-                SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "From",
-                      style: TextStyle(
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "From",
+                        style: TextStyle(
                           color: Colors.grey[600],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      selectedFromStation ?? "Select From Station",
-                      style: TextStyle(
-                        color: selectedFromStation == null ? grey888 : black2E2,
-                        fontSize: 16,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        selectedFromStation ?? "Select From Station",
+                        style: TextStyle(
+                          color: selectedFromStation == null ? grey888 : black2E2,
+                          fontSize: 16,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
