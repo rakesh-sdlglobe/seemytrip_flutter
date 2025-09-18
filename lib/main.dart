@@ -12,6 +12,7 @@ import 'core/theme/theme_service.dart';
 import 'features/auth/presentation/controllers/login_controller.dart';
 import 'firebase_options.dart';
 import 'translations/app_translations.dart';
+import 'features/flights/presentation/screens/FlightSearchScreen/flight_search_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,3 +84,4 @@ class MyBehavior extends ScrollBehavior {
     return child;
   }
 }
+

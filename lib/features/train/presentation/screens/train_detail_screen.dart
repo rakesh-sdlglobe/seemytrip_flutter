@@ -15,6 +15,7 @@ import 'train_booking_screen.dart';
 import 'train_modify_search_screen.dart';
 import 'view_train_routes_screen.dart';
 
+// ignore: must_be_immutable
 class TrainDetailScreen extends StatefulWidget {
 
   TrainDetailScreen({

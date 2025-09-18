@@ -1,28 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/flights/presentation/controllers/flight_search_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/multicity_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/one_way_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/round_trip_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
 
-class FlightSearchScreen extends StatelessWidget {
-  FlightSearchScreen({Key? key}) : super(key: key);
-  final FlightSearchTabController flightSearchTabController =
-      Get.put(FlightSearchTabController());
+import '../../../../../core/utils/colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../controllers/flight_search_controller.dart';
+import 'multicity_screen.dart';
+import 'one_way_screen.dart';
+import 'round_trip_screen.dart';
+
+class FlightSearchScreen extends StatefulWidget {
+  const FlightSearchScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  State<FlightSearchScreen> createState() => _FlightSearchScreenState();
+}
+
+class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProviderStateMixin {
+  late final FlightSearchController flightSearchController;
+  
+  @override
+  void initState() {
+    super.initState();
+    flightSearchController = Get.put(FlightSearchController());
+    // Initialize tabController immediately
+    flightSearchController.init(this);
+  }
+  
+  @override
+  void dispose() {
+    // The controller will be disposed by GetX
+    super.dispose();
+  }
+  
+  @override
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: white,
       body: Stack(
-        children: [
+        children: <Widget>[
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: <Widget>[
               Container(
                 height: 155,
                 width: Get.width,
@@ -36,7 +55,7 @@ class FlightSearchScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: <Widget>[
                       InkWell(
                         onTap: () {
                           Get.back();
@@ -44,7 +63,7 @@ class FlightSearchScreen extends StatelessWidget {
                         child: Icon(Icons.arrow_back, color: white, size: 20),
                       ),
                       CommonTextWidget.PoppinsSemiBold(
-                        text: "Flight Search",
+                        text: 'Flight Search',
                         color: white,
                         fontSize: 18,
                       ),
@@ -65,14 +84,14 @@ class FlightSearchScreen extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     child: Row(
-                      children: [
+                      children: <Widget>[
                         SvgPicture.asset(offerIcon),
                         SizedBox(width: 10),
                         Expanded(
                           child: CommonTextWidget.PoppinsMedium(
                             text:
-                                "Get FLAT 13% OFF* on your first booking! use "
-                                "code: WELCOMEMMT",
+                                'Get FLAT 13% OFF* on your first booking! use '
+                                'code: WELCOMEMMT',
                             color: redCA0,
                             fontSize: 12,
                           ),
@@ -84,13 +103,20 @@ class FlightSearchScreen extends StatelessWidget {
               ),
               SizedBox(height: 15),
               Expanded(
-                child: TabBarView(
-                  controller: flightSearchTabController.controller,
-                  children: [
-                    OneWayScreen(),
-                    RoundTripScreen(),
-                    MulticityScreen(),
-                  ],
+                child: GetBuilder<FlightSearchController>(
+                  builder: (controller) {
+                    if (!controller.isControllerInitialized) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return TabBarView(
+                      controller: controller.tabController,
+                      children: <Widget>[
+                        OneWayScreen(),
+                        RoundTripScreen(),
+                        MulticityScreen(),
+                      ],
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 30),
@@ -104,7 +130,7 @@ class FlightSearchScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: white,
                 borderRadius: BorderRadius.circular(5),
-                boxShadow: [
+                boxShadow: <BoxShadow>[
                   BoxShadow(
                     color: grey757.withOpacity(0.25),
                     blurRadius: 6,
@@ -112,20 +138,28 @@ class FlightSearchScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: TabBar(
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.label,
-                padding: EdgeInsets.only(left: 24, bottom: 7, right: 10),
-                tabs: flightSearchTabController.myTabs,
-                unselectedLabelColor: grey5F5,
-                labelStyle:
-                    TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 14),
-                unselectedLabelStyle:
-                    TextStyle(fontFamily: "PoppinsMedium", fontSize: 14),
-                labelColor: redCA0,
-                controller: flightSearchTabController.controller,
-                indicatorColor: redCA0,
-                indicatorWeight: 2.5,
+              child: GetBuilder<FlightSearchController>(
+                builder: (controller) {
+                  if (!controller.isControllerInitialized) {
+                    return const SizedBox.shrink();
+                  }
+                  return TabBar(
+                    isScrollable: true,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    padding: const EdgeInsets.only(left: 24, bottom: 7, right: 10),
+                    tabs: controller.myTabs,
+                    unselectedLabelColor: grey5F5,
+                    labelStyle: const TextStyle(fontFamily: 'PoppinsSemiBold', fontSize: 14),
+                    unselectedLabelStyle: const TextStyle(fontFamily: 'PoppinsMedium', fontSize: 14),
+                    labelColor: redCA0,
+                    controller: controller.tabController,
+                    onTap: (index) {
+                      controller.tabController.animateTo(index);
+                    },
+                    indicatorColor: redCA0,
+                    indicatorWeight: 2.5,
+                  );
+                },
               ),
             ),
           ),
@@ -156,5 +190,4 @@ class FlightSearchScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

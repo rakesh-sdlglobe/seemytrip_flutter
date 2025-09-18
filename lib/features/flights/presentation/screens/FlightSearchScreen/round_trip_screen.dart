@@ -2,21 +2,23 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/custom_dialogbox.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/datepicker.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/flight_from_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/flight_to_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/from_station_selector.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/offer_make_your_trip_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/to_station_selector.dart';
-import 'package:seemytrip/features/flights/presentation/screens/flight_book_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
 import 'package:intl/intl.dart';
+
+import '../../../../../core/utils/colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../controllers/flight_controller.dart';
+import '../../controllers/flight_search_controller.dart';
+import 'custom_dialogbox.dart';
+import 'datepicker.dart';
+import 'flight_from_screen.dart';
+import 'flight_to_screen.dart';
+import 'from_station_selector.dart';
+import 'offer_make_your_trip_screen.dart';
+import 'to_station_selector.dart';
 
 class RoundTripScreen extends StatefulWidget {
   RoundTripScreen({Key? key}) : super(key: key);
@@ -26,32 +28,77 @@ class RoundTripScreen extends StatefulWidget {
 }
 
 class _RoundTripScreenState extends State<RoundTripScreen> {
-  String? selectedFromStation; // To store the selected "From" station
-  String? selectedToStation; // To store the selected "To" station
-  String formattedDate = "Select Date"; // Placeholder for selected date
-  String dayOfWeek = ""; // Placeholder for day of the week
+  // Add the controller
+  final FlightSearchController flightSearchController = Get.put(FlightSearchController());
+  final FlightController flightController = Get.put(FlightController());
+  bool _isLoading = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the travelers value in the controller
+    flightSearchController.travelers.value = 1;
+  }
+  
+  String? selectedFromStation; // To store the selected "From" station name
+  String? selectedFromCode;    // To store the selected "From" station code
+  String? selectedToStation;   // To store the selected "To" station name
+  String? selectedToCode;      // To store the selected "To" station code
+  String formattedDate = 'Select Date'; // Placeholder for selected date
+  String dayOfWeek = ''; // Placeholder for day of the week
   DateTime selectedDate = DateTime.now();
   DateTime? returnDate; // To store the return date
-  bool isReturnDateVisible = false;
   int? selectedFareIndex; // Add this variable to track the selected fare index
-  String travelClass = "Economy"; // Default travel class
+  String travelClass = 'Economy'; // Default travel class
   int travelers = 1; // Default number of travelers
 
   Future<void> _navigateToFromScreen() async {
-    final result = await Get.to(() => FlightFromScreen());
-    if (result != null && result.containsKey('stationName')) {
-      setState(() {
-        selectedFromStation = result['stationName'];
-      });
+    try {
+      final result = await Get.to(() => FlightFromScreen());
+      print('Returned from FlightFromScreen with result: $result');
+      
+      if (result != null && result is Map) {
+        setState(() {
+          selectedFromStation = result['stationName'] ?? result['airportName'];
+          selectedFromCode = result['stationCode'] ?? result['airportCode'];
+          // Also update the controller
+          var params = flightController.getLastSearchParams();
+          params['fromAirport'] = selectedFromCode;
+        });
+        print('Updated selectedFromStation to: $selectedFromStation');
+      }
+    } catch (e) {
+      print('Error in _navigateToFromScreen: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to select departure airport',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
   Future<void> _navigateToToScreen() async {
-    final result = await Get.to(() => FlightToScreen());
-    if (result != null && result.containsKey('stationName')) {
-      setState(() {
-        selectedToStation = result['stationName'];
-      });
+    try {
+      final result = await Get.to(() => FlightToScreen());
+      
+      if (result != null && result is Map) {
+        setState(() {
+          selectedToStation = result['stationName'] ?? result['airportName'];
+          selectedToCode = result['stationCode'] ?? result['airportCode'];
+          // Also update the controller
+          var params = flightController.getLastSearchParams();
+          params['toAirport'] = selectedToCode;
+        });
+      }
+    } catch (e) {
+      print('Error in _navigateToToScreen: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to select arrival airport',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -75,6 +122,30 @@ class _RoundTripScreenState extends State<RoundTripScreen> {
     }
   }
 
+  String _getTravelClassCode(String travelClass) {
+    switch (travelClass.toLowerCase()) {
+      case 'economy':
+        return 'E';
+      case 'premium economy':
+        return 'PE';
+      case 'business':
+        return 'B';
+      case 'first class':
+        return 'F';
+      default:
+        return 'E';
+    }
+  }
+
+  bool get _isFormValid {
+    if (selectedFromStation == null || selectedFromCode == null) return false;
+    if (selectedToStation == null || selectedToCode == null) return false;
+    if (selectedFromCode == selectedToCode) return false;
+    if (returnDate == null) return false;
+    if (!returnDate!.isAfter(selectedDate)) return false;
+    return true;
+  }
+
   void _selectTravelersAndClass() {
     showDialog(
       context: context,
@@ -95,6 +166,55 @@ class _RoundTripScreenState extends State<RoundTripScreen> {
         );
       },
     );
+  }
+
+  Future<void> _searchFlights() async {
+    if (!_isFormValid) {
+      Get.snackbar(
+        'Incomplete Information',
+        'Please fill in all required fields',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final formattedDepartDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+      final formattedReturnDate = DateFormat('yyyy-MM-dd').format(returnDate!);
+
+      await flightController.searchAndShowFlights(
+        fromAirportCode: selectedFromCode!,
+        toAirportCode: selectedToCode!,
+        departDate: formattedDepartDate,
+        returnDate: formattedReturnDate,
+        adults: travelers, // Assuming travelers is the number of adults for now
+        travelClass: _getTravelClassCode(travelClass),
+        flightType: 'R', // R for Round Trip
+      );
+
+      // Data sent to flight controller successfully
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to search flights. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 5),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -246,13 +366,47 @@ class _RoundTripScreenState extends State<RoundTripScreen> {
             SizedBox(height: 25),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
-              child: CommonButtonWidget.button(
-                buttonColor: redCA0,
-                onTap: () {
-                  Get.to(() => FlightBookScreen());
-                },
-                text: "SEARCH FLIGHTS",
-              ),
+              child: _isLoading
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: redCA0.withValues(alpha: 0.7),
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                strokeWidth: 2.0,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Text(
+                              'SEARCHING...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : CommonButtonWidget.button(
+                      buttonColor: redCA0,
+                      onTap: _searchFlights,
+                      text: "SEARCH FLIGHTS",
+                    ),
             ),
             SizedBox(height: 20),
             Padding(

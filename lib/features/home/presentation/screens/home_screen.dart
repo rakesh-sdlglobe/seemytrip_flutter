@@ -523,7 +523,7 @@ class HomeScreen extends StatelessWidget {
                               Image.asset(flight, height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "flight".tr,
+                                text: 'flight'.tr,
                                 color: black2E2,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,

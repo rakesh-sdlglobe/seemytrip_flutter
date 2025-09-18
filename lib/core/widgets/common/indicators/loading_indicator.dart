@@ -3,13 +3,6 @@ import 'package:seemytrip/core/widgets/common/cards/app_card.dart';
 
 /// A customizable loading indicator
 class LoadingIndicator extends StatelessWidget {
-  final double size;
-  final double strokeWidth;
-  final Color? color;
-  final String? message;
-  final Axis direction;
-  final double spacing;
-  final TextStyle? messageStyle;
 
   const LoadingIndicator({
     Key? key,
@@ -21,6 +14,13 @@ class LoadingIndicator extends StatelessWidget {
     this.spacing = 8.0,
     this.messageStyle,
   }) : super(key: key);
+  final double size;
+  final double strokeWidth;
+  final Color? color;
+  final String? message;
+  final Axis direction;
+  final double spacing;
+  final TextStyle? messageStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -70,12 +70,6 @@ class LoadingIndicator extends StatelessWidget {
 
 /// A full screen loading overlay
 class FullScreenLoading extends StatelessWidget {
-  final String? message;
-  final bool showBackground;
-  final Color? backgroundColor;
-  final Color? indicatorColor;
-  final double indicatorSize;
-  final EdgeInsets padding;
 
   const FullScreenLoading({
     Key? key,
@@ -86,12 +80,17 @@ class FullScreenLoading extends StatelessWidget {
     this.indicatorSize = 48.0,
     this.padding = const EdgeInsets.all(16.0),
   }) : super(key: key);
+  final String? message;
+  final bool showBackground;
+  final Color? backgroundColor;
+  final Color? indicatorColor;
+  final double indicatorSize;
+  final EdgeInsets padding;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       color: showBackground
-          ? (backgroundColor ?? Colors.black.withOpacity(0.5))
+          ? (backgroundColor ?? Colors.black.withValues(alpha: 0.5))
           : Colors.transparent,
       child: Center(
         child: AppCard(
@@ -107,5 +106,4 @@ class FullScreenLoading extends StatelessWidget {
         ),
       ),
     );
-  }
 }

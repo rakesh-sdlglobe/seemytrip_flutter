@@ -2,21 +2,23 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/custom_dialogbox.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/datepicker.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/flight_from_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/flight_to_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/from_station_selector.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/offer_make_your_trip_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightSearchScreen/to_station_selector.dart';
-import 'package:seemytrip/features/flights/presentation/screens/flight_book_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
 import 'package:intl/intl.dart';
+
+import '../../../../../core/utils/colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../controllers/flight_controller.dart';
+import '../../controllers/flight_search_controller.dart';
+import 'custom_dialogbox.dart';
+import 'datepicker.dart';
+import 'flight_from_screen.dart';
+import 'flight_to_screen.dart';
+import 'from_station_selector.dart';
+import 'offer_make_your_trip_screen.dart';
+import 'to_station_selector.dart';
 
 class OneWayScreen extends StatefulWidget {
   const OneWayScreen({Key? key}) : super(key: key);
@@ -26,51 +28,92 @@ class OneWayScreen extends StatefulWidget {
 }
 
 class _OneWayScreenState extends State<OneWayScreen> {
-  String? selectedFromStation; // To store the selected "From" station
-  String? selectedToStation; // To store the selected "To" station
-  String formattedDate = "Select Date"; // Placeholder for selected date
-  String dayOfWeek = ""; // Placeholder for day of the week
+  // Add the controller
+  final FlightSearchController flightSearchController = Get.put(FlightSearchController());
+  final FlightController flightController = Get.put(FlightController());
+  
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the travelers value in the controller
+    flightSearchController.travelers.value = 1;
+  }
+  String? selectedFromStation; // To store the selected "From" station name
+  String? selectedFromCode;    // To store the selected "From" station code
+  String? selectedToStation;   // To store the selected "To" station name
+  String? selectedToCode;      // To store the selected "To" station code
+  String formattedDate = 'Select Date'; // Placeholder for selected date
+  String dayOfWeek = ''; // Placeholder for day of the week
   DateTime selectedDate = DateTime.now();
-  DateTime? returnDate; // To store the return date
-  bool isReturnDateVisible = false;
+  // Return date related variables - commented out as per requirement
+  // DateTime? returnDate; // To store the return date
+  // bool isReturnDateVisible = false;
   int? selectedFareIndex; // Add this variable to track the selected fare index
-  String travelClass = "Economy"; // Default travel class
+  String travelClass = 'Economy'; // Default travel class
   int travelers = 1; // Default number of travelers
 
   Future<void> _navigateToFromScreen() async {
-    final result = await Get.to(() => FlightFromScreen());
-    if (result != null && result.containsKey('stationName')) {
-      setState(() {
-        selectedFromStation = result['stationName'];
-      });
+    try {
+      final result = await Get.to(() => FlightFromScreen());
+      print('Returned from FlightFromScreen with result: $result');
+      
+      if (result != null && result is Map) {
+        setState(() {
+          selectedFromStation = result['stationName'] ?? result['airportName'];
+          selectedFromCode = result['stationCode'] ?? result['airportCode'];
+          // Also update the controller
+          final flightController = Get.find<FlightController>();
+          var params = flightController.getLastSearchParams();
+          params['fromAirport'] = selectedFromCode;
+        });
+        print('Updated selectedFromStation to: $selectedFromStation');
+      }
+    } catch (e) {
+      print('Error in _navigateToFromScreen: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to select departure airport',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
   Future<void> _navigateToToScreen() async {
-    final result = await Get.to(() => FlightToScreen());
-    if (result != null && result.containsKey('stationName')) {
-      setState(() {
-        selectedToStation = result['stationName'];
-      });
+    try {
+      final result = await Get.to(() => FlightToScreen());
+      
+      if (result != null && result is Map) {
+        setState(() {
+          selectedToStation = result['stationName'] ?? result['airportName'];
+          selectedToCode = result['stationCode'] ?? result['airportCode'];
+          // Also update the controller
+          final flightController = Get.find<FlightController>();
+          var params = flightController.getLastSearchParams();
+          params['toAirport'] = selectedToCode;
+        });
+      }
+    } catch (e) {
+      print('Error in _navigateToToScreen: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to select arrival airport',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
-  Future<void> _selectDate(BuildContext context,
-      {bool isReturnDate = false}) async {
+  Future<void> _selectDate(BuildContext context, {bool isReturnDate = false}) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate:
-          isReturnDate && returnDate != null ? returnDate! : selectedDate,
+      initialDate: selectedDate,
       firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
+      lastDate: DateTime(2100),
     );
     if (picked != null) {
       setState(() {
-        if (isReturnDate) {
-          returnDate = picked;
-        } else {
-          selectedDate = picked;
-        }
+        selectedDate = picked;
       });
     }
   }
@@ -78,8 +121,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
   void _selectTravelersAndClass() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return TravelClassAndTravelerSelector(
+      builder: (BuildContext context) => TravelClassAndTravelerSelector(
           travelClass: travelClass,
           travelers: travelers,
           onClassChanged: (String newClass) {
@@ -92,20 +134,19 @@ class _OneWayScreenState extends State<OneWayScreen> {
               travelers = newCount;
             });
           },
-        );
-      },
+        ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    String formattedDepartureDate = DateFormat('dd MMM').format(selectedDate);
-    String formattedReturnDate = returnDate != null
-        ? DateFormat('dd MMM').format(returnDate!)
-        : 'Select Return Date';
-    String dayOfWeekDeparture = DateFormat('EEEE').format(selectedDate);
-    String dayOfWeekReturn =
-        returnDate != null ? DateFormat('EEEE').format(returnDate!) : '';
+    final String formattedDepartureDate = DateFormat('dd MMM').format(selectedDate);
+    // final String formattedReturnDate = returnDate != null
+    //     ? DateFormat('dd MMM').format(returnDate!)
+    //     : 'Select Return Date';
+    final String dayOfWeekDeparture = DateFormat('EEEE').format(selectedDate);
+    // final String dayOfWeekReturn =
+    //     returnDate != null ? DateFormat('EEEE').format(returnDate!) : '';
     return ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
@@ -123,58 +164,74 @@ class _OneWayScreenState extends State<OneWayScreen> {
             ),
             SizedBox(height: 15),
             DatePickerWidget(
-              title: "DATE",
+              title: 'DATE',
               formattedDate: formattedDepartureDate,
               dayOfWeek: dayOfWeekDeparture,
               onTap: () => _selectDate(context),
             ),
             SizedBox(height: 18),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isReturnDateVisible = true;
-                  });
-                },
-                child: Container(
-                  width: Get.width,
-                  decoration: BoxDecoration(
-                    color: grey9B9.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(width: 1, color: greyE2E),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CommonTextWidget.PoppinsMedium(
-                          text: "+ ADD RETURN DATE",
-                          color: redCA0,
-                          fontSize: 14,
-                        ),
-                        CommonTextWidget.PoppinsMedium(
-                          text: "Save more on round trips!",
-                          color: grey888,
-                          fontSize: 14,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Return Date Button - Commented out as per requirement
+            // GestureDetector(
+            //   onTap: () {
+            //     setState(() {
+            //       isReturnDateVisible = !isReturnDateVisible;
+            //     });
+            //   },
+            //   child: Container(
+            //     width: Get.width,
+            //     margin: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            //     padding: EdgeInsets.all(15),
+            //     decoration: BoxDecoration(
+            //       color: white,
+            //       borderRadius: BorderRadius.circular(10),
+            //       border: Border.all(color: Colors.grey.shade300),
+            //     ),
+            //     child: Row(
+            //       children: [
+            //         Container(
+            //           height: 24,
+            //           width: 24,
+            //           decoration: BoxDecoration(
+            //             color: isReturnDateVisible ? redCA0 : Colors.transparent,
+            //             borderRadius: BorderRadius.circular(4),
+            //             border: Border.all(
+            //               color: isReturnDateVisible ? redCA0 : Colors.grey,
+            //             ),
+            //           ),
+            //           child: isReturnDateVisible
+            //               ? Icon(Icons.check, color: white, size: 16)
+            //               : null,
+            //         ),
+            //         SizedBox(width: 15),
+            //         Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             CommonTextWidget.PoppinsMedium(
+            //               text: '+ ADD RETURN DATE',
+            //               color: redCA0,
+            //               fontSize: 14,
+            //             ),
+            //             CommonTextWidget.PoppinsMedium(
+            //               text: 'Save more on round trips!',
+            //               color: grey888,
+            //               fontSize: 14,
+            //             ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
             SizedBox(height: 15),
 
-            // Return Date Picker (Visible only if 'Add Return Date' is tapped)
-            if (isReturnDateVisible)
-              DatePickerWidget(
-                title: "RETURN DATE",
-                formattedDate: formattedReturnDate,
-                dayOfWeek: dayOfWeekReturn,
-                onTap: () => _selectDate(context, isReturnDate: true),
-              ),
+            // Return Date Picker - Commented out as per requirement
+            // if (isReturnDateVisible)
+            //   DatePickerWidget(
+            //     title: 'RETURN DATE',
+            //     formattedDate: formattedReturnDate,
+            //     dayOfWeek: dayOfWeekReturn,
+            //     onTap: () => _selectDate(context, isReturnDate: true),
+            //   ),
 
             SizedBox(height: 15),
             Padding(
@@ -184,7 +241,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
                 child: Container(
                   width: Get.width,
                   decoration: BoxDecoration(
-                    color: grey9B9.withOpacity(0.15),
+                    color: grey9B9.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(5),
                     border: Border.all(width: 1, color: greyE2E),
                   ),
@@ -198,14 +255,14 @@ class _OneWayScreenState extends State<OneWayScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CommonTextWidget.PoppinsMedium(
-                              text: "TRAVELLERS & CLASS",
+                              text: 'TRAVELLERS & CLASS',
                               color: grey888,
                               fontSize: 14,
                             ),
                             Row(
                               children: [
                                 CommonTextWidget.PoppinsSemiBold(
-                                  text: "$travelers ,",
+                                  text: '${flightSearchController.travelers.value} ,',
                                   color: black2E2,
                                   fontSize: 18,
                                 ),
@@ -229,7 +286,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsMedium(
-                text: "SPECIAL FARES (OPTIONAL)",
+                text: 'SPECIAL FARES (OPTIONAL)',
                 color: grey888,
                 fontSize: 14,
               ),
@@ -245,7 +302,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
                   scrollDirection: Axis.horizontal,
                   padding:
                       EdgeInsets.only(top: 13, bottom: 13, left: 24, right: 12),
-                  itemBuilder: (context, index) => Padding(
+                  itemBuilder: (BuildContext context, int index) => Padding(
                     padding: EdgeInsets.only(right: 12),
                     child: GestureDetector(
                       onTap: () {
@@ -287,13 +344,48 @@ class _OneWayScreenState extends State<OneWayScreen> {
             SizedBox(height: 25),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
-              child: CommonButtonWidget.button(
-                buttonColor: redCA0,
-                onTap: () {
-                  Get.to(() => FlightBookScreen());
-                },
-                text: "SEARCH FLIGHTS",
-              ),
+              child: Obx(() {
+                final FlightController flightController = Get.find<FlightController>();
+                return CommonButtonWidget.button(
+                  buttonColor: redCA0,
+                  onTap: () async {
+                    if (selectedFromStation == null || selectedToStation == null) {
+                      Get.snackbar(
+                        'Error',
+                        'Please select both departure and arrival airports',
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
+                    
+                    try {
+                      // Format date as YYYY-MM-DD
+                      final String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+                      
+                      await flightController.searchAndShowFlights(
+                        fromAirportCode: selectedFromCode!,
+                        toAirportCode: selectedToCode!,
+                        departDate: formattedDate,
+                        adults: travelers,
+                        travelClass: travelClass == 'Economy' ? 'E' : 
+                                    travelClass == 'Business' ? 'B' : 'F',
+                        flightType: 'O', // One-way
+                      );
+                      
+                      // The searchAndShowFlights method will handle navigation
+                    } catch (e) {
+                      Get.snackbar(
+                        'Error',
+                        'Failed to search flights: ${e.toString()}',
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
+                  },
+                  text: flightController.isLoading.value ? 'SEARCHING...' : 'SEARCH FLIGHTS',
+                );
+              }),
             ),
             SizedBox(height: 20),
             Padding(
@@ -302,14 +394,14 @@ class _OneWayScreenState extends State<OneWayScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonTextWidget.PoppinsSemiBold(
-                    text: "OFFERS",
+                    text: 'OFFERS',
                     color: black2E2,
                     fontSize: 16,
                   ),
                   Row(
                     children: [
                       CommonTextWidget.PoppinsRegular(
-                        text: "View All",
+                        text: 'View All',
                         color: redCA0,
                         fontSize: 14,
                       ),
@@ -361,14 +453,14 @@ class _OneWayScreenState extends State<OneWayScreen> {
                   children: [
                     CommonTextWidget.PoppinsRegular(
                       text:
-                          "Explore the cheapest flight from New Delhi to Mumbai",
+                          'Explore the cheapest flight from New Delhi to Mumbai',
                       color: black2E2,
                       fontSize: 14,
                     ),
                     Row(
                       children: [
                         CommonTextWidget.PoppinsMedium(
-                          text: "EXPLORE FARE CALENDAR",
+                          text: 'EXPLORE FARE CALENDAR',
                           color: redCA0,
                           fontSize: 14,
                         ),

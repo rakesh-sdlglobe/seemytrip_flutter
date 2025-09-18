@@ -14,8 +14,7 @@ class FromStationSelector extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: GestureDetector(
         onTap: onTap,
@@ -30,26 +29,38 @@ class FromStationSelector extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
             child: Row(
               children: [
-                SvgPicture.asset(Lists.flightSearchList1[0]["image"]),
-                SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "From",
-                      style: TextStyle(
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: SvgPicture.asset(
+                    Lists.flightSearchList1[0]['image'],
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'From',
+                        style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      selectedFromStation ?? "Select From Station",
-                      style: TextStyle(
-                        color: selectedFromStation == null ? grey888 : black2E2,
-                        fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                      Text(
+                        selectedFromStation ?? 'Select From Station',
+                        style: TextStyle(
+                          color: selectedFromStation == null ? grey888 : black2E2,
+                          fontSize: 16,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -57,5 +68,4 @@ class FromStationSelector extends StatelessWidget {
         ),
       ),
     );
-  }
 }

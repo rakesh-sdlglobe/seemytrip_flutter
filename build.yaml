@@ -1,0 +1,17 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # Don't use the default 'toJson' and 'fromJson' methods
+          any_map: true
+          # Generate the 'toJson' and 'fromJson' methods
+          explicit_to_json: true
+          # Generate the 'copyWith' method
+          generate_copy_with: true
+          # Generate the 'toString' method
+          generate_to_string: true
+          # Generate the '==' operator and 'hashCode' method
+          generate_equals: true
+          # Generate the '==' operator and 'hashCode' method for all classes
+          generate_union_wrappers: true

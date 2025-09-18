@@ -29,26 +29,38 @@ class ToStationSelector extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
             child: Row(
               children: [
-                SvgPicture.asset(Lists.flightSearchList1[1]["image"]),
+                SvgPicture.asset(
+                  Lists.flightSearchList1[1]['image'],
+                  width: 24,
+                  height: 24,
+                  fit: BoxFit.contain,
+                ),
                 SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "To",
-                      style: TextStyle(
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'To',
+                        style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      selectedToStation ?? "Select To Station",
-                      style: TextStyle(
-                        color: selectedToStation == null ? grey888 : black2E2,
-                        fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                      Text(
+                        selectedToStation ?? 'Select To Station',
+                        style: TextStyle(
+                          color: selectedToStation == null ? grey888 : black2E2,
+                          fontSize: 16,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
