@@ -10,7 +10,7 @@ import '../../../../../shared/constants/images.dart';
 import '../../../../train/presentation/screens/train_modify_search_screen.dart';
 import '../../controllers/flight_controller.dart';
 import '../../widgets/flight_filter_sort_widget.dart';
-import 'flight_details_screen.dart';
+import 'one_way_flight_details_screen.dart';
 
 class OneWayResultsScreen extends StatefulWidget {
   const OneWayResultsScreen({Key? key}) : super(key: key);
@@ -410,7 +410,7 @@ color: redCA0.withOpacity(0.1),
                         print(flightDetails);
 
                         Get.to(
-                          () => FlightDetailsScreen(
+                          () => OneWayFlightDetailsScreen(
                             flight: flightDetails,
                             searchParams: searchParams,
                           ),
@@ -624,7 +624,7 @@ color: redCA0.withOpacity(0.1),
                         onPressed: () {
                           // Handle flight selection
                           // You can add navigation to booking screen here
-                          Get.to(() => FlightDetailsScreen(flight: flight, searchParams: searchParams));  
+                          Get.to(() => OneWayFlightDetailsScreen(flight: flight, searchParams: searchParams));  
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: redCA0,

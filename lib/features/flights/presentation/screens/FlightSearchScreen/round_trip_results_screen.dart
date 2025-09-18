@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../controllers/flight_controller.dart';
 import '../../widgets/flight_filter_sort_widget.dart';
-import 'flight_details_screen.dart';
+import 'round_trip_flight_details_screen.dart';
 
 class RoundTripResultsScreen extends StatefulWidget {
   const RoundTripResultsScreen({Key? key}) : super(key: key);
@@ -609,11 +609,51 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       // Select button
                       ElevatedButton(
                         onPressed: () {
-                          // Handle flight selection
-                          Get.to(() => FlightDetailsScreen(
-                            flight: flight, 
+                          // Prepare flight details with all necessary information
+                          final Map<String, dynamic> flightDetails = {
+                            // Basic flight info
+                            'id': flight['id'] ?? '',
+                            'airlineName': flight['AirlineName'] ?? '',
+                            'flightNumber': flight['FlightNumber'] ?? '',
+                            'flightType': 'round_trip',
+                            
+                            // Outbound flight details
+                            'origin': flight['Origin'] ?? '',
+                            'destination': flight['Destination'] ?? '',
+                            'departureTime': flight['DepartureTime'] ?? '',
+                            'arrivalTime': flight['ArrivalTime'] ?? '',
+                            'duration': flight['DurationTime'] ?? '',
+                            'stopCount': flight['StopCount'] ?? 0,
+                            'segments': flight['Segments'] ?? [],
+                            
+                            // Return flight details
+                            'returnDepartureTime': flight['ReturnDepartureTime'] ?? '',
+                            'returnArrivalTime': flight['ReturnArrivalTime'] ?? '',
+                            'returnDuration': flight['ReturnDuration'] ?? '',
+                            'returnStopCount': flight['ReturnStopCount'] ?? 0,
+                            'returnSegments': flight['ReturnSegments'] ?? [],
+                            
+                            // Fare details
+                            'baseFare': flight['BaseFare'] ?? 0,
+                            'tax': flight['Tax'] ?? 0,
+                            'totalFare': flight['OfferedFare'] ?? 0,
+                            'isRefundable': flight['IsRefundable'] ?? false,
+                            'cancellationPolicy': flight['CancellationPolicy'] ?? '',
+                            
+                            // Additional info
+                            'baggageAllowance': flight['BaggageAllowance'] ?? '7 kg',
+                            'cabinBaggage': flight['CabinBaggage'] ?? '7 kg',
+                            'mealIncluded': flight['MealIncluded'] ?? false,
+                            'operatedBy': flight['OperatedBy'] ?? '',
+                            'aircraftType': flight['AircraftType'] ?? '',
+                            'lastBookingTime': flight['LastBookingTime'] ?? '',
+                          };
+                          
+                          // Navigate to flight details screen
+                          Get.to(() => RoundTripFlightDetailsScreen(
+                            flight: flightDetails, 
                             searchParams: controller.getLastSearchParams(),
-                          ));  
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red, // Changed to red theme

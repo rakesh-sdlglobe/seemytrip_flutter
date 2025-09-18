@@ -1,5 +1,5 @@
 class AppConfig {
-  static const String baseUrl = 'http://192.168.0.5:3002/api';
+  static const String baseUrl = 'http://192.168.0.12:3002/api';
   // static const String baseUrl = 'http://192.168.1:3002/api';
   static const String googleClientId =
       '493628196678-cjvhttpbp9c4ha4a35srklc9skvgq324.apps.googleusercontent.com';
