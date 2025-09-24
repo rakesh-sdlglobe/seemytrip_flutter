@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/features/auth/presentation/controllers/otp_controller.dart';
 import 'package:seemytrip/core/utils/colors.dart'; // Replace with your own color constants
 import 'package:get/get.dart';
@@ -36,12 +37,11 @@ class _OtpScreen2State extends State<OtpScreen2> {
     super.dispose();
   }
 
-  Widget _buildInitialInputSection() {
-    return Column(
+  Widget _buildInitialInputSection() => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Email Verification",
+          'Email Verification',
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
         ),
         SizedBox(height: 10),
         Text(
-          "Enter your email address to receive the verification code.",
+          'Enter your email address to receive the verification code.',
           style: TextStyle(
             fontSize: 15,
             color: Colors.black54,
@@ -61,9 +61,9 @@ class _OtpScreen2State extends State<OtpScreen2> {
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: "Email Address",
+            labelText: 'Email Address',
             labelStyle: TextStyle(color: Colors.black54),
-            hintText: "Enter your email",
+            hintText: 'Enter your email',
             hintStyle: TextStyle(color: Colors.black38),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -115,15 +115,13 @@ class _OtpScreen2State extends State<OtpScreen2> {
           ),
           child: controller.isLoading.value
             ? SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
+                child: LoadingAnimationWidget.fourRotatingDots(
                   color: Colors.white,
-                  strokeWidth: 2,
+                  size: 24,
                 ),
               )
             : Text(
-                "Send Verification Code",
+                'Send Verification Code',
                 style: TextStyle(
                   color: white,
                   fontSize: 16,
@@ -133,10 +131,8 @@ class _OtpScreen2State extends State<OtpScreen2> {
         ),
       ],
     );
-  }
 
-  Widget _buildOtpVerificationSection() {
-    return Column(
+  Widget _buildOtpVerificationSection() => Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Obx(() => Container(
@@ -167,7 +163,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              text: "Enter the verification code sent to ",
+              text: 'Enter the verification code sent to ',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black87,
@@ -203,7 +199,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
             elevation: controller.isButtonEnabled.value ? 2 : 0,
           ),
           child: Text(
-            "Verify Email",
+            'Verify Email',
             style: TextStyle(
               color: white,
               fontSize: 16,
@@ -213,10 +209,8 @@ class _OtpScreen2State extends State<OtpScreen2> {
         )),
       ],
     );
-  }
 
-  Widget _buildOtpField(int index) {
-    return Container(
+  Widget _buildOtpField(int index) => Container(
       width: 45,
       height: 50,
       decoration: BoxDecoration(
@@ -232,7 +226,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
         maxLength: 1,
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
-          counterText: "",
+          counterText: '',
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,
         ),
@@ -255,14 +249,12 @@ class _OtpScreen2State extends State<OtpScreen2> {
         },
       ),
     );
-  }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: greyE2E,
       appBar: AppBar(
-        title: Text("Email Verification", style: TextStyle(color: white)),
+        title: Text('Email Verification', style: TextStyle(color: white)),
         backgroundColor: redCA0,
         iconTheme: IconThemeData(color: white),
         elevation: 0,
@@ -301,5 +293,4 @@ class _OtpScreen2State extends State<OtpScreen2> {
         ),
       ),
     );
-  }
 }

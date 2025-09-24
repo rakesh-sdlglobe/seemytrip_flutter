@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/core/utils/colors.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/features/train/presentation/controllers/train_detail_controller.dart';
@@ -131,8 +132,9 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
           ),
           if (isLoading)
             Center(
-              child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation<Color>(redCA0),
+              child: LoadingAnimationWidget.dotsTriangle(
+                color: redCA0,
+                size: 20,
               ),
             ),
         ],

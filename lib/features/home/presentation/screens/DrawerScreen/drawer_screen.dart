@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
 import 'package:seemytrip/core/utils/colors.dart';
 import 'package:seemytrip/core/widgets/lists_widget.dart';
@@ -77,9 +78,10 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) => Obx(() {
       if (loginController.isLoading.value) {
-        return const Center(
-          child: CircularProgressIndicator(
+        return Center(
+          child: LoadingAnimationWidget.dotsTriangle(
             color: Colors.red,
+            size: 24,
           ),
         );
       }

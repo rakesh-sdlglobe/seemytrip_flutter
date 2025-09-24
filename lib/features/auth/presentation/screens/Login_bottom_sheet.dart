@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/core/utils/colors.dart';
 import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
 
@@ -63,8 +64,7 @@ class _LoginSignupBottomSheetState extends State<LoginSignupBottomSheet> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: EdgeInsets.only(),
       child: SingleChildScrollView(
         child: Container(
@@ -156,11 +156,9 @@ class _LoginSignupBottomSheetState extends State<LoginSignupBottomSheet> {
                 ),
                 child: isLoading
                     ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          strokeWidth: 2,
+                        child: LoadingAnimationWidget.fourRotatingDots(
+                          color: Colors.white,
+                          size: 24,
                         ),
                       )
                     : Text(
@@ -183,5 +181,4 @@ class _LoginSignupBottomSheetState extends State<LoginSignupBottomSheet> {
         ),
       ),
     );
-  }
 }

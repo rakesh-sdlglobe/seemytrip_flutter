@@ -173,7 +173,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
           Column(
             children: [
               _buildStationField(
-                "From",
+                'From',
                 selectedFromStation,
                 _navigateToFromScreen,
               ),
@@ -183,7 +183,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                 margin: EdgeInsets.symmetric(horizontal: 16),
               ),
               _buildStationField(
-                "To",
+                'To',
                 selectedToStation,
                 _navigateToToScreen,
               ),
@@ -232,7 +232,10 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
               SvgPicture.asset(
                 trainAndBusFromToIcon,
                 height: 22,
-                color: Color(0xFFD32F2F),
+                colorFilter: ColorFilter.mode(
+                  Color(0xFFD32F2F),
+                  BlendMode.srcIn,
+                ),
               ),
               SizedBox(width: 12),
               Expanded(
@@ -249,7 +252,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      station ?? "Select $label Station",
+                      station ?? 'Select $label Station',
                       style: GoogleFonts.inter(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -269,11 +272,11 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
 
   Widget _buildDateSelection(String formattedDate, String dayOfWeek) => Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
@@ -325,7 +328,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Travel Date",
+                  'Travel Date',
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -359,9 +362,9 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
 
   Widget _buildDateOptions() => Row(
       children: [
-        _buildDateOption("Tomorrow", 1, _setDateToTomorrow),
+        _buildDateOption('Tomorrow', 1, _setDateToTomorrow),
         SizedBox(width: 12),
-        _buildDateOption("Day After", 2, _setDateToDayAfter),
+        _buildDateOption('Day After', 2, _setDateToDayAfter),
       ],
     );
 

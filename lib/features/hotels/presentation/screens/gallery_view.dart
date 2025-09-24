@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class GalleryView extends StatelessWidget {
-  final List<String> images;
-  final int initialIndex;
 
   const GalleryView({
     Key? key,
     required this.images,
     required this.initialIndex,
   }) : super(key: key);
+  final List<String> images;
+  final int initialIndex;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -30,20 +30,20 @@ class GalleryView extends StatelessWidget {
       ),
       body: PhotoViewGallery.builder(
         scrollPhysics: BouncingScrollPhysics(),
-        builder: (BuildContext context, int index) {
-          return PhotoViewGalleryPageOptions(
+        builder: (BuildContext context, int index) => PhotoViewGalleryPageOptions(
             imageProvider: NetworkImage(images[index]),
             initialScale: PhotoViewComputedScale.contained,
             minScale: PhotoViewComputedScale.contained,
             maxScale: PhotoViewComputedScale.covered * 2,
-          );
-        },
+          ),
         itemCount: images.length,
-        loadingBuilder: (context, event) => Center(
-          child: CircularProgressIndicator(),
+        loadingBuilder: (BuildContext context, ImageChunkEvent? event) => Center(
+          child: LoadingAnimationWidget.dotsTriangle(
+            color: Colors.red,
+            size: 24,
+          ),
         ),
         pageController: PageController(initialPage: initialIndex),
       ),
     );
-  }
 }

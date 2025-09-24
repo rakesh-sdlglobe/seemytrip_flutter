@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/features/shared/presentation/controllers/irctc_forgot_details_controller.dart';
 import 'package:seemytrip/features/train/presentation/controllers/train_contact_information_controller.dart';
 import 'package:seemytrip/core/utils/colors.dart';
@@ -54,8 +55,7 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -64,7 +64,7 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             _buildHeader(),
             SizedBox(height: 15),
             _buildInfoBox(),
@@ -79,11 +79,9 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildHeader() {
-    return Column(
-      children: [
+  Widget _buildHeader() => Column(
+      children: <Widget>[
         Center(
           child: Container(
             width: 40,
@@ -101,10 +99,8 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
         ),
       ],
     );
-  }
 
-  Widget _buildInfoBox() {
-    return Container(
+  Widget _buildInfoBox() => Container(
       width: Get.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(3),
@@ -112,22 +108,20 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
       ),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: CommonTextWidget.PoppinsMedium(
-        text: "Please enter your registered IRCTC Username and mobile number to recover your IRCTC Password",
+        text: 'Please enter your registered IRCTC Username and mobile number to recover your IRCTC Password',
         color: yellowCE8,
         fontSize: 12,
       ),
     );
-  }
 
-  Widget _buildUsernameField() {
-    return Container(
+  Widget _buildUsernameField() => Container(
       decoration: BoxDecoration(
         color: greyE2E,
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
         title: CommonTextWidget.PoppinsMedium(
-          text: "IRCTC USERNAME",
+          text: 'IRCTC USERNAME',
           color: grey888,
           fontSize: 12,
         ),
@@ -142,17 +136,15 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildMobileField() {
-    return Container(
+  Widget _buildMobileField() => Container(
       decoration: BoxDecoration(
         color: greyE2E,
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
         title: CommonTextWidget.PoppinsMedium(
-          text: "MOBILE NUMBER",
+          text: 'MOBILE NUMBER',
           color: grey888,
           fontSize: 12,
         ),
@@ -160,20 +152,18 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
           controller: _mobileController,
           keyboardType: TextInputType.phone,
           maxLength: 10,
-          onChanged: (value) => controller.validateMobile(value),
+          onChanged: (String value) => controller.validateMobile(value),
           decoration: InputDecoration(
-            hintText: "Enter registered mobile number",
+            hintText: 'Enter registered mobile number',
             hintStyle: TextStyle(color: grey888, fontSize: 12),
             border: InputBorder.none,
-            counterText: "",
+            counterText: '',
           ),
         ),
       ),
     );
-  }
 
-  Widget _buildMessageBox() {
-    return Obx(() {
+  Widget _buildMessageBox() => Obx(() {
       if (controller.errorMessage.isNotEmpty) {
         return Padding(
           padding: EdgeInsets.only(top: 8),
@@ -198,10 +188,8 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
       }
       return SizedBox.shrink();
     });
-  }
 
-  Widget _buildSubmitButton() {
-    return Obx(() => MaterialButton(
+  Widget _buildSubmitButton() => Obx(() => MaterialButton(
           height: 50,
           minWidth: Get.width,
           shape: RoundedRectangleBorder(
@@ -222,11 +210,11 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
                     return;
                   }
 
-                  final success = await controller.getForgotDetails();
+                  final bool success = await controller.getForgotDetails();
 
                   if (success) {
-                    Get.back();
-                    Get.snackbar(
+                    Get..back()
+                    ..snackbar(
                       'Success',
                       'Password reset instructions sent to your mobile number',
                       backgroundColor: Colors.green,
@@ -238,16 +226,15 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
               ? SizedBox(
                   height: 20,
                   width: 20,
-                  child: CircularProgressIndicator(
+                  child: LoadingAnimationWidget.fourRotatingDots(
                     color: white,
-                    strokeWidth: 2,
+                    size: 20,
                   ),
                 )
               : CommonTextWidget.PoppinsSemiBold(
                   fontSize: 16,
-                  text: "SUBMIT",
+                  text: 'SUBMIT',
                   color: white,
                 ),
         ));
-  }
 }

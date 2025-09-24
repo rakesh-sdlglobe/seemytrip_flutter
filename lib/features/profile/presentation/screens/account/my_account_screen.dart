@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -21,11 +22,11 @@ class MyAccountScreen extends StatefulWidget {
 class _MyAccountScreenState extends State<MyAccountScreen> {
   final LoginController loginController = Get.find<LoginController>();
 
-  String fullName = "";
-  String gender = "";
-  String dateOfBirth = "";
-  String emailId = "";
-  String phoneNumber = "";
+  String fullName = '';
+  String gender = '';
+  String dateOfBirth = '';
+  String emailId = '';
+  String phoneNumber = '';
 
   @override
   void initState() {
@@ -39,7 +40,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       String? token = prefs.getString('accessToken');
 
       if (token == null) {
-        Get.snackbar("Error", "No access token found. Please log in again.");
+        Get.snackbar('Error', 'No access token found. Please log in again.');
         return;
       }
 
@@ -51,8 +52,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         },
       );
 
-      print("Response Status: ${response.statusCode}");
-      print("Response Body: ${response.body}");
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
@@ -67,17 +68,16 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           phoneNumber = responseData['phoneNumber'] ?? '';
         });
       } else {
-        Get.snackbar("Error", "Failed to fetch user profile.");
+        Get.snackbar('Error', 'Failed to fetch user profile.');
       }
     } catch (error) {
-      print("Error: $error");
-      Get.snackbar("Error", "An error occurred: $error");
+      print('Error: $error');
+      Get.snackbar('Error', 'An error occurred: $error');
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: white,
       appBar: AppBar(
         backgroundColor: redCA0,
@@ -91,13 +91,16 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           child: Icon(Icons.arrow_back, color: white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "My Account",
+          text: 'My Account',
           color: white,
           fontSize: 18,
         ),
       ),
       body: Obx(() => loginController.isLoading.value
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: LoadingAnimationWidget.dotsTriangle(
+            color: redCA0,
+            size: 24,
+          ))
           : ScrollConfiguration(
               behavior: MyBehavior(),
               child: SingleChildScrollView(
@@ -123,7 +126,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                         ),
                       ),
                       title: CommonTextWidget.PoppinsMedium(
-                        text: fullName.isNotEmpty ? fullName : "Guest User",
+                        text: fullName.isNotEmpty ? fullName : 'Guest User',
                         color: black2E2,
                         fontSize: 18,
                       ),
@@ -139,7 +142,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                               ),
                             ),
                           CommonTextWidget.PoppinsMedium(
-                            text: "Edit Profile",
+                            text: 'Edit Profile',
                             color: redCA0,
                             fontSize: 12,
                           ),
@@ -157,7 +160,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                       itemBuilder: (context, index) => Padding(
                         padding: EdgeInsets.only(bottom: 30),
                         child: InkWell(
-                          onTap: Lists.myAccountList[index]["onTap"],
+                          onTap: Lists.myAccountList[index]['onTap'],
                           child: Row(
                             children: [
                               Container(
@@ -176,14 +179,14 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                 ),
                                 child: Center(
                                   child: SvgPicture.asset(
-                                    Lists.myAccountList[index]["image"],
+                                    Lists.myAccountList[index]['image'],
                                     color: redCA0,
                                   ),
                                 ),
                               ),
                               SizedBox(width: 20),
                               CommonTextWidget.PoppinsRegular(
-                                text: Lists.myAccountList[index]["text"],
+                                text: Lists.myAccountList[index]['text'],
                                 color: black2E2,
                                 fontSize: 18,
                               ),
@@ -197,5 +200,4 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               ),
             )),
     );
-  }
 }

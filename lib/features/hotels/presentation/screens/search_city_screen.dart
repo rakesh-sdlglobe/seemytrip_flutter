@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../controllers/hotel_controller.dart';
 import 'hotel_and_home_stay_tab_screen.dart';
 
@@ -157,12 +158,10 @@ class SearchCityScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+          SizedBox(
+            child: LoadingAnimationWidget.fourRotatingDots(
+              color: primaryColor,
+              size: 24,
             ),
           ),
           const SizedBox(height: 16),

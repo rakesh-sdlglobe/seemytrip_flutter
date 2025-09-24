@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 /// A customizable text button
 class TextButtonX extends StatelessWidget {
@@ -49,11 +50,9 @@ class TextButtonX extends StatelessWidget {
       return SizedBox(
         width: 20,
         height: 20,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            loadingColor ?? textColor,
-          ),
+        child: LoadingAnimationWidget.fourRotatingDots(
+          color: loadingColor ?? textColor,
+          size: 20,
         ),
       );
     }

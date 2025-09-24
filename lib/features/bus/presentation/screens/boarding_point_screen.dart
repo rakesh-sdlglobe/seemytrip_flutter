@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -208,7 +209,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
           ),
           Obx(() {
             if (_busController.isLoading.value && !_isMapReady) {
-              return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+              return SliverFillRemaining(child: Center(child: LoadingAnimationWidget.fourRotatingDots(color: Colors.black, size: 40)));
             }
             
             final BoardingPointResponse? response = _busController.boardingPointsResponse.value;
@@ -264,11 +265,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
           : Container(
               height: 220,
               color: Colors.grey[200],
-              child: const Center(
+              child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    CircularProgressIndicator(),
+                    LoadingAnimationWidget.dotsTriangle(color: Colors.black, size: 40),
                     SizedBox(height: 10),
                     Text('Loading Map...'),
                   ],

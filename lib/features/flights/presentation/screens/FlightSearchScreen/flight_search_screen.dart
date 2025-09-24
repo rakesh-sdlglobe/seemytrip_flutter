@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../../core/utils/colors.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
@@ -104,9 +105,13 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
               SizedBox(height: 15),
               Expanded(
                 child: GetBuilder<FlightSearchController>(
-                  builder: (controller) {
+                  builder: (FlightSearchController controller) {
                     if (!controller.isControllerInitialized) {
-                      return const Center(child: CircularProgressIndicator());
+                      return Center(
+                          child: LoadingAnimationWidget.dotsTriangle(
+                        color: Colors.red,
+                        size: 24,
+                      ));
                     }
                     return TabBarView(
                       controller: controller.tabController,
@@ -139,7 +144,7 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
                 ],
               ),
               child: GetBuilder<FlightSearchController>(
-                builder: (controller) {
+                builder: (FlightSearchController controller) {
                   if (!controller.isControllerInitialized) {
                     return const SizedBox.shrink();
                   }
@@ -153,7 +158,7 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
                     unselectedLabelStyle: const TextStyle(fontFamily: 'PoppinsMedium', fontSize: 14),
                     labelColor: redCA0,
                     controller: controller.tabController,
-                    onTap: (index) {
+                    onTap: (int index) {
                       controller.tabController.animateTo(index);
                     },
                     indicatorColor: redCA0,

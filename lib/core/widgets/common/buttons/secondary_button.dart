@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 /// A customizable secondary button
 class SecondaryButton extends StatelessWidget {
@@ -65,12 +66,10 @@ class SecondaryButton extends StatelessWidget {
 
   Widget _buildChild(BuildContext context) {
     if (isLoading) {
-      return const SizedBox(
-        width: 24,
-        height: 24,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.black54),
+      return SizedBox(
+        child: LoadingAnimationWidget.fourRotatingDots(
+          color: Colors.black54,
+          size: 24,
         ),
       );
     }

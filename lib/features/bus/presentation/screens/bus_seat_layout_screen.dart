@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../controllers/bus_controller.dart';
 import 'boarding_point_screen.dart';
 
@@ -264,7 +265,11 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
   @override
   Widget build(BuildContext context) {
     if (_fadeAnimation == null || _animationController == null) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+      return Center(
+          child: LoadingAnimationWidget.dotsTriangle(
+        color: AppColors.primary,
+        size: 40,
+      ));
     }
 
     return Scaffold(
@@ -281,9 +286,10 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(
+                        ? Center(
+                            child: LoadingAnimationWidget.dotsTriangle(
                               color: AppColors.primary,
+                              size: 40,
                             ),
                           )
                         : _tabController == null

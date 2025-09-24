@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../../core/utils/colors.dart';
 import '../../../../../core/widgets/common_button_widget.dart';
@@ -366,47 +367,67 @@ class _RoundTripScreenState extends State<RoundTripScreen> {
             SizedBox(height: 25),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
-              child: _isLoading
-                  ? SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: redCA0.withValues(alpha: 0.7),
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+              child: Obx(() {
+                final FlightController flightController =
+                    Get.find<FlightController>();
+                return CommonButtonWidget.button(
+                  buttonColor: redCA0,
+                  onTap: () async {
+                    if (selectedFromStation == null ||
+                        selectedToStation == null) {
+                      Get.snackbar(
+                        'Error',
+                        'Please select both departure and arrival airports',
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
+
+                    try {
+                      // Format date as YYYY-MM-DD
+                      final String formattedDate =
+                          DateFormat('yyyy-MM-dd').format(selectedDate);
+
+                      await flightController.searchAndShowFlights(
+                        fromAirportCode: selectedFromCode!,
+                        toAirportCode: selectedToCode!,
+                        departDate: formattedDate,
+                        returnDate: formattedDate,
+                        adults: travelers,
+                        travelClass: travelClass == 'Economy'
+                            ? 'E'
+                            : travelClass == 'Business'
+                                ? 'B'
+                                : 'F',
+                        flightType: 'R', // Round trip
+                      );
+
+                      // The searchAndShowFlights method will handle navigation
+                    } catch (e) {
+                      Get.snackbar(
+                        'Error',
+                        'Failed to search flights: ${e.toString()}',
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
+                  },
+                  child: flightController.isLoading.value
+                      ? LoadingAnimationWidget.threeRotatingDots(
+                          color: Colors.white,
+                          size: 24,
+                        )
+                      : Text(
+                          'SEARCH FLIGHTS',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                strokeWidth: 2.0,
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            Text(
-                              'SEARCHING...',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : CommonButtonWidget.button(
-                      buttonColor: redCA0,
-                      onTap: _searchFlights,
-                      text: "SEARCH FLIGHTS",
-                    ),
+                );
+              }),
             ),
             SizedBox(height: 20),
             Padding(

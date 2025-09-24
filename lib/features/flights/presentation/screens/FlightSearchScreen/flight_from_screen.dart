@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../../../core/utils/colors.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../controllers/flight_controller.dart';
@@ -189,7 +190,12 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
               ),
               Expanded(
                 child: isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? Center(
+                      child: LoadingAnimationWidget.dotsTriangle(
+                      color: redCA0,
+                        size: 50,
+                      )
+                      )
                     : hasError
                         ? Center(child: Text('Error fetching airports.'))
                         : filteredAirports.isEmpty

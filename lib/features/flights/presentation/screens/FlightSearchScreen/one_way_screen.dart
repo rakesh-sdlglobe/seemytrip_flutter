@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../../core/utils/colors.dart';
 import '../../../../../core/widgets/common_button_widget.dart';
@@ -29,19 +30,21 @@ class OneWayScreen extends StatefulWidget {
 
 class _OneWayScreenState extends State<OneWayScreen> {
   // Add the controller
-  final FlightSearchController flightSearchController = Get.put(FlightSearchController());
+  final FlightSearchController flightSearchController =
+      Get.put(FlightSearchController());
   final FlightController flightController = Get.put(FlightController());
-  
+
   @override
   void initState() {
     super.initState();
     // Initialize the travelers value in the controller
     flightSearchController.travelers.value = 1;
   }
+
   String? selectedFromStation; // To store the selected "From" station name
-  String? selectedFromCode;    // To store the selected "From" station code
-  String? selectedToStation;   // To store the selected "To" station name
-  String? selectedToCode;      // To store the selected "To" station code
+  String? selectedFromCode; // To store the selected "From" station code
+  String? selectedToStation; // To store the selected "To" station name
+  String? selectedToCode; // To store the selected "To" station code
   String formattedDate = 'Select Date'; // Placeholder for selected date
   String dayOfWeek = ''; // Placeholder for day of the week
   DateTime selectedDate = DateTime.now();
@@ -56,7 +59,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
     try {
       final result = await Get.to(() => FlightFromScreen());
       print('Returned from FlightFromScreen with result: $result');
-      
+
       if (result != null && result is Map) {
         setState(() {
           selectedFromStation = result['stationName'] ?? result['airportName'];
@@ -82,7 +85,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
   Future<void> _navigateToToScreen() async {
     try {
       final result = await Get.to(() => FlightToScreen());
-      
+
       if (result != null && result is Map) {
         setState(() {
           selectedToStation = result['stationName'] ?? result['airportName'];
@@ -104,7 +107,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context, {bool isReturnDate = false}) async {
+  Future<void> _selectDate(BuildContext context,
+      {bool isReturnDate = false}) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
@@ -122,25 +126,26 @@ class _OneWayScreenState extends State<OneWayScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => TravelClassAndTravelerSelector(
-          travelClass: travelClass,
-          travelers: travelers,
-          onClassChanged: (String newClass) {
-            setState(() {
-              travelClass = newClass;
-            });
-          },
-          onTravelerCountChanged: (int newCount) {
-            setState(() {
-              travelers = newCount;
-            });
-          },
-        ),
+        travelClass: travelClass,
+        travelers: travelers,
+        onClassChanged: (String newClass) {
+          setState(() {
+            travelClass = newClass;
+          });
+        },
+        onTravelerCountChanged: (int newCount) {
+          setState(() {
+            travelers = newCount;
+          });
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final String formattedDepartureDate = DateFormat('dd MMM').format(selectedDate);
+    final String formattedDepartureDate =
+        DateFormat('dd MMM').format(selectedDate);
     // final String formattedReturnDate = returnDate != null
     //     ? DateFormat('dd MMM').format(returnDate!)
     //     : 'Select Return Date';
@@ -262,7 +267,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
                             Row(
                               children: [
                                 CommonTextWidget.PoppinsSemiBold(
-                                  text: '${flightSearchController.travelers.value} ,',
+                                  text:
+                                      '${flightSearchController.travelers.value} ,',
                                   color: black2E2,
                                   fontSize: 18,
                                 ),
@@ -345,11 +351,13 @@ class _OneWayScreenState extends State<OneWayScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Obx(() {
-                final FlightController flightController = Get.find<FlightController>();
+                final FlightController flightController =
+                    Get.find<FlightController>();
                 return CommonButtonWidget.button(
                   buttonColor: redCA0,
                   onTap: () async {
-                    if (selectedFromStation == null || selectedToStation == null) {
+                    if (selectedFromStation == null ||
+                        selectedToStation == null) {
                       Get.snackbar(
                         'Error',
                         'Please select both departure and arrival airports',
@@ -358,21 +366,25 @@ class _OneWayScreenState extends State<OneWayScreen> {
                       );
                       return;
                     }
-                    
+
                     try {
                       // Format date as YYYY-MM-DD
-                      final String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-                      
+                      final String formattedDate =
+                          DateFormat('yyyy-MM-dd').format(selectedDate);
+
                       await flightController.searchAndShowFlights(
                         fromAirportCode: selectedFromCode!,
                         toAirportCode: selectedToCode!,
                         departDate: formattedDate,
                         adults: travelers,
-                        travelClass: travelClass == 'Economy' ? 'E' : 
-                                    travelClass == 'Business' ? 'B' : 'F',
+                        travelClass: travelClass == 'Economy'
+                            ? 'E'
+                            : travelClass == 'Business'
+                                ? 'B'
+                                : 'F',
                         flightType: 'O', // One-way
                       );
-                      
+
                       // The searchAndShowFlights method will handle navigation
                     } catch (e) {
                       Get.snackbar(
@@ -383,7 +395,19 @@ class _OneWayScreenState extends State<OneWayScreen> {
                       );
                     }
                   },
-                  text: flightController.isLoading.value ? 'SEARCHING...' : 'SEARCH FLIGHTS',
+                  child: flightController.isLoading.value
+                      ? LoadingAnimationWidget.threeRotatingDots(
+                          color: Colors.white,
+                          size: 24,
+                        )
+                      : Text(
+                          'SEARCH FLIGHTS',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 );
               }),
             ),

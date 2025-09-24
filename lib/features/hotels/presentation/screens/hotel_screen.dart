@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common_text_widget.dart';
@@ -185,10 +186,10 @@ class HotelScreen extends GetView<SearchCityController> {
                 child: Obx(() {
                   if (searchCtrl.isLoading.value) {
                     // Show circular loader while loading
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    return Center(
+                      child: LoadingAnimationWidget.dotsTriangle(
+                        color: AppColors.primary,
+                        size: 50,
                       ),
                     );
                   }

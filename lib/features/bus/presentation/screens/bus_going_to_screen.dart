@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/features/bus/presentation/controllers/bus_controller.dart';
 import 'package:seemytrip/core/utils/colors.dart';
 
@@ -76,8 +77,7 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
@@ -171,16 +171,14 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
             child: Obx(() {
               // Show loading indicator when cities are being loaded
               if (controller.isLoading.value) {
-                return const Center(
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(redCA0),
-                          strokeWidth: 3,
+                        child: LoadingAnimationWidget.dotsTriangle(
+                          color: redCA0,
+                          size: 40,
                         ),
                       ),
                       SizedBox(height: 16),
@@ -334,5 +332,4 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
         ],
       ),
     );
-  }
 }

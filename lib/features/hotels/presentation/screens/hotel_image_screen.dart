@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:seemytrip/features/hotels/presentation/controllers/hotel_image_controller.dart';
+
+import '../../../../core/utils/colors.dart';
 
 class HotelImageScreen extends StatefulWidget {
   final List<Map<String, String>> imageList;
@@ -34,8 +37,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: const Color(0xFFF8FAFD),
       extendBodyBehindAppBar: false,
       appBar: AppBar(
@@ -70,7 +72,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
             color: const Color(0xFF1A1A1A),
           ),
         ),
-        actions: [
+        actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.close_rounded, color: Color(0xFF666666)),
             onPressed: () => Get.back(),
@@ -78,9 +80,9 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
         ],
       ),
       body: GetBuilder<HotelImageController>(
-        builder: (controller) {
+        builder: (HotelImageController controller) {
           return Column(
-            children: [
+            children: <Widget>[
               // Category Chips
               if (controller.categories.isNotEmpty)
                 Container(
@@ -90,9 +92,9 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                     scrollDirection: Axis.horizontal,
                     itemCount: controller.categories.length,
                     separatorBuilder: (_, __) => const SizedBox(width: 8),
-                    itemBuilder: (context, idx) {
-                      final category = controller.categories[idx];
-                      final isSelected = controller.selectedCategory.value == category;
+                    itemBuilder: (BuildContext context, int idx) {
+                      final String category = controller.categories[idx];
+                      final bool isSelected = controller.selectedCategory.value == category;
                       return GestureDetector(
                         onTap: () => controller.selectCategory(category),
                         child: AnimatedContainer(
@@ -102,7 +104,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                             color: isSelected ? const Color(0xFFD32F2F) : const Color(0xFFF5F5F5),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: isSelected
-                                ? [
+                                ? <BoxShadow>[
                                     BoxShadow(
                                       color: const Color(0x40D32F2F),
                                       blurRadius: 8,
@@ -138,8 +140,8 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                           childAspectRatio: 0.8,
                         ),
                         itemCount: controller.filteredImages.length,
-                        itemBuilder: (context, index) {
-                          final url = controller.filteredImages[index];
+                        itemBuilder: (BuildContext context, int index) {
+                          final String url = controller.filteredImages[index];
                           return _buildImageItem(context, url);
                         },
                       ),
@@ -149,17 +151,15 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
         },
       ),
     );
-  }
 
-  Widget _buildImageItem(BuildContext context, String imageUrl) {
-    return GestureDetector(
+  Widget _buildImageItem(BuildContext context, String imageUrl) => GestureDetector(
       onTap: () => _showFullScreenImage(context, imageUrl),
       child: Hero(
         tag: 'image_$imageUrl',
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
+            boxShadow: <BoxShadow>[
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
                 blurRadius: 8,
@@ -172,22 +172,21 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
+              placeholder: (BuildContext context, String url) => Container(
                 color: Color(0xFFF5F5F5),
                 child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFFD32F2F)),
-                    strokeWidth: 2,
+                  child: LoadingAnimationWidget.fourRotatingDots(
+                    color: redCA0,
+                    size: 40,
                   ),
                 ),
               ),
-              errorWidget: (context, url, error) => Container(
+              errorWidget: (BuildContext context, String url, Object error) => Container(
                 color: Color(0xFFF5F5F5),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
                       Icon(Icons.broken_image_rounded,
                           color: Color(0xFFCCCCCC), size: 40),
                       SizedBox(height: 8),
@@ -207,13 +206,11 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
         ),
       ),
     );
-  }
 
   void _showFullScreenImage(BuildContext context, String imageUrl) {
     showGeneralDialog(
       context: context,
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return Scaffold(
+      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) => Scaffold(
           backgroundColor: Colors.black,
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -233,7 +230,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
             ),
           ),
           body: GestureDetector(
-            onVerticalDragEnd: (details) {
+            onVerticalDragEnd: (DragEndDetails details) {
               if (details.primaryVelocity! > 100) {
                 Navigator.of(context).pop();
               }
@@ -247,20 +244,16 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                   maxScale: PhotoViewComputedScale.covered * 2,
                   initialScale: PhotoViewComputedScale.contained,
                   backgroundDecoration: BoxDecoration(color: Colors.black),
-                  loadingBuilder: (context, event) => Center(
-                    child: CircularProgressIndicator(
-                      value: event == null
-                          ? 0
-                          : event.cumulativeBytesLoaded /
-                              (event.expectedTotalBytes ?? 1),
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Color(0xFFD32F2F)),
+                  loadingBuilder: (BuildContext context, ImageChunkEvent? event) => Center(
+                    child: LoadingAnimationWidget.dotsTriangle(
+                      color: redCA0,
+                      size: 40,
                     ),
                   ),
-                  errorBuilder: (context, error, stackTrace) => Center(
+                  errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) => Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: <Widget>[
                         Icon(Icons.broken_image_rounded,
                             color: Colors.white54, size: 60),
                         SizedBox(height: 16),
@@ -278,8 +271,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
               ),
             ),
           ),
-        );
-      },
+        ),
       barrierColor: Colors.black87,
       barrierDismissible: true,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
@@ -287,11 +279,10 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
+  Widget _buildEmptyState() => Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children: <Widget>[
           Icon(
             Icons.photo_library_outlined,
             size: 64,
@@ -321,5 +312,4 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
         ],
       ),
     );
-  }
 }

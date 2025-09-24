@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/features/shared/presentation/controllers/irctc_forgot_details_controller.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../../../../core/utils/colors.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../shared/presentation/controllers/irctc_forgot_details_controller.dart';
 
 class ForgotIRCTCUsernameScreen extends StatefulWidget {
   @override
@@ -41,8 +42,7 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -77,16 +77,16 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: CommonTextWidget.PoppinsMedium(
                 text:
-                    "Please enter your registered email ID or mobile number and date of birth to recover your IRCTC username",
+                    'Please enter your registered email ID or mobile number and date of birth to recover your IRCTC username',
                 color: yellowCE8,
                 fontSize: 12,
               ),
             ),
             SizedBox(height: 20),
             _inputField(
-              "EMAIL/MOBILE",
+              'EMAIL/MOBILE',
               _contactController,
-              "Enter registered email ID or mobile number",
+              'Enter registered email ID or mobile number',
               TextInputType.emailAddress,
               onChanged: (value) {
                 if (value.contains('@')) {
@@ -106,7 +106,7 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                   )
                 : SizedBox.shrink()),
             SizedBox(height: 15),
-            _dobField("DATE OF BIRTH", _dobController),
+            _dobField('DATE OF BIRTH', _dobController),
             SizedBox(height: 30),
             Obx(() => MaterialButton(
                   height: 50,
@@ -133,8 +133,8 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                           final success = await controller.submitForm();
 
                           if (success) {
-                            Get.back();
-                            Get.snackbar(
+                            Get..back()
+                            ..snackbar(
                               'Success',
                               controller.successMessage.value,
                               backgroundColor: Colors.green,
@@ -153,14 +153,14 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                       ? SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(
+                          child: LoadingAnimationWidget.fourRotatingDots(
                             color: white,
-                            strokeWidth: 2,
+                            size: 20,
                           ),
                         )
                       : CommonTextWidget.PoppinsSemiBold(
                           fontSize: 16,
-                          text: "SUBMIT",
+                          text: 'SUBMIT',
                           color: white,
                         ),
                 )),
@@ -168,11 +168,9 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
         ),
       ),
     );
-  }
 
   Widget _inputField(String label, TextEditingController controller, String hint,
-      TextInputType inputType, {int? maxLength, Function(String)? onChanged}) {
-    return Container(
+      TextInputType inputType, {int? maxLength, Function(String)? onChanged}) => Container(
       decoration: BoxDecoration(
         color: greyE2E,
         borderRadius: BorderRadius.circular(5),
@@ -192,15 +190,13 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
             hintText: hint,
             hintStyle: TextStyle(color: grey888, fontSize: 12),
             border: InputBorder.none,
-            counterText: "",
+            counterText: '',
           ),
         ),
       ),
     );
-  }
 
-  Widget _dobField(String label, TextEditingController controller) {
-    return Container(
+  Widget _dobField(String label, TextEditingController controller) => Container(
       decoration: BoxDecoration(
         color: greyE2E,
         borderRadius: BorderRadius.circular(5),
@@ -217,13 +213,12 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
           readOnly: true,
           onTap: () => _selectDate(context),
           decoration: InputDecoration(
-            hintText: "Select date of birth",
+            hintText: 'Select date of birth',
             hintStyle: TextStyle(color: grey888, fontSize: 12),
             border: InputBorder.none,
-            counterText: "",
+            counterText: '',
           ),
         ),
       ),
     );
-  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../../core/widgets/common/cards/app_card.dart';
 import '../../../../core/utils/colors.dart';
 import '../../../../shared/models/bus_models.dart';
@@ -113,7 +114,11 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
   Widget build(BuildContext context) {
     // Ensure animation is initialized before building
     if (_fadeAnimation == null || _animationController == null) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(
+          child: LoadingAnimationWidget.fourRotatingDots(
+        color: kPrimaryColor,
+        size: 40,
+      ));
     }
 
     return Scaffold(
@@ -378,8 +383,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
         ],
       );
 
-  Widget _buildFareAndButton(BusSearchResult result, {CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.end}) {
-    return Column(
+  Widget _buildFareAndButton(BusSearchResult result, {CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.end}) => Column(
       crossAxisAlignment: crossAxisAlignment,
       children: [
         Row(
@@ -475,12 +479,12 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             ),
             child: _isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
+                    child: LoadingAnimationWidget.fourRotatingDots(
                       color: Colors.white,
+                      size: 24,
                     ),
                   )
                 : Text(
@@ -495,7 +499,6 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
         ),
       ],
     );
-  }
 
   Widget _buildTimeline(BusSearchResult result) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,

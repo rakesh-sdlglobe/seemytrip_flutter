@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../../../../../core/utils/colors.dart';
 import '../../controllers/flight_controller.dart';
 import '../../widgets/flight_filter_sort_widget.dart';
 import 'round_trip_flight_details_screen.dart';
@@ -16,73 +18,84 @@ class RoundTripResultsScreen extends StatefulWidget {
 
 class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
   final FlightController controller = Get.find<FlightController>();
-  
+
   // Filter and sort state
   final RxMap<String, dynamic> _filters = <String, dynamic>{}.obs;
   final RxString _sortBy = 'price_low_to_high'.obs;
-  
+
   // Get filtered and sorted flights
   List<dynamic> get _filteredFlights {
-    List<dynamic> flights = List<dynamic>.from(controller.flightResults['FlightResults'] ?? []);
-    
+    List<dynamic> flights =
+        List<dynamic>.from(controller.flightResults['FlightResults'] ?? []);
+
     // Apply filters
     if (_filters.containsKey('stops')) {
       final int stops = _filters['stops'] as int;
       flights = flights.where((flight) {
-        final int stopCount = int.tryParse(flight['StopCount']?.toString() ?? '0') ?? 0;
+        final int stopCount =
+            int.tryParse(flight['StopCount']?.toString() ?? '0') ?? 0;
         if (stops == 2) {
           return stopCount >= 2; // 2 or more stops
         }
         return stopCount == stops;
       }).toList();
     }
-    
+
     if (_filters.containsKey('airline')) {
       final String airline = _filters['airline'] as String;
       flights = flights.where((flight) {
-        final String? airlineName = flight['AirlineName']?.toString().toLowerCase();
+        final String? airlineName =
+            flight['AirlineName']?.toString().toLowerCase();
         return airlineName?.contains(airline.toLowerCase()) ?? false;
       }).toList();
     }
-    
+
     // Apply sorting
     flights.sort((a, b) {
       switch (_sortBy.value) {
         case 'price_low_to_high':
-          final double priceA = double.tryParse(a['OfferedFare']?.toString() ?? '0') ?? 0;
-          final double priceB = double.tryParse(b['OfferedFare']?.toString() ?? '0') ?? 0;
+          final double priceA =
+              double.tryParse(a['OfferedFare']?.toString() ?? '0') ?? 0;
+          final double priceB =
+              double.tryParse(b['OfferedFare']?.toString() ?? '0') ?? 0;
           return priceA.compareTo(priceB);
-          
+
         case 'price_high_to_low':
-          final double priceA = double.tryParse(a['OfferedFare']?.toString() ?? '0') ?? 0;
-          final double priceB = double.tryParse(b['OfferedFare']?.toString() ?? '0') ?? 0;
+          final double priceA =
+              double.tryParse(a['OfferedFare']?.toString() ?? '0') ?? 0;
+          final double priceB =
+              double.tryParse(b['OfferedFare']?.toString() ?? '0') ?? 0;
           return priceB.compareTo(priceA);
-          
+
         case 'duration_short_to_long':
-          final int durationA = _parseDuration(a['DurationTime']?.toString() ?? '0h 0m');
-          final int durationB = _parseDuration(b['DurationTime']?.toString() ?? '0h 0m');
+          final int durationA =
+              _parseDuration(a['DurationTime']?.toString() ?? '0h 0m');
+          final int durationB =
+              _parseDuration(b['DurationTime']?.toString() ?? '0h 0m');
           return durationA.compareTo(durationB);
-          
+
         case 'departure_earliest':
-          final String timeA = a['DepartureTime']?.toString().split(' ')[1] ?? '23:59';
-          final String timeB = b['DepartureTime']?.toString().split(' ')[1] ?? '23:59';
+          final String timeA =
+              a['DepartureTime']?.toString().split(' ')[1] ?? '23:59';
+          final String timeB =
+              b['DepartureTime']?.toString().split(' ')[1] ?? '23:59';
           return timeA.compareTo(timeB);
-          
+
         default:
           return 0;
       }
     });
-    
+
     return flights;
   }
-  
+
   // Helper to parse duration string (e.g., "2h 30m") to minutes
   int _parseDuration(String duration) {
     try {
       final List<String> parts = duration.split(' ');
       int hours = 0;
       int minutes = 0;
-      
+
       for (final String part in parts) {
         if (part.endsWith('h')) {
           hours = int.tryParse(part.replaceAll('h', '')) ?? 0;
@@ -90,7 +103,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
           minutes = int.tryParse(part.replaceAll('m', '')) ?? 0;
         }
       }
-      
+
       return hours * 60 + minutes;
     } catch (e) {
       return 0;
@@ -111,7 +124,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
     print(controller.flightResults);
     print('💰 Total Price: ${controller.totalPrice}');
     print('🎫 Discount: ${controller.discount}');
-    
+
     // Print last search parameters
     final Map<String, dynamic> params = controller.getLastSearchParams();
     print('🔍 Last Search Parameters:');
@@ -124,7 +137,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
   Widget build(BuildContext context) {
     final Map<String, dynamic> params = controller.getLastSearchParams();
     final bool hasFilters = _filters.isNotEmpty;
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -242,7 +255,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                 ],
               ),
             ),
-            
+
             // Filter & Sort Bar
             FlightFilterSortWidget(
               onSortChanged: (value) {
@@ -256,11 +269,12 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
               },
             ),
             const SizedBox(height: 8),
-            
+
             // Active Filters
             if (_filters.isNotEmpty)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 height: 40,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
@@ -275,12 +289,14 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                         filterText = '2+ Stops';
                       }
                     } else if (entry.key == 'airline') {
-                      filterText = '${entry.value.toString().split(' ').map((s) => s[0].toUpperCase() + s.substring(1)).join(' ')}';
+                      filterText =
+                          '${entry.value.toString().split(' ').map((s) => s[0].toUpperCase() + s.substring(1)).join(' ')}';
                     }
-                    
+
                     return Container(
                       margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(16),
@@ -303,7 +319,8 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                               _filters.remove(entry.key);
                               setState(() {});
                             },
-                            child: Icon(Icons.close, size: 16, color: Colors.blue[800]),
+                            child: Icon(Icons.close,
+                                size: 16, color: Colors.blue[800]),
                           ),
                         ],
                       ),
@@ -311,7 +328,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                   }).toList(),
                 ),
               ),
-            
+
             // Flight Results
             if (_filteredFlights.isNotEmpty)
               ListView.builder(
@@ -374,21 +391,29 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
 
   Widget _buildFlightCard(Map<String, dynamic> flight) {
     // Parse departure and arrival times for outbound flight
-    final String departTime = flight['DepartureTime']?.toString().split(' ')[1] ?? '--:--';
-    final String departDate = _formatDate(flight['DepartureTime']?.toString().split(' ')[0]);
-    final String arriveTime = flight['ArrivalTime']?.toString().split(' ')[1] ?? '--:--';
-    final String arriveDate = _formatDate(flight['ArrivalTime']?.toString().split(' ')[0]);
-    
+    final String departTime =
+        flight['DepartureTime']?.toString().split(' ')[1] ?? '--:--';
+    final String departDate =
+        _formatDate(flight['DepartureTime']?.toString().split(' ')[0]);
+    final String arriveTime =
+        flight['ArrivalTime']?.toString().split(' ')[1] ?? '--:--';
+    final String arriveDate =
+        _formatDate(flight['ArrivalTime']?.toString().split(' ')[0]);
+
     // Parse departure and arrival times for return flight
-    final String returnDepartTime = flight['ReturnDepartureTime']?.toString().split(' ')[1] ?? '--:--';
-    final String returnDepartDate = _formatDate(flight['ReturnDepartureTime']?.toString().split(' ')[0]);
-    final String returnArriveTime = flight['ReturnArrivalTime']?.toString().split(' ')[1] ?? '--:--';
-    final String returnArriveDate = _formatDate(flight['ReturnArrivalTime']?.toString().split(' ')[0]);
-    
+    final String returnDepartTime =
+        flight['ReturnDepartureTime']?.toString().split(' ')[1] ?? '--:--';
+    final String returnDepartDate =
+        _formatDate(flight['ReturnDepartureTime']?.toString().split(' ')[0]);
+    final String returnArriveTime =
+        flight['ReturnArrivalTime']?.toString().split(' ')[1] ?? '--:--';
+    final String returnArriveDate =
+        _formatDate(flight['ReturnArrivalTime']?.toString().split(' ')[0]);
+
     // Get origin and destination
     final String origin = flight['Origin'] ?? '--';
     final String destination = flight['Destination'] ?? '--';
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -430,7 +455,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
               ],
             ),
           ),
-          
+
           // Flight details
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -438,14 +463,16 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
               children: <Widget>[
                 // Outbound flight header
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.flight_takeoff, size: 16, color: Colors.blue),
+                      const Icon(Icons.flight_takeoff,
+                          size: 16, color: Colors.blue),
                       const SizedBox(width: 8),
                       Text(
                         'Outbound • $departDate',
@@ -459,7 +486,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Outbound flight details
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -468,7 +495,8 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       time: departTime,
                       location: origin,
                       date: departDate,
-                      terminal: flight['Segments']?[0]['Origin']?['Terminal']?.toString(),
+                      terminal: flight['Segments']?[0]['Origin']?['Terminal']
+                          ?.toString(),
                     ),
                     _buildDurationColumn(
                       duration: flight['DurationTime'] ?? '--',
@@ -478,24 +506,28 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       time: arriveTime,
                       location: destination,
                       date: arriveDate,
-                      terminal: flight['Segments']?[0]['Destination']?['Terminal']?.toString(),
+                      terminal: flight['Segments']?[0]['Destination']
+                              ?['Terminal']
+                          ?.toString(),
                       isArrival: true,
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // Return flight header
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.orange[50],
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.flight_land, size: 16, color: Colors.orange),
+                      const Icon(Icons.flight_land,
+                          size: 16, color: Colors.orange),
                       const SizedBox(width: 8),
                       Text(
                         'Return • $returnDepartDate',
@@ -509,7 +541,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Return flight details
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -518,7 +550,9 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       time: returnDepartTime,
                       location: destination,
                       date: returnDepartDate,
-                      terminal: flight['ReturnSegments']?[0]['Origin']?['Terminal']?.toString(),
+                      terminal: flight['ReturnSegments']?[0]['Origin']
+                              ?['Terminal']
+                          ?.toString(),
                     ),
                     _buildDurationColumn(
                       duration: flight['ReturnDuration'] ?? '--',
@@ -529,13 +563,15 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       time: returnArriveTime,
                       location: origin,
                       date: returnArriveDate,
-                      terminal: flight['ReturnSegments']?[0]['Destination']?['Terminal']?.toString(),
+                      terminal: flight['ReturnSegments']?[0]['Destination']
+                              ?['Terminal']
+                          ?.toString(),
                       isArrival: true,
                       isReturn: true,
                     ),
                   ],
                 ),
-                
+
                 // Fare details and select button
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
@@ -594,10 +630,14 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Text(
-                                  flight['IsRefundable'] ? 'Refundable' : 'Non-Refundable',
+                                  flight['IsRefundable']
+                                      ? 'Refundable'
+                                      : 'Non-Refundable',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: flight['IsRefundable'] ? Colors.green[600] : Colors.orange[600],
+                                    color: flight['IsRefundable']
+                                        ? Colors.green[600]
+                                        : Colors.orange[600],
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -605,62 +645,92 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                           ],
                         ),
                       ),
-                      
+
                       // Select button
                       ElevatedButton(
-                        onPressed: () {
-                          // Prepare flight details with all necessary information
-                          final Map<String, dynamic> flightDetails = {
-                            // Basic flight info
-                            'id': flight['id'] ?? '',
-                            'airlineName': flight['AirlineName'] ?? '',
-                            'flightNumber': flight['FlightNumber'] ?? '',
-                            'flightType': 'round_trip',
-                            
-                            // Outbound flight details
-                            'origin': flight['Origin'] ?? '',
-                            'destination': flight['Destination'] ?? '',
-                            'departureTime': flight['DepartureTime'] ?? '',
-                            'arrivalTime': flight['ArrivalTime'] ?? '',
-                            'duration': flight['DurationTime'] ?? '',
-                            'stopCount': flight['StopCount'] ?? 0,
-                            'segments': flight['Segments'] ?? [],
-                            
-                            // Return flight details
-                            'returnDepartureTime': flight['ReturnDepartureTime'] ?? '',
-                            'returnArrivalTime': flight['ReturnArrivalTime'] ?? '',
-                            'returnDuration': flight['ReturnDuration'] ?? '',
-                            'returnStopCount': flight['ReturnStopCount'] ?? 0,
-                            'returnSegments': flight['ReturnSegments'] ?? [],
-                            
-                            // Fare details
-                            'baseFare': flight['BaseFare'] ?? 0,
-                            'tax': flight['Tax'] ?? 0,
-                            'totalFare': flight['OfferedFare'] ?? 0,
-                            'isRefundable': flight['IsRefundable'] ?? false,
-                            'cancellationPolicy': flight['CancellationPolicy'] ?? '',
-                            
-                            // Additional info
-                            'baggageAllowance': flight['BaggageAllowance'] ?? '7 kg',
-                            'cabinBaggage': flight['CabinBaggage'] ?? '7 kg',
-                            'mealIncluded': flight['MealIncluded'] ?? false,
-                            'operatedBy': flight['OperatedBy'] ?? '',
-                            'aircraftType': flight['AircraftType'] ?? '',
-                            'lastBookingTime': flight['LastBookingTime'] ?? '',
-                          };
-                          
-                          // Navigate to flight details screen
-                          Get.to(() => RoundTripFlightDetailsScreen(
-                            flight: flightDetails, 
-                            searchParams: controller.getLastSearchParams(),
-                          ));
+                        onPressed: () async {
+                          Get.dialog(
+                            Center(
+                              child: LoadingAnimationWidget.staggeredDotsWave(
+                                color: Colors.blue,
+                                size: 50,
+                              ),
+                            ),
+                            barrierDismissible: false,
+                          );
+                          try {
+                            // Prepare flight details with all necessary information
+                            final Map<String, dynamic> flightDetails = {
+                              // Basic flight info
+                              'id': flight['id'] ?? '',
+                              'airlineName': flight['AirlineName'] ?? '',
+                              'flightNumber': flight['FlightNumber'] ?? '',
+                              'flightType': 'round_trip',
+
+                              // Outbound flight details
+                              'origin': flight['Origin'] ?? '',
+                              'destination': flight['Destination'] ?? '',
+                              'departureTime': flight['DepartureTime'] ?? '',
+                              'arrivalTime': flight['ArrivalTime'] ?? '',
+                              'duration': flight['DurationTime'] ?? '',
+                              'stopCount': flight['StopCount'] ?? 0,
+                              'segments': flight['Segments'] ?? [],
+
+                              // Return flight details
+                              'returnDepartureTime':
+                                  flight['ReturnDepartureTime'] ?? '',
+                              'returnArrivalTime':
+                                  flight['ReturnArrivalTime'] ?? '',
+                              'returnDuration': flight['ReturnDuration'] ?? '',
+                              'returnStopCount': flight['ReturnStopCount'] ?? 0,
+                              'returnSegments': flight['ReturnSegments'] ?? [],
+
+                              // Fare details
+                              'baseFare': flight['BaseFare'] ?? 0,
+                              'tax': flight['Tax'] ?? 0,
+                              'totalFare': flight['OfferedFare'] ?? 0,
+                              'isRefundable': flight['IsRefundable'] ?? false,
+                              'cancellationPolicy':
+                                  flight['CancellationPolicy'] ?? '',
+
+                              // Additional info
+                              'baggageAllowance':
+                                  flight['BaggageAllowance'] ?? '7 kg',
+                              'cabinBaggage': flight['CabinBaggage'] ?? '7 kg',
+                              'mealIncluded': flight['MealIncluded'] ?? false,
+                              'operatedBy': flight['OperatedBy'] ?? '',
+                              'aircraftType': flight['AircraftType'] ?? '',
+                              'lastBookingTime':
+                                  flight['LastBookingTime'] ?? '',
+                            };
+
+                            // Navigate to flight details screen
+                            await Get.to(() => RoundTripFlightDetailsScreen(
+                                  flight: flightDetails,
+                                  searchParams:
+                                      controller.getLastSearchParams(),
+                                ));
+                          } catch (e) {
+                            Get.snackbar(
+                              'Error',
+                              'Failed to load flight details',
+                              backgroundColor: Colors.red,
+                              colorText: Colors.white,
+                            );
+                          } finally {
+                            // Dismiss the loading dialog
+                            if (Get.isDialogOpen ?? false) {
+                              Get.back();
+                            }
+                          }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red, // Changed to red theme
+                          backgroundColor: Colors.red,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
                           elevation: 0,
                         ),
                         child: Text(
@@ -682,7 +752,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
       ),
     );
   }
-  
+
   Widget _buildTimeColumn({
     required String time,
     required String location,
@@ -690,103 +760,115 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
     String? terminal,
     bool isArrival = false,
     bool isReturn = false,
-  }) => Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(
-        color: isArrival ? (isReturn ? Colors.orange[50] : Colors.blue[50]) : null,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            time,
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: isArrival ? (isReturn ? Colors.orange[800] : Colors.blue[800]) : Colors.black,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            location,
-            style: GoogleFonts.poppins(
-              color: isArrival ? (isReturn ? Colors.orange[700] : Colors.blue[700]) : Colors.grey[700],
-              fontSize: 13,
-              fontWeight: isArrival ? FontWeight.w500 : FontWeight.normal,
-            ),
-          ),
-          if (terminal != null) ...<Widget>[
-            const SizedBox(height: 2),
+  }) =>
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        decoration: BoxDecoration(
+          color: isArrival
+              ? (isReturn ? Colors.orange[50] : Colors.blue[50])
+              : null,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
             Text(
-              'Terminal $terminal',
+              time,
               style: GoogleFonts.poppins(
-                color: Colors.grey[500],
-                fontSize: 11,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: isArrival
+                    ? (isReturn ? Colors.orange[800] : Colors.blue[800])
+                    : Colors.black,
               ),
             ),
-          ],
-          if (date != null) ...<Widget>[
             const SizedBox(height: 2),
             Text(
-              date,
+              location,
               style: GoogleFonts.poppins(
-                color: isArrival ? (isReturn ? Colors.orange[700] : Colors.blue[700]) : Colors.grey[500],
-                fontSize: 11,
+                color: isArrival
+                    ? (isReturn ? Colors.orange[700] : Colors.blue[700])
+                    : Colors.grey[700],
+                fontSize: 13,
                 fontWeight: isArrival ? FontWeight.w500 : FontWeight.normal,
               ),
             ),
+            if (terminal != null) ...<Widget>[
+              const SizedBox(height: 2),
+              Text(
+                'Terminal $terminal',
+                style: GoogleFonts.poppins(
+                  color: Colors.grey[500],
+                  fontSize: 11,
+                ),
+              ),
+            ],
+            if (date != null) ...<Widget>[
+              const SizedBox(height: 2),
+              Text(
+                date,
+                style: GoogleFonts.poppins(
+                  color: isArrival
+                      ? (isReturn ? Colors.orange[700] : Colors.blue[700])
+                      : Colors.grey[500],
+                  fontSize: 11,
+                  fontWeight: isArrival ? FontWeight.w500 : FontWeight.normal,
+                ),
+              ),
+            ],
           ],
-        ],
-      ),
-    );
-  
+        ),
+      );
+
   Widget _buildDurationColumn({
     required String duration,
     required String stops,
     bool isReturn = false,
-  }) => Column(
-      children: <Widget>[
-        Text(
-          duration,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: isReturn ? Colors.orange[800] : Colors.blue[800],
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            Container(
-              height: 1,
-              width: 80,
-              color: Colors.grey[300],
+  }) =>
+      Column(
+        children: <Widget>[
+          Text(
+            duration,
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: isReturn ? Colors.orange[800] : Colors.blue[800],
+              fontWeight: FontWeight.w500,
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: isReturn ? Colors.orange[50] : Colors.blue[50],
-                borderRadius: BorderRadius.circular(12),
+          ),
+          const SizedBox(height: 6),
+          Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              Container(
+                height: 1,
+                width: 80,
+                color: Colors.grey[300],
               ),
-              child: Text(
-                stops == '0' ? 'Non-stop' : '$stops ${stops == '1' ? 'stop' : 'stops'}',
-                style: GoogleFonts.poppins(
-                  fontSize: 10,
-                  color: isReturn ? Colors.orange[800] : Colors.blue[800],
-                  fontWeight: FontWeight.w500,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isReturn ? Colors.orange[50] : Colors.blue[50],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  stops == '0'
+                      ? 'Non-stop'
+                      : '$stops ${stops == '1' ? 'stop' : 'stops'}',
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    color: isReturn ? Colors.orange[800] : Colors.blue[800],
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
-    );
-  
+            ],
+          ),
+        ],
+      );
+
   String _formatDate(String? dateString) {
     if (dateString == null || dateString.isEmpty) return '--';
-    
+
     try {
       final DateTime date = DateTime.parse(dateString);
       return DateFormat('MMM d, yyyy').format(date);

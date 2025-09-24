@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../core/core.dart';
+import '../../core/widgets/common/buttons/text_button.dart';
+import '../../core/widgets/common/cards/app_card.dart';
+import '../../core/widgets/shared/app_app_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppAppBar(
         title: 'SeeMyTrip',
         actions: [
@@ -20,66 +21,14 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      drawer: _buildDrawer(context),
       body: _buildBody(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: const Icon(Icons.add),
       ),
     );
-  }
 
-  Widget _buildDrawer(BuildContext context) {
-    return AppDrawer(
-      header: const UserAccountsDrawerHeader(
-        accountName: Text('John Doe'),
-        accountEmail: Text('john.doe@example.com'),
-        currentAccountPicture: CircleAvatar(
-          backgroundColor: Colors.white,
-          child: Text(
-            'JD',
-            style: TextStyle(fontSize: 20.0, color: Colors.blue),
-          ),
-        ),
-      ),
-      items: [
-        const DrawerItem(
-          title: 'Home',
-          icon: Icons.home,
-          isSelected: true,
-        ),
-        const DrawerItem(
-          title: 'My Trips',
-          icon: Icons.card_travel,
-        ),
-        const DrawerItem(
-          title: 'Favorites',
-          icon: Icons.favorite_border,
-        ),
-        const DrawerItem(
-          title: 'Bookings',
-          icon: Icons.bookmark_border,
-        ),
-        const DrawerItem.divider(),
-        const DrawerItem(
-          title: 'Settings',
-          icon: Icons.settings,
-        ),
-        DrawerItem(
-          title: 'Logout',
-          icon: Icons.logout,
-          color: Colors.red,
-          onTap: () {
-            // Handle logout
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBody(BuildContext context) {
-    return SingleChildScrollView(
+  Widget _buildBody(BuildContext context) => SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -99,10 +48,8 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return AppCard(
+  Widget _buildSearchBar(BuildContext context) => AppCard(
       onTap: () {
         // Handle search tap
       },
@@ -119,10 +66,8 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildPopularDestinations(BuildContext context) {
-    return Column(
+  Widget _buildPopularDestinations(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -169,15 +114,13 @@ class HomePage extends StatelessWidget {
         ),
       ],
     );
-  }
 
   Widget _buildDestinationCard(
     BuildContext context,
     String city,
     String country,
     String imageUrl,
-  ) {
-    return AppCard(
+  ) => AppCard(
       width: 150,
       padding: EdgeInsets.zero,
       onTap: () {
@@ -221,10 +164,8 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildTravelDeals(BuildContext context) {
-    return Column(
+  Widget _buildTravelDeals(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -278,10 +219,8 @@ class HomePage extends StatelessWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildCallToAction(BuildContext context) {
-    return Column(
+  Widget _buildCallToAction(BuildContext context) => Column(
       children: [
         const Text(
           'Ready for your next adventure?',
@@ -289,14 +228,14 @@ class HomePage extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16.0),
-        PrimaryButton(
+        TextButtonX(
           text: 'Explore Destinations',
           onPressed: () {
             // Navigate to explore page
           },
         ),
         const SizedBox(height: 8.0),
-        SecondaryButton(
+        TextButtonX(
           text: 'View All Deals',
           onPressed: () {
             // Navigate to deals page
@@ -304,5 +243,4 @@ class HomePage extends StatelessWidget {
         ),
       ],
     );
-  }
 }

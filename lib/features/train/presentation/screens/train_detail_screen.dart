@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../../../core/utils/colors.dart';
 import '../../../../core/widgets/common_text_widget.dart';
@@ -116,9 +117,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           _buildBottomFilterBar(context),
           if (isLoading)
             Center(
-              child: CircularProgressIndicator.adaptive(
-                valueColor: AlwaysStoppedAnimation<Color>(redCA0),
-                strokeWidth: 3.0,
+              child: LoadingAnimationWidget.dotsTriangle(
+                color: redCA0,
+                size: 80,
               ),
             ),
         ],

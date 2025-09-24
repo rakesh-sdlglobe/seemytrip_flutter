@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 // --- Modern RED Color Scheme ---
@@ -48,8 +49,7 @@ class SearchForm extends StatefulWidget {
 
 class _SearchFormState extends State<SearchForm> {
   // The horizontal list now simply reflects the state passed into the widget
-  List<Map<String, dynamic>> _generateQuickDates() {
-    return List.generate(14, (index) {
+  List<Map<String, dynamic>> _generateQuickDates() => List.generate(14, (index) {
       final date = DateTime.now().add(Duration(days: index));
       return {
         'date': date,
@@ -59,7 +59,6 @@ class _SearchFormState extends State<SearchForm> {
         'isSelected': widget.selectedDates.any((d) => isSameDay(d, date)),
       };
     });
-  }
 
   /// Shows a dialog with a full calendar for multi-date selection.
   void _showCalendarPicker(BuildContext context) {
@@ -77,8 +76,7 @@ class _SearchFormState extends State<SearchForm> {
           height: 420,
           // StatefulBuilder is used to update the dialog's UI without closing it
           child: StatefulBuilder(
-            builder: (context, setDialogState) {
-              return TableCalendar(
+            builder: (context, setDialogState) => TableCalendar(
                 focusedDay: widget.selectedDates.isNotEmpty
                     ? widget.selectedDates.first
                     : DateTime.now(),
@@ -110,8 +108,7 @@ class _SearchFormState extends State<SearchForm> {
                   // Update the dialog's state to show the change immediately
                   setDialogState(() {});
                 },
-              );
-            },
+              ),
           ),
         ),
         actions: [
@@ -127,8 +124,7 @@ class _SearchFormState extends State<SearchForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       decoration: BoxDecoration(
@@ -153,7 +149,6 @@ class _SearchFormState extends State<SearchForm> {
         ],
       ),
     );
-  }
 
   /// Builds the combined "From" and "To" input section.
   Widget _buildLocationSection() {
@@ -360,8 +355,7 @@ class _SearchFormState extends State<SearchForm> {
   }
 
   /// Builds the gradient search button.
-  Widget _buildSearchButton() {
-    return SizedBox(
+  Widget _buildSearchButton() => SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: widget.isLoading
@@ -404,12 +398,10 @@ class _SearchFormState extends State<SearchForm> {
             padding: const EdgeInsets.symmetric(vertical: 18),
             alignment: Alignment.center,
             child: widget.isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 3,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ? SizedBox(
+                    child: LoadingAnimationWidget.fourRotatingDots(
+                      color: Colors.white,
+                      size: 40,
                     ),
                   )
                 : Text(
@@ -425,5 +417,4 @@ class _SearchFormState extends State<SearchForm> {
         ),
       ),
     );
-  }
 }

@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/train/presentation/controllers/view_train_routes_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
+import '../../../../core/utils/colors.dart';
+import '../controllers/view_train_routes_controller.dart';
+
 class ViewTrainRoutes extends StatelessWidget {
+
+  ViewTrainRoutes({required this.trainNumber, required this.fromStation, required this.toStation}) {
+    viewRouteController.fetchTrainSchedule(trainNumber);
+  }
   final String trainNumber;
   final String fromStation;
   final String toStation;
   final ViewTrainRoutesController viewRouteController = Get.put(ViewTrainRoutesController());
 
-  ViewTrainRoutes({required this.trainNumber, required this.fromStation, required this.toStation}) {
-    viewRouteController.fetchTrainSchedule(trainNumber);
-  }
-
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Obx(() => Text(
-              viewRouteController.trainSchedule['trainName'] ?? "Train Routes",
+              viewRouteController.trainSchedule['trainName'] ?? 'Train Routes',
               style: TextStyle(color: Colors.white),
             )),
         centerTitle: true,
         backgroundColor: redCA0,
         foregroundColor: white,
         elevation: 1,
-        actions: [
+        actions: <Widget>[
           IconButton(
             icon: Icon(Icons.share),
             onPressed: () {},
@@ -36,11 +37,11 @@ class ViewTrainRoutes extends StatelessWidget {
         ],
       ),
       body: Column(
-        children: [
+        children: <Widget>[
           Divider(thickness: 1, color: Colors.grey.shade300),
           Obx(() {
             if (viewRouteController.trainSchedule.isEmpty) {
-              return Text("Running Days: N/A", style: TextStyle(fontSize: 16));
+              return Text('Running Days: N/A', style: TextStyle(fontSize: 16));
             }
             return Text(
               "Running Days: ${viewRouteController.trainSchedule['trainRunsOnMon'] == 'Y' ? 'M ' : ''}"
@@ -57,10 +58,10 @@ class ViewTrainRoutes extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (viewRouteController.isLoading.value) {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: LoadingAnimationWidget.fourRotatingDots(color: white, size: 20));
               }
               if (viewRouteController.trainSchedule.isEmpty) {
-                return Center(child: Text("No data available"));
+                return Center(child: Text('No data available'));
               }
 
               final stationList = viewRouteController.trainSchedule['stationList'];
@@ -76,10 +77,10 @@ class ViewTrainRoutes extends StatelessWidget {
                 builder: TimelineTileBuilder.connected(
                   connectionDirection: ConnectionDirection.before,
                   itemCount: stationList.length,
-                  contentsBuilder: (_, index) {
+                  contentsBuilder: (_, int index) {
                     final stop = stationList[index];
-                    final isFirst = stop['stationName'] == fromStation;
-                    final isLast = stop['stationName'] == toStation;
+                    final bool isFirst = stop['stationName'] == fromStation;
+                    final bool isLast = stop['stationName'] == toStation;
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -95,7 +96,7 @@ class ViewTrainRoutes extends StatelessWidget {
                           padding: const EdgeInsets.all(10.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: <Widget>[
                               Text(
                                 stop['stationName']!,
                                 style: TextStyle(
@@ -111,7 +112,7 @@ class ViewTrainRoutes extends StatelessWidget {
                               SizedBox(height: 4),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
+                                children: <Widget>[
                                   Text("Arr: ${stop['arrivalTime']}", style: TextStyle(fontSize: 12)),
                                   Text("Dep: ${stop['departureTime']}", style: TextStyle(fontSize: 12)),
                                   Text("Halt: ${stop['haltTime']} min", style: TextStyle(fontSize: 12)),
@@ -120,7 +121,7 @@ class ViewTrainRoutes extends StatelessWidget {
                               SizedBox(height: 4),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
+                                children: <Widget>[
                                   Text("Distance: ${stop['distance']} km", style: TextStyle(fontSize: 12)),
                                   Text("Day: ${stop['dayCount']}", style: TextStyle(fontSize: 12)),
                                 ],
@@ -131,10 +132,10 @@ class ViewTrainRoutes extends StatelessWidget {
                       ),
                     );
                   },
-                  indicatorBuilder: (_, index) {
+                  indicatorBuilder: (_, int index) {
                     final stop = stationList[index];
-                    final isFirst = stop['stationName'] == fromStation;
-                    final isLast = stop['stationName'] == toStation;
+                    final bool isFirst = stop['stationName'] == fromStation;
+                    final bool isLast = stop['stationName'] == toStation;
 
                     return DotIndicator(
                       size: 24,
@@ -146,7 +147,7 @@ class ViewTrainRoutes extends StatelessWidget {
                       ),
                     );
                   },
-                  connectorBuilder: (_, index, __) => SolidLineConnector(),
+                  connectorBuilder: (_, int index, __) => SolidLineConnector(),
                 ),
               );
             }),
@@ -154,5 +155,4 @@ class ViewTrainRoutes extends StatelessWidget {
         ],
       ),
     );
-  }
 }

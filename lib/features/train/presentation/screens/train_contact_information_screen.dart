@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/core/utils/colors.dart';
 import 'package:seemytrip/features/train/presentation/controllers/train_contact_information_controller.dart';
 
@@ -108,8 +109,7 @@ class _TrainAndBusContactInformationScreenState
   }
 
   // Helper method for footer links
-  Widget _buildFooterLink(String text, {required VoidCallback onTap}) {
-    return GestureDetector(
+  Widget _buildFooterLink(String text, {required VoidCallback onTap}) => GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
@@ -130,14 +130,11 @@ class _TrainAndBusContactInformationScreenState
         ),
       ),
     );
-  }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
+  Widget build(BuildContext context) => AnimatedBuilder(
       animation: _animationController,
-      builder: (context, child) {
-        return Container(
+      builder: (context, child) => Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
@@ -308,14 +305,12 @@ class _TrainAndBusContactInformationScreenState
                                   border: InputBorder.none,
                                   suffixIcon: Obx(() {
                                     if (controller.isLoading.value) {
-                                      return const Padding(
+                                      return Padding(
                                         padding: EdgeInsets.only(right: 16),
                                         child: SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor: AlwaysStoppedAnimation<Color>(redCA0),
+                                          child: LoadingAnimationWidget.fourRotatingDots(
+                                            color: white,
+                                            size: 20,
                                           ),
                                         ),
                                       );
@@ -431,14 +426,10 @@ class _TrainAndBusContactInformationScreenState
                                       : null,
                                   child: Center(
                                     child: controller.isLoading.value
-                                        ? const SizedBox(
-                                            width: 24,
-                                            height: 24,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2.5,
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
+                                        ? SizedBox(
+                                            child: LoadingAnimationWidget.fourRotatingDots(
+                                              color: Colors.white,
+                                              size: 20,
                                             ),
                                           )
                                         : Text(
@@ -478,8 +469,6 @@ class _TrainAndBusContactInformationScreenState
               ),
             ),
           ),
-        );
-      },
+        ),
     );
-  }
 }

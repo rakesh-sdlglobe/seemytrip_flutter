@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/utils/colors.dart';
@@ -149,7 +150,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       body: Obx(() {
         if (loginController.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: LoadingAnimationWidget.dotsTriangle(
+            color: redCA0,
+            size: 24,
+          ));
         }
 
         return ScrollConfiguration(

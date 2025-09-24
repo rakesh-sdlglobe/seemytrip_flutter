@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import '../../../utils/colors.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
@@ -80,13 +83,13 @@ class AppButton extends StatelessWidget {
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
               child: isLoading
-                  ? const SizedBox(
+                  ?  SizedBox(
                       width: 24,
                       height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
+                      child: LoadingAnimationWidget.fourRotatingDots(
+                        color: Colors.white,
+                        size: 40,
+                      )
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,

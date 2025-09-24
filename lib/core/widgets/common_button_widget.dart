@@ -4,7 +4,12 @@ import 'package:seemytrip/core/utils/colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 
 class CommonButtonWidget {
-  static button({onTap, text, buttonColor, SizedBox? child}) {
+  static Widget button({
+    VoidCallback? onTap,
+    String? text,
+    Color? buttonColor,
+    Widget? child,
+  }) {
     return MaterialButton(
       onPressed: onTap,
       height: 50,
@@ -13,10 +18,10 @@ class CommonButtonWidget {
         borderRadius: BorderRadius.circular(40),
       ),
       color: buttonColor,
-      child: CommonTextWidget.PoppinsSemiBold(
+      child: child ?? CommonTextWidget.PoppinsSemiBold(
         fontSize: 16,
-        text: text,
-        color: white,
+        text: text ?? '',
+        color: Colors.white,
       ),
     );
   }

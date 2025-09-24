@@ -1,5 +1,6 @@
 class AppConfig {
   static const String baseUrl = 'http://192.168.0.12:3002/api';
+  // static const String baseUrl = 'http://10.0.2.2:3002/api';
   // static const String baseUrl = 'http://192.168.1:3002/api';
   static const String googleClientId =
       '493628196678-cjvhttpbp9c4ha4a35srklc9skvgq324.apps.googleusercontent.com';
@@ -23,13 +24,13 @@ class AppConfig {
   static const String trainsList = '$baseUrl/trains/getTrains';
   
   // Bus endpoints
-  static const String busAuth = r'$baseUrl/bus/authenticateBusAPI';
-  static const String busCities = r'$baseUrl/bus/getBusCityList';
-  static const String busSearch = r'$baseUrl/bus/busSearch';
-  static const String busSeatLayout = r'$baseUrl/bus/getBusSeatLayOut';
-  static const String busBoardingPoints = r'$baseUrl/bus/getBoardingPointDetails';
+  static const String busAuth = '$baseUrl/bus/authenticateBusAPI';
+  static const String busCities = '$baseUrl/bus/getBusCityList';
+  static const String busSearch = '$baseUrl/bus/busSearch';
+  static const String busSeatLayout = '$baseUrl/bus/getBusSeatLayOut';
+  static const String busBoardingPoints = '$baseUrl/bus/getBoardingPointDetails';
   
   // Flight endpoints
-  static const String flightsAirports = r'$baseUrl/flights/getFlightsAirports';
-  static const String flightsSearch = r'$baseUrl/flights/getFlightsList';
+  static const String flightsAirports = '$baseUrl/flights/getFlightsAirports';
+  static const String flightsSearch = '$baseUrl/flights/getFlightsList';
 }

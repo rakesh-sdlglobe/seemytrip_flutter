@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/widgets/common_text_widget.dart';
@@ -375,7 +376,10 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                           fit: BoxFit.cover,
                           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) return child;
-                            return Center(child: CircularProgressIndicator());
+                            return Center(child: LoadingAnimationWidget.dotsTriangle(
+                              color: redCA0,
+                              size: 24,
+                            ));
                           },
                           errorBuilder: (_, __, ___) => Container(
                             color: Colors.grey[200],

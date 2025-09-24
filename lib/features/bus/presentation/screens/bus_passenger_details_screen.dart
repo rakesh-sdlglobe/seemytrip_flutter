@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'passenger_form.dart';
 
@@ -219,8 +220,11 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   @override
   Widget build(BuildContext context) {
     if (_fadeAnimation == null || _animationController == null) {
-      return const Center(
-          child: CircularProgressIndicator(color: _AppStyles.primary));
+      return Center(
+          child: LoadingAnimationWidget.fourRotatingDots(
+        color: _AppStyles.primary,
+        size: 40,
+      ));
     }
 
     return Scaffold(

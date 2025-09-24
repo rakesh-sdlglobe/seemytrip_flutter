@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/common_textfeild_widget.dart';
-import 'package:seemytrip/features/train/presentation/controllers/train_detail_controller.dart';
-import 'package:seemytrip/features/train/presentation/controllers/travellerDetailController.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../../../../core/utils/common_textfeild_widget.dart';
+import '../controllers/train_detail_controller.dart';
+import '../controllers/travellerDetailController.dart';
+import '../../../../core/utils/colors.dart';
+import '../../../../core/widgets/common_button_widget.dart';
+import '../../../../core/widgets/common_text_widget.dart';
 
 // Ensure it's a StatefulWidget
 class TravellerDetailScreen extends StatefulWidget {
@@ -133,9 +134,9 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
                       ? SizedBox(
                           height: 24,
                           width: 24,
-                          child: CircularProgressIndicator(
+                          child: LoadingAnimationWidget.fourRotatingDots(
                             color: white,
-                            strokeWidth: 3,
+                            size: 20,
                           ),
                         )
                       : null,
@@ -263,6 +264,7 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
           value: _selectedBerth, // Use state variable
           isExpanded: true,
           icon: Icon(Icons.arrow_drop_down, color: grey717),
+          // ignore: prefer_expression_function_bodies
           items: berthItems.map((String value) { // Use updated berthItems list
             return DropdownMenuItem<String>(
               value: value,
