@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
 
 class MyGiftCardScreen extends StatelessWidget {
    MyGiftCardScreen({Key? key}) : super(key: key);
 
   @override 
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -21,11 +20,11 @@ class MyGiftCardScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "My Gift Card",
-          color: white,
+          text: 'My Gift Card',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -43,5 +42,4 @@ class MyGiftCardScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

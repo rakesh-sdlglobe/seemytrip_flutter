@@ -57,10 +57,12 @@ class AppCard extends StatelessWidget {
         boxShadow: showShadow
             ? [
                 BoxShadow(
-                  color: shadowColor.withOpacity(isDark ? 0.3 : 0.1),
-                  blurRadius: 15,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 4),
+                  color: isDark 
+                      ? Colors.black.withOpacity(0.4)
+                      : shadowColor.withOpacity(0.1),
+                  blurRadius: isDark ? 12 : 15,
+                  spreadRadius: isDark ? 0 : 1,
+                  offset: Offset(0, isDark ? 6 : 4),
                 ),
               ]
             : null,
@@ -145,7 +147,10 @@ class AppCard extends StatelessWidget {
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [Colors.grey.shade900, Colors.grey.shade800],
+      colors: [
+        const Color(0xFF2A2A2A), 
+        const Color(0xFF1E1E1E)
+      ],
       stops: const [0.0, 1.0],
     );
   }

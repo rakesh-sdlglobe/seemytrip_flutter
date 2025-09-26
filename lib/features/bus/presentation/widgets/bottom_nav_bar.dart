@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class BusBottomNavBar extends StatelessWidget {
-  final int selectedIndex;
-  final Function(int) onItemTapped;
 
   const BusBottomNavBar({
     Key? key,
     required this.selectedIndex,
     required this.onItemTapped,
   }) : super(key: key);
+  final int selectedIndex;
+  final Function(int) onItemTapped;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
@@ -21,7 +20,7 @@ class BusBottomNavBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: redCA0.withOpacity(0.13),
+            color: AppColors.redCA0.withValues(alpha: 0.13),
             spreadRadius: 1,
             blurRadius: 10,
             offset: const Offset(0, -2),
@@ -37,7 +36,6 @@ class BusBottomNavBar extends StatelessWidget {
         ],
       ),
     );
-  }
 
   Widget _buildNavItem(IconData icon, String label, int index) {
     bool isSelected = selectedIndex == index;
@@ -48,14 +46,14 @@ class BusBottomNavBar extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isSelected ? redCA0 : Colors.grey[600],
+            color: isSelected ? AppColors.redCA0 : Colors.grey[600],
             size: 24,
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: isSelected ? redCA0 : Colors.grey[600],
+              color: isSelected ? AppColors.redCA0 : Colors.grey[600],
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),

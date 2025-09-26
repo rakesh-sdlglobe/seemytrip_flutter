@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../components/irctcs_webview.dart';
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/buttons/app_button.dart';
 import '../../../../core/widgets/common/cards/app_card.dart';
 import '../../../../core/widgets/common/common_app_bar.dart';
@@ -92,7 +92,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: redF9E,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           children: [
             _buildBody(),
@@ -108,7 +108,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
 
   Widget _buildAppBar() => CommonAppBar(
         title: 'Train Booking',
-        textColor: white,
+        textColor: AppColors.white,
         showBackButton: true,
       );
 
@@ -140,7 +140,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                     style: TextStyle(
                       fontFamily: FontFamily.PoppinsBold,
                       fontSize: 18,
-                      color: black2E2,
+                      color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.black2E2,
                     ),
                   ),
                   Text(
@@ -148,7 +148,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                     style: TextStyle(
                       fontFamily: FontFamily.PoppinsMedium,
                       fontSize: 14,
-                      color: greyB8B,
+                      color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.greyB8B,
                     ),
                   ),
                 ],
@@ -168,7 +168,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsMedium,
                               fontSize: 12,
-                              color: grey717,
+                              color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -177,7 +177,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsMedium,
                               fontSize: 14,
-                              color: black2E2,
+                              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
                             ),
                           ),
                           Text(
@@ -185,7 +185,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsMedium,
                               fontSize: 12,
-                              color: greyB8B,
+                              color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.greyB8B,
                             ),
                           ),
                         ],
@@ -204,7 +204,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsMedium,
                               fontSize: 12,
-                              color: grey717,
+                              color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -213,7 +213,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsMedium,
                               fontSize: 14,
-                              color: black2E2,
+                              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
                             ),
                           ),
                           Text(
@@ -221,7 +221,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsMedium,
                               fontSize: 12,
-                              color: greyB8B,
+                              color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.greyB8B,
                               ),
                           ),
                         ],
@@ -239,7 +239,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                     style: TextStyle(
                       fontFamily: FontFamily.PoppinsMedium,
                       fontSize: 14,
-                      color: grey717,
+                      color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
                       overflow: TextOverflow.ellipsis,
                         ),
                   ),
@@ -248,7 +248,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                     style: TextStyle(
                       fontFamily: FontFamily.PoppinsMedium,
                       fontSize: 14,
-                      color: grey717,
+                      color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -259,27 +259,6 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
         ),
       );
 
-  Widget _buildScheduleColumn(String time, String date) => Column(
-        children: [
-          Text(
-            time,
-            style: TextStyle(
-              fontFamily: FontFamily.PoppinsBold,
-              fontSize: 18,
-              color: black2E2,
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            date,
-            style: TextStyle(
-              fontFamily: FontFamily.PoppinsRegular,
-              fontSize: 12,
-              color: greyB8B,
-            ),
-          ),
-        ],
-      );
 
   Widget _buildDuration() => Row(
         children: [
@@ -287,7 +266,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
             height: 2,
             width: 50,
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [redCA0, Colors.orangeAccent]),
+              gradient: LinearGradient(colors: [AppColors.redCA0, Colors.orangeAccent]),
             ),
           ),
           SizedBox(width: 12),
@@ -296,7 +275,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
             style: TextStyle(
               fontFamily: FontFamily.PoppinsMedium,
               fontSize: 14,
-              color: grey717,
+              color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
             ),
           ),
           SizedBox(width: 12),
@@ -304,7 +283,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
             height: 2,
             width: 50,
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.orangeAccent, redCA0]),
+              gradient: LinearGradient(colors: [Colors.orangeAccent, AppColors.redCA0]),
             ),
           ),
         ],
@@ -322,7 +301,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                 style: TextStyle(
                   fontFamily: FontFamily.PoppinsBold,
                   fontSize: 18,
-                  color: black2E2,
+                  color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.black2E2,
                 ),
               ),
               SizedBox(height: 12),
@@ -342,9 +321,15 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]!.withOpacity(0.8),
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.grey[800]!.withValues(alpha: 0.8)
+                      : Colors.grey[200]!.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[300]!),
+                    border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.grey[600]!
+                        : Colors.grey[300]!
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -356,10 +341,12 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                         style: TextStyle(
                           fontFamily: FontFamily.PoppinsMedium,
                           fontSize: 14,
-                          color: irctcUsername.isEmpty ? grey888 : black2E2,
+                          color: irctcUsername.isEmpty
+                              ? Theme.of(context).hintColor
+                              : Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2,
                         ),
                       ),
-                      Icon(Icons.arrow_forward_ios, color: redCA0, size: 18),
+                      Icon(Icons.arrow_forward_ios, color: AppColors.redCA0, size: 18),
                     ],
                   ),
                 ),
@@ -414,7 +401,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
             style: TextStyle(
               fontFamily: FontFamily.PoppinsSemiBold,
               fontSize: 16,
-              color: Colors.grey[700],
+              color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.grey[700],
             ),
           ),
         ),
@@ -449,12 +436,16 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
             child: Ink(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.grey[600]!
+                    : Colors.grey[200]!
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Theme.of(context).shadowColor.withOpacity(0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -465,12 +456,12 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: redCA0.withOpacity(0.1),
+                      color: AppColors.redCA0.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       icon,
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       size: 22,
                     ),
                   ),
@@ -484,7 +475,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                           style: TextStyle(
                             fontFamily: FontFamily.PoppinsSemiBold,
                             fontSize: 15,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -493,7 +484,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                           style: TextStyle(
                             fontFamily: FontFamily.PoppinsRegular,
                             fontSize: 13,
-                            color: Colors.grey[600],
+                            color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[600],
                           ),
                         ),
                       ],
@@ -502,7 +493,9 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 16,
-                    color: Colors.grey[400],
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.grey[600]
+                      : Colors.grey[400],
                   ),
                 ],
               ),
@@ -523,7 +516,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                 style: TextStyle(
                   fontFamily: FontFamily.PoppinsBold,
                   fontSize: 18,
-                  color: black2E2,
+                  color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.black2E2,
                 ),
               ),
               SizedBox(height: 12),
@@ -536,7 +529,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                   style: TextStyle(
                     fontFamily: FontFamily.PoppinsMedium,
                     fontSize: 14,
-                    color: redCA0,
+                    color: AppColors.redCA0,
                     decoration: TextDecoration.underline,
                   ),
                 ),
@@ -575,10 +568,16 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     color: isSelected
-                        ? redCA0.withOpacity(0.15)
-                        : Colors.grey[200]!.withOpacity(0.8),
+                        ? AppColors.redCA0.withOpacity(0.15)
+                        : Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.grey[800]!.withOpacity(0.8)
+                          : Colors.grey[200]!.withOpacity(0.8),
                     border: Border.all(
-                        color: isSelected ? redCA0 : Colors.grey[300]!),
+                        color: isSelected 
+                          ? AppColors.redCA0 
+                          : Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.grey[600]!
+                            : Colors.grey[300]!),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -591,7 +590,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsMedium,
                               fontSize: 16,
-                              color: black2E2,
+                              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -600,13 +599,13 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsRegular,
                               fontSize: 12,
-                              color: grey717,
+                              color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
                             ),
                           ),
                         ],
                       ),
                       IconButton(
-                        icon: Icon(Icons.edit, color: redCA0, size: 20),
+                        icon: Icon(Icons.edit, color: AppColors.redCA0, size: 20),
                         onPressed: () => print('Edit tapped for $name'),
                       ),
                     ],
@@ -632,7 +631,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                 style: TextStyle(
                   fontFamily: FontFamily.PoppinsBold,
                   fontSize: 18,
-                  color: black2E2,
+                  color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.black2E2,
                 ),
               ),
               SizedBox(height: 12),
@@ -656,7 +655,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
             style: TextStyle(
               fontFamily: FontFamily.PoppinsMedium,
               fontSize: 14,
-              color: black2E2,
+              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
             ),
           ),
           SizedBox(height: 8),
@@ -668,10 +667,12 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
               hintStyle: TextStyle(
                 fontFamily: FontFamily.PoppinsRegular,
                 fontSize: 14,
-                color: grey717,
+                color: Theme.of(context).hintColor,
               ),
               filled: true,
-              fillColor: Colors.grey[200]!.withOpacity(0.8),
+              fillColor: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.grey[800]!.withValues(alpha: 0.8)
+                : Colors.grey[200]!.withValues(alpha: 0.8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -682,7 +683,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
             style: TextStyle(
               fontFamily: FontFamily.PoppinsRegular,
               fontSize: 14,
-              color: black2E2,
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2,
             ),
           ),
         ],
@@ -700,7 +701,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                 style: TextStyle(
                   fontFamily: FontFamily.PoppinsBold,
                   fontSize: 18,
-                  color: black2E2,
+                  color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.black2E2,
                 ),
               ),
               SizedBox(height: 12),
@@ -710,7 +711,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                     value: 1,
                     groupValue: 1,
                     onChanged: (value) {},
-                    activeColor: redCA0,
+                    activeColor: AppColors.redCA0,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -720,7 +721,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                         style: TextStyle(
                           fontFamily: FontFamily.PoppinsMedium,
                           fontSize: 14,
-                          color: black2E2,
+                          color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
                         ),
                       ),
                       SizedBox(height: 4),
@@ -729,7 +730,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                         style: TextStyle(
                           fontFamily: FontFamily.PoppinsRegular,
                           fontSize: 12,
-                          color: grey717,
+                          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
                         ),
                       ),
                     ],
@@ -745,10 +746,12 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                   hintStyle: TextStyle(
                     fontFamily: FontFamily.PoppinsRegular,
                     fontSize: 14,
-                    color: grey717,
+                    color: Theme.of(context).hintColor,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[200]!.withOpacity(0.8),
+                  fillColor: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.grey[800]!.withValues(alpha: 0.8)
+                    : Colors.grey[200]!.withValues(alpha: 0.8),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide.none,
@@ -762,7 +765,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                       style: TextStyle(
                         fontFamily: FontFamily.PoppinsMedium,
                         fontSize: 14,
-                        color: redCA0,
+                        color: AppColors.redCA0,
                       ),
                     ),
                   ),
@@ -770,7 +773,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                 style: TextStyle(
                   fontFamily: FontFamily.PoppinsRegular,
                   fontSize: 14,
-                  color: black2E2,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2,
                 ),
               ),
             ],
@@ -780,10 +783,10 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
 
   Widget _buildBottomBar() => Container(
         decoration: BoxDecoration(
-          color: white,
+          color: Theme.of(context).bottomAppBarTheme.color ?? Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
+              color: Theme.of(context).shadowColor.withOpacity(0.12),
               blurRadius: 10,
               offset: Offset(0, -2),
             ),
@@ -805,7 +808,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                   Text(
                     'Total Fare',
                     style: TextStyle(
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey888,
                       fontSize: 14,
                       fontFamily: FontFamily.PoppinsRegular,
                     ),
@@ -814,7 +817,7 @@ class _TrainBookingScreenState extends State<TrainBookingScreen>
                   Text(
                     '₹${widget.price?.toStringAsFixed(2) ?? '0.00'}',
                     style: TextStyle(
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       fontSize: 22,
                       fontFamily: FontFamily.PoppinsBold,
                     ),

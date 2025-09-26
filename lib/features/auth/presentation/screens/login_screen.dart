@@ -1,21 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/config/app_config.dart';
-import 'package:seemytrip/components/otp_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/features/profile/presentation/screens/referral/refferal_screen.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/font_family.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
-import 'package:seemytrip/features/auth/presentation/screens/Login_bottom_sheet.dart';
-import 'package:seemytrip/features/auth/presentation/screens/mobile_bottom_sheet.dart';
-import 'package:seemytrip/core/presentation/screens/navigation/navigation_screen.dart';
-import 'package:seemytrip/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../components/otp_screen.dart';
+import '../../../../core/config/app_config.dart';
+import '../../../../core/presentation/screens/navigation/navigation_screen.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_button_widget.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../main.dart';
+import '../../../../shared/constants/font_family.dart';
+import '../../../../shared/constants/images.dart';
+import '../../../profile/presentation/screens/referral/refferal_screen.dart';
+import '../controllers/login_controller.dart';
+import 'Login_bottom_sheet.dart';
+import 'mobile_bottom_sheet.dart';
 
 // ignore: must_be_immutable
 class LogInScreen extends StatelessWidget {
@@ -90,9 +92,8 @@ class LogInScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Stack(
         children: [
           Container(
@@ -122,8 +123,8 @@ class LogInScreen extends StatelessWidget {
                               Get.to(() => NavigationScreen());
                             },
                             child: CommonTextWidget.PoppinsSemiBold(
-                              text: "SKIP",
-                              color: white,
+                              text: 'SKIP',
+                              color: AppColors.white,
                               fontSize: 16,
                             ),
                           ),
@@ -133,9 +134,8 @@ class LogInScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "Join the club of 10 crore+ "
-                                "happy travellers",
-                            color: white,
+                            text: 'Join the club of 10 crore+ happy travellers',
+                            color: AppColors.white,
                             fontSize: 22,
                           ),
                           SizedBox(height: 50),
@@ -156,7 +156,7 @@ class LogInScreen extends StatelessWidget {
                   topRight: Radius.circular(30),
                   topLeft: Radius.circular(30),
                 ),
-                color: white,
+                color: AppColors.white,
               ),
               child: ScrollConfiguration(
                 behavior: MyBehavior(),
@@ -168,8 +168,8 @@ class LogInScreen extends StatelessWidget {
                         SizedBox(height: 20),
                         CommonTextWidget.PoppinsMedium(
                           // text: "Use Mobile Number or Email to Login/Signup",
-                          text: "Use Google gmail to Login/Signup",
-                          color: grey929,
+                          text: 'Use Google gmail to Login/Signup',
+                          color: AppColors.grey929,
                           fontSize: 14,
                         ),
                         // SizedBox(height: 35),
@@ -228,9 +228,9 @@ class LogInScreen extends StatelessWidget {
                                     loginUser();
                                   },
                             buttonColor: loginController.isTextEmpty.isFalse
-                                ? greyD8D
-                                : redCA0,
-                            text: "CONTINUE",
+                                ? AppColors.greyD8D
+                                : AppColors.redCA0,
+                            text: 'CONTINUE',
                           ),
                         ),
 
@@ -369,8 +369,8 @@ class LogInScreen extends StatelessWidget {
                               height: 50,
                               width: Get.width,
                               decoration: BoxDecoration(
-                                border: Border.all(color: greyD8D, width: 1),
-                                color: white,
+                                border: Border.all(color: AppColors.greyD8D, width: 1),
+                                color: AppColors.white,
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: Padding(
@@ -386,9 +386,9 @@ class LogInScreen extends StatelessWidget {
                                       width: 24,
                                     ),
                                     Text(
-                                      "Continue with Google",
+                                      'Continue with Google',
                                       style: TextStyle(
-                                        color: grey717,
+                                        color: AppColors.grey717,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -417,8 +417,8 @@ class LogInScreen extends StatelessWidget {
                             height: 50,
                             width: Get.width,
                             decoration: BoxDecoration(
-                              border: Border.all(color: greyD8D, width: 1),
-                              color: white,
+                              border: Border.all(color: AppColors.greyD8D, width: 1),
+                              color: AppColors.white,
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: Padding(
@@ -435,9 +435,9 @@ class LogInScreen extends StatelessWidget {
                                   // ),
                                   Icon(Icons.email),
                                   Text(
-                                    "Continue with email otp",
+                                    'Continue with email otp',
                                     style: TextStyle(
-                                      color: grey717,
+                                      color: AppColors.grey717,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -466,19 +466,19 @@ class LogInScreen extends StatelessWidget {
                           child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text: "Have a ",
+                              text: 'Have a ',
                               style: TextStyle(
                                 fontFamily: FontFamily.PoppinsMedium,
                                 fontSize: 14,
-                                color: grey929,
+                                color: AppColors.grey929,
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: "Referral Code?",
+                                  text: 'Referral Code?',
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontFamily: FontFamily.PoppinsSemiBold,
-                                      color: redCA0),
+                                      color: AppColors.redCA0),
                                 ),
                               ],
                             ),
@@ -488,33 +488,33 @@ class LogInScreen extends StatelessWidget {
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: "By proceeding, you agree to SeeMyTrip’s ",
+                            text: 'By proceeding, you agree to SeeMyTrip’s ',
                             style: TextStyle(
                               fontFamily: FontFamily.PoppinsRegular,
                               fontSize: 10,
-                              color: grey929,
+                              color: AppColors.grey929,
                             ),
                             children: <TextSpan>[
                               TextSpan(
-                                text: "Privacy Policy. User Agreement. T&Cs ",
+                                text: 'Privacy Policy. User Agreement. T&Cs ',
                                 style: TextStyle(
                                     fontSize: 10,
                                     fontFamily: FontFamily.PoppinsMedium,
-                                    color: redCA0),
+                                    color: AppColors.redCA0),
                               ),
                               TextSpan(
-                                text: "as well Mobile connect’s ",
+                                text: 'as well Mobile connect’s ',
                                 style: TextStyle(
                                     fontSize: 10,
                                     fontFamily: FontFamily.PoppinsRegular,
-                                    color: grey929),
+                                    color: AppColors.grey929),
                               ),
                               TextSpan(
-                                text: "T&Cs",
+                                text: 'T&Cs',
                                 style: TextStyle(
                                     fontSize: 10,
                                     fontFamily: FontFamily.PoppinsMedium,
-                                    color: redCA0),
+                                    color: AppColors.redCA0),
                               ),
                             ],
                           ),
@@ -530,5 +530,4 @@ class LogInScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

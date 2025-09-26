@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/cabs/presentation/controllers/cab_search_controller.dart';
-import 'package:seemytrip/features/hotels/presentation/screens/select_checkin_date_screen.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/home/presentation/screens/OutStationCabsScreen/out_station_cab_from_to_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../../../cabs/presentation/controllers/cab_search_controller.dart';
+import '../../../../hotels/presentation/screens/select_checkin_date_screen.dart';
+import 'out_station_cab_from_to_screen.dart';
 
 class OutStationCabScreen extends StatelessWidget {
   OutStationCabScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -26,34 +26,34 @@ class OutStationCabScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Outstation Cabs",
-          color: white,
+          text: 'Outstation Cabs',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
-          children: [
+          children: <Widget>[
             SizedBox(height: 20),
             Container(
               width: Get.width,
               decoration: BoxDecoration(
-                color: yellowF7C.withOpacity(0.35),
+                color: AppColors.yellowF7C.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: Row(
-                  children: [
-                    SvgPicture.asset(info, color: yellowCE8),
+                  children: <Widget>[
+                    SvgPicture.asset(info, color: AppColors.yellowCE8),
                     SizedBox(width: 10),
                     CommonTextWidget.PoppinsRegular(
-                      text: "Includes one pick up & drop",
-                      color: yellowCE8,
+                      text: 'Includes one pick up & drop',
+                      color: AppColors.yellowCE8,
                       fontSize: 12,
                     ),
                   ],
@@ -64,19 +64,19 @@ class OutStationCabScreen extends StatelessWidget {
             Container(
               width: Get.width,
               decoration: BoxDecoration(
-                color: grey9B9.withOpacity(0.15),
+                color: AppColors.grey9B9.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: greyE2E, width: 1),
+                border: Border.all(color: AppColors.greyE2E, width: 1),
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 14, vertical: 17),
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     SvgPicture.asset(arrowsLeftRight),
                     SizedBox(width: 10),
                     CommonTextWidget.PoppinsMedium(
-                      text: "Travel",
-                      color: grey888,
+                      text: 'Travel',
+                      color: AppColors.grey888,
                       fontSize: 14,
                     ),
                     SizedBox(width: 20),
@@ -84,13 +84,13 @@ class OutStationCabScreen extends StatelessWidget {
                       height: 30,
                       child: GetBuilder<CabSearchController>(
                         init: CabSearchController(),
-                        builder: (controller) => ListView.builder(
+                        builder: (CabSearchController controller) => ListView.builder(
                           padding: EdgeInsets.zero,
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: Lists.cabSearchList1.length,
                           scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) => Padding(
+                          itemBuilder: (BuildContext context, int index) => Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: InkWell(
                               onTap: () {
@@ -99,14 +99,14 @@ class OutStationCabScreen extends StatelessWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(4),
-                                  color: white,
+                                  color: AppColors.white,
                                   border: Border.all(
                                       color: controller.selectedIndex == index
-                                          ? redCA0
-                                          : white),
-                                  boxShadow: [
+                                          ? AppColors.redCA0
+                                          : AppColors.white),
+                                  boxShadow: <BoxShadow>[
                                     BoxShadow(
-                                      color: grey515.withOpacity(0.25),
+                                      color: AppColors.grey515.withValues(alpha: 0.25),
                                       blurRadius: 6,
                                       offset: Offset(0, 1),
                                     ),
@@ -118,8 +118,8 @@ class OutStationCabScreen extends StatelessWidget {
                                   child: CommonTextWidget.PoppinsMedium(
                                     text: Lists.cabSearchList1[index],
                                     color: controller.selectedIndex == index
-                                        ? redCA0
-                                        : black2E2,
+                                        ? AppColors.redCA0
+                                        : AppColors.black2E2,
                                     fontSize: 10,
                                   ),
                                 ),
@@ -139,7 +139,7 @@ class OutStationCabScreen extends StatelessWidget {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.zero,
-              itemBuilder: (context, index) => Padding(
+              itemBuilder: (BuildContext context, int index) => Padding(
                 padding: EdgeInsets.only(bottom: 15),
                 child: InkWell(
                   onTap: () {
@@ -148,20 +148,20 @@ class OutStationCabScreen extends StatelessWidget {
                   child: Container(
                     width: Get.width,
                     decoration: BoxDecoration(
-                      color: grey9B9.withOpacity(0.15),
+                      color: AppColors.grey9B9.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: greyE2E, width: 1),
+                      border: Border.all(color: AppColors.greyE2E, width: 1),
                     ),
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       child: Row(
-                        children: [
+                        children: <Widget>[
                           SvgPicture.asset(trainAndBusFromToIcon),
                           SizedBox(width: 10),
                           CommonTextWidget.PoppinsMedium(
                             text: Lists.outStationOneWayTabList[index],
-                            color: grey888,
+                            color: AppColors.grey888,
                             fontSize: 14,
                           ),
                         ],
@@ -178,27 +178,27 @@ class OutStationCabScreen extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: greyE2E, width: 1),
+                  border: Border.all(color: AppColors.greyE2E, width: 1),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       SvgPicture.asset(calendarPlus),
                       SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           CommonTextWidget.PoppinsMedium(
-                            text: "Pick Up Time",
-                            color: grey888,
+                            text: 'Pick Up Time',
+                            color: AppColors.grey888,
                             fontSize: 12,
                           ),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "11 Oct, 10:00 AM",
-                            color: black2E2,
+                            text: '11 Oct, 10:00 AM',
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                         ],
@@ -216,27 +216,27 @@ class OutStationCabScreen extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: greyE2E, width: 1),
+                  border: Border.all(color: AppColors.greyE2E, width: 1),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       SvgPicture.asset(calendarPlus),
                       SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           CommonTextWidget.PoppinsMedium(
-                            text: "Pick Up Time",
-                            color: grey888,
+                            text: 'Pick Up Time',
+                            color: AppColors.grey888,
                             fontSize: 12,
                           ),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "12 Oct, 10:00 AM",
-                            color: black2E2,
+                            text: '12 Oct, 10:00 AM',
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                         ],
@@ -248,8 +248,8 @@ class OutStationCabScreen extends StatelessWidget {
             ),
             Spacer(),
             CommonButtonWidget.button(
-              text: "SEARCH",
-              buttonColor: redCA0,
+              text: 'SEARCH',
+              buttonColor: AppColors.redCA0,
               onTap: () {
                 // Get.to(() => CabTerminalScreen1());
               },
@@ -259,5 +259,4 @@ class OutStationCabScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

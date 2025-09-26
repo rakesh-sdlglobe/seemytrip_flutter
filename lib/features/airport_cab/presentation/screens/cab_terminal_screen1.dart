@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/airport_cab/presentation/screens/cab_terminal_screen2.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../core/widgets/lists_widget.dart';
+import '../../../../main.dart';
+import '../../../../shared/constants/images.dart';
+import 'cab_terminal_screen2.dart';
 
 class CabTerminalScreen1 extends StatelessWidget {
   CabTerminalScreen1({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -35,11 +35,11 @@ class CabTerminalScreen1 extends StatelessWidget {
                     onTap: () {
                       Get.back();
                     },
-                    child: Icon(Icons.arrow_back, color: white, size: 20),
+                    child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                   ),
                   CommonTextWidget.PoppinsSemiBold(
-                    text: "Terminal 1C to Delhi...",
-                    color: white,
+                    text: 'Terminal 1C to Delhi...',
+                    color: AppColors.white,
                     fontSize: 18,
                   ),
                   Container(),
@@ -60,21 +60,21 @@ class CabTerminalScreen1 extends StatelessWidget {
               width: Get.width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: grey9B9.withOpacity(0.15),
-                border: Border.all(color: greyE2E, width: 1),
+                color: AppColors.grey9B9.withValues(alpha: 0.15),
+                border: Border.all(color: AppColors.greyE2E, width: 1),
               ),
               child: Center(
                 child: CommonTextWidget.PoppinsMedium(
                   text:
-                      "Distance for selected route is 9kms | Approx 0.5 hr(s)",
-                  color: grey575,
+                      'Distance for selected route is 9kms | Approx 0.5 hr(s)',
+                  color: AppColors.grey575,
                   fontSize: 10,
                 ),
               ),
             ),
           ),
           SizedBox(height: 20),
-          Divider(color: greyE8E, thickness: 5),
+          Divider(color: AppColors.greyE8E, thickness: 5),
           SizedBox(height: 15),
           Expanded(
             child: ScrollConfiguration(
@@ -96,7 +96,7 @@ class CabTerminalScreen1 extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 15),
-                      Divider(color: greyE8E, thickness: 5),
+                      Divider(color: AppColors.greyE8E, thickness: 5),
                       SizedBox(height: 15),
                     ],
                   ),
@@ -107,5 +107,4 @@ class CabTerminalScreen1 extends StatelessWidget {
         ],
       ),
     );
-  }
 }

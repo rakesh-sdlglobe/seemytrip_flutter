@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/features/flights/presentation/screens/flight_book_screen.dart';
 import 'package:seemytrip/core/widgets/common_button_widget.dart';
@@ -13,8 +13,7 @@ class RoundTripScreen1 extends StatelessWidget {
   RoundTripScreen1({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
+  Widget build(BuildContext context) => ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
         child: Column(
@@ -28,13 +27,13 @@ class RoundTripScreen1 extends StatelessWidget {
               itemBuilder: (context, index) => Padding(
                 padding: EdgeInsets.only(bottom: 15),
                 child: InkWell(
-                  onTap: Lists.flightSearchRoundTripList1[index]["onTap"],
+                  onTap: Lists.flightSearchRoundTripList1[index]['onTap'],
                   child: Container(
                     width: Get.width,
                     decoration: BoxDecoration(
-                      color: grey9B9.withOpacity(0.15),
+                      color: AppColors.grey9B9.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(width: 1, color: greyE2E),
+                      border: Border.all(width: 1, color: AppColors.greyE2E),
                     ),
                     child: Padding(
                       padding:
@@ -42,7 +41,7 @@ class RoundTripScreen1 extends StatelessWidget {
                       child: Row(
                         children: [
                           SvgPicture.asset(
-                              Lists.flightSearchRoundTripList1[index]["image"]),
+                              Lists.flightSearchRoundTripList1[index]['image']),
                           SizedBox(width: 15),
                           Expanded(
                             child: Column(
@@ -50,8 +49,8 @@ class RoundTripScreen1 extends StatelessWidget {
                               children: [
                                 CommonTextWidget.PoppinsMedium(
                                   text: Lists.flightSearchRoundTripList1[index]
-                                      ["text1"],
-                                  color: grey888,
+                                      ['text1'],
+                                  color: AppColors.grey888,
                                   fontSize: 14,
                                 ),
                                 Row(
@@ -59,23 +58,23 @@ class RoundTripScreen1 extends StatelessWidget {
                                     CommonTextWidget.PoppinsSemiBold(
                                       text: Lists
                                               .flightSearchRoundTripList1[index]
-                                          ["text2"],
-                                      color: black2E2,
+                                          ['text2'],
+                                      color: AppColors.black2E2,
                                       fontSize: 18,
                                     ),
                                     CommonTextWidget.PoppinsMedium(
                                       text: Lists
                                               .flightSearchRoundTripList1[index]
-                                          ["text3"],
-                                      color: grey888,
+                                          ['text3'],
+                                      color: AppColors.grey888,
                                       fontSize: 12,
                                     ),
                                   ],
                                 ),
                                 CommonTextWidget.PoppinsRegular(
                                   text: Lists.flightSearchRoundTripList1[index]
-                                      ["text4"],
-                                  color: grey888,
+                                      ['text4'],
+                                  color: AppColors.grey888,
                                   fontSize: 12,
                                 ),
                               ],
@@ -93,9 +92,9 @@ class RoundTripScreen1 extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1, color: greyE2E),
+                  border: Border.all(width: 1, color: AppColors.greyE2E),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
@@ -107,20 +106,20 @@ class RoundTripScreen1 extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsMedium(
-                            text: "TRAVELLERS & CLASS",
-                            color: grey888,
+                            text: 'TRAVELLERS & CLASS',
+                            color: AppColors.grey888,
                             fontSize: 14,
                           ),
                           Row(
                             children: [
                               CommonTextWidget.PoppinsSemiBold(
-                                text: "1,",
-                                color: black2E2,
+                                text: '1,',
+                                color: AppColors.black2E2,
                                 fontSize: 18,
                               ),
                               CommonTextWidget.PoppinsMedium(
-                                text: "TEconomy/Premium Economy",
-                                color: grey888,
+                                text: 'TEconomy/Premium Economy',
+                                color: AppColors.grey888,
                                 fontSize: 14,
                               ),
                             ],
@@ -136,8 +135,8 @@ class RoundTripScreen1 extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsMedium(
-                text: "SPECIAL FARES (OPTIONAL)",
-                color: grey888,
+                text: 'SPECIAL FARES (OPTIONAL)',
+                color: AppColors.grey888,
                 fontSize: 14,
               ),
             ),
@@ -158,15 +157,15 @@ class RoundTripScreen1 extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: white,
-                        border: Border.all(color: greyE2E, width: 1),
+                        color: AppColors.white,
+                        border: Border.all(color: AppColors.greyE2E, width: 1),
                       ),
                       child: Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: CommonTextWidget.PoppinsMedium(
                             text: Lists.flightSearchList2[index],
-                            color: grey5F5,
+                            color: AppColors.grey5F5,
                             fontSize: 14,
                           ),
                         ),
@@ -180,11 +179,11 @@ class RoundTripScreen1 extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonButtonWidget.button(
-                buttonColor: redCA0,
+                buttonColor: AppColors.redCA0,
                 onTap: () {
                   Get.to(() => FlightBookScreen());
                 },
-                text: "MODIFY SEARCH",
+                text: 'MODIFY SEARCH',
               ),
             ),
             SizedBox(height: 20),
@@ -192,5 +191,4 @@ class RoundTripScreen1 extends StatelessWidget {
         ),
       ),
     );
-  }
 }

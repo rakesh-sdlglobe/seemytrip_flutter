@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/features/shared/presentation/controllers/language_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 
 class LanguageScreen extends StatelessWidget {
@@ -21,19 +21,19 @@ class LanguageScreen extends StatelessWidget {
     final controller = Get.put(LanguageController());
     
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.arrow_back, color: white, size: 20),
+          icon: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Language",
-          color: white,
+          text: 'Language',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -45,8 +45,8 @@ class LanguageScreen extends StatelessWidget {
             children: [
               SizedBox(height: 20),
               CommonTextWidget.PoppinsSemiBold(
-                text: "Select Language",
-                color: black2E2,
+                text: 'Select Language',
+                color: AppColors.black2E2,
                 fontSize: 16,
               ),
               SizedBox(height: 30),
@@ -66,7 +66,7 @@ class LanguageScreen extends StatelessWidget {
                         children: [
                           CommonTextWidget.PoppinsMedium(
                             text: languageName,
-                            color: grey717,
+                            color: AppColors.grey717,
                             fontSize: 14,
                           ),
                           InkWell(
@@ -78,9 +78,9 @@ class LanguageScreen extends StatelessWidget {
                               height: 18,
                               width: 18,
                               decoration: BoxDecoration(
-                                color: white,
+                                color: AppColors.white,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: redCA0),
+                                border: Border.all(color: AppColors.redCA0),
                               ),
                               alignment: Alignment.center,
                               child: Get.locale == locale
@@ -88,7 +88,7 @@ class LanguageScreen extends StatelessWidget {
                                       height: 10,
                                       width: 10,
                                       decoration: BoxDecoration(
-                                        color: redCA0,
+                                        color: AppColors.redCA0,
                                         shape: BoxShape.circle,
                                       ),
                                     )

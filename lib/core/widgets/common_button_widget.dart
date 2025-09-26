@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 
 class CommonButtonWidget {

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 
 class TransactionHistoryScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title:
             Text('Transaction History', style: TextStyle(color: Colors.white)),
         // centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         actions: [
           GestureDetector(
             onTap: () {
@@ -24,15 +23,14 @@ class TransactionHistoryScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(
           itemCount: 10, // Replace with the actual number of transactions
-          itemBuilder: (context, index) {
-            return Container(
+          itemBuilder: (context, index) => Container(
               decoration: BoxDecoration(
                 border: Border.all(width: 0.1),
                 borderRadius: BorderRadius.circular(20.0),
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1), spreadRadius: 5, blurRadius: 7, offset: Offset(0, 3)
+                    color: Colors.grey.withValues(alpha: 0.1), spreadRadius: 5, blurRadius: 7, offset: Offset(0, 3)
                   )
                 ]
               ),
@@ -87,10 +85,8 @@ class TransactionHistoryScreen extends StatelessWidget {
                   )
                 ],
               ),
-            );
-          },
+            ),
         ),
       ),
     );
-  }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:seemytrip/features/shared/presentation/controllers/splash_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
+
+import '../../../../features/shared/presentation/controllers/splash_controller.dart';
+import '../../../../shared/constants/images.dart';
+import '../../../theme/app_colors.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class SplashScreen extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -75,7 +76,7 @@ class SplashScreen extends StatelessWidget {
                                 'SeeMyTrip',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: black2E2,
+                                  color: AppColors.black2E2,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 1.3,
@@ -95,7 +96,7 @@ class SplashScreen extends StatelessWidget {
                                 'Your journey begins here',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: black2E2.withValues(alpha: 0.7),
+                                  color: AppColors.black2E2.withValues(alpha: 0.7),
                                   fontSize: 18,
                                   // fontStyle: FontStyle.italic,
                                   fontWeight: FontWeight.w400,

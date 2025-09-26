@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/font_family.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
@@ -13,21 +13,20 @@ class SearchDestinationScreen extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
-          children: [
+          children: <Widget>[
             SizedBox(height: 65),
             Container(
               width: Get.width,
               decoration: BoxDecoration(
-                color: white,
-                boxShadow: [
+                color: AppColors.white,
+                boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: grey515.withOpacity(0.25),
+                    color: AppColors.grey515.withOpacity(0.25),
                     blurRadius: 6,
                     offset: Offset(0, 1),
                   ),
@@ -36,10 +35,10 @@ class SearchDestinationScreen extends StatelessWidget {
               ),
               child: TextFormField(
                 keyboardType: TextInputType.text,
-                cursorColor: black2E2,
+                cursorColor: AppColors.black2E2,
                 controller: searchController,
                 style: TextStyle(
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 14,
                   fontFamily: FontFamily.PoppinsRegular,
                 ),
@@ -48,40 +47,40 @@ class SearchDestinationScreen extends StatelessWidget {
                     onTap: () {
                       Get.back();
                     },
-                    child: Icon(Icons.arrow_back, color: grey717),
+                    child: Icon(Icons.arrow_back, color: AppColors.grey717),
                   ),
                   suffixIcon: Padding(
                     padding: EdgeInsets.all(15),
                     child: CommonTextWidget.PoppinsMedium(
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       text: "Clear",
                       fontSize: 12,
                     ),
                   ),
                   hintText: "Search Destinations",
                   hintStyle: TextStyle(
-                    color: greyA1A,
+                    color: AppColors.greyA1A,
                     fontSize: 15,
                     fontFamily: FontFamily.PoppinsRegular,
                   ),
                   filled: true,
-                  fillColor: white,
+                  fillColor: AppColors.white,
                   contentPadding: EdgeInsets.only(left: 12),
                   disabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: white, width: 0)),
+                      borderSide: BorderSide(color: AppColors.white, width: 0)),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: white, width: 0)),
+                      borderSide: BorderSide(color: AppColors.white, width: 0)),
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: white, width: 0)),
+                      borderSide: BorderSide(color: AppColors.white, width: 0)),
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: white, width: 0)),
+                      borderSide: BorderSide(color: AppColors.white, width: 0)),
                   errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(color: white, width: 0)),
+                      borderSide: BorderSide(color: AppColors.white, width: 0)),
                 ),
               ),
             ),
@@ -92,14 +91,14 @@ class SearchDestinationScreen extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 itemCount: Lists.searchDestinationList.length,
-                itemBuilder: (context, index) => Padding(
+                itemBuilder: (BuildContext context, int index) => Padding(
                   padding:  EdgeInsets.only(bottom: 24),
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       SvgPicture.asset(refreshIcon),
                       SizedBox(width: 14),
                       CommonTextWidget.PoppinsRegular(
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         text: Lists.searchDestinationList[index],
                         fontSize: 14,
                       ),
@@ -112,5 +111,4 @@ class SearchDestinationScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

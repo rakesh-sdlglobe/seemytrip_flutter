@@ -5,30 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../../../../core/widgets/common_text_widget.dart';
-import '../../../../core/utils/colors.dart';
 import '../controllers/hotel_controller.dart';
 import '../screens/gallery_view.dart';
 
-// Colors
-const Color _redCA0 = Color(0xFFCA0B0B);
-const Color _grey717 = Color(0xFF717171);
-const Color _greyE2E = Color(0xFFE2E2E2);
-
-// Text Styles
-TextStyle _poppinsMedium({double? fontSize, Color? color}) => TextStyle(
+// Theme-aware text styles
+TextStyle _poppinsMedium(BuildContext context, {double? fontSize, Color? color}) => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w500,
     fontSize: fontSize ?? 14,
-    color: color ?? Colors.black87,
+    color: color ?? Theme.of(context).textTheme.bodyMedium?.color,
   );
 
-TextStyle _poppinsBold({double? fontSize, Color? color}) => TextStyle(
+TextStyle _poppinsBold(BuildContext context, {double? fontSize, Color? color}) => TextStyle(
     fontFamily: 'Poppins',
     fontWeight: FontWeight.w700,
     fontSize: fontSize ?? 16,
-    color: color ?? Colors.black87,
+    color: color ?? Theme.of(context).textTheme.titleLarge?.color,
   );
 
 
@@ -84,11 +77,11 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
       child: Container(
         margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Theme.of(context).shadowColor.withOpacity(0.05),
               blurRadius: 20,
               offset: const Offset(0, 4),
             ),
@@ -107,7 +100,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                   ),
                   child: AspectRatio(
                     aspectRatio: 16 / 9,
-                    child: _buildHotelImage(widget.hotel),
+                    child: _buildHotelImage(context, widget.hotel),
                   ),
                 ),
 
@@ -132,11 +125,11 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Theme.of(context).shadowColor.withOpacity(0.1),
                             blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),
@@ -146,7 +139,9 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                         scale: _scaleAnimation,
                         child: Icon(
                           isFavorited ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorited ? _redCA0 : _redCA0.withOpacity(0.8),
+                          color: Theme.of(context).brightness == Brightness.dark 
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B), // Red for light theme
                           size: 20,
                         ),
                       ),
@@ -171,10 +166,10 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                       Expanded(
                         child: Text(
                           widget.hotel['HotelName'] ?? 'Unknown Hotel',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.titleLarge?.color,
                             fontFamily: 'Poppins',
                             height: 1.2,
                           ),
@@ -185,23 +180,23 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
 
                       // Star Rating
                       const SizedBox(width: 8),
-                      _buildStarRating(widget.hotel['StarRating']),
+                      _buildStarRating(context, widget.hotel['StarRating']),
                     ],
                   ),
 
                   // Location
                   const SizedBox(height: 8),
-                  _buildLocationInfo(widget.hotel, widget.cityName),
+                  _buildLocationInfo(context, widget.hotel, widget.cityName),
 
                   // Price
                   const SizedBox(height: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Starting from',
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                           fontSize: 12,
                           fontFamily: 'Poppins',
                         ),
@@ -209,8 +204,10 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                       const SizedBox(height: 2),
                       Text(
                         '₹${_getHotelPrice(widget.hotel)}',
-                        style: const TextStyle(
-                          color: _redCA0,
+                        style: TextStyle(
+                          color: Theme.of(context).brightness == Brightness.dark 
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B), // Red for light theme
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
                           fontFamily: 'Poppins',
@@ -234,13 +231,18 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.green.withOpacity(0.2)
+                          : Colors.green.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4)),
                     child: Text(
                       widget.hotel['CancellationPolicy'] ?? 'Free Cancellation',
                       style: _poppinsMedium(
+                        context,
                         fontSize: 12,
-                        color: Colors.green,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.green[400]
+                          : Colors.green[700],
                       ),
                     ),
                   ),
@@ -277,7 +279,9 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                             }
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _redCA0,
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                        ? const Color(0xFFFF5722) // Orange-red for dark theme
+                        : const Color(0xFFCA0B0B), // Red for light theme
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       shape: RoundedRectangleBorder(
@@ -287,6 +291,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                     child: Text(
                       'See Availability',
                       style: _poppinsMedium(
+                        context,
                         color: Colors.white,
                         fontSize: 14,
                       ),
@@ -301,7 +306,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
     );
 
   // --- Helper methods below (copy from your main file, or refactor as needed) ---
-  Widget _buildHotelImage(Map<String, dynamic> hotel) {
+  Widget _buildHotelImage(BuildContext context, Map<String, dynamic> hotel) {
     final images = List<String>.from(hotel['HotelImages'] ?? []);
     final imageUrl = images.isNotEmpty ? images.first : null;
 
@@ -311,16 +316,20 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
           ? Container(
               width: double.infinity,
               height: double.infinity,
-              color: Colors.grey[100],
+              color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.grey[800]
+                : Colors.grey[100],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.hotel, size: 40, color: grey717),
+                  Icon(Icons.hotel, size: 40, color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
                   const SizedBox(height: 8),
                   Text(
                     'No Image Available',
                     style: TextStyle(
-                        color: grey717, fontSize: 12, fontFamily: 'Poppins'),
+                        color: Theme.of(context).textTheme.bodySmall?.color, 
+                        fontSize: 12, 
+                        fontFamily: 'Poppins'),
                   ),
                 ],
               ),
@@ -331,18 +340,24 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
               width: double.infinity,
               height: double.infinity,
               placeholder: (BuildContext context, String url) => Shimmer.fromColors(
-                baseColor: Colors.grey[200]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: Theme.of(context).brightness == Brightness.dark 
+                  ? Colors.grey[700]!
+                  : Colors.grey[200]!,
+                highlightColor: Theme.of(context).brightness == Brightness.dark 
+                  ? Colors.grey[600]!
+                  : Colors.grey[100]!,
                 child: Container(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   width: double.infinity,
                   height: double.infinity,
                 ),
               ),
               errorWidget: (BuildContext context, String url, Object error) => Container(
-                color: Colors.grey[100],
-                child: const Center(
-                  child: Icon(Icons.error_outline, color: Colors.grey),
+                color: Theme.of(context).brightness == Brightness.dark 
+                  ? Colors.grey[800]
+                  : Colors.grey[100],
+                child: Center(
+                  child: Icon(Icons.error_outline, color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
                 ),
               ),
             ),
@@ -366,7 +381,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: greyE2E),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
@@ -377,13 +392,17 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Center(child: LoadingAnimationWidget.dotsTriangle(
-                              color: redCA0,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                : const Color(0xFFCA0B0B), // Red for light theme
                               size: 24,
                             ));
                           },
                           errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey[200],
-                            child: Icon(Icons.image, color: grey717),
+                            color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.grey[800]
+                              : Colors.grey[200],
+                            child: Icon(Icons.image, color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
                           ),
                         ),
                       ),
@@ -398,7 +417,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
-                    border: Border.all(color: greyE2E),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Stack(
                     fit: StackFit.expand,
@@ -409,15 +428,19 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                           images[3],
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey[200],
-                            child: Icon(Icons.image, color: grey717),
+                            color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.grey[800]
+                              : Colors.grey[200],
+                            child: Icon(Icons.image, color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
                           ),
                         ),
                       ),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: Colors.black.withOpacity(0.6),
+                          color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.black.withOpacity(0.7)
+                            : Colors.black.withOpacity(0.6),
                         ),
                         child: Center(
                           child: Column(
@@ -429,6 +452,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                               Text(
                                 '+${images.length - 3}',
                                 style: _poppinsMedium(
+                                  context,
                                   color: Colors.white,
                                   fontSize: 12,
                                 ),
@@ -455,7 +479,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
         ));
   }
 
-  Widget _buildStarRating(dynamic rating) {
+  Widget _buildStarRating(BuildContext context, dynamic rating) {
     // Convert rating to double, defaulting to 0.0 if conversion fails
     final double starRating = rating is num 
         ? rating.toDouble() 
@@ -469,7 +493,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
         Text(
           starRating.toStringAsFixed(1),
           style: TextStyle(
-            color: black2E2,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
@@ -478,16 +502,16 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
     );
   }
 
-  Widget _buildLocationInfo(Map<String, dynamic> hotel, String cityName) {
+  Widget _buildLocationInfo(BuildContext context, Map<String, dynamic> hotel, String cityName) {
     final location = hotel['Location'] ?? cityName;
     return Row(
       children: [
-        Icon(Icons.location_on, size: 14, color: grey717),
+        Icon(Icons.location_on, size: 14, color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
         SizedBox(width: 4),
         Expanded(
           child: CommonTextWidget.PoppinsRegular(
             text: location,
-            color: grey717,
+            color: Theme.of(context).textTheme.bodySmall?.color,
             fontSize: 12,
           ),
         ),

@@ -8,20 +8,43 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../controllers/bus_controller.dart';
 import 'boarding_point_screen.dart';
 
-// --- REFINED THEME & STYLES ---
+// --- SIMPLIFIED THEME-AWARE COLORS ---
+class ThemeAwareColors {
+  static Color primary(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFFF5722) // Orange-red for dark theme
+    : const Color(0xFFE53935); // Red for light theme
+  
+  static Color primaryVariant(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFE64A19) // Darker orange-red for dark theme
+    : const Color(0xFFC62828); // Darker red for light theme
+  
+  static Color accent(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFFFB74D) // Orange accent for dark theme
+    : const Color(0xFFFFA726); // Orange accent for light theme
+  
+  static Color seatLadies(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFE91E63) // Pink for dark theme
+    : const Color(0xFFF06292); // Light pink for light theme
+  
+  static Color seatBooked(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? Colors.grey[700]!
+    : const Color(0xFFEAECF0);
+}
+
+// Keep simplified AppColors for compatibility
 class AppColors {
-  static const Color primary = Color(0xFFE53935); // Softer red
-  static const Color primaryVariant = Color(0xFFC62828); // Darker for depth
-  static const Color accent = Color(0xFFFFA726); // Orange accent for highlights
-  static const Color background = Color(0xFFF5F6FA); // Clean background
+  static const Color primary = Color(0xFFE53935); // Will be overridden in theme-aware widgets
+  static const Color primaryVariant = Color(0xFFC62828);
+  static const Color accent = Color(0xFFFFA726);
+  static const Color background = Color(0xFFF5F6FA);
   static const Color seatAvailable = Color(0xFFFFFFFF);
   static const Color seatAvailableBorder = Color(0xFFD0D5DD);
   static const Color seatSelected = Color(0xFFE53935);
   static const Color seatLadies = Color(0xFFF06292);
   static const Color seatBooked = Color(0xFFEAECF0);
   static const Color seatBookedBorder = Color(0xFFEAECF0);
-  static const Color textDark = Color(0xFF1A1A1A); // Softer black
-  static const Color textLight = Color(0xFF757575); // Neutral grey
+  static const Color textDark = Color(0xFF1A1A1A);
+  static const Color textLight = Color(0xFF757575);
   static const Color card = Colors.white;
 }
 
@@ -181,7 +204,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
         Get.snackbar(
           "Error",
           "Could not load seat layout. Please try again.",
-          backgroundColor: AppColors.primaryVariant,
+          backgroundColor: ThemeAwareColors.primaryVariant(context),
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
@@ -247,7 +270,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: AppColors.primaryVariant,
+            backgroundColor: ThemeAwareColors.primaryVariant(context),
             content: Text(
               'You can select a maximum of 6 seats.',
               style: AppStyles.body.copyWith(color: Colors.white),
@@ -267,13 +290,13 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
     if (_fadeAnimation == null || _animationController == null) {
       return Center(
           child: LoadingAnimationWidget.dotsTriangle(
-        color: AppColors.primary,
+color: ThemeAwareColors.primary(context),
         size: 40,
       ));
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(),
       body: Stack(
         children: [
@@ -288,7 +311,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                     child: _isLoading
                         ? Center(
                             child: LoadingAnimationWidget.dotsTriangle(
-                              color: AppColors.primary,
+                              color: ThemeAwareColors.primary(context),
                               size: 40,
                             ),
                           )
@@ -296,7 +319,9 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                             ? Center(
                                 child: Text(
                                   'Error loading seat layout.',
-                                  style: AppStyles.body,
+                                  style: AppStyles.body.copyWith(
+                                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                                  ),
                                 ),
                               )
                             : TabBarView(
@@ -324,14 +349,14 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
   }
 
   PreferredSizeWidget _buildAppBar() => AppBar(
-        backgroundColor: AppColors.card,
+        backgroundColor: Theme.of(context).cardColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        shadowColor: AppColors.primary.withOpacity(0.1),
+        shadowColor: ThemeAwareColors.primary(context).withOpacity(0.1),
         leading: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -342,8 +367,8 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
             ],
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppColors.textDark, size: 20),
+            icon: Icon(Icons.arrow_back_ios_new_rounded,
+                color: Theme.of(context).textTheme.titleLarge?.color, size: 20),
             onPressed: () => Get.back(),
           ),
         ),
@@ -352,20 +377,26 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
           children: [
             Text(
               '${widget.args.fromLocation} → ${widget.args.toLocation}',
-              style: AppStyles.heading2.copyWith(fontSize: 18),
+              style: AppStyles.heading2.copyWith(
+                fontSize: 18,
+                color: Theme.of(context).textTheme.titleLarge?.color,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(
               DateFormat('E, d MMM yyyy').format(widget.args.travelDate),
-              style: AppStyles.body.copyWith(fontSize: 13, color: AppColors.textLight),
+              style: AppStyles.body.copyWith(
+                fontSize: 13,
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
             ),
           ],
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
-            color: AppColors.seatAvailableBorder.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withOpacity(0.5),
             height: 1,
           ),
         ),
@@ -375,19 +406,24 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: Theme.of(context).cardColor,
         border: Border(
-          bottom: BorderSide(color: AppColors.seatAvailableBorder, width: 1),
+          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.args.busName, style: AppStyles.heading1),
+          Text(
+            widget.args.busName,
+            style: AppStyles.heading1.copyWith(
+              color: Theme.of(context).textTheme.titleLarge?.color,
+            ),
+          ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.event_seat_outlined, color: AppColors.textLight, size: 18),
+              Icon(Icons.event_seat_outlined, color: Theme.of(context).textTheme.bodySmall?.color, size: 18),
               const SizedBox(width: 8),
               Text(
                 '${widget.args.availableSeats} Seats Available',
@@ -401,12 +437,18 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
           if (!_isLoading && _upperDeckLayout.isNotEmpty && _tabController != null)
             TabBar(
               controller: _tabController,
-              indicatorColor: AppColors.accent,
+              indicatorColor: ThemeAwareColors.accent(context),
               indicatorWeight: 3,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.textLight,
-              labelStyle: AppStyles.bodyBold.copyWith(fontSize: 13),
-              unselectedLabelStyle: AppStyles.body.copyWith(fontSize: 13),
+              labelColor: ThemeAwareColors.primary(context),
+              unselectedLabelColor: Theme.of(context).textTheme.bodySmall?.color,
+              labelStyle: AppStyles.bodyBold.copyWith(
+                fontSize: 13,
+                color: ThemeAwareColors.primary(context),
+              ),
+              unselectedLabelStyle: AppStyles.body.copyWith(
+                fontSize: 13,
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
               tabs: const [
                 Tab(text: 'LOWER DECK'),
                 Tab(text: 'UPPER DECK'),
@@ -444,12 +486,12 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               decoration: BoxDecoration(
-                color: AppColors.card,
-                border: Border.all(color: AppColors.seatAvailableBorder),
+                color: Theme.of(context).cardColor,
+                border: Border.all(color: Theme.of(context).dividerColor),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Theme.of(context).shadowColor.withOpacity(0.08),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -475,7 +517,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
               padding: const EdgeInsets.only(right: 16, top: 16),
               child: Icon(
                 Icons.directions_bus,
-                color: AppColors.textLight.withOpacity(0.5),
+                color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
                 size: 36,
               ),
             ),
@@ -513,10 +555,10 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
       child: Container(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         decoration: BoxDecoration(
-          color: AppColors.card,
+          color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -538,13 +580,16 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                         Text(
                           '₹${_totalPrice.toStringAsFixed(0)}',
                           style: AppStyles.heading1.copyWith(
-                            color: AppColors.accent,
+                            color: ThemeAwareColors.accent(context),
                             fontSize: 24,
                           ),
                         ),
                         Text(
                           '${_selectedSeats.length} Seat${_selectedSeats.length == 1 ? '' : 's'} Selected',
-                          style: AppStyles.body.copyWith(fontSize: 13),
+                          style: AppStyles.body.copyWith(
+                            fontSize: 13,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
                         ),
                       ],
                     ),
@@ -554,11 +599,11 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                     icon: AnimatedRotation(
                       duration: const Duration(milliseconds: 200),
                       turns: _isSummaryExpanded ? 0.5 : 0,
-                      child: const Icon(Icons.expand_less, color: AppColors.textLight),
+                      child: Icon(Icons.expand_less, color: Theme.of(context).textTheme.bodySmall?.color),
                     ),
                     label: Text(
                       "Details",
-                      style: AppStyles.body.copyWith(color: AppColors.textLight),
+                      style: AppStyles.body.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
                     ),
                   ),
                 ],
@@ -578,14 +623,14 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: ThemeAwareColors.primary(context),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 52),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
-                  shadowColor: AppColors.primary.withOpacity(0.3),
+                  shadowColor: ThemeAwareColors.primary(context).withOpacity(0.3),
                 ),
                 onPressed: _selectedSeats.isEmpty
                     ? null
@@ -626,7 +671,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
             children: [
               Icon(
                 seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined,
-                color: AppColors.primary,
+                color: ThemeAwareColors.primary(context),
                 size: 20,
               ),
               const SizedBox(width: 10),
@@ -641,7 +686,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
                 style: AppStyles.body.copyWith(fontSize: 13),
               ),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: AppColors.textLight, size: 20),
+                icon: Icon(Icons.close_rounded, color: Theme.of(context).textTheme.bodySmall?.color, size: 20),
                 onPressed: () => _onSeatTap(seat),
               ),
             ],
@@ -667,25 +712,25 @@ class SeatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color borderColor = AppColors.seatBookedBorder;
-    Color backgroundColor = AppColors.seatBooked;
-    Color contentColor = AppColors.textLight;
+    Color borderColor = ThemeAwareColors.seatBooked(context);
+    Color backgroundColor = ThemeAwareColors.seatBooked(context);
+    Color contentColor = Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey;
 
     if (seat.isAvailable) {
       if (seat.isLadiesSeat) {
-        borderColor = AppColors.seatLadies;
-        backgroundColor = AppColors.seatLadies.withOpacity(0.15);
-        contentColor = AppColors.seatLadies;
+        borderColor = ThemeAwareColors.seatLadies(context);
+        backgroundColor = ThemeAwareColors.seatLadies(context).withOpacity(0.15);
+        contentColor = ThemeAwareColors.seatLadies(context);
       } else {
-        borderColor = AppColors.seatAvailableBorder;
-        backgroundColor = AppColors.seatAvailable;
-        contentColor = AppColors.textDark;
+        borderColor = Theme.of(context).dividerColor;
+        backgroundColor = Theme.of(context).cardColor;
+        contentColor = Theme.of(context).textTheme.titleLarge?.color ?? Colors.black;
       }
     }
 
     if (isSelected) {
-      borderColor = AppColors.seatSelected;
-      backgroundColor = AppColors.seatSelected;
+      borderColor = ThemeAwareColors.primary(context);
+      backgroundColor = ThemeAwareColors.primary(context);
       contentColor = Colors.white;
     }
 
@@ -749,23 +794,23 @@ class SeatInfoLegend extends StatelessWidget {
       runSpacing: 10.0,
       children: [
         LegendItem(
-          color: AppColors.seatAvailable,
-          borderColor: AppColors.seatAvailableBorder,
+          color: Theme.of(context).cardColor,
+          borderColor: Theme.of(context).dividerColor,
           text: 'Available',
         ),
         LegendItem(
-          color: AppColors.seatBooked,
-          borderColor: AppColors.seatBookedBorder,
+          color: ThemeAwareColors.seatBooked(context),
+          borderColor: ThemeAwareColors.seatBooked(context),
           text: 'Booked',
         ),
         LegendItem(
-          color: AppColors.seatLadies.withOpacity(0.15),
-          borderColor: AppColors.seatLadies,
+          color: ThemeAwareColors.seatLadies(context).withOpacity(0.15),
+          borderColor: ThemeAwareColors.seatLadies(context),
           text: 'Ladies',
         ),
         LegendItem(
-          color: AppColors.seatSelected,
-          borderColor: AppColors.seatSelected,
+          color: ThemeAwareColors.primary(context),
+          borderColor: ThemeAwareColors.primary(context),
           text: 'Selected',
         ),
       ],
@@ -802,7 +847,10 @@ class LegendItem extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           text,
-          style: AppStyles.body.copyWith(fontSize: 13),
+          style: AppStyles.body.copyWith(
+            fontSize: 13,
+            color: Theme.of(context).textTheme.bodySmall?.color,
+          ),
         ),
       ],
     );

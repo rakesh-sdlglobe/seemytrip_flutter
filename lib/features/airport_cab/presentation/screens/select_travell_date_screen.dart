@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/shared/presentation/controllers/calender_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/font_family.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/main.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_button_widget.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../main.dart';
+import '../../../../shared/constants/font_family.dart';
+import '../../../../shared/constants/images.dart';
+import '../../../shared/presentation/controllers/calender_controller.dart';
 
 class SelectTravelDateScreen extends StatefulWidget {
   SelectTravelDateScreen({Key? key}) : super(key: key);
@@ -18,15 +19,14 @@ class SelectTravelDateScreen extends StatefulWidget {
 }
 
 class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
-  var _tabTextIndexSelected = 1;
-  var listHeightText = ["AM", "PM"];
+  int _tabTextIndexSelected = 1;
+  List<String> listHeightText = <String>['AM', 'PM'];
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -34,11 +34,11 @@ class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Select Travel Dates",
-          color: white,
+          text: 'Select Travel Dates',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -49,28 +49,28 @@ class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     Image.asset(selectTravelDateImage1, height: 86),
                     Image.asset(selectTravelDateImage2, height: 86),
                   ],
                 ),
                 SizedBox(height: 15),
-                Divider(color: greyE8E, thickness: 1),
+                Divider(color: AppColors.greyE8E, thickness: 1),
                 SizedBox(height: 15),
                 CommonTextWidget.PoppinsMedium(
-                  text: "SET START DATE",
-                  color: redCA0,
+                  text: 'SET START DATE',
+                  color: AppColors.redCA0,
                   fontSize: 14,
                 ),
                 SizedBox(height: 15),
                 GetBuilder<CalenderControllerDesign>(
                   init: CalenderControllerDesign(),
-                  builder: (controller) => TableCalendar(
-                    availableCalendarFormats: {
+                  builder: (CalenderControllerDesign controller) => TableCalendar(
+                    availableCalendarFormats: <CalendarFormat, String>{
                       CalendarFormat.month: 'Month',
                     },
                     availableGestures: AvailableGestures.none,
@@ -78,43 +78,43 @@ class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: controller.focusedDay,
                     calendarFormat: controller.calendarFormat,
-                    onFormatChanged: (format) {
+                    onFormatChanged: (CalendarFormat format) {
                       controller.onFormatChange(format);
                     },
-                    selectedDayPredicate: (day) {
+                    selectedDayPredicate: (DateTime day) {
                       return isSameDay(controller.selectedDay, day);
                     },
-                    onDaySelected: (selectedDay, focusedDay) {
+                    onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
                       if (!isSameDay(controller.selectedDay, selectedDay)) {
                         controller.onDaySelected(selectedDay, focusedDay);
                       }
                       print(selectedDay);
                     },
-                    onPageChanged: (focusedDay) {
+                    onPageChanged: (DateTime focusedDay) {
                       controller.focusedDay = focusedDay;
                     },
                     daysOfWeekStyle: DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
                           fontSize: 12,
                           fontFamily: FontFamily.PoppinsRegular,
-                          color: grey717),
+                          color: AppColors.grey717),
                     ),
                     calendarStyle: CalendarStyle(
                       selectedDecoration: BoxDecoration(
-                          color: redCA0,
+                          color: AppColors.redCA0,
                           borderRadius: BorderRadius.circular(4)),
                       selectedTextStyle: TextStyle(
-                        color: white,
+                        color: AppColors.white,
                         fontFamily: FontFamily.PoppinsMedium,
                         fontSize: 16,
                       ),
                       disabledTextStyle: TextStyle(
-                        color: grey717,
+                        color: AppColors.grey717,
                         fontFamily: FontFamily.PoppinsRegular,
                         fontSize: 16,
                       ),
                       todayDecoration: BoxDecoration(
-                          color: redCA0,
+                          color: AppColors.redCA0,
                           borderRadius: BorderRadius.circular(4)),
                     ),
                     headerStyle: HeaderStyle(
@@ -122,35 +122,35 @@ class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
                       titleTextStyle: TextStyle(
                         fontSize: 12,
                         fontFamily: FontFamily.PoppinsRegular,
-                        color: black2E2,
+                        color: AppColors.black2E2,
                       ),
                       titleCentered: true,
                     ),
                   ),
                 ),
                 SizedBox(height: 25),
-                Divider(color: greyE8E, thickness: 1),
+                Divider(color: AppColors.greyE8E, thickness: 1),
                 SizedBox(height: 22),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: <Widget>[
                     CommonTextWidget.PoppinsMedium(
-                      text: "SET START DATE",
-                      color: redCA0,
+                      text: 'SET START DATE',
+                      color: AppColors.redCA0,
                       fontSize: 14,
                     ),
                     Container(
                       height: 35,
                       width: 130,
                       decoration: BoxDecoration(
-                        boxShadow: [
+                        boxShadow: <BoxShadow>[
                           BoxShadow(
                             offset: Offset(0, 1),
                             blurRadius: 6,
-                            color: grey515.withOpacity(0.25),
+                            color: AppColors.grey515.withOpacity(0.25),
                           ),
                         ],
-                        color: white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
@@ -161,21 +161,21 @@ class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
                           borderRadius: 30,
                           selectedIndex: _tabTextIndexSelected,
                           selectedTextStyle: TextStyle(
-                              color: white,
+                              color: AppColors.white,
                               fontSize: 14,
                               fontFamily: FontFamily.PoppinsMedium),
                           unSelectedTextStyle: TextStyle(
-                              color: black2E2,
+                              color: AppColors.black2E2,
                               fontSize: 14,
                               fontFamily: FontFamily.PoppinsMedium),
                           // labels: listHeightText,
-                          selectedBackgroundColors: [redCA0],
-                          unSelectedBackgroundColors: [white],
-                          selectedLabelIndex: (index) {
+                          selectedBackgroundColors: <Color>[AppColors.redCA0],
+                          unSelectedBackgroundColors: <Color>[AppColors.white],
+                          selectedLabelIndex: (int index) {
                             setState(() {
                               _tabTextIndexSelected = index;
                             });
-                          }, dataTabs: [],
+                          }, dataTabs: <DataTab>[],
                         ),
                       ),
                     ),
@@ -185,9 +185,9 @@ class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
                 Image.asset(selectTravelDateImage3),
                 SizedBox(height: 135),
                 CommonButtonWidget.button(
-                  buttonColor: redCA0,
+                  buttonColor: AppColors.redCA0,
                   onTap: () {},
-                  text: "DONE",
+                  text: 'DONE',
                 ),
                 SizedBox(height: 60),
               ],
@@ -196,5 +196,4 @@ class _SelectTravelDateScreenState extends State<SelectTravelDateScreen> {
         ),
       ),
     );
-  }
 }

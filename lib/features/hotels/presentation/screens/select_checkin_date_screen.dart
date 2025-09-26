@@ -1,22 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/features/hotels/presentation/controllers/select_checkin_date_controller.dart'; // Ensure path is correct
 import 'package:table_calendar/table_calendar.dart';
 
-// --- Mock Data (replace with your actual constants) ---
-// const Color redCA0 = Color(0xFFCA0B0B);
-// const Color white = Colors.white;
-// const Color black2E2 = Color(0xFF2D2D2D);
-// const Color grey717 = Color(0xFF666666);
-// ---
-
 class SelectCheckInDateScreen extends StatelessWidget {
-  // MODIFIED: Accept initial dates to show previous selections
-  final DateTime? initialStartDate;
-  final DateTime? initialEndDate;
-
-  final SelectCheckInControllerDesign controller;
 
   SelectCheckInDateScreen({
     Key? key,
@@ -27,6 +15,11 @@ class SelectCheckInDateScreen extends StatelessWidget {
           initialEndDate: initialEndDate,
         )),
         super(key: key);
+
+  final DateTime? initialStartDate;
+  final DateTime? initialEndDate;
+
+  final SelectCheckInControllerDesign controller;
 
   @override
   Widget build(BuildContext context) {
@@ -42,23 +35,23 @@ class SelectCheckInDateScreen extends StatelessWidget {
     });
 
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: AppColors.white),
         ),
-        title: Text("Select Your Dates",
+        title: Text('Select Your Dates',
             style: TextStyle(
-                color: white, fontSize: 18, fontWeight: FontWeight.w600)),
+                color: AppColors.white, fontSize: 18, fontWeight: FontWeight.w600)),
         actions: [
           TextButton(
             onPressed: controller.resetSelection,
-            child: Text("Reset", style: TextStyle(color: white, fontSize: 14)),
+            child: Text('Reset', style: TextStyle(color: AppColors.white, fontSize: 14)),
           ),
         ],
       ),
@@ -68,40 +61,37 @@ class SelectCheckInDateScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildCalendarHeader(),
-                  _buildCalendar(),
-                  _buildDateSelectionInfo(),
+                  _buildCalendarHeader(context),
+                  _buildCalendar(context),
+                  _buildDateSelectionInfo(context),
                 ],
               ),
             ),
           ),
-          _buildBottomButton(),
+          _buildBottomButton(context),
         ],
       ),
     );
   }
 
-  Widget _buildCalendarHeader() {
-    return Container(
+  Widget _buildCalendarHeader(BuildContext context) => Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.grey[50],
+      color: AppColors.grey50,
       child: Row(
         children: [
-          Icon(Icons.info_outline, size: 18, color: grey717),
+          Icon(Icons.info_outline, size: 18, color: AppColors.grey717),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              "Select a check-in and check-out date",
-              style: TextStyle(color: grey717, fontSize: 12),
+              'Select a check-in and check-out date',
+              style: TextStyle(color: AppColors.grey717, fontSize: 12),
             ),
           ),
         ],
       ),
     );
-  }
 
-  Widget _buildCalendar() {
-    return Obx(
+  Widget _buildCalendar(BuildContext context) => Obx(
       () => TableCalendar(
         firstDay: DateTime.now().subtract(const Duration(days: 30)),
         lastDay: DateTime.now().add(const Duration(days: 365 * 2)),
@@ -124,16 +114,16 @@ class SelectCheckInDateScreen extends StatelessWidget {
           return !normalizedDay.isBefore(normalizedToday);
         },
         calendarStyle: CalendarStyle(
-          rangeHighlightColor: redCA0.withOpacity(0.2),
+          rangeHighlightColor: AppColors.redCA0.withOpacity(0.2),
           rangeStartDecoration:
-              BoxDecoration(color: redCA0, shape: BoxShape.circle),
+              BoxDecoration(color: AppColors.redCA0, shape: BoxShape.circle),
           rangeEndDecoration:
-              BoxDecoration(color: redCA0, shape: BoxShape.circle),
+              BoxDecoration(color: AppColors.redCA0, shape: BoxShape.circle),
           todayDecoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: redCA0),
+            border: Border.all(color: AppColors.redCA0),
           ),
-          todayTextStyle: TextStyle(color: redCA0),
+          todayTextStyle: TextStyle(color: AppColors.redCA0),
           selectedTextStyle: const TextStyle(color: Colors.white),
           disabledTextStyle: TextStyle(color: Colors.grey.shade400),
           outsideDaysVisible: false,
@@ -142,14 +132,12 @@ class SelectCheckInDateScreen extends StatelessWidget {
           titleCentered: true,
           formatButtonVisible: false,
           titleTextStyle: TextStyle(
-              color: black2E2, fontSize: 16, fontWeight: FontWeight.w600),
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2, fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );
-  }
 
-  Widget _buildDateSelectionInfo() {
-    return Padding(
+  Widget _buildDateSelectionInfo(BuildContext context) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Obx(() {
         if (controller.isRangeSelected) {
@@ -157,14 +145,14 @@ class SelectCheckInDateScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "Selected Stay: ${controller.formattedRangeDate}",
+                'Selected Stay: ${controller.formattedRangeDate}',
                 style: TextStyle(
-                    color: black2E2, fontSize: 14, fontWeight: FontWeight.w600),
+                    color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2, fontSize: 14, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 4),
               Text(
                 "${controller.numberOfNights} night${controller.numberOfNights != 1 ? 's' : ''}",
-                style: TextStyle(color: grey717, fontSize: 12),
+                style: TextStyle(color: AppColors.grey717, fontSize: 12),
               ),
             ],
           );
@@ -172,24 +160,22 @@ class SelectCheckInDateScreen extends StatelessWidget {
         // Shows a prompt if only the start date is selected
         if (controller.rangeStart.value != null) {
           return Text(
-            "Please select a check-out date",
-            style: TextStyle(color: black2E2, fontSize: 14),
+            'Please select a check-out date',
+            style: TextStyle(color: AppColors.black2E2, fontSize: 14),
           );
         }
         return const SizedBox.shrink();
       }),
     );
-  }
 
   // Update the bottom button to return the selected dates
-  Widget _buildBottomButton() {
-    return Container(
+  Widget _buildBottomButton(BuildContext context) => Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: AppColors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -197,13 +183,13 @@ class SelectCheckInDateScreen extends StatelessWidget {
       ),
       child: Obx(() => ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: redCA0,
-              foregroundColor: white,
+              backgroundColor: AppColors.redCA0,
+              foregroundColor: AppColors.white,
               minimumSize: const Size(double.infinity, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              disabledBackgroundColor: Colors.grey.shade400,
+              disabledBackgroundColor: AppColors.grey575,
             ),
             onPressed: controller.isRangeSelected
                 ? () {
@@ -218,12 +204,12 @@ class SelectCheckInDateScreen extends StatelessWidget {
               controller.isRangeSelected
                   ? 'Confirm ${controller.numberOfNights} Nights'
                   : 'Select Dates',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
+                color: AppColors.white,
               ),
             ),
           )),
     );
-  }
 }

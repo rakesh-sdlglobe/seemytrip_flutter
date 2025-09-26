@@ -4,11 +4,20 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../shared/models/bus_models.dart';
 import '../controllers/bus_controller.dart';
 import 'bus_passenger_details_screen.dart';
+
+// Theme-aware color functions
+class ThemeAwareColors {
+  static Color primary(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFFF5722) // Orange-red for dark theme
+    : const Color(0xFFE53935); // Red for light theme
+  
+  static Color accent(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFFFB74D) // Orange accent for dark theme
+    : const Color(0xFFFFA726); // Orange accent for light theme
+}
 
 
 class BoardingPointScreen extends StatefulWidget {
@@ -136,9 +145,14 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             }),
             child: Icon(
               Icons.location_pin,
-              color: _selectedBoardingPoint?.id == point.id ? AppColors.accent : Colors.grey.shade600,
+              color: _selectedBoardingPoint?.id == point.id 
+                ? ThemeAwareColors.accent(context) 
+                : (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600),
               size: _selectedBoardingPoint?.id == point.id ? 40 : 30,
-              shadows: const <Shadow>[Shadow(color: Colors.black26, blurRadius: 4)],
+              shadows: [Shadow(
+                color: Theme.of(context).shadowColor.withOpacity(0.3), 
+                blurRadius: 4
+              )],
             ),
           ),
         )).toList();
@@ -157,9 +171,14 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             }),
             child: Icon(
               Icons.location_pin,
-              color: _selectedDroppingPoint?.id == point.id ? AppColors.accent : Colors.grey.shade600,
+              color: _selectedDroppingPoint?.id == point.id 
+                ? ThemeAwareColors.accent(context) 
+                : (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600),
               size: _selectedDroppingPoint?.id == point.id ? 40 : 30,
-              shadows: const <Shadow>[Shadow(color: Colors.black26, blurRadius: 4)],
+              shadows: [Shadow(
+                color: Theme.of(context).shadowColor.withOpacity(0.3), 
+                blurRadius: 4
+              )],
             ),
           ),
         )).toList();
@@ -180,15 +199,23 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
             pinned: true,
-            title: const Text('Boarding & Dropping'),
-            backgroundColor: AppColors.primary,
+            title: Text(
+              'Boarding & Dropping',
+              style: TextStyle(
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color ?? Colors.white,
+              ),
+            ),
+            backgroundColor: ThemeAwareColors.primary(context),
             elevation: 1,
-            shadowColor: Colors.black.withValues(alpha: 0.1),
+            shadowColor: Theme.of(context).shadowColor.withOpacity(0.1),
+            iconTheme: IconThemeData(
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Colors.white,
+            ),
           ),
           SliverToBoxAdapter(child: _buildJourneySummary()),
           SliverToBoxAdapter(child: _buildMapView()),
@@ -197,9 +224,19 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             delegate: _SliverTabBarDelegate(
               TabBar(
                 controller: _tabController,
-                labelColor: AppColors.primary,
-                unselectedLabelColor: AppColors.textSecondary,
-                indicatorColor: AppColors.primary,
+                labelColor: ThemeAwareColors.primary(context),
+                unselectedLabelColor: Theme.of(context).textTheme.bodySmall?.color,
+                indicatorColor: ThemeAwareColors.primary(context),
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: ThemeAwareColors.primary(context),
+                ),
+                unselectedLabelStyle: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
+                ),
                 tabs: const <Widget>[
                   Tab(text: 'BOARDING'),
                   Tab(text: 'DROPPING'),
@@ -209,12 +246,29 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
           ),
           Obx(() {
             if (_busController.isLoading.value && !_isMapReady) {
-              return SliverFillRemaining(child: Center(child: LoadingAnimationWidget.fourRotatingDots(color: Colors.black, size: 40)));
+              return SliverFillRemaining(
+                child: Center(
+                  child: LoadingAnimationWidget.fourRotatingDots(
+                    color: ThemeAwareColors.primary(context), 
+                    size: 40
+                  )
+                )
+              );
             }
             
             final BoardingPointResponse? response = _busController.boardingPointsResponse.value;
             if (response == null) {
-              return const SliverFillRemaining(child: Center(child: Text('No points available')));
+              return SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    'No points available',
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              );
             }
 
             return SliverFillRemaining(
@@ -233,14 +287,27 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     );
 
   Widget _buildJourneySummary() => Container(
-      color: AppColors.surface,
+      color: Theme.of(context).cardColor,
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(widget.busName ?? 'Unknown Bus', style: AppTextStyles.heading1),
+          Text(
+            widget.busName ?? 'Unknown Bus',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).textTheme.titleLarge?.color,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text('${widget.fromCity ?? 'Unknown'} to ${widget.toCity ?? 'Unknown'}', style: AppTextStyles.bodyMedium),
+          Text(
+            '${widget.fromCity ?? 'Unknown'} to ${widget.toCity ?? 'Unknown'}',
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ),
         ],
       ),
     );
@@ -264,14 +331,24 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             )
           : Container(
               height: 220,
-              color: Colors.grey[200],
+              color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.grey[800] 
+                : Colors.grey[200],
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    LoadingAnimationWidget.dotsTriangle(color: Colors.black, size: 40),
-                    SizedBox(height: 10),
-                    Text('Loading Map...'),
+                    LoadingAnimationWidget.dotsTriangle(
+                      color: ThemeAwareColors.primary(context), 
+                      size: 40
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Loading Map...',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -280,10 +357,13 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
 
   Widget _buildBoardingPointsList(List<BoardingPoint> points) {
     if (points.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No boarding points available',
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+            fontSize: 16,
+          ),
         ),
       );
     }
@@ -297,7 +377,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
         return _buildPointItem(
           point: point,
           isSelected: isSelected,
-          accentColor: AppColors.accent,
+          accentColor: ThemeAwareColors.accent(context),
           onTap: () => setState(() {
             _selectedBoardingPoint = point;
             if (_busController.boardingPointsResponse.value != null) {
@@ -312,10 +392,13 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
   
   Widget _buildDroppingPointsList(List<BoardingPoint> points) {
     if (points.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No dropping points available',
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+            fontSize: 16,
+          ),
         ),
       );
     }
@@ -329,7 +412,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
         return _buildPointItem(
           point: point,
           isSelected: isSelected,
-          accentColor: AppColors.accent,
+          accentColor: ThemeAwareColors.accent(context),
           onTap: () => setState(() {
             _selectedDroppingPoint = point;
             if (_busController.boardingPointsResponse.value != null) {
@@ -348,11 +431,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     required Color accentColor,
     required VoidCallback onTap,
   }) {
-    final String time = point.time ?? '--:--';
-    final String location = point.location ?? 'Location not specified';
-    final String address = point.address ?? '';
-    final String landmark = point.landmark ?? '';
-    final String name = point.name ?? 'Unnamed Point';
+    final String time = point.time;
+    final String location = point.location;
+    final String address = point.address;
+    final String landmark = point.landmark;
+    final String name = point.name;
     
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -361,7 +444,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isSelected ? accentColor : AppColors.border,
+          color: isSelected ? accentColor : Theme.of(context).dividerColor,
           width: isSelected ? 1.5 : 1,
         ),
       ),
@@ -387,7 +470,8 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                           ),
                           child: Text(
                             time,
-                            style: AppTextStyles.bodySmall.copyWith(
+                            style: TextStyle(
+                              fontSize: 12,
                               color: accentColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -398,17 +482,19 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                     const SizedBox(height: 8),
                     Text(
                       name,
-                      style: AppTextStyles.bodyLarge.copyWith(
+                      style: TextStyle(
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
                       ),
                     ),
                     if (location.isNotEmpty) ...<Widget>[
                       const SizedBox(height: 4),
                       Text(
                         location,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textHint,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                     ],
@@ -416,8 +502,9 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                       const SizedBox(height: 2),
                       Text(
                         address,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textHint,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                     ],
@@ -428,14 +515,15 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                           Icon(
                             Icons.place_outlined,
                             size: 14,
-                            color: AppColors.textHint,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               'Near $landmark',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textHint,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context).textTheme.bodySmall?.color,
                               ),
                             ),
                           ),
@@ -459,7 +547,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Icon(
                     Icons.radio_button_unchecked,
-                    color: AppColors.border,
+                    color: Theme.of(context).dividerColor,
                     size: 24,
                   ),
                  )
@@ -473,10 +561,10 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
   Widget _buildContinueButton() => Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).cardColor,
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -494,14 +582,14 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
               if (_selectedBoardingPoint != null)
                 Expanded(
                     child: _buildSelectedPointCard('Boarding',
-                        _selectedBoardingPoint!, AppColors.accent)),
+                        _selectedBoardingPoint!, ThemeAwareColors.accent(context))),
               const SizedBox(width: 12),
               if (_selectedDroppingPoint != null)
                 Expanded(
                     child: _buildSelectedPointCard(
                         'Dropping',
                         _selectedDroppingPoint!,
-                        AppColors.accent)),
+                        ThemeAwareColors.accent(context))),
             ],
           ),
           const SizedBox(height: 16),
@@ -513,12 +601,15 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                   ? _onContinuePressed
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: ThemeAwareColors.primary(context),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                textStyle: AppTextStyles.bodyMedium.copyWith(fontSize: 16),
+                textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
                 elevation: 2,
               ),
               child: const Text('Continue'),
@@ -541,21 +632,32 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
               const SizedBox(width: 6),
               Text(
                 title,
-                style: AppTextStyles.bodyMedium.copyWith(color: accentColor),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: accentColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            point.name ?? 'Unnamed Point',
-            style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+            point.name,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.titleLarge?.color,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
           Text(
             point.time,
-            style: AppTextStyles.bodySmall,
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).textTheme.bodySmall?.color,
+            ),
           ),
         ],
       );
@@ -611,7 +713,7 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) => Container(
-      color: AppColors.surface,
+      color: Theme.of(context).cardColor,
       child: _tabBar,
     );
 

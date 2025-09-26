@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common_text_widget.dart';
 import '../../../../shared/constants/images.dart';
 import '../controllers/hotel_controller.dart';
@@ -46,7 +44,7 @@ class HotelScreen extends GetView<SearchCityController> {
     });
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: <Widget>[
           Column(
@@ -63,18 +61,18 @@ class HotelScreen extends GetView<SearchCityController> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                   child: TextField(
                     controller: searchCtrl.searchController,
                     onChanged: (query) {
@@ -85,16 +83,22 @@ class HotelScreen extends GetView<SearchCityController> {
                       searchCtrl.searchQuery.value = query;
                       filterCtrl.applySearch(query);
                     },
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Search hotels...',
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).hintColor,
+                      ),
                       prefixIcon:
-                          const Icon(Icons.search, color: AppColors.textHint),
+                          Icon(Icons.search, color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
                       border: InputBorder.none,
                       suffixIcon: Obx(() {
                         if (searchCtrl.searchQuery.value.isNotEmpty) {
                           return IconButton(
-                            icon: const Icon(Icons.close,
-                                color: AppColors.textSecondary),
+                            icon: Icon(Icons.close,
+                                color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
                             onPressed: () {
                               searchCtrl.searchController.clear();
                               searchCtrl.searchQuery.value = '';
@@ -111,7 +115,9 @@ class HotelScreen extends GetView<SearchCityController> {
               ),
               // --- Hotel Filter Section (Train style) ---
               Container(
-                color: AppColors.surface,
+                color: Theme.of(context).brightness == Brightness.dark 
+                  ? Colors.grey[900]
+                  : const Color(0xFFF8F9FA),
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: Obx(() => SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -155,6 +161,7 @@ class HotelScreen extends GetView<SearchCityController> {
                               onTap: () {
                                 showModalBottomSheet(
                                   context: context,
+                                  backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).cardColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.vertical(
                                         top: Radius.circular(18)),
@@ -169,11 +176,13 @@ class HotelScreen extends GetView<SearchCityController> {
                               child: Container(
                                 padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: AppColors.surface,
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                    ? Colors.grey[800]
+                                    : const Color(0xFFF8F9FA),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(Icons.filter_alt,
-                                    color: AppColors.primary, size: 22),
+                                    color: Theme.of(context).primaryColor, size: 22),
                               ),
                             ),
                           ),
@@ -188,7 +197,7 @@ class HotelScreen extends GetView<SearchCityController> {
                     // Show circular loader while loading
                     return Center(
                       child: LoadingAnimationWidget.dotsTriangle(
-                        color: AppColors.primary,
+                        color: Theme.of(context).primaryColor,
                         size: 50,
                       ),
                     );
@@ -202,7 +211,7 @@ class HotelScreen extends GetView<SearchCityController> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Icon(Icons.hotel_outlined,
-                              size: 48, color: AppColors.textSecondary),
+                              size: 48, color: Theme.of(context).textTheme.bodySmall?.color),
                           SizedBox(height: 16),
                           Text(
                             filterCtrl.selectedFilter.value != 'all' &&
@@ -211,7 +220,7 @@ class HotelScreen extends GetView<SearchCityController> {
                                 : 'No hotels found for these dates',
                             style: TextStyle(
                               fontSize: 16,
-                              color: AppColors.textSecondary,
+                              color: Theme.of(context).textTheme.bodySmall?.color,
                               fontFamily: 'Poppins',
                             ),
                           ),
@@ -294,7 +303,7 @@ class _HotelScreenHeader extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: ListTile(
@@ -302,16 +311,16 @@ class _HotelScreenHeader extends StatelessWidget {
                   leading: InkWell(
                     onTap: () => Get.back(),
                     child: Icon(Icons.arrow_back,
-                        color: AppColors.textSecondary, size: 20),
+                        color: Theme.of(context).iconTheme.color, size: 20),
                   ),
                   title: CommonTextWidget.PoppinsMedium(
                     text: cityName,
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                     fontSize: 15,
                   ),
                   subtitle: CommonTextWidget.PoppinsRegular(
                     text: '$dateRange, $guestInfo',
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                     fontSize: 12,
                   ),
                   trailing: InkWell(
@@ -322,11 +331,11 @@ class _HotelScreenHeader extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        SvgPicture.asset(draw),
+                        SvgPicture.asset(draw, colorFilter: ColorFilter.mode(Theme.of(context).primaryColor, BlendMode.srcIn)),
                         const SizedBox(height: 10),
                         CommonTextWidget.PoppinsMedium(
                           text: 'Edit',
-                          color: AppColors.primary,
+                          color: Theme.of(context).primaryColor,
                           fontSize: 12,
                         ),
                       ],
@@ -344,7 +353,7 @@ class _HotelScreenHeader extends StatelessWidget {
                 child: Container(
                   width: Get.width,
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Padding(
@@ -352,10 +361,10 @@ class _HotelScreenHeader extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Icon(Icons.location_on, color: AppColors.primary),
+                        Icon(Icons.location_on, color: Theme.of(context).primaryColor),
                         CommonTextWidget.PoppinsMedium(
                           text: 'Map',
-                          color: AppColors.primary,
+                          color: Theme.of(context).primaryColor,
                           fontSize: 12,
                         ),
                       ],
@@ -392,17 +401,19 @@ class _HotelFilterChip extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             color: selected
-                ? AppColors.primary.withValues(alpha: 0.12)
-                : AppColors.surface,
+                ? Theme.of(context).primaryColor.withOpacity(0.12)
+                : Theme.of(context).brightness == Brightness.dark 
+                  ? Colors.grey[800]
+                  : const Color(0xFFF8F9FA),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: selected ? AppColors.primary : AppColors.divider,
+              color: selected ? Theme.of(context).primaryColor : Theme.of(context).dividerColor,
               width: 1,
             ),
             boxShadow: selected
                 ? <BoxShadow>[
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.08),
+                      color: Theme.of(context).primaryColor.withOpacity(0.08),
                       blurRadius: 8,
                       offset: Offset(0, 2),
                     )
@@ -412,21 +423,21 @@ class _HotelFilterChip extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Icon(icon,
-                  color: selected ? AppColors.primary : AppColors.textSecondary,
+                  color: selected ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodySmall?.color,
                   size: 17),
               const SizedBox(width: 6),
               Text(
                 label,
                 style: TextStyle(
-                  color: selected ? AppColors.primary : AppColors.textSecondary,
+                  color: selected ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodySmall?.color,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
               ),
               if (selected)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(left: 4),
-                  child: Icon(Icons.check, color: AppColors.primary, size: 15),
+                  child: Icon(Icons.check, color: Theme.of(context).primaryColor, size: 15),
                 ),
             ],
           ),
@@ -486,14 +497,21 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text('All Filters',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold, 
+                    fontSize: 18,
+                    color: Theme.of(context).textTheme.headlineSmall?.color,
+                  )),
               SizedBox(height: 18),
               // Price Range Filter
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                     'Price Range (₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()})',
-                    style: TextStyle(fontWeight: FontWeight.w500)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.titleMedium?.color,
+                    )),
               ),
               RangeSlider(
                 min: minPrice.toDouble(),
@@ -506,6 +524,8 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                   '₹${priceRange.start.toInt()}',
                   '₹${priceRange.end.toInt()}',
                 ),
+                activeColor: Theme.of(context).primaryColor,
+                inactiveColor: Theme.of(context).dividerColor,
                 onChanged: (RangeValues v) {
                   setState(() {
                     priceRange = v;
@@ -517,7 +537,10 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text('Star Rating',
-                    style: TextStyle(fontWeight: FontWeight.w500)),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.titleMedium?.color,
+                    )),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -535,13 +558,13 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: selectedStar >= star
-                            ? AppColors.primary.withValues(alpha: 0.15)
+                            ? Theme.of(context).primaryColor.withOpacity(0.15)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: selectedStar >= star
-                              ? AppColors.primary
-                              : AppColors.divider,
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).dividerColor,
                           width: 1,
                         ),
                       ),
@@ -549,7 +572,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                         Icons.star,
                         color: selectedStar >= star
                             ? Colors.amber
-                            : AppColors.divider,
+                            : Theme.of(context).dividerColor,
                         size: 28,
                       ),
                     ),
@@ -594,7 +617,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(22),
                     ),
@@ -618,7 +641,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                 child: Text(
                   'Cancel',
                   style: TextStyle(
-                    color: AppColors.primary,
+                    color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

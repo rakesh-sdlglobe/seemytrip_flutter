@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/features/home/presentation/screens/where_to_go/select_timing_screen.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../features/home/presentation/screens/where_to_go/select_timing_screen.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/images.dart';
 
 
 class BookingOptionScreen extends StatefulWidget {
@@ -18,11 +19,10 @@ class BookingOptionScreen extends StatefulWidget {
 class _BookingOptionScreenState extends State<BookingOptionScreen> {
   int indexSelected = 0;
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -30,11 +30,11 @@ class _BookingOptionScreenState extends State<BookingOptionScreen> {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Booking Options",
-          color: white,
+          text: 'Booking Options',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -50,13 +50,13 @@ class _BookingOptionScreenState extends State<BookingOptionScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CommonTextWidget.PoppinsMedium(
-                      text: "Selected Date : 13 OCT, 2022",
-                      color: black2E2,
+                      text: 'Selected Date : 13 OCT, 2022',
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                     CommonTextWidget.PoppinsRegular(
-                      text: "Full Calendar",
-                      color: redCA0,
+                      text: 'Full Calendar',
+                      color: AppColors.redCA0,
                       fontSize: 12,
                     ),
                   ],
@@ -88,7 +88,7 @@ class _BookingOptionScreenState extends State<BookingOptionScreen> {
                             topLeft: Radius.circular(6),
                           ),
                           border: Border.all(
-                            color: indexSelected == index ? redCA0 : greyAFA,
+                            color: indexSelected == index ? AppColors.redCA0 : AppColors.greyAFA,
                           ),
                         ),
                         child: Column(
@@ -99,7 +99,7 @@ class _BookingOptionScreenState extends State<BookingOptionScreen> {
                               height: 25,
                               decoration: BoxDecoration(
                                 color:
-                                    indexSelected == index ? redCA0 : greyAFA,
+                                    indexSelected == index ? AppColors.redCA0 : AppColors.greyAFA,
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(5),
                                   topRight: Radius.circular(5),
@@ -107,8 +107,8 @@ class _BookingOptionScreenState extends State<BookingOptionScreen> {
                               ),
                               child: Center(
                                 child: CommonTextWidget.PoppinsMedium(
-                                  text: "OCT",
-                                  color: white,
+                                  text: 'OCT',
+                                  color: AppColors.white,
                                   fontSize: 14.0,
                                 ),
                               ),
@@ -125,10 +125,10 @@ class _BookingOptionScreenState extends State<BookingOptionScreen> {
                 ),
               ),
               SizedBox(height: 15),
-              Divider(color: greyE8E, thickness: 1),
+              Divider(color: AppColors.greyE8E, thickness: 1),
               SizedBox(height: 15),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: InkWell(
                   onTap: () {
                     Get.bottomSheet(
@@ -148,5 +148,4 @@ class _BookingOptionScreenState extends State<BookingOptionScreen> {
         ),
       ),
     );
-  }
 }

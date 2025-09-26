@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:seemytrip/core/widgets/lists_widget.dart';
@@ -19,9 +19,8 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,11 +42,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     onTap: () {
                       Get.back();
                     },
-                    child: Icon(Icons.arrow_back, color: white, size: 20),
+                    child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                   ),
                   CommonTextWidget.PoppinsSemiBold(
-                    text: "Explore",
-                    color: white,
+                    text: 'Explore',
+                    color: AppColors.white,
                     fontSize: 18,
                   ),
                   Container(),
@@ -79,13 +78,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: widget.title == Lists.holidayPackagesList1[index]
-                            ? redF8E
-                            : white,
+                            ? AppColors.redF8E
+                            : AppColors.white,
                         boxShadow: [
                           BoxShadow(
                             offset: Offset(0, 1),
                             blurRadius: 6,
-                            color: grey515.withOpacity(0.25),
+                            color: AppColors.grey515.withValues(alpha: 0.25),
                           ),
                         ],
                       ),
@@ -96,8 +95,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             text: Lists.holidayPackagesList1[index],
                             color: widget.title ==
                                     Lists.holidayPackagesList1[index]
-                                ? redCA0
-                                : grey969,
+                                ? AppColors.redCA0
+                                : AppColors.grey969,
                             fontSize: 14,
                           ),
                         ),
@@ -109,13 +108,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
             ),
           ),
           SizedBox(height: 10),
-          Divider(color: greyE8E, thickness: 1),
+          Divider(color: AppColors.greyE8E, thickness: 1),
           SizedBox(height: 10),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: CommonTextWidget.PoppinsSemiBold(
-              text: "Best selling destinations",
-              color: black2E2,
+              text: 'Best selling destinations',
+              color: AppColors.black2E2,
               fontSize: 16,
             ),
           ),
@@ -140,7 +139,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       SizedBox(height: 10),
                       CommonTextWidget.PoppinsMedium(
                         text: Lists.holidayPackagesList2[index]["text"],
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 14,
                       ),
                     ],
@@ -150,13 +149,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
             ),
           ),
           SizedBox(height: 10),
-          Divider(color: greyE8E, thickness: 1),
+          Divider(color: AppColors.greyE8E, thickness: 1),
           SizedBox(height: 10),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: CommonTextWidget.PoppinsSemiBold(
-              text: "Emerging",
-              color: black2E2,
+              text: 'Emerging',
+              color: AppColors.black2E2,
               fontSize: 16,
             ),
           ),
@@ -177,7 +176,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     SizedBox(height: 10),
                     CommonTextWidget.PoppinsMedium(
                       text: Lists.exploreList[index]["text"],
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                   ],
@@ -188,5 +187,4 @@ class _ExploreScreenState extends State<ExploreScreen> {
         ],
       ),
     );
-  }
 }

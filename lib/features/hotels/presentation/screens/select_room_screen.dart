@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../core/widgets/common_text_widget.dart';
 import '../../../../main.dart';
 import '../../../../shared/constants/images.dart';
@@ -12,9 +12,9 @@ class SelectRoomScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -22,11 +22,11 @@ class SelectRoomScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'Select Room',
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
         actions: [
@@ -38,7 +38,7 @@ class SelectRoomScreen extends StatelessWidget {
               padding: EdgeInsets.only(right: 24, top: 20),
               child: CommonTextWidget.PoppinsMedium(
                 text: 'Modify',
-                color: white,
+                color: AppColors.white,
                 fontSize: 13,
               ),
             ),
@@ -53,7 +53,7 @@ class SelectRoomScreen extends StatelessWidget {
             children: [
               Container(
                 width: Get.width,
-                color: redF9E.withOpacity(0.75),
+                color: AppColors.redF9E.withValues(alpha: 0.75),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
                   child: Image.asset(selectRoomImage1),
@@ -97,7 +97,7 @@ class SelectRoomScreen extends StatelessWidget {
               SizedBox(height: 30),
               Container(
                 width: Get.width,
-                color: black2E2,
+                color: AppColors.black2E2,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   child: Row(
@@ -108,17 +108,17 @@ class SelectRoomScreen extends StatelessWidget {
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
                             text: '₹ 7,950',
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 16,
                           ),
                           CommonTextWidget.PoppinsRegular(
                             text: '+ ₹870 taxes & service fees',
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 10,
                           ),
                           CommonTextWidget.PoppinsRegular(
                             text: 'Per Night (2 Adults)',
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 10,
                           ),
                         ],
@@ -132,11 +132,11 @@ class SelectRoomScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        color: redCA0,
+                        color: AppColors.redCA0,
                         child: CommonTextWidget.PoppinsSemiBold(
                           fontSize: 16,
                           text: 'CONTINUE',
-                          color: white,
+                          color: AppColors.white,
                         ),
                       ),
                     ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/widgets/lists_widget.dart';
-import '../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 
 class ToStationSelector extends StatelessWidget {
   final String? selectedToStation;
@@ -21,9 +21,9 @@ class ToStationSelector extends StatelessWidget {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.15),
+            color: AppColors.grey9B9.withOpacity(0.15),
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(width: 1, color: greyE2E),
+            border: Border.all(width: 1, color: AppColors.greyE2E),
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
@@ -44,7 +44,7 @@ class ToStationSelector extends StatelessWidget {
                       Text(
                         'To',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: AppColors.grey888,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -53,7 +53,7 @@ class ToStationSelector extends StatelessWidget {
                       Text(
                         selectedToStation ?? 'Select To Station',
                         style: TextStyle(
-                          color: selectedToStation == null ? grey888 : black2E2,
+                          color: selectedToStation == null ? AppColors.grey888 : AppColors.black2E2,
                           fontSize: 16,
                         ),
                         overflow: TextOverflow.ellipsis,

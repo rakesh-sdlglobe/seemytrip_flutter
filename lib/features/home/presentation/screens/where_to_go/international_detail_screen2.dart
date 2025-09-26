@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/features/home/presentation/screens/where_to_go/booking_option_screen.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/images.dart';
+import 'booking_option_screen.dart';
 
 class InterNationalDetailScreen2 extends StatelessWidget {
   InterNationalDetailScreen2({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: SingleChildScrollView(
@@ -71,7 +71,7 @@ class InterNationalDetailScreen2 extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Divider(color: greyE8E, thickness: 1),
+              Divider(color: AppColors.greyE8E, thickness: 1),
               SizedBox(height: 15),
               Padding(
                 padding: EdgeInsets.only(left: 24),
@@ -82,12 +82,12 @@ class InterNationalDetailScreen2 extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 15),
-              Divider(color: greyE8E, thickness: 1),
+              Divider(color: AppColors.greyE8E, thickness: 1),
               Padding(
                 padding: EdgeInsets.only(left: 24),
                 child: CommonTextWidget.PoppinsSemiBold(
-                  text: "People Also Bought These",
-                  color: black2E2,
+                  text: 'People Also Bought These',
+                  color: AppColors.black2E2,
                   fontSize: 16,
                 ),
               ),
@@ -108,7 +108,7 @@ class InterNationalDetailScreen2 extends StatelessWidget {
               Container(
                 height: 60,
                 width: Get.width,
-                color: black2E2,
+                color: AppColors.black2E2,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   child: Row(
@@ -117,13 +117,13 @@ class InterNationalDetailScreen2 extends StatelessWidget {
                       Column(
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "₹ 3,145",
-                            color: white,
+                            text: '₹ 3,145',
+                            color: AppColors.white,
                             fontSize: 16,
                           ),
                           CommonTextWidget.PoppinsMedium(
-                            text: "Per Person",
-                            color: white,
+                            text: 'Per Person',
+                            color: AppColors.white,
                             fontSize: 10,
                           ),
                         ],
@@ -138,11 +138,11 @@ class InterNationalDetailScreen2 extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        color: redCA0,
+                        color: AppColors.redCA0,
                         child: CommonTextWidget.PoppinsSemiBold(
                           fontSize: 16,
-                          text: "VIEW DEALS",
-                          color: white,
+                          text: 'VIEW DEALS',
+                          color: AppColors.white,
                         ),
                       ),
                     ],
@@ -155,5 +155,4 @@ class InterNationalDetailScreen2 extends StatelessWidget {
         ),
       ),
     );
-  }
 }

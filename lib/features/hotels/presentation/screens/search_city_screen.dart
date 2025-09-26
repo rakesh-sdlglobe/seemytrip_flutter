@@ -1,37 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../controllers/hotel_controller.dart';
 import 'hotel_and_home_stay_tab_screen.dart';
 
-// --- Design Tokens ---
-const Color primaryColor = Color(0xFFCA0B0B);
-const Color primaryLight = Color(0xFFFFEBEE);
-const Color surfaceColor = Color(0xFFF8F9FA);
-const Color surfaceElevated = Color(0xFFFFFFFF);
-const Color textPrimary = Color(0xFF1A1A1A);
-const Color textSecondary = Color(0xFF666666);
-const Color borderColor = Color(0xFFEEEEEE);
+// --- Design Tokens --- (Now using theme-aware colors)
+// These constants will be replaced with theme-aware alternatives throughout the file
 
 // --- Spacing ---
 const double defaultRadius = 16.0;
 const double defaultPadding = 20.0;
 const double itemSpacing = 12.0;
 
-// --- Typography ---
-final TextStyle headingStyle = TextStyle(
-  fontSize: 24,
-  fontWeight: FontWeight.w700,
-  color: textPrimary,
-  letterSpacing: -0.5,
-);
-
-final TextStyle subtitleStyle = TextStyle(
-  fontSize: 14,
-  color: textSecondary,
-  height: 1.4,
-);
+// --- Typography --- (Will be replaced with theme-aware styles)
 
 // --- Animation Durations ---
 const Duration defaultAnimationDuration = Duration(milliseconds: 300);
@@ -86,7 +67,7 @@ class SearchCityScreen extends StatelessWidget {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
+                        color: Theme.of(context).dividerColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -119,7 +100,7 @@ class SearchCityScreen extends StatelessWidget {
                     // Search Bar
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: _buildSearchTextField(),
+                      child: _buildSearchTextField(context),
                     ),
 
                     const SizedBox(height: 8),
@@ -128,12 +109,12 @@ class SearchCityScreen extends StatelessWidget {
                     Expanded(
                       child: Obx(() {
                         if (controller.isLoading.value) {
-                          return _buildLoadingState();
+                          return _buildLoadingState(context);
                         }
                         
                         final RxList<City> list = controller.filteredCities;
                         if (list.isEmpty) {
-                          return _buildEmptyState();
+                          return _buildEmptyState(context);
                         }
 
                         return ListView.builder(
@@ -141,7 +122,7 @@ class SearchCityScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 12, bottom: 24),
                           itemCount: list.length,
                           itemBuilder: (_, int index) =>
-                              _buildSearchResultTile(list[index]),
+                              _buildSearchResultTile(context, list[index]),
                         );
                       }),
                     ),
@@ -154,21 +135,23 @@ class SearchCityScreen extends StatelessWidget {
   }
 
   // Loading state widget
-  Widget _buildLoadingState() => Center(
+  Widget _buildLoadingState(BuildContext context) => Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           SizedBox(
             child: LoadingAnimationWidget.fourRotatingDots(
-              color: primaryColor,
+              color: Theme.of(context).primaryColor,
               size: 24,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             'Searching destinations...',
-            style: subtitleStyle.copyWith(
-              color: textSecondary.withValues(alpha: 0.8),
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8),
+              height: 1.4,
             ),
           ),
         ],
@@ -177,7 +160,7 @@ class SearchCityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: surfaceElevated,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(context),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -188,6 +171,7 @@ class SearchCityScreen extends StatelessWidget {
             children: <Widget>[
               // Current Location Card
               _buildOptionTile(
+                context: context,
                 icon: Icons.my_location_rounded,
                 title: 'Use Current Location',
                 subtitle: 'Find places near you',
@@ -198,6 +182,7 @@ class SearchCityScreen extends StatelessWidget {
               
               // Selected City Card
               _buildOptionTile(
+                context: context,
                 icon: Icons.location_city_rounded,
                 title: 'Destination',
                 subtitle: controller.selectedCity.value?.toString() ??
@@ -230,7 +215,7 @@ class SearchCityScreen extends StatelessWidget {
                           //     ),
                           //   ),
                           // ),
-                          _buildRecentSearchChips(),
+                          _buildRecentSearchChips(context),
                           const SizedBox(height: 8),
                         ],
                       )
@@ -246,7 +231,7 @@ class SearchCityScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: textPrimary,
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
               ),
@@ -286,6 +271,7 @@ class SearchCityScreen extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final Map<String, String> destination = popularDestinations[index];
         return _buildDestinationCard(
+          context,
           destination['city']!,
           destination['country']!,
         );
@@ -294,7 +280,7 @@ class SearchCityScreen extends StatelessWidget {
   }
   
   // Destination Card
-  Widget _buildDestinationCard(String city, String country) => Material(
+  Widget _buildDestinationCard(BuildContext context, String city, String country) => Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
@@ -306,11 +292,11 @@ class SearchCityScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Theme.of(context).shadowColor.withOpacity(0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -322,7 +308,9 @@ class SearchCityScreen extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey.shade100,
+                  color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.grey[700]
+                    : Colors.grey.shade100,
                 ),
               ),
               // Gradient Overlay
@@ -375,19 +363,21 @@ class SearchCityScreen extends StatelessWidget {
 
   /// Builds a modern AppBar with a clean design and search functionality
   AppBar _buildAppBar(BuildContext context) => AppBar(
-      backgroundColor: surfaceElevated,
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       elevation: 0.5,
-      shadowColor: Colors.black.withOpacity(0.05),
+      shadowColor: Theme.of(context).shadowColor.withOpacity(0.05),
       leading: IconButton(
         icon: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: surfaceColor,
+            color: Theme.of(context).brightness == Brightness.dark 
+              ? Colors.grey[800]
+              : const Color(0xFFF8F9FA),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.arrow_back_ios_rounded,
-            color: textPrimary,
+            color: Theme.of(context).iconTheme.color,
             size: 18,
           ),
         ),
@@ -396,7 +386,12 @@ class SearchCityScreen extends StatelessWidget {
       ),
       title: Text(
         'Search City',
-        style: headingStyle.copyWith(fontSize: 22),
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: Theme.of(context).textTheme.headlineSmall?.color,
+          letterSpacing: -0.5,
+        ),
       ),
       centerTitle: false,
       actions: <Widget>[
@@ -404,12 +399,14 @@ class SearchCityScreen extends StatelessWidget {
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: surfaceColor,
+              color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.grey[800]
+                : const Color(0xFFF8F9FA),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.tune_rounded,
-              color: textPrimary,
+              color: Theme.of(context).iconTheme.color,
               size: 20,
             ),
           ),
@@ -424,6 +421,7 @@ class SearchCityScreen extends StatelessWidget {
 
   /// A modern, customizable option tile with smooth hover effects
   Widget _buildOptionTile({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String subtitle,
@@ -435,8 +433,8 @@ class SearchCityScreen extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        splashColor: primaryColor.withOpacity(0.1),
-        highlightColor: primaryColor.withOpacity(0.05),
+        splashColor: Theme.of(context).primaryColor.withOpacity(0.1),
+        highlightColor: Theme.of(context).primaryColor.withOpacity(0.05),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
@@ -444,12 +442,12 @@ class SearchCityScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   icon,
-                  color: primaryColor,
+                  color: Theme.of(context).primaryColor,
                   size: 20,
                 ),
               ),
@@ -460,10 +458,10 @@ class SearchCityScreen extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
-                        color: textPrimary,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -476,7 +474,7 @@ class SearchCityScreen extends StatelessWidget {
                               selectedCity?.toString() ?? subtitle,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: textSecondary,
+                                color: Theme.of(context).textTheme.bodySmall?.color,
                                 height: 1.3,
                               ),
                               maxLines: 1,
@@ -488,7 +486,7 @@ class SearchCityScreen extends StatelessWidget {
                           subtitle,
                           style: TextStyle(
                             fontSize: 13,
-                            color: textSecondary,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                             height: 1.3,
                           ),
                           maxLines: 1,
@@ -501,19 +499,19 @@ class SearchCityScreen extends StatelessWidget {
               ),
               if (showClearButton)
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.close_rounded,
-                    color: textSecondary,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                     size: 20,
                   ),
                   onPressed: onClear,
                   splashRadius: 20,
                 )
               else
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 16,
-                  color: textSecondary,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
             ],
           ),
@@ -522,7 +520,7 @@ class SearchCityScreen extends StatelessWidget {
     );
 
   /// Builds a modern horizontal list of recent search chips
-  Widget _buildRecentSearchChips() => Obx(() {
+  Widget _buildRecentSearchChips(BuildContext context) => Obx(() {
       final RxList<City> recents = controller.recentSearches;
       if (recents.isEmpty) return const SizedBox.shrink();
       
@@ -536,7 +534,7 @@ class SearchCityScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: textPrimary,
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
           ),
@@ -562,10 +560,12 @@ class SearchCityScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: surfaceColor,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.grey[800]
+                          : const Color(0xFFF8F9FA),
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                          color: Colors.grey.shade200,
+                          color: Theme.of(context).dividerColor,
                           width: 1,
                         ),
                       ),
@@ -575,7 +575,7 @@ class SearchCityScreen extends StatelessWidget {
                           Icon(
                             Icons.history_rounded,
                             size: 16,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -583,7 +583,7 @@ class SearchCityScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: textPrimary,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
                             ),
                           ),
                         ],
@@ -599,23 +599,27 @@ class SearchCityScreen extends StatelessWidget {
     });
 
   /// A clean search text field for the modal.
-  Widget _buildSearchTextField() => Obx(
+  Widget _buildSearchTextField(BuildContext context) => Obx(
       () => TextField(
         controller: textController,
         onChanged: (String value) => controller.searchText.value = value,
         autofocus: true,
-        style: const TextStyle(fontSize: 16, height: 1.4),
+        style: TextStyle(
+          fontSize: 16, 
+          height: 1.4,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+        ),
         decoration: InputDecoration(
           hintText: 'Search for a city or hotel',
           hintStyle: TextStyle(
-            color: Colors.grey.shade500,
+            color: Theme.of(context).hintColor,
             fontSize: 16,
           ),
           prefixIcon: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Icon(
               Icons.search_rounded,
-              color: Colors.grey.shade600,
+              color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
               size: 24,
             ),
           ),
@@ -626,7 +630,7 @@ class SearchCityScreen extends StatelessWidget {
                     key: ValueKey(controller.searchText),
                     icon: Icon(
                       Icons.close_rounded,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
                       size: 22,
                     ),
                     onPressed: () {
@@ -639,7 +643,9 @@ class SearchCityScreen extends StatelessWidget {
                 )
               : null,
           filled: true,
-          fillColor: Colors.grey.shade100,
+          fillColor: Theme.of(context).brightness == Brightness.dark 
+            ? Colors.grey[800]
+            : Colors.grey.shade100,
           contentPadding: const EdgeInsets.symmetric(vertical: 4),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
@@ -648,7 +654,7 @@ class SearchCityScreen extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide(
-              color: primaryColor.withOpacity(0.4),
+              color: Theme.of(context).primaryColor.withOpacity(0.4),
               width: 1.5,
             ),
           ),
@@ -657,7 +663,7 @@ class SearchCityScreen extends StatelessWidget {
     );
 
   /// A modern tile for search results with smooth animations
-  Widget _buildSearchResultTile(City city) => Material(
+  Widget _buildSearchResultTile(BuildContext context, City city) => Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
@@ -666,8 +672,8 @@ class SearchCityScreen extends StatelessWidget {
           Get.to(() => HotelAndHomeStayTabScreen());
         },
         borderRadius: BorderRadius.circular(12),
-        splashColor: primaryColor.withOpacity(0.1),
-        highlightColor: primaryColor.withOpacity(0.05),
+        splashColor: Theme.of(context).primaryColor.withOpacity(0.1),
+        highlightColor: Theme.of(context).primaryColor.withOpacity(0.05),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(
@@ -675,12 +681,12 @@ class SearchCityScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.1),
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.location_on_rounded,
-                  color: primaryColor,
+                  color: Theme.of(context).primaryColor,
                   size: 20,
                 ),
               ),
@@ -689,14 +695,14 @@ class SearchCityScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    _highlightedText(city.name, controller.searchText.value),
+                    _highlightedText(context, city.name, controller.searchText.value),
                     if (city.country.isNotEmpty) ...<Widget>[
                       const SizedBox(height: 2),
                       Text(
                         city.country,
                         style: TextStyle(
                           fontSize: 13,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                     ],
@@ -706,7 +712,7 @@ class SearchCityScreen extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 16,
-                color: Colors.grey.shade400,
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.4),
               ),
             ],
           ),
@@ -715,21 +721,23 @@ class SearchCityScreen extends StatelessWidget {
     );
 
   /// A rich text widget that bolds the matching search query.
-  RichText _highlightedText(String text, String query) {
+  RichText _highlightedText(BuildContext context, String text, String query) {
     if (query.isEmpty) {
       return RichText(
           text: TextSpan(
               text: text,
-              style: const TextStyle(
-                  color: textPrimary, fontWeight: FontWeight.w500)));
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color, 
+                  fontWeight: FontWeight.w500)));
     }
     final int matches = text.toLowerCase().indexOf(query.toLowerCase());
     if (matches == -1) {
       return RichText(
           text: TextSpan(
               text: text,
-              style: const TextStyle(
-                  color: textPrimary, fontWeight: FontWeight.w500)));
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color, 
+                  fontWeight: FontWeight.w500)));
     }
 
     final String beforeMatch = text.substring(0, matches);
@@ -738,40 +746,26 @@ class SearchCityScreen extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        style: const TextStyle(color: textSecondary, fontFamily: 'Poppins'),
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodySmall?.color, 
+          fontFamily: 'Poppins'
+        ),
         children: <InlineSpan>[
           TextSpan(text: beforeMatch),
           TextSpan(
               text: match,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: textPrimary)),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, 
+                  color: Theme.of(context).textTheme.bodyLarge?.color)),
           TextSpan(text: afterMatch),
         ],
       ),
     );
   }
 
-  /// A header for different sections on the main screen.
-  Padding _buildSectionHeader(String title, String assetName) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: <Widget>[
-          SvgPicture.asset(assetName,
-              colorFilter:
-                  const ColorFilter.mode(textSecondary, BlendMode.srcIn),
-              width: 16),
-          const SizedBox(width: 8),
-          Text(title,
-              style: const TextStyle(
-                  fontSize: 14,
-                  color: textSecondary,
-                  fontWeight: FontWeight.w500)),
-        ],
-      ),
-    );
 
   /// A modern empty state widget with animations
-  Widget _buildEmptyState() => Center(
+  Widget _buildEmptyState(BuildContext context) => Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
@@ -783,12 +777,16 @@ class SearchCityScreen extends StatelessWidget {
                   ? Icon(
                       Icons.explore_rounded,
                       size: 80,
-                      color: Colors.grey.shade300,
+                      color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.grey.shade600
+                        : Colors.grey.shade300,
                     )
                   : Icon(
                       Icons.search_off_rounded,
                       size: 80,
-                      color: Colors.grey.shade300,
+                      color: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.grey.shade600
+                        : Colors.grey.shade300,
                     ),
             ),
             const SizedBox(height: 24),
@@ -796,10 +794,10 @@ class SearchCityScreen extends StatelessWidget {
               controller.searchText.value.isEmpty
                   ? 'Where to next?'
                   : 'No results found',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: textPrimary,
+                color: Theme.of(context).textTheme.headlineSmall?.color,
               ),
               textAlign: TextAlign.center,
             ),
@@ -810,7 +808,7 @@ class SearchCityScreen extends StatelessWidget {
                   : 'We couldn\'t find any matches for "${controller.searchText.value}"',
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.grey.shade600,
+                color: Theme.of(context).textTheme.bodySmall?.color,
                 height: 1.5,
               ),
               textAlign: TextAlign.center,
@@ -823,7 +821,7 @@ class SearchCityScreen extends StatelessWidget {
                   controller.searchText.value = '';
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
+                  backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(

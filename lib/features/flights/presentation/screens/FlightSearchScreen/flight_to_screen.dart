@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../controllers/flight_controller.dart';
 
@@ -18,7 +18,7 @@ class _FlightToScreenState extends State<FlightToScreen> {
   final RxList<Map<String, String>> airports = <Map<String, String>>[].obs;
   final RxList<Map<String, String>> filteredAirports = <Map<String, String>>[].obs;
   final RxBool isLoading = true.obs;
-  final RxBool hasError = false.obs; // This line is already correct.
+  final RxBool hasError = false.obs;
   Timer? _debounce;
 
   @override
@@ -32,31 +32,31 @@ class _FlightToScreenState extends State<FlightToScreen> {
     try {
       isLoading.value = true;
       hasError.value = false;
-      
+
       final airportList = _flightController.airports;
-      
+
       if (airportList.isEmpty) {
         await _flightController.fetchAirports();
         airports.assignAll(_flightController.airports);
-      } else {    
+      } else {
         airports.assignAll(airportList);
       }
-      
+
       filteredAirports.assignAll(airports);
-      
+
       if (airports.isEmpty) {
         throw Exception('No airports available. Please try again later.');
       }
     } catch (e) {
       final errorMessage = e.toString().replaceAll('Exception: ', '');
       hasError.value = true;
-      
+
       if (mounted) {
         Get.snackbar(
           'Error',
           errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+          backgroundColor: AppColors.redCA0,
+          colorText: AppColors.white,
           duration: Duration(seconds: 5),
         );
       }
@@ -72,7 +72,6 @@ class _FlightToScreenState extends State<FlightToScreen> {
     super.dispose();
   }
 
-
   void _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(Duration(milliseconds: 300), () {
@@ -87,10 +86,10 @@ class _FlightToScreenState extends State<FlightToScreen> {
       filteredAirports.assignAll(airports);
       return;
     }
-    
+
     query = query.toLowerCase();
     setState(() {
-      filteredAirports.assignAll(airports.where((airport) => 
+      filteredAirports.assignAll(airports.where((airport) =>
       (airport['name']?.toLowerCase().contains(query) ?? false) ||
       (airport['code']?.toLowerCase().contains(query) ?? false) ||
       (airport['city']?.toLowerCase().contains(query) ?? false)
@@ -102,7 +101,7 @@ class _FlightToScreenState extends State<FlightToScreen> {
     try {
       final searchParams = _flightController.getLastSearchParams();
       searchParams['toAirport'] = airportCode;
-      searchParams['toAirport'] = airportCode; // correct
+      searchParams['toAirport'] = airportCode;
       Get.back(result: {
         'stationName': airportName,
         'stationCode': airportCode,
@@ -114,7 +113,7 @@ class _FlightToScreenState extends State<FlightToScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
@@ -124,9 +123,9 @@ class _FlightToScreenState extends State<FlightToScreen> {
             Container(
               width: Get.width,
               decoration: BoxDecoration(
-                color: redF8E,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: greyE8E, width: 1),
+                border: Border.all(color: AppColors.greyE8E, width: 1),
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18),
@@ -136,7 +135,7 @@ class _FlightToScreenState extends State<FlightToScreen> {
                       onTap: () {
                         Get.back();
                       },
-                      child: Icon(Icons.arrow_back, color: black2E2, size: 20),
+                      child: Icon(Icons.arrow_back, color: AppColors.black2E2, size: 20),
                     ),
                     SizedBox(width: 15),
                     Column(
@@ -144,7 +143,7 @@ class _FlightToScreenState extends State<FlightToScreen> {
                       children: [
                         CommonTextWidget.PoppinsMedium(
                           text: 'To',
-                          color: black2E2,
+                          color: AppColors.black2E2,
                           fontSize: 14,
                         ),
                         _isEditingTo
@@ -174,7 +173,7 @@ class _FlightToScreenState extends State<FlightToScreen> {
                                   text: _toController.text.isEmpty
                                       ? 'Enter any City/Airport Name'
                                       : _toController.text,
-                                  color: grey717,
+                                  color: AppColors.grey717,
                                   fontSize: 14,
                                 ),
                               ),
@@ -187,60 +186,60 @@ class _FlightToScreenState extends State<FlightToScreen> {
             SizedBox(height: 20),
             CommonTextWidget.PoppinsMedium(
               text: 'Popular Searches',
-              color: grey717,
+              color: AppColors.grey717,
               fontSize: 12,
             ),
             Expanded(
               child: isLoading.value
                   ? Center(
-                    child: LoadingAnimationWidget.dotsTriangle(
-                      color: redCA0,
-                      size: 50,
-                    )
+                      child: LoadingAnimationWidget.dotsTriangle(
+                        color: AppColors.redCA0,
+                        size: 50,
+                      ),
                     )
                   : hasError.value
                       ? Center(child: Text('Error fetching airports.'))
                       : filteredAirports.isEmpty
                           ? Center(child: Text('No airports found'))
                           : ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: filteredAirports.length,
-                            itemBuilder: (context, index) {
-                              final airport = filteredAirports[index];
-                              final city = airport['city'] ?? 'Unknown';
-                              final code = airport['code'] ?? '';
-                              final name = airport['name'] ?? 'Unknown Airport';
-                              
-                              return ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      color: black2E2,
-                                      fontSize: 16,
-                                    ),
-                                    children: [
-                                      TextSpan(text: '$city '),
-                                      TextSpan(
-                                        text: '($code)',
-                                        style: TextStyle(
-                                          color: grey717,
-                                          fontSize: 14,
-                                        ),
+                              padding: EdgeInsets.zero,
+                              itemCount: filteredAirports.length,
+                              itemBuilder: (context, index) {
+                                final airport = filteredAirports[index];
+                                final city = airport['city'] ?? 'Unknown';
+                                final code = airport['code'] ?? '';
+                                final name = airport['name'] ?? 'Unknown Airport';
+
+                                return ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  title: RichText(
+                                    text: TextSpan(
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        color: AppColors.black2E2,
+                                        fontSize: 16,
                                       ),
-                                    ],
+                                      children: [
+                                        TextSpan(text: '$city '),
+                                        TextSpan(
+                                          text: '($code)',
+                                          style: TextStyle(
+                                            color: AppColors.grey717,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                subtitle: CommonTextWidget.PoppinsRegular(
-                                  text: name,
-                                  color: grey717,
-                                  fontSize: 12,
-                                ),
-                                onTap: () {
-                                  _selectAirport(name, code);
-                                },
-                              );
+                                  subtitle: CommonTextWidget.PoppinsRegular(
+                                    text: name,
+                                    color: AppColors.grey717,
+                                    fontSize: 12,
+                                  ),
+                                  onTap: () {
+                                    _selectAirport(name, code);
+                                  },
+                                );
                               },
                             ),
             ),

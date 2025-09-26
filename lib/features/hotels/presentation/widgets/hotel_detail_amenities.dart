@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:seemytrip/core/utils/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HotelDetailAmenities extends StatefulWidget {
-  final Map<String, dynamic> hotelDetail;
 
   const HotelDetailAmenities({Key? key, required this.hotelDetail}) : super(key: key);
+  final Map<String, dynamic> hotelDetail;
 
   @override
   _HotelDetailAmenitiesState createState() => _HotelDetailAmenitiesState();
@@ -68,16 +67,17 @@ class _HotelDetailAmenitiesState extends State<HotelDetailAmenities> {
 
   @override
   Widget build(BuildContext context) {
-    final amenities = widget.hotelDetail['Amenities'] as List<dynamic>? ?? [];
+    // ignore: always_specify_types
+    final List amenities = widget.hotelDetail['Amenities'] as List<dynamic>? ?? <dynamic>[];
     
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -87,20 +87,24 @@ class _HotelDetailAmenitiesState extends State<HotelDetailAmenities> {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             // Header with icon
             Row(
-              children: [
+              children: <Widget>[
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.orange.withOpacity(0.2)
+                      : Colors.orange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.emoji_food_beverage_outlined,
                     size: 20,
-                    color: Colors.orange,
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.orange[300]
+                      : Colors.orange,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -109,7 +113,7 @@ class _HotelDetailAmenitiesState extends State<HotelDetailAmenities> {
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
               ],
@@ -119,7 +123,7 @@ class _HotelDetailAmenitiesState extends State<HotelDetailAmenities> {
             
             if (amenities.isNotEmpty)
               Column(
-                children: [
+                children: <Widget>[
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -130,31 +134,41 @@ class _HotelDetailAmenitiesState extends State<HotelDetailAmenities> {
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
                     ),
-                    itemBuilder: (context, i) {
+                    itemBuilder: (BuildContext context, int i) {
                       final amen = amenities[i];
                       final String description = amen is Map && amen.containsKey('Description')
                           ? amen['Description'].toString()
                           : amen.toString();
-                      final icon = _getAmenityIcon(description);
+                      final IconData icon = _getAmenityIcon(description);
                       
                       return Container(
                         decoration: BoxDecoration(
-                          color: Colors.grey[50],
+                          color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.grey[800]
+                            : Colors.grey[50],
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey[200]!),
+                          border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.grey[700]!
+                              : Colors.grey[200]!,
+                          ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                           child: Row(
-                            children: [
-                              Icon(icon, color: redCA0, size: 18),
+                            children: <Widget>[
+                              Icon(icon, 
+                                color: Theme.of(context).brightness == Brightness.dark 
+                                  ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                  : const Color(0xFFCA0B0B), // Red for light theme
+                                size: 18),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   description,
                                   style: GoogleFonts.poppins(
                                     fontSize: 13,
-                                    color: Colors.grey[800],
+                                    color: Theme.of(context).textTheme.bodyMedium?.color,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 1,
@@ -178,18 +192,22 @@ class _HotelDetailAmenitiesState extends State<HotelDetailAmenities> {
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
+                          children: <Widget>[
                             Text(
                               _isExpanded ? 'Show Less' : 'Show More',
                               style: GoogleFonts.poppins(
-                                color: redCA0,
+                                color: Theme.of(context).brightness == Brightness.dark 
+                                  ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                  : const Color(0xFFCA0B0B), // Red for light theme
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                             Icon(
                               _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                              color: redCA0,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                : const Color(0xFFCA0B0B), // Red for light theme
                               size: 18,
                             ),
                           ],
@@ -204,7 +222,7 @@ class _HotelDetailAmenitiesState extends State<HotelDetailAmenities> {
                 child: Text(
                   'No amenities listed.',
                   style: GoogleFonts.poppins(
-                    color: Colors.grey[600],
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                     fontSize: 14,
                   ),
                 ),

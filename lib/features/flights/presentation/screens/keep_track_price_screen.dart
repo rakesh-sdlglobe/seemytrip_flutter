@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/features/flights/presentation/screens/price_alert_screen.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:seemytrip/main.dart';
@@ -9,12 +9,11 @@ class KeepTrackPriceScreen extends StatelessWidget {
   KeepTrackPriceScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: EdgeInsets.only(top: 400),
       child: Container(
         decoration: BoxDecoration(
-          color: white,
+          color: AppColors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -29,22 +28,22 @@ class KeepTrackPriceScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonTextWidget.PoppinsSemiBold(
-                    text: "Keep track of the prices!",
-                    color: black2E2,
+                    text: 'Keep track of the prices!',
+                    color: AppColors.black2E2,
                     fontSize: 18,
                   ),
                   SizedBox(height: 6),
                   Container(
                     height: 4,
                     width: 30,
-                    color: redCA0,
+                    color: AppColors.grey888,
                   ),
                   SizedBox(height: 20),
                   CommonTextWidget.PoppinsRegular(
-                    text: "Create an alert for this sector to receive "
-                        "notification whenever the flight prices "
-                        "increase or decrease.",
-                    color: grey888,
+                    text: 'Create an alert for this sector to receive '
+                        'notification whenever the flight prices '
+                        'increase or decrease.',
+                    color: AppColors.grey888,
                     fontSize: 16,
                   ),
                   SizedBox(height: 30),
@@ -56,8 +55,8 @@ class KeepTrackPriceScreen extends StatelessWidget {
                           Get.back();
                         },
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "NO,THANKS!",
-                          color: redCA0,
+                          text: 'NO,THANKS!',
+                          color: AppColors.redCA0,
                           fontSize: 16,
                         ),
                       ),
@@ -74,11 +73,11 @@ class KeepTrackPriceScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        color: redCA0,
+                        color: AppColors.redCA0,
                         child: CommonTextWidget.PoppinsSemiBold(
                           fontSize: 16,
-                          text: "YES, I’M IN",
-                          color: white,
+                          text: 'YES, I’M IN',
+                          color: AppColors.white,
                         ),
                       ),
                     ],
@@ -90,5 +89,4 @@ class KeepTrackPriceScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

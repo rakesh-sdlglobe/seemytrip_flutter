@@ -1,16 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/features/profile/presentation/screens/account/edit_profile_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../auth/presentation/controllers/login_controller.dart';
+import 'edit_profile_screen.dart';
 
 class MyAccountScreen extends StatefulWidget {
   MyAccountScreen({Key? key}) : super(key: key);
@@ -78,9 +80,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -88,17 +90,17 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'My Account',
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
       body: Obx(() => loginController.isLoading.value
           ? Center(child: LoadingAnimationWidget.dotsTriangle(
-            color: redCA0,
+            color: AppColors.redCA0,
             size: 24,
           ))
           : ScrollConfiguration(
@@ -117,17 +119,17 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                         height: 70,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: redCA0.withOpacity(0.1),
+                          color: AppColors.redCA0.withOpacity(0.1),
                         ),
                         child: Icon(
                           Icons.person,
                           size: 40,
-                          color: redCA0,
+                          color: AppColors.redCA0,
                         ),
                       ),
                       title: CommonTextWidget.PoppinsMedium(
                         text: fullName.isNotEmpty ? fullName : 'Guest User',
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 18,
                       ),
                       subtitle: Column(
@@ -143,14 +145,14 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                             ),
                           CommonTextWidget.PoppinsMedium(
                             text: 'Edit Profile',
-                            color: redCA0,
+                            color: AppColors.redCA0,
                             fontSize: 12,
                           ),
                         ],
                       ),
                     ),
                     SizedBox(height: 18),
-                    Divider(color: greyE8E, thickness: 1),
+                    Divider(color: AppColors.greyE8E, thickness: 1),
                     SizedBox(height: 20),
                     ListView.builder(
                       itemCount: Lists.myAccountList.length,
@@ -171,23 +173,23 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                     BoxShadow(
                                       offset: Offset(0, 1),
                                       blurRadius: 4,
-                                      color: black262.withOpacity(0.25),
+                                      color: AppColors.black262.withOpacity(0.25),
                                     ),
                                   ],
-                                  color: white,
+                                  color: AppColors.white,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
                                   child: SvgPicture.asset(
                                     Lists.myAccountList[index]['image'],
-                                    color: redCA0,
+                                    color: AppColors.redCA0,
                                   ),
                                 ),
                               ),
                               SizedBox(width: 20),
                               CommonTextWidget.PoppinsRegular(
                                 text: Lists.myAccountList[index]['text'],
-                                color: black2E2,
+                                color: AppColors.black2E2,
                                 fontSize: 18,
                               ),
                             ],

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../core/widgets/common_text_widget.dart';
 import '../../../../shared/constants/images.dart';
@@ -12,7 +12,7 @@ class HotelDetailSearchScreen extends StatelessWidget {
   final TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       body: Stack(
         children: [
           Column(
@@ -36,11 +36,11 @@ class HotelDetailSearchScreen extends StatelessWidget {
                         onTap: () {
                           Get.back();
                         },
-                        child: Icon(Icons.arrow_back, color: white, size: 20),
+                        child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                       ),
                       CommonTextWidget.PoppinsSemiBold(
                         text: 'Search',
-                        color: white,
+                        color: AppColors.white,
                         fontSize: 18,
                       ),
                       Container(),
@@ -60,10 +60,10 @@ class HotelDetailSearchScreen extends StatelessWidget {
             padding: EdgeInsets.only(top: 130, left: 24, right: 24),
             child: Container(
               decoration: BoxDecoration(
-                color: white,
+                color: AppColors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: grey515.withOpacity(0.25),
+                    color: AppColors.grey515.withValues(alpha: 0.25),
                     blurRadius: 6,
                     offset: Offset(0, 1),
                   ),

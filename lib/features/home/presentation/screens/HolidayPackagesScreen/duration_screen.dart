@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_button_widget.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:seemytrip/core/widgets/lists_widget.dart';
@@ -9,11 +9,10 @@ class DurationScreen extends StatelessWidget {
   DurationScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -21,11 +20,11 @@ class DurationScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.close, color: white, size: 20),
+          child: Icon(Icons.close, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: "Duration",
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
         actions: [
@@ -33,7 +32,7 @@ class DurationScreen extends StatelessWidget {
             padding: EdgeInsets.only(top: 20, right: 24),
             child: CommonTextWidget.PoppinsMedium(
               text: "CLEAR ALL",
-              color: white,
+              color: AppColors.white,
               fontSize: 12,
             ),
           ),
@@ -47,7 +46,7 @@ class DurationScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: CommonTextWidget.PoppinsMedium(
               text: "Duration in Night",
-              color: black2E2,
+              color: AppColors.black2E2,
               fontSize: 14,
             ),
           ),
@@ -69,18 +68,18 @@ class DurationScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: grey515.withOpacity(0.25),
+                      color: AppColors.grey515.withValues(alpha: 0.25),
                       offset: Offset(0, 1),
                       blurRadius: 6,
                     ),
                   ],
-                  color: white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Center(
                   child: CommonTextWidget.PoppinsRegular(
                     text: Lists.durationList[index],
-                    color: black2E2,
+                    color: AppColors.black2E2,
                     fontSize: 12,
                   ),
                 ),
@@ -91,14 +90,13 @@ class DurationScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: CommonButtonWidget.button(
-              buttonColor: redCA0,
+              buttonColor: AppColors.redCA0,
               onTap: () {},
-              text: "APPLY",
+              text: 'APPLY',
             ),
           ),
           SizedBox(height: 60),
         ],
       ),
     );
-  }
 }

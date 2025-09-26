@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'colors.dart';
+// import 'package:seemytrip/core/theme/app_colors.dart';
 
 // class AppStyles {
 //   // Text Styles

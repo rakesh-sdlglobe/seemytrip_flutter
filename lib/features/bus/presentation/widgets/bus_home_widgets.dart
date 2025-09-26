@@ -2,11 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// Define your color palette for consistency
-const Color kPrimaryColor = Color(0xFFD32F2F);
-const Color kPrimaryDarkColor = Color(0xFFB71C1C);
-const Color kAccentColor = Color(0xFFFF5252);
-
 class TopBanner extends StatelessWidget {
 
   const TopBanner({required this.onBackPressed, Key? key}) : super(key: key);
@@ -19,9 +14,16 @@ class TopBanner extends StatelessWidget {
         children: <Widget>[
           // Layer 1: Base Gradient
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: <Color>[kPrimaryColor, kPrimaryDarkColor],
+                colors: <Color>[
+                  Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFFFF5722) // Orange-red for dark theme
+                    : const Color(0xFFCA0B0B), // Red for light theme
+                  Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFFFF5722) // Orange-red for dark theme
+                    : const Color(0xFFCA0B0B), // Red for light theme
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -29,7 +31,7 @@ class TopBanner extends StatelessWidget {
           ),
 
           // Layer 2: Decorative Abstract Shapes
-          _buildDecorativeShapes(),
+          _buildDecorativeShapes(context),
 
           // Layer 3: Glassmorphism Effect with BackdropFilter
           ClipPath(
@@ -113,14 +115,16 @@ class TopBanner extends StatelessWidget {
     );
 
   /// Adds subtle, layered circles for visual depth.
-  Widget _buildDecorativeShapes() => Stack(
+  Widget _buildDecorativeShapes(BuildContext context) => Stack(
       children: <Widget>[
         Positioned(
           top: -50,
           left: -80,
           child: CircleAvatar(
             radius: 100,
-            backgroundColor: kAccentColor.withValues(alpha: 0.1),
+            backgroundColor: (Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFFFF5722) // Orange-red for dark theme
+              : const Color(0xFFCA0B0B)).withValues(alpha: 0.1), // Red for light theme
           ),
         ),
         Positioned(

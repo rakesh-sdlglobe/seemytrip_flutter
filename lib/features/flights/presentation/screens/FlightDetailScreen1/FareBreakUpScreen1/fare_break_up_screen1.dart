@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
+import '../../../../../../core/theme/app_colors.dart';
+import '../../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../../core/widgets/lists_widget.dart';
 
 class FareBreakUpScreen1 extends StatelessWidget {
    FareBreakUpScreen1({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: redF9E,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.redF9E,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -20,11 +19,11 @@ class FareBreakUpScreen1 extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.close, color: white, size: 20),
+          child: Icon(Icons.close, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Fare Breakup",
-          color: white,
+          text: 'Fare Breakup',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -35,7 +34,7 @@ class FareBreakUpScreen1 extends StatelessWidget {
           width: Get.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: white,
+            color: AppColors.white,
           ),
           child: Column(
             children: [
@@ -47,25 +46,25 @@ class FareBreakUpScreen1 extends StatelessWidget {
                   children: [
                     ListTile(
                       title: CommonTextWidget.PoppinsMedium(
-                        text: Lists.fareBreakList[index]["text1"],
-                        color: black2E2,
+                        text: Lists.fareBreakList[index]['text1'],
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                       subtitle: CommonTextWidget.PoppinsMedium(
-                        text: Lists.fareBreakList[index]["text2"],
-                        color: black2E2,
+                        text: Lists.fareBreakList[index]['text2'],
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                       trailing: CommonTextWidget.PoppinsMedium(
-                        text: Lists.fareBreakList[index]["text3"],
-                        color: black2E2,
+                        text: Lists.fareBreakList[index]['text3'],
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                       horizontalTitleGap: -3,
                     ),
                     index == 2
                         ? SizedBox.shrink()
-                        : Divider(color: greyE8E, thickness: 1),
+                        : Divider(color: AppColors.greyE8E, thickness: 1),
                   ],
                 ),
               ),
@@ -73,8 +72,8 @@ class FareBreakUpScreen1 extends StatelessWidget {
               Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  border: Border.all(color: greyE8E,width: 1),
-                  color: white,
+                  border: Border.all(color: AppColors.greyE8E,width: 1),
+                  color: AppColors.white,
                 ),
                 child: Padding(
                   padding:  EdgeInsets.all(15),
@@ -82,13 +81,13 @@ class FareBreakUpScreen1 extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonTextWidget.PoppinsSemiBold(
-                        text: "Total Amount",
-                        color: black2E2,
+                        text: 'Total Amount',
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                       CommonTextWidget.PoppinsSemiBold(
-                        text: "₹ 8,623",
-                        color: black2E2,
+                        text: '₹ 8,623',
+                        color: AppColors.black2E2,
                         fontSize: 16,
                       ),
                     ],
@@ -101,5 +100,4 @@ class FareBreakUpScreen1 extends StatelessWidget {
         ),
       ),
     );
-  }
 }

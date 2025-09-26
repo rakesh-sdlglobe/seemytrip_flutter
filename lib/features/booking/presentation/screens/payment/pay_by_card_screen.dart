@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/utils/colors.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../shared/constants/font_family.dart';
@@ -20,9 +20,9 @@ class PayByCardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -30,11 +30,11 @@ class PayByCardScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'Select Payment Mode',
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -71,7 +71,7 @@ class PayByCardScreen extends StatelessWidget {
                         controller: expiryMonthController,
                         keyboardType: TextInputType.text,
                         prefixIcon: Icon(Icons.arrow_drop_down_outlined,
-                            color: grey969),
+                            color: AppColors.grey969),
                       ),
                     ),
                     SizedBox(width: 20),
@@ -81,7 +81,7 @@ class PayByCardScreen extends StatelessWidget {
                         controller: expiryYearController,
                         keyboardType: TextInputType.text,
                         prefixIcon: Icon(Icons.arrow_drop_down_outlined,
-                            color: grey969),
+                            color: AppColors.grey969),
                       ),
                     ),
                     SizedBox(width: 20),
@@ -107,7 +107,7 @@ class PayByCardScreen extends StatelessWidget {
                 child: Container(
                   height: 65,
                   width: Get.width,
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                     child: Row(
@@ -122,7 +122,7 @@ class PayByCardScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: FontFamily.PoppinsSemiBold,
                                   fontSize: 16,
-                                  color: white,
+                                  color: AppColors.white,
                                 ),
                                 children: <TextSpan>[
                                   TextSpan(
@@ -130,14 +130,14 @@ class PayByCardScreen extends StatelessWidget {
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontFamily: FontFamily.PoppinsMedium,
-                                        color: grey8E8),
+                                        color: AppColors.grey8E8),
                                   ),
                                 ],
                               ),
                             ),
                             CommonTextWidget.PoppinsMedium(
                               text: 'Convenience Fee added',
-                              color: grey8E8,
+                              color: AppColors.grey8E8,
                               fontSize: 10,
                             ),
                           ],

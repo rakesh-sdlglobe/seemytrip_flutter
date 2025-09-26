@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../../../core/widgets/doted_screen.dart';
 import '../../../../../../../main.dart';
@@ -26,7 +26,7 @@ class FlightDetailScreen1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: redF9E,
+      backgroundColor: AppColors.redF9E,
       body: Stack(
         children: [
           ScrollConfiguration(
@@ -54,18 +54,18 @@ class FlightDetailScreen1 extends StatelessWidget {
                                   Get.back();
                                 },
                                 child: Icon(Icons.arrow_back,
-                                    color: white, size: 24),
+                                    color: AppColors.white, size: 24),
                               ),
                               Column(
                                 children: [
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Trip to",
-                                    color: white,
+                                    text: 'Trip to',
+                                    color: AppColors.white,
                                     fontSize: 14,
                                   ),
                                   CommonTextWidget.PoppinsSemiBold(
-                                    text: "Mumbai",
-                                    color: white,
+                                    text: 'Mumbai',
+                                    color: AppColors.white,
                                     fontSize: 20,
                                   ),
                                 ],
@@ -81,7 +81,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                                 width: 36,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(3),
-                                  color: white,
+                                  color: AppColors.white,
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.all(3),
@@ -94,19 +94,19 @@ class FlightDetailScreen1 extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     CommonTextWidget.PoppinsSemiBold(
-                                      text: "DEL - BOM",
-                                      color: white,
+                                      text: 'DEL - BOM',
+                                      color: AppColors.white,
                                       fontSize: 14,
                                     ),
                                     CommonTextWidget.PoppinsMedium(
                                       text:
-                                          "Sat, 24 Sep | 19:45 - 22.00 | 2hrs 15mins",
-                                      color: white,
+                                          'Sat, 24 Sep | 19:45 - 22.00 | 2hrs 15mins',
+                                      color: AppColors.white,
                                       fontSize: 14,
                                     ),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: "Economy > SPICESAVER",
-                                      color: white,
+                                      text: 'Economy > SPICESAVER',
+                                      color: AppColors.white,
                                       fontSize: 14,
                                     ),
                                   ],
@@ -121,12 +121,12 @@ class FlightDetailScreen1 extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.transparent,
                               borderRadius: BorderRadius.circular(30),
-                              border: Border.all(color: white, width: 1),
+                              border: Border.all(color: AppColors.white, width: 1),
                             ),
                             child: Center(
                               child: CommonTextWidget.PoppinsMedium(
-                                text: "VIEW FLIGHT & FARE DETAILS",
-                                color: white,
+                                text: 'VIEW FLIGHT & FARE DETAILS',
+                                color: AppColors.white,
                                 fontSize: 14,
                               ),
                             ),
@@ -143,7 +143,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                       width: Get.width,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: white,
+                        color: AppColors.white,
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(15),
@@ -158,11 +158,11 @@ class FlightDetailScreen1 extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   CommonTextWidget.PoppinsSemiBold(
-                                    text: "Baggage Policy",
-                                    color: black2E2,
+                                    text: 'Baggage Policy',
+                                    color: AppColors.black2E2,
                                     fontSize: 16,
                                   ),
-                                  Icon(Icons.arrow_forward_ios, color: redCA0),
+                                  Icon(Icons.arrow_forward_ios, color: AppColors.redCA0),
                                 ],
                               ),
                             ),
@@ -182,13 +182,13 @@ class FlightDetailScreen1 extends StatelessWidget {
                                       child: SvgPicture.asset(briefcase),
                                     ),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: "Cabin bag",
-                                      color: black2E2,
+                                      text: 'Cabin bag',
+                                      color: AppColors.black2E2,
                                       fontSize: 12,
                                     ),
                                     CommonTextWidget.PoppinsRegular(
-                                      text: "7 Kgs ( 1 Piece only)",
-                                      color: grey717,
+                                      text: '7 Kgs ( 1 Piece only)',
+                                      color: AppColors.grey717,
                                       fontSize: 12,
                                     ),
                                   ],
@@ -201,13 +201,13 @@ class FlightDetailScreen1 extends StatelessWidget {
                                       child: SvgPicture.asset(backpack),
                                     ),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: "Check-in",
-                                      color: black2E2,
+                                      text: 'Check-in',
+                                      color: AppColors.black2E2,
                                       fontSize: 12,
                                     ),
                                     CommonTextWidget.PoppinsRegular(
-                                      text: "15 Kgs ( 1 Piece only)",
-                                      color: grey717,
+                                      text: '15 Kgs ( 1 Piece only)',
+                                      color: AppColors.grey717,
                                       fontSize: 12,
                                     ),
                                   ],
@@ -223,7 +223,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                                 width: Get.width,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(3),
-                                  color: redF9E.withOpacity(0.75),
+                                  color: AppColors.redF9E.withOpacity(0.75),
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
@@ -235,16 +235,16 @@ class FlightDetailScreen1 extends StatelessWidget {
                                       Expanded(
                                         child: CommonTextWidget.PoppinsRegular(
                                           text:
-                                              "Got excess luggage? Dont’t stress, buy "
-                                              "extra check-in baggage allowance at fab "
-                                              "rates!",
-                                          color: black2E2,
+                                              'Got excess luggage? Don’t stress, buy '
+                                              'extra check-in baggage allowance at fab '
+                                              'rates!',
+                                          color: AppColors.black2E2,
                                           fontSize: 10,
                                         ),
                                       ),
                                       CommonTextWidget.PoppinsSemiBold(
-                                        text: "+ADD",
-                                        color: redCA0,
+                                        text: '+ADD',
+                                        color: AppColors.redCA0,
                                         fontSize: 14,
                                       ),
                                     ],
@@ -264,7 +264,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                       width: Get.width,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: white,
+                        color: AppColors.white,
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(15),
@@ -272,8 +272,8 @@ class FlightDetailScreen1 extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CommonTextWidget.PoppinsSemiBold(
-                              text: "Cancellation Refund Policy",
-                              color: black2E2,
+                              text: 'Cancellation Refund Policy',
+                              color: AppColors.black2E2,
                               fontSize: 16,
                             ),
                             SizedBox(height: 15),
@@ -281,13 +281,13 @@ class FlightDetailScreen1 extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "Cancel Between (IST):",
-                                  color: grey717,
+                                  text: 'Cancel Between (IST):',
+                                  color: AppColors.grey717,
                                   fontSize: 10,
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "Cancellation Penalty:",
-                                  color: grey717,
+                                  text: 'Cancellation Penalty:',
+                                  color: AppColors.grey717,
                                   fontSize: 10,
                                 ),
                               ],
@@ -297,13 +297,13 @@ class FlightDetailScreen1 extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "Now - 27 sep, 10:25",
-                                  color: black2E2,
+                                  text: 'Now - 27 sep, 10:25',
+                                  color: AppColors.black2E2,
                                   fontSize: 12,
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "₹ 3,900",
-                                  color: black2E2,
+                                  text: '₹ 3,900',
+                                  color: AppColors.black2E2,
                                   fontSize: 12,
                                 ),
                               ],
@@ -315,13 +315,13 @@ class FlightDetailScreen1 extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "27 Sep, 10:05 27 Sep, 12:05",
-                                  color: black2E2,
+                                  text: '27 Sep, 10:05 27 Sep, 12:05',
+                                  color: AppColors.black2E2,
                                   fontSize: 12,
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "₹ 6,900",
-                                  color: black2E2,
+                                  text: '₹ 6,900',
+                                  color: AppColors.black2E2,
                                   fontSize: 12,
                                 ),
                               ],
@@ -331,7 +331,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                               width: Get.width,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(3),
-                                color: redF9E.withOpacity(0.75),
+                                color: AppColors.redF9E.withOpacity(0.75),
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
@@ -343,15 +343,15 @@ class FlightDetailScreen1 extends StatelessWidget {
                                     Expanded(
                                       child: CommonTextWidget.PoppinsRegular(
                                         text:
-                                            "Upgrade fare to get extra legroom "
-                                            "and complimentary meals",
-                                        color: black2E2,
+                                            'Upgrade fare to get extra legroom '
+                                            'and complimentary meals',
+                                        color: AppColors.black2E2,
                                         fontSize: 10,
                                       ),
                                     ),
                                     CommonTextWidget.PoppinsSemiBold(
-                                      text: "UPGRADE",
-                                      color: redCA0,
+                                      text: 'UPGRADE',
+                                      color: AppColors.redCA0,
                                       fontSize: 14,
                                     ),
                                   ],
@@ -369,7 +369,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                     child: Container(
                       width: Get.width,
                       decoration: BoxDecoration(
-                        color: white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Padding(
@@ -382,65 +382,65 @@ class FlightDetailScreen1 extends StatelessWidget {
                               },
                               contentPadding: EdgeInsets.zero,
                               title: CommonTextWidget.PoppinsSemiBold(
-                                text: "Offers & Promo Codes",
-                                color: black2E2,
+                                text: 'Offers & Promo Codes',
+                                color: AppColors.black2E2,
                                 fontSize: 16,
                               ),
                               subtitle: CommonTextWidget.PoppinsRegular(
-                                text: "To help you save more",
-                                color: black2E2,
+                                text: 'To help you save more',
+                                color: AppColors.black2E2,
                                 fontSize: 12,
                               ),
                               trailing: Icon(Icons.arrow_forward_ios,
-                                  color: redCA0, size: 18),
+                                  color: AppColors.redCA0, size: 18),
                             ),
                             TextFormField(
                               keyboardType: TextInputType.text,
-                              cursorColor: black2E2,
+                              cursorColor: AppColors.black2E2,
                               controller: promoCodeController,
                               style: TextStyle(
-                                color: black2E2,
+                                color: AppColors.black2E2,
                                 fontSize: 14,
                                 fontFamily: FontFamily.PoppinsRegular,
                               ),
                               decoration: InputDecoration(
-                                hintText: "Enter promo code here",
+                                hintText: 'Enter promo code here',
                                 hintStyle: TextStyle(
-                                  color: grey717,
+                                  color: AppColors.grey717,
                                   fontSize: 12,
                                   fontFamily: FontFamily.PoppinsRegular,
                                 ),
                                 suffixIcon: Padding(
                                   padding: EdgeInsets.all(14),
                                   child: CommonTextWidget.PoppinsMedium(
-                                    color: redCA0,
+                                    color: AppColors.redCA0,
                                     fontSize: 14,
-                                    text: "APPLY",
+                                    text: 'APPLY',
                                   ),
                                 ),
                                 filled: true,
-                                fillColor: white,
+                                fillColor: AppColors.white,
                                 contentPadding: EdgeInsets.only(left: 14),
                                 disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5),
                                     borderSide:
-                                        BorderSide(color: redCA0, width: 1)),
+                                        BorderSide(color: AppColors.redCA0, width: 1)),
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5),
                                     borderSide:
-                                        BorderSide(color: redCA0, width: 1)),
+                                        BorderSide(color: AppColors.redCA0, width: 1)),
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5),
                                     borderSide:
-                                        BorderSide(color: redCA0, width: 1)),
+                                        BorderSide(color: AppColors.redCA0, width: 1)),
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5),
                                     borderSide:
-                                        BorderSide(color: redCA0, width: 1)),
+                                        BorderSide(color: AppColors.redCA0, width: 1)),
                                 errorBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5),
                                     borderSide:
-                                        BorderSide(color: redCA0, width: 1)),
+                                        BorderSide(color: AppColors.redCA0, width: 1)),
                               ),
                             ),
                             SizedBox(height: 15),
@@ -453,7 +453,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                                 padding: EdgeInsets.only(bottom: 10),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    color: whiteF2F,
+                                    color: AppColors.whiteF2F,
                                     borderRadius: BorderRadius.circular(3),
                                   ),
                                   child: Padding(
@@ -466,7 +466,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Icon(Icons.circle_outlined,
-                                            color: grey959),
+                                            color: AppColors.grey959),
                                         SizedBox(width: 15),
                                         Expanded(
                                           child: Column(
@@ -474,20 +474,20 @@ class FlightDetailScreen1 extends StatelessWidget {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               CommonTextWidget.PoppinsSemiBold(
-                                                text: "MMTSUPER",
-                                                color: black2E2,
+                                                text: 'MMTSUPER',
+                                                color: AppColors.black2E2,
                                                 fontSize: 14,
                                               ),
                                               CommonTextWidget.PoppinsRegular(
                                                 text:
-                                                    "Use this coupon and get Rs 475 instant"
-                                                    "discount on your flight booking.",
-                                                color: black2E2,
+                                                    'Use this coupon and get Rs 475 instant'
+                                                    'discount on your flight booking.',
+                                                color: AppColors.black2E2,
                                                 fontSize: 10,
                                               ),
                                               CommonTextWidget.PoppinsSemiBold(
-                                                text: "T&Cs apply",
-                                                color: redCA0,
+                                                text: 'T&Cs apply',
+                                                color: AppColors.redCA0,
                                                 fontSize: 10,
                                               ),
                                             ],
@@ -503,8 +503,8 @@ class FlightDetailScreen1 extends StatelessWidget {
                             Align(
                               alignment: Alignment.bottomRight,
                               child: CommonTextWidget.PoppinsSemiBold(
-                                text: "VIEW MORE",
-                                color: redCA0,
+                                text: 'VIEW MORE',
+                                color: AppColors.redCA0,
                                 fontSize: 10,
                               ),
                             ),
@@ -520,7 +520,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                     child: Container(
                       width: Get.width,
                       decoration: BoxDecoration(
-                        color: white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Padding(
@@ -532,16 +532,16 @@ class FlightDetailScreen1 extends StatelessWidget {
                               contentPadding: EdgeInsets.zero,
                               horizontalTitleGap: -1,
                               leading:
-                                  Icon(Icons.circle_outlined, color: grey959),
+                                  Icon(Icons.circle_outlined, color: AppColors.grey959),
                               title: CommonTextWidget.PoppinsMedium(
-                                text: "Donate ₹10 to support responsible "
-                                    "tourism initiatives ",
-                                color: black2E2,
+                                text: 'Donate ₹10 to support responsible '
+                                    'tourism initiatives ',
+                                color: AppColors.black2E2,
                                 fontSize: 12,
                               ),
                               trailing: CommonTextWidget.PoppinsMedium(
-                                text: "T&Cs",
-                                color: redCA0,
+                                text: 'T&Cs',
+                                color: AppColors.redCA0,
                                 fontSize: 10,
                               ),
                             ),
@@ -549,7 +549,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                             Container(
                               width: Get.width,
                               decoration: BoxDecoration(
-                                color: redFAE,
+                                color: AppColors.redFAE,
                                 borderRadius: BorderRadius.circular(3),
                               ),
                               child: Padding(
@@ -558,20 +558,20 @@ class FlightDetailScreen1 extends StatelessWidget {
                                 child: RichText(
                                   text: TextSpan(
                                     text:
-                                        "Support community empowerment and preservation or heritage. ",
+                                        'Support community empowerment and preservation or heritage. ',
                                     style: TextStyle(
                                       fontFamily: FontFamily.PoppinsMedium,
                                       fontSize: 10,
-                                      color: black2E2,
+                                      color: AppColors.black2E2,
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text: "Know More",
+                                        text: 'Know More',
                                         style: TextStyle(
                                             fontSize: 10,
                                             fontFamily:
                                                 FontFamily.PoppinsMedium,
-                                            color: redCA0),
+                                            color: AppColors.redCA0),
                                       ),
                                     ],
                                   ),
@@ -589,7 +589,7 @@ class FlightDetailScreen1 extends StatelessWidget {
                     child: Container(
                       width: Get.width,
                       decoration: BoxDecoration(
-                        color: white,
+                        color: AppColors.white,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Padding(
@@ -598,8 +598,8 @@ class FlightDetailScreen1 extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CommonTextWidget.PoppinsSemiBold(
-                              text: "Traveller Details",
-                              color: black2E2,
+                              text: 'Traveller Details',
+                              color: AppColors.black2E2,
                               fontSize: 16,
                             ),
                             ListTile(
@@ -608,25 +608,25 @@ class FlightDetailScreen1 extends StatelessWidget {
                               leading: Image.asset(travellerDetailsProfileImage,
                                   height: 30, width: 30),
                               title: CommonTextWidget.PoppinsSemiBold(
-                                text: "ADULT (12 yrs+)",
-                                color: black2E2,
+                                text: 'ADULT (12 yrs+)',
+                                color: AppColors.black2E2,
                                 fontSize: 16,
                               ),
                               trailing: RichText(
                                 text: TextSpan(
-                                  text: "0/1 ",
+                                  text: '0/1 ',
                                   style: TextStyle(
                                     fontFamily: FontFamily.PoppinsMedium,
                                     fontSize: 10,
-                                    color: black2E2,
+                                    color: AppColors.black2E2,
                                   ),
                                   children: <TextSpan>[
                                     TextSpan(
-                                      text: "added",
+                                      text: 'added',
                                       style: TextStyle(
                                           fontSize: 10,
                                           fontFamily: FontFamily.PoppinsMedium,
-                                          color: grey717),
+                                          color: AppColors.grey717),
                                     ),
                                   ],
                                 ),
@@ -642,25 +642,25 @@ class FlightDetailScreen1 extends StatelessWidget {
                                 width: Get.width,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
-                                  color: white,
+                                  color: AppColors.white,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: grey4B4.withOpacity(0.25),
+                                      color: AppColors.grey4B4.withOpacity(0.25),
                                       blurRadius: 4,
                                     ),
                                   ],
                                 ),
                                 child: Center(
                                   child: CommonTextWidget.PoppinsSemiBold(
-                                    text: "+ Add New ADULT",
-                                    color: redCA0,
+                                    text: '+ Add New ADULT',
+                                    color: AppColors.redCA0,
                                     fontSize: 12,
                                   ),
                                 ),
                               ),
                             ),
                             SizedBox(height: 15),
-                            Divider(color: greyE8E, thickness: 1),
+                            Divider(color: AppColors.greyE8E, thickness: 1),
                             SizedBox(height: 15),
                             InkWell(
                               onTap: (){
@@ -674,12 +674,12 @@ class FlightDetailScreen1 extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Booking details will be sent to",
-                                    color: black2E2,
+                                    text: 'Booking details will be sent to',
+                                    color: AppColors.black2E2,
                                     fontSize: 12,
                                   ),
                                   Icon(Icons.arrow_forward_ios,
-                                      color: redCA0, size: 18),
+                                      color: AppColors.redCA0, size: 18),
                                 ],
                               ),
                             ),
@@ -689,8 +689,8 @@ class FlightDetailScreen1 extends StatelessWidget {
                               horizontalTitleGap: 10,
                               leading: Image.asset(addEmailIdIcon),
                               title: CommonTextWidget.PoppinsMedium(
-                                text: "Add Email ID",
-                                color: redCA0,
+                                text: 'Add Email ID',
+                                color: AppColors.redCA0,
                                 fontSize: 12,
                               ),
                             ),
@@ -700,13 +700,13 @@ class FlightDetailScreen1 extends StatelessWidget {
                               horizontalTitleGap: 10,
                               leading: Image.asset(phoneImage),
                               title: CommonTextWidget.PoppinsRegular(
-                                text: "91-8669825896",
-                                color: grey717,
+                                text: '91-8669825896',
+                                color: AppColors.grey717,
                                 fontSize: 12,
                               ),
                             ),
                             SizedBox(height: 15),
-                            Divider(color: greyE8E, thickness: 1),
+                            Divider(color: AppColors.greyE8E, thickness: 1),
                             SizedBox(height: 10),
                             ListTile(
                               onTap: (){
@@ -719,22 +719,22 @@ class FlightDetailScreen1 extends StatelessWidget {
                               contentPadding: EdgeInsets.zero,
                               horizontalTitleGap: 1,
                               leading: Icon(Icons.crop_square,
-                                  color: grey717, size: 30),
+                                  color: AppColors.grey717, size: 30),
                               title: RichText(
                                 text: TextSpan(
-                                  text: "I have a GST number ",
+                                  text: 'I have a GST number ',
                                   style: TextStyle(
                                     fontFamily: FontFamily.PoppinsMedium,
                                     fontSize: 12,
-                                    color: black2E2,
+                                    color: AppColors.black2E2,
                                   ),
                                   children: <TextSpan>[
                                     TextSpan(
-                                      text: "(Optional)",
+                                      text: '(Optional)',
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontFamily: FontFamily.PoppinsMedium,
-                                          color: grey717),
+                                          color: AppColors.grey717),
                                     ),
                                   ],
                                 ),
@@ -757,7 +757,7 @@ class FlightDetailScreen1 extends StatelessWidget {
               child: Container(
                 height: 60,
                 width: Get.width,
-                color: black2E2,
+                color: AppColors.black2E2,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   child: Row(
@@ -768,13 +768,13 @@ class FlightDetailScreen1 extends StatelessWidget {
                           Column(
                             children: [
                               CommonTextWidget.PoppinsSemiBold(
-                                text: "₹ 5,950",
-                                color: white,
+                                text: '₹ 5,950',
+                                color: AppColors.white,
                                 fontSize: 16,
                               ),
                               CommonTextWidget.PoppinsMedium(
-                                text: "FOR 1 ADULT",
-                                color: white,
+                                text: 'FOR 1 ADULT',
+                                color: AppColors.white,
                                 fontSize: 10,
                               ),
                             ],
@@ -801,11 +801,11 @@ class FlightDetailScreen1 extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        color: redCA0,
+                        color: AppColors.redCA0,
                         child: CommonTextWidget.PoppinsSemiBold(
                           fontSize: 16,
-                          text: "CONTINUE",
-                          color: white,
+                          text: 'CONTINUE',
+                          color: AppColors.white,
                         ),
                       ),
                     ],

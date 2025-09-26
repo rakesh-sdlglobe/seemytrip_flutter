@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/features/hotels/presentation/controllers/hotel_filter_controller.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart' as custom_lists;
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/lists_widget.dart' as custom_lists;
+import '../controllers/hotel_filter_controller.dart';
 
 class HotelListFilterBar extends StatelessWidget {
-  final HotelFilterController filterCtrl;
-  final List<Map<String, dynamic>> hotels;
 
   const HotelListFilterBar({
     Key? key,
     required this.filterCtrl,
     required this.hotels,
   }) : super(key: key);
+  final HotelFilterController filterCtrl;
+  final List<Map<String, dynamic>> hotels;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       height: 50,
       width: Get.width,
       color: Colors.white,
@@ -43,12 +43,12 @@ class HotelListFilterBar extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: filterCtrl.selectedFilter.value == filterType
-                            ? redCA0.withOpacity(0.1)
+                            ? AppColors.redCA0.withOpacity(0.1)
                             : Colors.white,
                         border: Border.all(
                           color: filterCtrl.selectedFilter.value == filterType
-                              ? redCA0
-                              : greyE2E,
+                              ? AppColors.redCA0
+                              : AppColors.greyE2E,
                           width: 1,
                         ),
                       ),
@@ -60,16 +60,16 @@ class HotelListFilterBar extends StatelessWidget {
                               filterText,
                               style: TextStyle(
                                 color: filterCtrl.selectedFilter.value == filterType
-                                    ? redCA0
-                                    : grey717,
+                                    ? AppColors.redCA0
+                                    : AppColors.grey717,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                             SizedBox(width: 7),
                             Icon(Icons.arrow_drop_down, color: filterCtrl.selectedFilter.value == filterType
-                                ? redCA0
-                                : grey717),
+                                ? AppColors.redCA0
+                                : AppColors.grey717),
                           ],
                         ),
                       ),
@@ -89,16 +89,15 @@ class HotelListFilterBar extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: redCA0.withOpacity(0.08),
+                color: AppColors.redCA0.withOpacity(0.08),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.filter_alt, color: redCA0, size: 22),
+              child: Icon(Icons.filter_alt, color: AppColors.redCA0, size: 22),
             ),
           ),
           SizedBox(width: 8),
         ],
       ),
     );
-  }
 }
 

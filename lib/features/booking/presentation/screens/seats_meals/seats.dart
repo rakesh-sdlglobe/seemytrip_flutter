@@ -1,38 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 
 RxBool seatSelected = false.obs;
-seatsRow({index, image1, image2, image3, image4, image5, image6}) {
-  return Row(
+seatsRow({index, image1, image2, image3, image4, image5, image6}) => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
       CommonTextWidget.PoppinsMedium(
         text: index,
         fontSize: 16,
-        color: grey717,
+        color: AppColors.grey717,
       ),
       Column(
         children: [
-          index == "1"
+          index == '1'
               ? Row(
                   children: [
                     CommonTextWidget.PoppinsMedium(
-                      text: "A",
-                      color: grey717,
+                      text: 'A',
+                      color: AppColors.grey717,
                       fontSize: 16.0,
                     ),
                     SizedBox(width: 28),
                     CommonTextWidget.PoppinsMedium(
-                      text: "B",
-                      color: grey717,
+                      text: 'B',
+                      color: AppColors.grey717,
                       fontSize: 16.0,
                     ),
                     SizedBox(width: 28),
                     CommonTextWidget.PoppinsMedium(
-                      text: "C",
-                      color: grey717,
+                      text: 'C',
+                      color: AppColors.grey717,
                       fontSize: 16.0,
                     ),
                   ],
@@ -78,24 +77,24 @@ seatsRow({index, image1, image2, image3, image4, image5, image6}) {
       ),
       Column(
         children: [
-          index == "1"
+          index == '1'
               ? Row(
                   children: [
                     CommonTextWidget.PoppinsMedium(
-                      text: "D",
-                      color: grey717,
+                      text: 'D',
+                      color: AppColors.grey717,
                       fontSize: 16.0,
                     ),
                     SizedBox(width: 28),
                     CommonTextWidget.PoppinsMedium(
-                      text: "E",
-                      color: grey717,
+                      text: 'E',
+                      color: AppColors.grey717,
                       fontSize: 16.0,
                     ),
                     SizedBox(width: 28),
                     CommonTextWidget.PoppinsMedium(
-                      text: "F",
-                      color: grey717,
+                      text: 'F',
+                      color: AppColors.grey717,
                       fontSize: 16.0,
                     ),
                   ],
@@ -142,11 +141,10 @@ seatsRow({index, image1, image2, image3, image4, image5, image6}) {
       CommonTextWidget.PoppinsMedium(
         text: index,
         fontSize: 16,
-        color: grey717,
+        color: AppColors.grey717,
       )
     ],
   );
-}
 
 openBottomSheet() {
   Get.bottomSheet(
@@ -154,7 +152,7 @@ openBottomSheet() {
     Container(
       height: 258,
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
@@ -165,22 +163,21 @@ openBottomSheet() {
         child: Column(
           children: [
             CommonTextWidget.PoppinsMedium(
-              text: "Your Seats",
-              fontSize: 25.0,
-              color: black2E2,
+              text: 'Your Seats',
+              fontSize: 25,
+              color: AppColors.black2E2,
             ),
             SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CommonTextWidget.PoppinsMedium(
-                  text: "7B",
-                  color: black2E2,
+                  text: '7B',
+                  color: AppColors.black2E2,
                   fontSize: 18.0,
                 ),
                 CommonTextWidget.PoppinsMedium(
-                  text: "₹ 0",
-                  color: black2E2,
+                  text: '₹ 0',
                   fontSize: 18.0,
                 ),
               ],
@@ -195,8 +192,8 @@ openBottomSheet() {
                     Get.back();
                   },
                   child: CommonTextWidget.PoppinsSemiBold(
-                    text: "OKAY",
-                    color: redCA0,
+                    text: 'OKAY',
+                    color: AppColors.redCA0,
                     fontSize: 18.0,
                   ),
                 )

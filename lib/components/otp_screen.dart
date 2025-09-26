@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/features/auth/presentation/controllers/otp_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart'; // Replace with your own color constants
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import '../core/theme/app_colors.dart'; // Replace with your own color constants
+import '../features/auth/presentation/controllers/otp_controller.dart';
 
 class OtpScreen2 extends StatefulWidget {
   @override
@@ -71,7 +72,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: redCA0, width: 2),
+              borderSide: BorderSide(color: AppColors.redCA0, width: 2),
             ),
             prefixIcon: Icon(Icons.email_outlined, color: Colors.grey),
           ),
@@ -107,7 +108,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
               },
           style: ElevatedButton.styleFrom(
             minimumSize: Size(double.infinity, 50),
-            backgroundColor: controller.isLoading.value ? Colors.grey : redCA0,
+            backgroundColor: controller.isLoading.value ? Colors.grey : AppColors.redCA0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -123,7 +124,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
             : Text(
                 'Send Verification Code',
                 style: TextStyle(
-                  color: white,
+                  color: AppColors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -138,19 +139,19 @@ class _OtpScreen2State extends State<OtpScreen2> {
         Obx(() => Container(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: redCA0.withOpacity(0.1),
+            color: AppColors.redCA0.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.timer_outlined, color: redCA0, size: 18),
+              Icon(Icons.timer_outlined, color: AppColors.redCA0, size: 18),
               SizedBox(width: 5),
               Text(
                 "${(controller.secondsRemaining.value ~/ 60).toString().padLeft(2, '0')}:${(controller.secondsRemaining.value % 60).toString().padLeft(2, '0')}",
                 style: TextStyle(
                   fontSize: 15,
-                  color: redCA0,
+                  color: AppColors.redCA0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -173,7 +174,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
                   text: _emailController.text,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: redCA0,
+                    color: AppColors.redCA0,
                   ),
                 ),
               ],
@@ -192,7 +193,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
               : null,
           style: ElevatedButton.styleFrom(
             minimumSize: Size(double.infinity, 50),
-            backgroundColor: controller.isButtonEnabled.value ? redCA0 : Colors.grey.shade400,
+            backgroundColor: controller.isButtonEnabled.value ? AppColors.redCA0 : Colors.grey.shade400,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -201,7 +202,7 @@ class _OtpScreen2State extends State<OtpScreen2> {
           child: Text(
             'Verify Email',
             style: TextStyle(
-              color: white,
+              color: AppColors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -252,11 +253,11 @@ class _OtpScreen2State extends State<OtpScreen2> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: greyE2E,
+      backgroundColor: AppColors.greyE2E,
       appBar: AppBar(
-        title: Text('Email Verification', style: TextStyle(color: white)),
-        backgroundColor: redCA0,
-        iconTheme: IconThemeData(color: white),
+        title: Text('Email Verification', style: TextStyle(color: AppColors.white)),
+        backgroundColor: AppColors.redCA0,
+        iconTheme: IconThemeData(color: AppColors.white),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -267,11 +268,11 @@ class _OtpScreen2State extends State<OtpScreen2> {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               decoration: BoxDecoration(
-                color: white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     spreadRadius: 1,
                     offset: Offset(0, 4),

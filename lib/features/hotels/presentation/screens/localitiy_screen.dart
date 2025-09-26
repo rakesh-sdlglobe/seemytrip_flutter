@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../core/widgets/common_button_widget.dart';
 import '../../../../core/widgets/common_text_widget.dart';
@@ -41,11 +41,11 @@ class LocalityScreen extends StatelessWidget {
                         onTap: () {
                           Get.back();
                         },
-                        child: Icon(Icons.arrow_back, color: white, size: 20),
+                        child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                       ),
                       CommonTextWidget.PoppinsSemiBold(
                         text: 'Goa',
-                        color: white,
+                        color: AppColors.white,
                         fontSize: 18,
                       ),
                       Container(),
@@ -58,7 +58,7 @@ class LocalityScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsMedium(
                   text: 'PREFERRED BY TOURISTS',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 14,
                 ),
               ),
@@ -80,15 +80,15 @@ class LocalityScreen extends StatelessWidget {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: white,
+                              color: AppColors.white,
                               border: Border.all(
                                 color: controller.selectedIndex == index
-                                    ? redCA0
-                                    : grey515.withOpacity(0.25),
+                                    ? AppColors.redCA0
+                                    : AppColors.grey515.withOpacity(0.25),
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: grey515.withOpacity(0.25),
+                                  color: AppColors.grey515.withValues(alpha: 0.25),
                                   blurRadius: 6,
                                   offset: Offset(0, 1),
                                 ),
@@ -107,7 +107,7 @@ class LocalityScreen extends StatelessWidget {
                                     children: [
                                       CommonTextWidget.PoppinsSemiBold(
                                         text: Lists.localityList[index],
-                                        color: black2E2,
+                                        color: AppColors.black2E2,
                                         fontSize: 14,
                                       ),
                                       Container(
@@ -118,20 +118,20 @@ class LocalityScreen extends StatelessWidget {
                                               BorderRadius.circular(5),
                                           color:
                                               controller.selectedIndex == index
-                                                  ? redCA0
-                                                  : white,
+                                                  ? AppColors.redCA0
+                                                  : AppColors.white,
                                           border: Border.all(
                                             color: controller.selectedIndex ==
                                                     index
-                                                ? redCA0
-                                                : grey717,
+                                                ? AppColors.redCA0
+                                                : AppColors.grey717,
                                             width: 1.5,
                                           ),
                                         ),
                                         child: Center(
                                           child: Icon(
                                             Icons.check,
-                                            color: white,
+                                            color: AppColors.white,
                                             size: 14,
                                           ),
                                         ),
@@ -140,13 +140,13 @@ class LocalityScreen extends StatelessWidget {
                                   ),
                                   CommonTextWidget.PoppinsRegular(
                                     text: 'Best for Couple, Family',
-                                    color: redCA0,
+                                    color: AppColors.redCA0,
                                     fontSize: 12,
                                   ),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
                                     text: '2,000 - 5,000 INR',
-                                    color: black2E2,
+                                    color: AppColors.black2E2,
                                     fontSize: 12,
                                   ),
                                   Row(
@@ -155,12 +155,12 @@ class LocalityScreen extends StatelessWidget {
                                     children: [
                                       CommonTextWidget.PoppinsRegular(
                                         text: 'Avg cost room/Night',
-                                        color: grey717,
+                                        color: AppColors.grey717,
                                         fontSize: 12,
                                       ),
                                       CommonTextWidget.PoppinsSemiBold(
                                         text: 'KNOW MORE',
-                                        color: redCA0,
+                                        color: AppColors.redCA0,
                                         fontSize: 12,
                                       ),
                                     ],
@@ -182,10 +182,10 @@ class LocalityScreen extends StatelessWidget {
             padding: EdgeInsets.only(top: 130, left: 24, right: 24),
             child: Container(
               decoration: BoxDecoration(
-                color: white,
+                color: AppColors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: grey515.withOpacity(0.25),
+                    color: AppColors.grey515.withValues(alpha: 0.25),
                     blurRadius: 6,
                     offset: Offset(0, 1),
                   ),
@@ -205,7 +205,7 @@ class LocalityScreen extends StatelessWidget {
             left: 24,
             right: 24,
             child: CommonButtonWidget.button(
-              buttonColor: redCA0,
+              buttonColor: AppColors.redCA0,
               onTap: () {},
               text: 'DONE',
             ),

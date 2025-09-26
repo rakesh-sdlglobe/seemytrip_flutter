@@ -52,8 +52,12 @@ class SplashController extends GetxController
 
     // Start the animation with repeat
     animationController.forward();
+  }
 
-    // Check login status and navigate accordingly
+  @override
+  void onReady() {
+    super.onReady();
+    // Check login status and navigate accordingly after widget is ready
     Timer(
       const Duration(seconds: 7),
       () => checkLoginStatus(),

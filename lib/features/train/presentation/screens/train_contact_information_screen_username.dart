@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../core/widgets/common_text_widget.dart';
 import '../../../shared/presentation/controllers/irctc_forgot_details_controller.dart';
 
@@ -45,7 +45,7 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
   Widget build(BuildContext context) => Container(
       padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).cardColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SingleChildScrollView(
@@ -58,27 +58,35 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                 height: 4,
                 margin: EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                  color: Colors.grey[400],
+                  color: Theme.of(context).dividerColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             Text(
               'Forgot IRCTC Username',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(
+                fontWeight: FontWeight.bold, 
+                fontSize: 18,
+                color: Theme.of(context).textTheme.headlineSmall?.color,
+              ),
             ),
             SizedBox(height: 15),
             Container(
               width: Get.width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(3),
-                color: yellowF7C.withOpacity(0.3),
+                color: Theme.of(context).brightness == Brightness.dark 
+                  ? const Color(0xFF3E2723).withOpacity(0.9)
+                  : AppColors.yellowF7C.withOpacity(0.3),
               ),
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: CommonTextWidget.PoppinsMedium(
                 text:
                     'Please enter your registered email ID or mobile number and date of birth to recover your IRCTC username',
-                color: yellowCE8,
+                color: Theme.of(context).brightness == Brightness.dark 
+                  ? const Color(0xFFBCAAA4)
+                  : AppColors.yellowCE8,
                 fontSize: 12,
               ),
             ),
@@ -101,7 +109,10 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                     padding: EdgeInsets.only(top: 5),
                     child: Text(
                       controller.errorMessage.value,
-                      style: TextStyle(color: Colors.red, fontSize: 12),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error, 
+                        fontSize: 12
+                      ),
                     ),
                   )
                 : SizedBox.shrink()),
@@ -114,7 +125,7 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(40),
                   ),
-                  color: redCA0,
+                  color: AppColors.redCA0,
                   onPressed: controller.isLoading.value
                       ? null
                       : () async {
@@ -123,8 +134,8 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                             Get.snackbar(
                               'Error',
                               'Please fill all required fields.',
-                              backgroundColor: Colors.red,
-                              colorText: Colors.white,
+                              backgroundColor: AppColors.redCA0,
+                              colorText: AppColors.white,
                               snackPosition: SnackPosition.BOTTOM,
                             );
                             return;
@@ -137,15 +148,15 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                             ..snackbar(
                               'Success',
                               controller.successMessage.value,
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
+                              backgroundColor: AppColors.green00A,
+                              colorText: AppColors.white,
                             );
                           } else {
                             Get.snackbar(
                               'Error',
                               controller.errorMessage.value,
-                              backgroundColor: Colors.red,
-                              colorText: Colors.white,
+                              backgroundColor: AppColors.redCA0,
+                              colorText: AppColors.white,
                             );
                           }
                         },
@@ -154,14 +165,14 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
                           height: 20,
                           width: 20,
                           child: LoadingAnimationWidget.fourRotatingDots(
-                            color: white,
+                            color: AppColors.white,
                             size: 20,
                           ),
                         )
                       : CommonTextWidget.PoppinsSemiBold(
                           fontSize: 16,
                           text: 'SUBMIT',
-                          color: white,
+                          color: AppColors.white,
                         ),
                 )),
           ],
@@ -172,13 +183,15 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
   Widget _inputField(String label, TextEditingController controller, String hint,
       TextInputType inputType, {int? maxLength, Function(String)? onChanged}) => Container(
       decoration: BoxDecoration(
-        color: greyE2E,
+        color: Theme.of(context).brightness == Brightness.dark 
+          ? Colors.grey[800]
+          : AppColors.greyE2E,
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
         title: CommonTextWidget.PoppinsMedium(
           text: label,
-          color: grey888,
+          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey888,
           fontSize: 12,
         ),
         subtitle: TextField(
@@ -186,9 +199,15 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
           keyboardType: inputType,
           maxLength: maxLength,
           onChanged: onChanged,
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: grey888, fontSize: 12),
+            hintStyle: TextStyle(
+              color: Theme.of(context).hintColor, 
+              fontSize: 12
+            ),
             border: InputBorder.none,
             counterText: '',
           ),
@@ -198,13 +217,15 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
 
   Widget _dobField(String label, TextEditingController controller) => Container(
       decoration: BoxDecoration(
-        color: greyE2E,
+        color: Theme.of(context).brightness == Brightness.dark 
+          ? Colors.grey[800]
+          : AppColors.greyE2E,
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
         title: CommonTextWidget.PoppinsMedium(
           text: label,
-          color: grey888,
+          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey888,
           fontSize: 12,
         ),
         subtitle: TextField(
@@ -212,9 +233,15 @@ class _ForgotIRCTCUsernameScreenState extends State<ForgotIRCTCUsernameScreen> {
           keyboardType: TextInputType.datetime,
           readOnly: true,
           onTap: () => _selectDate(context),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
           decoration: InputDecoration(
             hintText: 'Select date of birth',
-            hintStyle: TextStyle(color: grey888, fontSize: 12),
+            hintStyle: TextStyle(
+              color: Theme.of(context).hintColor, 
+              fontSize: 12
+            ),
             border: InputBorder.none,
             counterText: '',
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/features/hotels/presentation/screens/select_room_screen.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
@@ -9,11 +9,10 @@ class RatePlanDetailScreen extends StatelessWidget {
   RatePlanDetailScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -21,11 +20,11 @@ class RatePlanDetailScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Rate Plan Details",
-          color: white,
+          text: 'Rate Plan Details',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -35,7 +34,7 @@ class RatePlanDetailScreen extends StatelessWidget {
           Spacer(),
           Container(
             width: Get.width,
-            color: black2E2,
+            color: AppColors.black2E2,
             child: Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: 24, vertical: 10),
@@ -46,18 +45,18 @@ class RatePlanDetailScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CommonTextWidget.PoppinsSemiBold(
-                        text: "₹ 7,950",
-                        color: white,
+                        text: '₹ 7,950',
+                        color: AppColors.white,
                         fontSize: 16,
                       ),
                       CommonTextWidget.PoppinsRegular(
-                        text: "+ ₹870 taxes & service fees",
-                        color: white,
+                        text: '+ ₹870 taxes & service fees',
+                        color: AppColors.white,
                         fontSize: 10,
                       ),
                       CommonTextWidget.PoppinsRegular(
-                        text: "Per Night (2 Adults)",
-                        color: white,
+                        text: 'Per Night (2 Adults)',
+                        color: AppColors.white,
                         fontSize: 10,
                       ),
                     ],
@@ -71,11 +70,11 @@ class RatePlanDetailScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40),
                     ),
-                    color: redCA0,
+                    color: AppColors.redCA0,
                     child: CommonTextWidget.PoppinsSemiBold(
                       fontSize: 16,
-                      text: "SELECT ROOM",
-                      color: white,
+                      text: 'SELECT ROOM',
+                      color: AppColors.white,
                     ),
                   ),
                 ],
@@ -86,5 +85,4 @@ class RatePlanDetailScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

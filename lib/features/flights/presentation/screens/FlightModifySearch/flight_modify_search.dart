@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/features/flights/presentation/controllers/flight_modify_search_controller.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightModifySearch/round_trip1.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../controllers/flight_modify_search_controller.dart';
 import 'multicity1.dart';
 import 'one_way_screen1.dart';
+import 'round_trip1.dart';
 
 class FlightModifySearch extends StatelessWidget {
   FlightModifySearch({Key? key}) : super(key: key);
@@ -14,9 +15,8 @@ class FlightModifySearch extends StatelessWidget {
   final FlightModifySearchController flightModifySearchController =
       Get.put(FlightModifySearchController());
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Stack(
         children: [
           Column(
@@ -40,11 +40,11 @@ class FlightModifySearch extends StatelessWidget {
                         onTap: () {
                           Get.back();
                         },
-                        child: Icon(Icons.arrow_back, color: white, size: 20),
+                        child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                       ),
                       CommonTextWidget.PoppinsSemiBold(
                         text: "Modify Flight Search",
-                        color: white,
+                        color: AppColors.white,
                         fontSize: 18,
                       ),
                       Container(),
@@ -72,11 +72,11 @@ class FlightModifySearch extends StatelessWidget {
               height: 45,
               width: Get.width,
               decoration: BoxDecoration(
-                color: white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(5),
                 boxShadow: [
                   BoxShadow(
-                    color: grey757.withOpacity(0.25),
+                    color: AppColors.grey757.withValues(alpha: 0.25),
                     blurRadius: 6,
                     offset: Offset(0, 1),
                   ),
@@ -87,14 +87,14 @@ class FlightModifySearch extends StatelessWidget {
                 indicatorSize: TabBarIndicatorSize.label,
                 padding: EdgeInsets.only(left: 24, bottom: 7, right: 10),
                 tabs: flightModifySearchController.myTabs,
-                unselectedLabelColor: grey5F5,
+                unselectedLabelColor: AppColors.grey5F5,
                 labelStyle:
                     TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 14),
                 unselectedLabelStyle:
-                    TextStyle(fontFamily: "PoppinsMedium", fontSize: 14),
-                labelColor: redCA0,
+                    TextStyle(fontFamily: "PoppinsMedium", fontSize: 14 ),
+                labelColor: AppColors.redCA0,
                 controller: flightModifySearchController.controller,
-                indicatorColor: redCA0,
+                indicatorColor: AppColors.redCA0,
                 indicatorWeight: 2.5,
               ),
             ),
@@ -102,5 +102,4 @@ class FlightModifySearch extends StatelessWidget {
         ],
       ),
     );
-  }
 }

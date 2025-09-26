@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
+
 import '../../controllers/flight_controller.dart';
 import '../../widgets/flight_filter_sort_widget.dart';
 import 'round_trip_flight_details_screen.dart';
@@ -139,18 +140,18 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
     final bool hasFilters = _filters.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).cardColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyLarge?.color),
           onPressed: () => Get.back(),
         ),
         title: Text(
           'Available Flights',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -195,7 +196,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
@@ -226,7 +227,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                             Text(
                               '${_formatDate(params['departDate'])} • ${params['adults']} Adult${params['adults'] > 1 ? 's' : ''} • ${params['travelClass']} Class',
                               style: GoogleFonts.poppins(
-                                color: Colors.grey[600],
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
                                 fontSize: 14,
                               ),
                             ),
@@ -238,13 +239,13 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.blue[50],
+                            color: Theme.of(context).primaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
                             'Round Trip',
                             style: GoogleFonts.poppins(
-                              color: Colors.blue[800],
+                              color: Theme.of(context).primaryColor,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -298,9 +299,9 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.blue[50],
+                        color: Theme.of(context).primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.blue[100]!),
+                        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.2)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -309,7 +310,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                             filterText,
                             style: GoogleFonts.poppins(
                               fontSize: 12,
-                              color: Colors.blue[800],
+                              color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -320,7 +321,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                               setState(() {});
                             },
                             child: Icon(Icons.close,
-                                size: 16, color: Colors.blue[800]),
+                                size: 16, color: Theme.of(context).primaryColor),
                           ),
                         ],
                       ),
@@ -350,7 +351,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       Icon(
                         Icons.airplanemode_inactive,
                         size: 64,
-                        color: Colors.grey[400],
+                        color: Theme.of(context).disabledColor,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -358,7 +359,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                             ? 'No flights match your filters.'
                             : 'No flights found for the selected criteria.',
                         style: GoogleFonts.poppins(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontSize: 16,
                         ),
                         textAlign: TextAlign.center,
@@ -417,7 +418,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: <BoxShadow>[
           BoxShadow(
@@ -466,7 +467,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Colors.blue[50],
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -479,7 +480,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.blue[800],
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                     ],
@@ -521,7 +522,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   decoration: BoxDecoration(
-                    color: Colors.orange[50],
+                    color: AppColors.orangeFFB.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -534,7 +535,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Colors.orange[800],
+                          color: AppColors.orangeEB9,
                         ),
                       ),
                     ],
@@ -588,7 +589,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -598,7 +599,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                                   'Base Fare: ',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context).textTheme.bodyMedium?.color,
                                   ),
                                 ),
                                 Text(
@@ -606,14 +607,14 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.grey[800],
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
                                   ),
                                 ),
                                 Text(
                                   'Taxes: ',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context).textTheme.bodyMedium?.color,
                                   ),
                                 ),
                                 Text(
@@ -621,7 +622,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.grey[800],
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
                                   ),
                                 ),
                               ],
@@ -636,8 +637,8 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     color: flight['IsRefundable']
-                                        ? Colors.green[600]
-                                        : Colors.orange[600],
+                                        ? AppColors.green00A
+                                        : AppColors.orangeEB9,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -715,7 +716,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                               'Error',
                               'Failed to load flight details',
                               backgroundColor: Colors.red,
-                              colorText: Colors.white,
+                              colorText: AppColors.white,
                             );
                           } finally {
                             // Dismiss the loading dialog
@@ -736,7 +737,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                         child: Text(
                           'Select',
                           style: GoogleFonts.poppins(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -765,7 +766,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
           color: isArrival
-              ? (isReturn ? Colors.orange[50] : Colors.blue[50])
+              ? (isReturn ? AppColors.orangeFFB.withOpacity(0.3) : Theme.of(context).primaryColor.withOpacity(0.1))
               : null,
           borderRadius: BorderRadius.circular(8),
         ),
@@ -778,8 +779,8 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: isArrival
-                    ? (isReturn ? Colors.orange[800] : Colors.blue[800])
-                    : Colors.black,
+                    ? (isReturn ? AppColors.orangeEB9 : Theme.of(context).primaryColor)
+                    : Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
             const SizedBox(height: 2),
@@ -787,8 +788,8 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
               location,
               style: GoogleFonts.poppins(
                 color: isArrival
-                    ? (isReturn ? Colors.orange[700] : Colors.blue[700])
-                    : Colors.grey[700],
+                    ? (isReturn ? AppColors.orangeEB9 : Theme.of(context).primaryColor)
+                    : Theme.of(context).textTheme.bodyMedium?.color,
                 fontSize: 13,
                 fontWeight: isArrival ? FontWeight.w500 : FontWeight.normal,
               ),
@@ -798,7 +799,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
               Text(
                 'Terminal $terminal',
                 style: GoogleFonts.poppins(
-                  color: Colors.grey[500],
+                  color: Theme.of(context).textTheme.bodySmall?.color,
                   fontSize: 11,
                 ),
               ),
@@ -809,8 +810,8 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                 date,
                 style: GoogleFonts.poppins(
                   color: isArrival
-                      ? (isReturn ? Colors.orange[700] : Colors.blue[700])
-                      : Colors.grey[500],
+                      ? (isReturn ? AppColors.orangeEB9 : Theme.of(context).primaryColor)
+                      : Theme.of(context).textTheme.bodySmall?.color,
                   fontSize: 11,
                   fontWeight: isArrival ? FontWeight.w500 : FontWeight.normal,
                 ),
@@ -831,7 +832,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
             duration,
             style: GoogleFonts.poppins(
               fontSize: 12,
-              color: isReturn ? Colors.orange[800] : Colors.blue[800],
+              color: isReturn ? AppColors.orangeEB9 : Theme.of(context).primaryColor,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -842,12 +843,12 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
               Container(
                 height: 1,
                 width: 80,
-                color: Colors.grey[300],
+                color: Theme.of(context).dividerColor,
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: isReturn ? Colors.orange[50] : Colors.blue[50],
+                  color: isReturn ? AppColors.orangeFFB.withOpacity(0.3) : Theme.of(context).primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -856,7 +857,7 @@ class _RoundTripResultsScreenState extends State<RoundTripResultsScreen> {
                       : '$stops ${stops == '1' ? 'stop' : 'stops'}',
                   style: GoogleFonts.poppins(
                     fontSize: 10,
-                    color: isReturn ? Colors.orange[800] : Colors.blue[800],
+                    color: isReturn ? AppColors.orangeEB9 : Theme.of(context).primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

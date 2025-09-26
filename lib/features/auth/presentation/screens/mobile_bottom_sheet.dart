@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/features/auth/presentation/controllers/mobile_otp_controller.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../controllers/mobile_otp_controller.dart';
 
 class MobileOtpBottomSheet extends StatelessWidget {
   final MobileOtpController otpController = Get.put(MobileOtpController());
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom + 0,
       ),
@@ -27,7 +26,7 @@ class MobileOtpBottomSheet extends StatelessWidget {
                 'Login with Mobile',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: redCA0,
+                      color: AppColors.redCA0,
                     ),
               ),
               SizedBox(height: 20),
@@ -73,7 +72,7 @@ class MobileOtpBottomSheet extends StatelessWidget {
                         ElevatedButton(
                           onPressed: () => otpController.verifyOtp(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: redCA0,
+                            backgroundColor: AppColors.redCA0,
                             minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -89,7 +88,7 @@ class MobileOtpBottomSheet extends StatelessWidget {
                   : ElevatedButton(
                       onPressed: () => otpController.sendOtp(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: redCA0,
+                        backgroundColor: AppColors.redCA0,
                         minimumSize: Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -105,5 +104,4 @@ class MobileOtpBottomSheet extends StatelessWidget {
         ),
       ),
     );
-  }
 }

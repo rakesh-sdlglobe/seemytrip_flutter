@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/profile/presentation/controllers/mobile_wallet_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/font_family.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/booking/presentation/screens/payment/fare_breakUp_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/font_family.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../../../profile/presentation/controllers/mobile_wallet_controller.dart';
+import 'fare_breakUp_screen.dart';
 
 class MobileWalletScreen extends StatelessWidget {
   MobileWalletScreen({Key? key}) : super(key: key);
@@ -17,11 +18,10 @@ class MobileWalletScreen extends StatelessWidget {
       Get.put(MobileWalletController());
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -29,11 +29,11 @@ class MobileWalletScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Mobile Wallet",
-          color: white,
+          text: 'Mobile Wallet',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -46,16 +46,16 @@ class MobileWalletScreen extends StatelessWidget {
                 children: [
                   Container(
                     width: Get.width,
-                    color: redF9E.withOpacity(0.75),
+                    color: AppColors.redF9E.withOpacity(0.75),
                     child: ListTile(
                       title: CommonTextWidget.PoppinsSemiBold(
-                        text: "Select Provider",
-                        color: black2E2,
+                        text: 'Select Provider',
+                        color: AppColors.black2E2,
                         fontSize: 15,
                       ),
                       subtitle: CommonTextWidget.PoppinsRegular(
-                        text: "for payment via net banking options",
-                        color: grey717,
+                        text: 'for payment via net banking options',
+                        color: AppColors.grey717,
                         fontSize: 12,
                       ),
                     ),
@@ -71,12 +71,12 @@ class MobileWalletScreen extends StatelessWidget {
                         children: [
                           ListTile(
                             leading: Image.asset(
-                                Lists.mobileWalletList[index]["image"],
+                                Lists.mobileWalletList[index]['image'],
                                 height: 30,
                                 width: 30),
                             title: CommonTextWidget.PoppinsMedium(
-                              text: Lists.mobileWalletList[index]["text"],
-                              color: black2E2,
+                              text: Lists.mobileWalletList[index]['text'],
+                              color: AppColors.black2E2,
                               fontSize: 15,
                             ),
                             trailing: InkWell(
@@ -88,26 +88,26 @@ class MobileWalletScreen extends StatelessWidget {
                                 height: 18,
                                 width: 18,
                                 decoration: BoxDecoration(
-                                    color: white,
+                                    color: AppColors.white,
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                         color: controller.selectedIndex == index
-                                            ? redCA0
-                                            : grey717)),
+                                            ? AppColors.redCA0
+                                            : AppColors.grey717)),
                                 alignment: Alignment.center,
                                 child: controller.selectedIndex == index
                                     ? Container(
                                         height: 10,
                                         width: 10,
                                         decoration: BoxDecoration(
-                                            color: redCA0,
+                                            color: AppColors.redCA0,
                                             shape: BoxShape.circle),
                                       )
                                     : SizedBox.shrink(),
                               ),
                             ),
                           ),
-                          Divider(color: greyE8E, thickness: 1),
+                          Divider(color: AppColors.greyE8E, thickness: 1),
                         ],
                       ),
                     ),
@@ -132,7 +132,7 @@ class MobileWalletScreen extends StatelessWidget {
                     Container(
                       height: 65,
                       width: Get.width,
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 22, vertical: 10),
@@ -144,27 +144,27 @@ class MobileWalletScreen extends StatelessWidget {
                               children: [
                                 RichText(
                                   text: TextSpan(
-                                    text: "₹ 5,950 ",
+                                    text: '₹ 5,950 ',
                                     style: TextStyle(
                                       fontFamily: FontFamily.PoppinsSemiBold,
                                       fontSize: 16,
-                                      color: white,
+                                      color: AppColors.white,
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text: "Due now ",
+                                        text: 'Due now ',
                                         style: TextStyle(
                                             fontSize: 10,
                                             fontFamily:
                                                 FontFamily.PoppinsMedium,
-                                            color: grey8E8),
+                                            color: AppColors.grey8E8),
                                       ),
                                     ],
                                   ),
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "Convenience Fee added",
-                                  color: grey8E8,
+                                  text: 'Convenience Fee added',
+                                  color: AppColors.grey8E8,
                                   fontSize: 10,
                                 ),
                               ],
@@ -203,11 +203,11 @@ class MobileWalletScreen extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(40),
                                         ),
-                                        color: redCA0,
+                                        color: AppColors.redCA0,
                                         child: CommonTextWidget.PoppinsSemiBold(
                                           fontSize: 16,
-                                          text: "CONTINUE",
-                                          color: white,
+                                          text: 'CONTINUE',
+                                          color: AppColors.white,
                                         ),
                                       ),
                                     ],
@@ -234,5 +234,4 @@ class MobileWalletScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

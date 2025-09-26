@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/features/home/presentation/screens/where_to_go/international_detail_screen2.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/images.dart';
+import 'international_detail_screen2.dart';
 
 class InterNationalDetailScreen1 extends StatelessWidget {
   InterNationalDetailScreen1({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: SingleChildScrollView(
@@ -43,8 +43,8 @@ class InterNationalDetailScreen1 extends StatelessWidget {
                         child: SvgPicture.asset(internationalDetailBackImage),
                       ),
                       CommonTextWidget.PoppinsMedium(
-                        text: "Bali",
-                        color: white,
+                        text: 'Bali',
+                        color: AppColors.white,
                         fontSize: 18,
                       ),
                       SvgPicture.asset(internationalDetailSearchImage),
@@ -56,8 +56,8 @@ class InterNationalDetailScreen1 extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsSemiBold(
-                  text: "Things To See & Do",
-                  color: black2E2,
+                  text: 'Things To See & Do',
+                  color: AppColors.black2E2,
                   fontSize: 16,
                 ),
               ),
@@ -74,14 +74,11 @@ class InterNationalDetailScreen1 extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.only(left: 24, right: 24),
                 itemCount: Lists.internationalDetail1List.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
+                itemBuilder: (context, index) => InkWell(
                     onTap: () {
                       Get.to(InterNationalDetailScreen2());
                     },
-                    child: Image.asset(Lists.internationalDetail1List[index]),
-                  );
-                },
+                    child: Image.asset(Lists.internationalDetail1List[index])),
               ),
               Image.asset(internationalDetail1Image6,
                   width: Get.width, height: 324),
@@ -90,5 +87,4 @@ class InterNationalDetailScreen1 extends StatelessWidget {
         ),
       ),
     );
-  }
 }

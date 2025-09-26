@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/trips/presentation/controllers/my_trip_controller.dart';
-import 'package:seemytrip/features/trips/presentation/screens/my_trips/cancelled_trip_screen.dart';
-import 'package:seemytrip/features/trips/presentation/screens/my_trips/upcoming_trip_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../features/trips/presentation/controllers/my_trip_controller.dart';
+import '../../../../../features/trips/presentation/screens/my_trips/cancelled_trip_screen.dart';
+import '../../../../../features/trips/presentation/screens/my_trips/upcoming_trip_screen.dart';
+import '../../../../../shared/constants/images.dart';
 
 class MyTripScreen extends StatelessWidget {
   MyTripScreen({Key? key}) : super(key: key);
@@ -15,11 +16,10 @@ class MyTripScreen extends StatelessWidget {
       Get.put(MyTripTabController());
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.whiteF2F,
       appBar: AppBar(
-        backgroundColor: white,
+        backgroundColor: AppColors.whiteF2F,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -27,11 +27,11 @@ class MyTripScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: black2E2, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.black2E2, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "My Trips",
-          color: black2E2,
+          text: 'My Trips',
+          color: AppColors.black2E2,
           fontSize: 18,
         ),
         actions: [
@@ -48,10 +48,10 @@ class MyTripScreen extends StatelessWidget {
             height: 45,
             width: Get.width,
             decoration: BoxDecoration(
-              color: white,
+              color: AppColors.whiteF2F,
               boxShadow: [
                 BoxShadow(
-                  color: grey363.withOpacity(0.25),
+                  color: AppColors.grey363.withValues(alpha: 0.25),
                   blurRadius: 4,
                 ),
               ],
@@ -60,14 +60,14 @@ class MyTripScreen extends StatelessWidget {
               isScrollable: true,
               padding: EdgeInsets.only(left: 24, bottom: 7, right: 10),
               tabs: myTripTabController.myTabs,
-              unselectedLabelColor: grey5F5,
+              unselectedLabelColor: AppColors.grey5F5,
               labelStyle:
-                  TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 14),
+                  TextStyle(fontFamily: 'PoppinsSemiBold', fontSize: 14),
               unselectedLabelStyle:
-                  TextStyle(fontFamily: "PoppinsMedium", fontSize: 14),
-              labelColor: redCA0,
+                  TextStyle(fontFamily: 'PoppinsMedium', fontSize: 14),
+              labelColor: AppColors.redCA0,
               controller: myTripTabController.controller,
-              indicatorColor: redCA0,
+              indicatorColor: AppColors.redCA0,
               indicatorWeight: 2.5,
             ),
           ),
@@ -85,5 +85,4 @@ class MyTripScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

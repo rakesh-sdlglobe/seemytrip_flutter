@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../core/utils/common_textfeild_widget.dart';
-import '../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 
 class OutStationCabFromToScreen extends StatelessWidget {
@@ -13,9 +13,9 @@ class OutStationCabFromToScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: white,
+        backgroundColor: AppColors.white,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -25,12 +25,12 @@ class OutStationCabFromToScreen extends StatelessWidget {
             onTap: () {
               Get.back();
             },
-            child: Icon(Icons.arrow_back, color: black2E2, size: 20),
+            child: Icon(Icons.arrow_back, color: AppColors.black2E2, size: 20),
           ),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'Outstation Cabs',
-          color: black2E2,
+          color: AppColors.black2E2,
           fontSize: 18,
         ),
       ),
@@ -45,7 +45,7 @@ class OutStationCabFromToScreen extends StatelessWidget {
               keyboardType: TextInputType.text,
               prefixIcon: Padding(
                 padding: EdgeInsets.only(bottom: 25),
-                child: Icon(Icons.circle_outlined, color: black2E2, size: 15),
+                child: Icon(Icons.circle_outlined, color: AppColors.black2E2, size: 15),
               ),
             ),
             SizedBox(height: 20),
@@ -55,7 +55,7 @@ class OutStationCabFromToScreen extends StatelessWidget {
               keyboardType: TextInputType.text,
               prefixIcon: Padding(
                 padding: EdgeInsets.only(bottom: 25),
-                child: Icon(Icons.circle_outlined, color: black2E2, size: 15),
+                child: Icon(Icons.circle_outlined, color: AppColors.black2E2, size: 15),
               ),
             ),
             SizedBox(height: 20),
@@ -65,7 +65,7 @@ class OutStationCabFromToScreen extends StatelessWidget {
               keyboardType: TextInputType.text,
               prefixIcon: Padding(
                 padding: EdgeInsets.only(bottom: 25),
-                child: Icon(Icons.my_location, color: redFD3, size: 20),
+                child: Icon(Icons.my_location, color: AppColors.redFD3, size: 20),
               ),
             ),
           ],

@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 // Import global styles
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/buttons/app_button.dart';
 import '../../../../core/widgets/common/cards/app_card.dart';
 import '../controllers/hotel_controller.dart';
@@ -42,6 +41,7 @@ class HotelHomeScreen extends StatelessWidget {
 
   /// Builds a reusable, animated search card.
   Widget _buildSearchCard({
+    required BuildContext context,
     required VoidCallback onTap,
     required String title,
     required String subtitle,
@@ -60,19 +60,25 @@ class HotelHomeScreen extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: <Color>[AppColors.surface, AppColors.background],
+            colors: <Color>[
+              Theme.of(context).cardColor,
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: AppColors.divider.withOpacity(0.5),
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 15,
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: AppColors.border, width: 1),
+          border: Border.all(
+            color: Theme.of(context).dividerColor, 
+            width: 1
+          ),
         ),
         child: Material(
           color: Colors.transparent,
@@ -80,9 +86,9 @@ class HotelHomeScreen extends StatelessWidget {
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(16),
-            // CORRECTED: Replaced non-existent .withValues() with .withOpacity()
-            splashColor: AppColors.primary.withOpacity(0.1),
-            highlightColor: AppColors.primary.withOpacity(0.05),
+            // Theme-aware splash and highlight colors
+            splashColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            highlightColor: Theme.of(context).primaryColor.withOpacity(0.05),
             child: Padding(
               padding: const EdgeInsets.all(18.0),
               child: Row(
@@ -92,7 +98,10 @@ class HotelHomeScreen extends StatelessWidget {
                     height: 48,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: <Color>[AppColors.primary, AppColors.primaryDark],
+                        colors: <Color>[
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColorDark,
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -108,7 +117,7 @@ class HotelHomeScreen extends StatelessWidget {
                         Text(
                           title.toUpperCase(),
                           style: TextStyle(
-                            color: AppColors.textSecondary.withOpacity(0.8),
+                            color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8),
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.5,
@@ -118,7 +127,7 @@ class HotelHomeScreen extends StatelessWidget {
                         Text(
                           subtitle,
                           style: TextStyle(
-                            color: AppColors.textPrimary,
+                            color: Theme.of(context).textTheme.titleMedium?.color,
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
                           ),
@@ -134,13 +143,12 @@ class HotelHomeScreen extends StatelessWidget {
                       width: 1,
                       height: 36,
                       margin: const EdgeInsets.symmetric(horizontal: 16),
-                      color: Colors.grey.shade200,
+                      color: Theme.of(context).dividerColor,
                     ),
                     Text(
                       _searchCtrl.selectedCity.value?.country ?? 'India',
                       style: TextStyle(
-                        // CORRECTED: .withValues() to .withOpacity()
-                        color: AppColors.textSecondary.withOpacity(0.8),
+                        color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8),
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -150,7 +158,7 @@ class HotelHomeScreen extends StatelessWidget {
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 16,
-                    color: AppColors.primary,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ],
               ),
@@ -162,7 +170,7 @@ class HotelHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Obx(() {
         final bool isSearchEnabled = _searchCtrl.selectedCity.value != null &&
             _searchCtrl.checkInDate.value != null &&
@@ -175,6 +183,7 @@ class HotelHomeScreen extends StatelessWidget {
             children: <Widget>[
               // 1. City Selection Card
               _buildSearchCard(
+                context: context,
                 onTap: () => Get.to(() => SearchCityScreen()),
                 title: 'Destination',
                 subtitle: _searchCtrl.selectedCity.value?.name ??
@@ -187,6 +196,7 @@ class HotelHomeScreen extends StatelessWidget {
               Column(
                 children: <Widget>[
                   _buildSearchCard(
+                    context: context,
                     onTap: _selectDates,
                     title: 'Check-in',
                     subtitle: _searchCtrl.checkInDate.value == null
@@ -198,6 +208,7 @@ class HotelHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   _buildSearchCard(
+                    context: context,
                     onTap: _selectDates,
                     title: 'Check-out',
                     subtitle: _searchCtrl.checkOutDate.value == null
@@ -212,6 +223,7 @@ class HotelHomeScreen extends StatelessWidget {
 
               // 3. Rooms & Guests Card
               _buildSearchCard(
+                context: context,
                 onTap: () async {
                   final result = await Get.bottomSheet(
                     AppCard(

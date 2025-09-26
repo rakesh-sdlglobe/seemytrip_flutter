@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/hotels/presentation/controllers/hotel_filter_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../controllers/hotel_filter_controller.dart';
 
 class HotelFilterBarFull extends StatelessWidget {
-  final HotelFilterController filterCtrl;
-  final List<Map<String, dynamic>> hotels;
 
   const HotelFilterBarFull({
     Key? key,
     required this.filterCtrl,
     required this.hotels,
   }) : super(key: key);
+  final HotelFilterController filterCtrl;
+  final List<Map<String, dynamic>> hotels;
 
   @override
   Widget build(BuildContext context) {
@@ -57,16 +58,16 @@ class HotelFilterBarFull extends StatelessWidget {
                     duration: Duration(milliseconds: 200),
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: isSelected ? redCA0.withOpacity(0.12) : Colors.white,
+                      color: isSelected ? AppColors.redCA0.withOpacity(0.12) : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: isSelected ? redCA0 : greyE2E,
+                        color: isSelected ? AppColors.redCA0 : AppColors.greyE2E,
                         width: 1,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: redCA0.withOpacity(0.08),
+                                color: AppColors.redCA0.withOpacity(0.08),
                                 blurRadius: 8,
                                 offset: Offset(0, 2),
                               )
@@ -75,12 +76,12 @@ class HotelFilterBarFull extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(filter['icon'] as IconData, color: isSelected ? redCA0 : grey717, size: 18),
+                        Icon(filter['icon'] as IconData, color: isSelected ? AppColors.redCA0 : AppColors.grey717, size: 18),
                         SizedBox(width: 6),
                         Text(
                           filter['label'] as String,
                           style: TextStyle(
-                            color: isSelected ? redCA0 : grey717,
+                            color: isSelected ? AppColors.redCA0 : AppColors.grey717,
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
                           ),
@@ -88,7 +89,7 @@ class HotelFilterBarFull extends StatelessWidget {
                         if (isSelected)
                           Padding(
                             padding: const EdgeInsets.only(left: 6),
-                            child: Icon(Icons.check, color: redCA0, size: 16),
+                            child: Icon(Icons.check, color: AppColors.redCA0, size: 16),
                           ),
                       ],
                     ),
@@ -121,31 +122,26 @@ class HotelFilterBarFull extends StatelessWidget {
 }
 
 class FilterActionButton extends StatelessWidget {
-  final VoidCallback onPressed;
   const FilterActionButton({Key? key, required this.onPressed}) : super(key: key);
+  final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
+  Widget build(BuildContext context) => InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: redCA0.withOpacity(0.08),
+          color: AppColors.redCA0.withOpacity(0.08),
           shape: BoxShape.circle,
         ),
-        child: Icon(Icons.filter_alt, color: redCA0, size: 22),
+        child: Icon(Icons.filter_alt, color: AppColors.redCA0, size: 22),
       ),
     );
-  }
 }
 
 // --- Individual Filter Option Sheet ---
 class _FilterOptionsSheet extends StatelessWidget {
-  final HotelFilterController filterCtrl;
-  final List<Map<String, dynamic>> hotels;
-  final String filterType;
 
   const _FilterOptionsSheet({
     Key? key,
@@ -153,6 +149,9 @@ class _FilterOptionsSheet extends StatelessWidget {
     required this.hotels,
     required this.filterType,
   }) : super(key: key);
+  final HotelFilterController filterCtrl;
+  final List<Map<String, dynamic>> hotels;
+  final String filterType;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +166,7 @@ class _FilterOptionsSheet extends StatelessWidget {
         break;
       // Add more cases for other filter types
       default:
-        content = Center(child: Text("No filter UI implemented for $filterType"));
+        content = Center(child: Text('No filter UI implemented for $filterType'));
     }
     return SafeArea(
       child: Padding(
@@ -175,7 +174,7 @@ class _FilterOptionsSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Filter by ${filterType[0].toUpperCase()}${filterType.substring(1)}",
+            Text('Filter by ${filterType[0].toUpperCase()}${filterType.substring(1)}',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             SizedBox(height: 18),
             content,
@@ -183,13 +182,13 @@ class _FilterOptionsSheet extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: redCA0,
+                backgroundColor: AppColors.redCA0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(22),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
               ),
-              child: Text("Close", style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: Text('Close', style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ],
         ),
@@ -200,14 +199,14 @@ class _FilterOptionsSheet extends StatelessWidget {
 
 // --- All Filters Sheet ---
 class _FilterAllOptionsSheet extends StatefulWidget {
-  final HotelFilterController filterCtrl;
-  final List<Map<String, dynamic>> hotels;
 
   const _FilterAllOptionsSheet({
     Key? key,
     required this.filterCtrl,
     required this.hotels,
   }) : super(key: key);
+  final HotelFilterController filterCtrl;
+  final List<Map<String, dynamic>> hotels;
 
   @override
   State<_FilterAllOptionsSheet> createState() => _FilterAllOptionsSheetState();
@@ -263,11 +262,11 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
                 ),
               ),
               Text(
-                "Filter Hotels",
+                'Filter Hotels',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   letterSpacing: 0.2,
                 ),
               ),
@@ -276,8 +275,8 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Price Range",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: black2E2),
+                  'Price Range',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.black2E2),
                 ),
               ),
               SizedBox(height: 8),
@@ -286,11 +285,11 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: greyE8E,
+                      color: AppColors.greyE8E,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text("₹${priceRange.start.toInt()}",
-                        style: TextStyle(fontWeight: FontWeight.w500, color: black2E2)),
+                    child: Text('₹${priceRange.start.toInt()}',
+                        style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.black2E2)),
                   ),
                   Expanded(
                     child: RangeSlider(
@@ -299,11 +298,11 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
                       values: priceRange,
                       divisions: maxPrice > minPrice ? 20 : 1,
                       labels: RangeLabels(
-                        "₹${priceRange.start.toInt()}",
-                        "₹${priceRange.end.toInt()}",
+                        '₹${priceRange.start.toInt()}',
+                        '₹${priceRange.end.toInt()}',
                       ),
-                      activeColor: redCA0,
-                      inactiveColor: greyE2E,
+                      activeColor: AppColors.redCA0,
+                      inactiveColor: AppColors.greyE2E,
                       onChanged: (v) {
                         setState(() {
                           priceRange = v;
@@ -314,11 +313,11 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: greyE8E,
+                      color: AppColors.greyE8E,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text("₹${priceRange.end.toInt()}",
-                        style: TextStyle(fontWeight: FontWeight.w500, color: black2E2)),
+                    child: Text('₹${priceRange.end.toInt()}',
+                        style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.black2E2)),
                   ),
                 ],
               ),
@@ -327,8 +326,8 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Star Rating",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: black2E2),
+                  'Star Rating',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: AppColors.black2E2),
                 ),
               ),
               SizedBox(height: 8),
@@ -347,16 +346,16 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
                       margin: EdgeInsets.symmetric(horizontal: 4),
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: selectedStar >= star ? redCA0.withOpacity(0.15) : Colors.transparent,
+                        color: selectedStar >= star ? AppColors.redCA0.withOpacity(0.15) : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: selectedStar >= star ? redCA0 : greyE2E,
+                          color: selectedStar >= star ? AppColors.redCA0 : AppColors.greyE2E,
                           width: 1,
                         ),
                       ),
                       child: Icon(
                         Icons.star,
-                        color: selectedStar >= star ? Colors.amber : greyE2E,
+                        color: selectedStar >= star ? Colors.amber : AppColors.greyE2E,
                         size: 28,
                       ),
                     ),
@@ -387,11 +386,11 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
                     }).toList();
 
                     widget.filterCtrl.filteredHotels.assignAll(filtered);
-                    widget.filterCtrl.selectedFilter.value = "custom";
+                    widget.filterCtrl.selectedFilter.value = 'custom';
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: redCA0,
+                    backgroundColor: AppColors.redCA0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(22),
                     ),
@@ -399,7 +398,7 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
                     elevation: 0,
                   ),
                   child: Text(
-                    "Apply Filters",
+                    'Apply Filters',
                     style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.2),
                   ),
                 ),
@@ -407,7 +406,7 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
               SizedBox(height: 8),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text("Cancel", style: TextStyle(color: redCA0, fontWeight: FontWeight.w500)),
+                child: Text('Cancel', style: TextStyle(color: AppColors.redCA0, fontWeight: FontWeight.w500)),
               ),
             ],
           ),
@@ -419,9 +418,9 @@ class _FilterAllOptionsSheetState extends State<_FilterAllOptionsSheet> {
 
 // --- Example Filter Widgets ---
 class _PriceSlider extends StatefulWidget {
+  const _PriceSlider({required this.filterCtrl, required this.hotels});
   final HotelFilterController filterCtrl;
   final List<Map<String, dynamic>> hotels;
-  const _PriceSlider({required this.filterCtrl, required this.hotels});
 
   @override
   State<_PriceSlider> createState() => _PriceSliderState();
@@ -439,19 +438,18 @@ class _PriceSliderState extends State<_PriceSlider> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Price Range (₹${values.start.toInt()} - ₹${values.end.toInt()})"),
+        Text('Price Range (₹${values.start.toInt()} - ₹${values.end.toInt()})'),
         RangeSlider(
           min: min,
           max: max,
           values: values,
           divisions: 20,
           labels: RangeLabels(
-            "₹${values.start.toInt()}",
-            "₹${values.end.toInt()}",
+            '₹${values.start.toInt()}',
+            '₹${values.end.toInt()}',
           ),
           onChanged: (v) {
             setState(() {
@@ -462,13 +460,12 @@ class _PriceSliderState extends State<_PriceSlider> {
         ),
       ],
     );
-  }
 }
 
 class _StarRatingSelector extends StatefulWidget {
+  const _StarRatingSelector({required this.filterCtrl, required this.hotels});
   final HotelFilterController filterCtrl;
   final List<Map<String, dynamic>> hotels;
-  const _StarRatingSelector({required this.filterCtrl, required this.hotels});
 
   @override
   State<_StarRatingSelector> createState() => _StarRatingSelectorState();
@@ -478,14 +475,13 @@ class _StarRatingSelectorState extends State<_StarRatingSelector> {
   int selectedStar = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(BuildContext context) => Row(
       children: List.generate(5, (i) {
         final star = i + 1;
         return IconButton(
           icon: Icon(
             Icons.star,
-            color: selectedStar >= star ? Colors.amber : greyE2E,
+            color: selectedStar >= star ? Colors.amber : AppColors.greyE2E,
           ),
           onPressed: () {
             setState(() {
@@ -496,5 +492,4 @@ class _StarRatingSelectorState extends State<_StarRatingSelector> {
         );
       }),
     );
-  }
 }

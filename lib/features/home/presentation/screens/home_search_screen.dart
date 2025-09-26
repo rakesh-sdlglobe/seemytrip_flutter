@@ -2,41 +2,41 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/common/inputs/app_text_field.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common/inputs/app_text_field.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../core/widgets/lists_widget.dart';
+import '../../../../main.dart';
+import '../../../../shared/constants/images.dart';
 
 class HomeSearchSCreen extends StatelessWidget {
   HomeSearchSCreen({Key? key}) : super(key: key);
   final TextEditingController searchController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Column(
-        children: [
+        children: <Widget>[
           Container(
             width: Get.width,
-            color: redCA0,
+            color: AppColors.redCA0,
             child: Padding(
               padding:
                   EdgeInsets.only(top: 60, left: 24, right: 24, bottom: 10),
               child: Row(
-                children: [
+                children: <Widget>[
                   InkWell(
                     onTap: () {
                       Get.back();
                     },
-                    child: Icon(Icons.arrow_back, color: white, size: 20),
+                    child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                   ),
                   SizedBox(width: 15),
                   Expanded(
                     child: AppTextField(
-                      prefixIcon: Icon(CupertinoIcons.search, color: grey717),
+                      prefixIcon: Icon(CupertinoIcons.search, color: AppColors.grey717),
                       keyboardType: TextInputType.text,
                       controller: searchController,
                       hintText: "Try 'Delhi Actinites'",
@@ -51,16 +51,16 @@ class HomeSearchSCreen extends StatelessWidget {
               behavior: MyBehavior(),
               child: SingleChildScrollView(
                 child: Column(
-                  children: [
+                  children: <Widget>[
                     Container(
                       width: Get.width,
-                      color: greyEEE,
+                      color: AppColors.greyEEE,
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "TOP SERVICES",
-                          color: black2E2,
+                          text: 'TOP SERVICES',
+                          color: AppColors.black2E2,
                           fontSize: 14,
                         ),
                       ),
@@ -76,15 +76,15 @@ class HomeSearchSCreen extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.only(
                               top: 13, bottom: 13, left: 24, right: 12),
-                          itemBuilder: (context, index) => Padding(
+                          itemBuilder: (BuildContext context, int index) => Padding(
                             padding: EdgeInsets.only(right: 12),
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                color: white,
-                                boxShadow: [
+                                color: AppColors.white,
+                                boxShadow: <BoxShadow>[
                                   BoxShadow(
-                                    color: grey323.withOpacity(0.25),
+                                    color: AppColors.grey323.withValues(alpha: 0.25),
                                     blurRadius: 6,
                                     offset: Offset(0, 1),
                                   ),
@@ -95,7 +95,7 @@ class HomeSearchSCreen extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(horizontal: 20),
                                   child: CommonTextWidget.PoppinsMedium(
                                     text: Lists.homeSearchList[index],
-                                    color: grey5F5,
+                                    color: AppColors.grey5F5,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -107,13 +107,13 @@ class HomeSearchSCreen extends StatelessWidget {
                     ),
                     Container(
                       width: Get.width,
-                      color: greyEEE,
+                      color: AppColors.greyEEE,
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "RECENT SEARCHES",
-                          color: black2E2,
+                          text: 'RECENT SEARCHES',
+                          color: AppColors.black2E2,
                           fontSize: 14,
                         ),
                       ),
@@ -124,28 +124,28 @@ class HomeSearchSCreen extends StatelessWidget {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: 1,
-                      itemBuilder: (context, index) => ListTile(
+                      itemBuilder: (BuildContext context, int index) => ListTile(
                         contentPadding: EdgeInsets.zero,
                         horizontalTitleGap: -5,
                         leading: SvgPicture.asset(recentSearchesIcon),
                         title: CommonTextWidget.PoppinsRegular(
-                          text: "New Delhi to Mumbai flights for 24th Sep",
-                          color: grey717,
+                          text: 'New Delhi to Mumbai flights for 24th Sep',
+                          color: AppColors.grey717,
                           fontSize: 14,
                         ),
-                        trailing: Icon(Icons.arrow_forward_ios, color: redCA0),
+                        trailing: Icon(Icons.arrow_forward_ios, color: AppColors.redCA0),
                       ),
                     ),
                     SizedBox(height: 12),
                     Container(
                       width: Get.width,
-                      color: greyEEE,
+                      color: AppColors.greyEEE,
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "WHAT’S INDIA SEARCHING FOR",
-                          color: black2E2,
+                          text: 'WHAT’S INDIA SEARCHING FOR',
+                          color: AppColors.black2E2,
                           fontSize: 14,
                         ),
                       ),
@@ -156,25 +156,25 @@ class HomeSearchSCreen extends StatelessWidget {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: 6,
-                      itemBuilder: (context, index) => Column(
-                        children: [
+                      itemBuilder: (BuildContext context, int index) => Column(
+                        children: <Widget>[
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             horizontalTitleGap: -5,
                             leading:
-                                SvgPicture.asset(trendArrow, color: grey969),
+                                SvgPicture.asset(trendArrow, color: AppColors.grey969),
                             title: CommonTextWidget.PoppinsRegular(
-                              text: "Cheapest flight from Delhi to Dharmsala",
-                              color: grey717,
+                              text: 'Cheapest flight from Delhi to Dharmsala',
+                              color: AppColors.grey717,
                               fontSize: 14,
                             ),
                             trailing:
-                                Icon(Icons.arrow_forward_ios, color: redCA0),
+                                Icon(Icons.arrow_forward_ios, color: AppColors.redCA0),
                           ),
                           SizedBox(height: 12),
                           index == 5
                               ? SizedBox.shrink()
-                              : Divider(thickness: 1, color: greyDED),
+                              : Divider(thickness: 1, color: AppColors.greyDED),
                           SizedBox(height: 12),
                         ],
                       ),
@@ -187,5 +187,4 @@ class HomeSearchSCreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

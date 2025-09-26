@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../utils/colors.dart';
+import '../../theme/app_colors.dart';
 
 class CommonAppBar extends StatelessWidget {
 
@@ -11,7 +11,7 @@ class CommonAppBar extends StatelessWidget {
     Key? key,
     this.subtitle,
     this.onBackPressed,
-    this.backgroundColor = redCA0, // Default red color
+    this.backgroundColor = AppColors.redCA0, // Default red color
     this.textColor = Colors.white,
     this.showBackButton = true,
     this.action,

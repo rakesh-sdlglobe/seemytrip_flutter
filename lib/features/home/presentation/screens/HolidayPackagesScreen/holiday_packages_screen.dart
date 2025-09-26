@@ -2,10 +2,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../core/theme/app_colors.dart';
+
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../core/widgets/lists_widget.dart';
 import '../../../../../main.dart';
-import '../../../../../core/utils/colors.dart';
 import '../../../../../shared/constants/images.dart';
 import '../../../../holidays/presentation/controllers/holiday_package_slider_controller.dart';
 import 'explore_screen.dart';
@@ -21,7 +22,7 @@ class HolidayPackagesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: SingleChildScrollView(
@@ -49,11 +50,11 @@ class HolidayPackagesScreen extends StatelessWidget {
                               Get.back();
                             },
                             child:
-                                Icon(Icons.arrow_back, color: white, size: 20),
+                                Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                           ),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "New Delhi",
-                            color: white,
+                            text: 'New Delhi',
+                            color: AppColors.white,
                             fontSize: 18,
                           ),
                           InkWell(
@@ -61,8 +62,8 @@ class HolidayPackagesScreen extends StatelessWidget {
                               Get.to(() => StartFromSCreen());
                             },
                             child: CommonTextWidget.PoppinsMedium(
-                              text: "City",
-                              color: white,
+                              text: 'City',
+                              color: AppColors.white,
                               fontSize: 13,
                             ),
                           ),
@@ -94,12 +95,12 @@ class HolidayPackagesScreen extends StatelessWidget {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: white,
+                                color: AppColors.white,
                                 boxShadow: [
                                   BoxShadow(
                                     offset: Offset(0, 1),
                                     blurRadius: 6,
-                                    color: grey515.withOpacity(0.25),
+                                    color: AppColors.grey515.withOpacity(0.25),
                                   ),
                                 ],
                               ),
@@ -108,7 +109,7 @@ class HolidayPackagesScreen extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(horizontal: 20),
                                   child: CommonTextWidget.PoppinsMedium(
                                     text: Lists.holidayPackagesList1[index],
-                                    color: grey5F5,
+                                    color: AppColors.grey5F5,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -120,21 +121,21 @@ class HolidayPackagesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Divider(color: greyE8E, thickness: 1),
+                  Divider(color: AppColors.greyE8E, thickness: 1),
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsSemiBold(
-                      text: "Best selling destinations",
-                      color: black2E2,
+                      text: 'Best selling destinations',
+                      color: AppColors.black2E2,
                       fontSize: 16,
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsRegular(
-                      text: "Grab best price for Oct-travel, Book now",
-                      color: grey717,
+                      text: 'Grab best price for Oct-travel, Book now',
+                      color: AppColors.grey717,
                       fontSize: 12,
                     ),
                   ),
@@ -161,7 +162,7 @@ class HolidayPackagesScreen extends StatelessWidget {
                               SizedBox(height: 10),
                               CommonTextWidget.PoppinsMedium(
                                 text: Lists.holidayPackagesList2[index]["text"],
-                                color: black2E2,
+                                color: AppColors.black2E2,
                                 fontSize: 14,
                               ),
                             ],
@@ -171,7 +172,7 @@ class HolidayPackagesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Divider(color: greyE8E, thickness: 1),
+                  Divider(color: AppColors.greyE8E, thickness: 1),
                   SizedBox(height: 8),
                   CarouselSlider.builder(
                     itemCount: Lists.holidayPackageSliderList.length,
@@ -219,8 +220,8 @@ class HolidayPackagesScreen extends StatelessWidget {
                                   color: i ==
                                           holidayPackageSliderController
                                               .sliderIndex.value
-                                      ? redCA0
-                                      : greyD3D,
+                                      ? AppColors.redCA0
+                                      : AppColors.greyD3D,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -230,21 +231,21 @@ class HolidayPackagesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Divider(color: greyE8E, thickness: 1),
+                  Divider(color: AppColors.greyE8E, thickness: 1),
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsSemiBold(
-                      text: "Easy Visa Destinations",
-                      color: black2E2,
+                      text: 'Easy Visa Destinations',
+                      color: AppColors.black2E2,
                       fontSize: 16,
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsRegular(
-                      text: "Now travel the world without any hassie!",
-                      color: grey717,
+                      text: 'Now travel the world without any hassie!',
+                      color: AppColors.grey717,
                       fontSize: 12,
                     ),
                   ),
@@ -270,13 +271,13 @@ class HolidayPackagesScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 10),
                             CommonTextWidget.PoppinsRegular(
-                              text: "Starting at",
-                              color: grey717,
+                              text: 'Starting at',
+                              color: AppColors.grey717,
                               fontSize: 12,
                             ),
                             CommonTextWidget.PoppinsSemiBold(
                               text: Lists.holidayPackagesList3[index]["text"],
-                              color: black2E2,
+                              color: AppColors.black2E2,
                               fontSize: 16,
                             ),
                           ],
@@ -285,21 +286,21 @@ class HolidayPackagesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Divider(color: greyE8E, thickness: 1),
+                  Divider(color: AppColors.greyE8E, thickness: 1),
                   SizedBox(height: 8),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsSemiBold(
-                      text: "Best selling destinations",
-                      color: black2E2,
+                      text: 'Best selling destinations',
+                      color: AppColors.black2E2,
                       fontSize: 16,
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsRegular(
-                      text: "Grab best price for Oct-travel, Book now",
-                      color: grey717,
+                      text: 'Grab best price for Oct-travel, Book now',
+                      color: AppColors.grey717,
                       fontSize: 12,
                     ),
                   ),
@@ -322,7 +323,7 @@ class HolidayPackagesScreen extends StatelessWidget {
                             SizedBox(height: 10),
                             CommonTextWidget.PoppinsMedium(
                               text: Lists.holidayPackagesList4[index]["text"],
-                              color: black2E2,
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                           ],
@@ -331,7 +332,7 @@ class HolidayPackagesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 15),
-                ],
+                  ],
               ),
               Padding(
                 padding: EdgeInsets.only(top: 105, left: 24, right: 24),
@@ -341,10 +342,10 @@ class HolidayPackagesScreen extends StatelessWidget {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: white,
+                      color: AppColors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: grey515.withOpacity(0.25),
+                          color: AppColors.grey515.withOpacity(0.25),
                           blurRadius: 6,
                           offset: Offset(0, 1),
                         ),
@@ -355,11 +356,11 @@ class HolidayPackagesScreen extends StatelessWidget {
                       padding: EdgeInsets.all(12),
                       child: Row(
                         children: [
-                          Icon(CupertinoIcons.search, color: grey717),
+                          Icon(CupertinoIcons.search, color: AppColors.grey717),
                           SizedBox(width: 10),
                           CommonTextWidget.PoppinsRegular(
-                            color: greyA1A,
-                            text: "Search Destinations",
+                            color: AppColors.greyA1A,
+                            text: 'Search Destinations',
                             fontSize: 15,
                           ),
                         ],

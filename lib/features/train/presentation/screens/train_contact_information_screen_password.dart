@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/features/shared/presentation/controllers/irctc_forgot_details_controller.dart';
 import 'package:seemytrip/features/train/presentation/controllers/train_contact_information_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 
 class ForgotIRCTCPasswordScreen extends StatefulWidget {
@@ -58,7 +58,7 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
   Widget build(BuildContext context) => Container(
       padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).cardColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SingleChildScrollView(
@@ -88,14 +88,18 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
             height: 4,
             margin: EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.grey[400],
+              color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
         ),
         Text(
           'Forgot IRCTC Password',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            fontWeight: FontWeight.bold, 
+            fontSize: 18,
+            color: Theme.of(context).textTheme.headlineSmall?.color,
+          ),
         ),
       ],
     );
@@ -104,33 +108,45 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
       width: Get.width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(3),
-        color: yellowF7C.withOpacity(0.3),
+        color: Theme.of(context).brightness == Brightness.dark 
+          ? const Color(0xFF3E2723).withOpacity(0.9)
+          : AppColors.yellowF7C.withValues(alpha: 0.3),
       ),
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: CommonTextWidget.PoppinsMedium(
         text: 'Please enter your registered IRCTC Username and mobile number to recover your IRCTC Password',
-        color: yellowCE8,
+        color: Theme.of(context).brightness == Brightness.dark 
+          ? const Color(0xFFBCAAA4)
+          : AppColors.yellowCE8,
         fontSize: 12,
       ),
     );
 
   Widget _buildUsernameField() => Container(
       decoration: BoxDecoration(
-        color: greyE2E,
+        color: Theme.of(context).brightness == Brightness.dark 
+          ? Colors.grey[800]
+          : AppColors.greyE2E,
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
         title: CommonTextWidget.PoppinsMedium(
           text: 'IRCTC USERNAME',
-          color: grey888,
+          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey888,
           fontSize: 12,
         ),
         subtitle: TextField(
           controller: _usernameController,
           // enabled: false, // Disable editing since username is pre-filled
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
           decoration: InputDecoration(
             hintText: widget.username ?? trainController.username.value,
-            hintStyle: TextStyle(color: grey888, fontSize: 12),
+            hintStyle: TextStyle(
+              color: Theme.of(context).hintColor, 
+              fontSize: 12
+            ),
             border: InputBorder.none,
           ),
         ),
@@ -139,13 +155,15 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
 
   Widget _buildMobileField() => Container(
       decoration: BoxDecoration(
-        color: greyE2E,
+        color: Theme.of(context).brightness == Brightness.dark 
+          ? Colors.grey[800]
+          : AppColors.greyE2E,
         borderRadius: BorderRadius.circular(5),
       ),
       child: ListTile(
         title: CommonTextWidget.PoppinsMedium(
           text: 'MOBILE NUMBER',
-          color: grey888,
+          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey888,
           fontSize: 12,
         ),
         subtitle: TextField(
@@ -153,9 +171,15 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
           keyboardType: TextInputType.phone,
           maxLength: 10,
           onChanged: (String value) => controller.validateMobile(value),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
           decoration: InputDecoration(
             hintText: 'Enter registered mobile number',
-            hintStyle: TextStyle(color: grey888, fontSize: 12),
+            hintStyle: TextStyle(
+              color: Theme.of(context).hintColor, 
+              fontSize: 12
+            ),
             border: InputBorder.none,
             counterText: '',
           ),
@@ -169,7 +193,10 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
           padding: EdgeInsets.only(top: 8),
           child: Text(
             controller.errorMessage.value,
-            style: TextStyle(color: Colors.red, fontSize: 12),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.error, 
+              fontSize: 12
+            ),
           ),
         );
       }
@@ -179,7 +206,9 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
           child: Text(
             controller.successMessage.value,
             style: TextStyle(
-              color: Colors.green,
+              color: Theme.of(context).brightness == Brightness.dark 
+                ? Colors.green[400]
+                : AppColors.green00A,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -195,7 +224,7 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
           ),
-          color: redCA0,
+          color: AppColors.redCA0,
           onPressed: controller.isLoading.value
               ? null
               : () async {
@@ -204,7 +233,7 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
                     Get.snackbar(
                       'Error',
                       'Please fill all required fields',
-                      backgroundColor: Colors.red,
+                      backgroundColor: AppColors.redCA0,
                       colorText: Colors.white,
                     );
                     return;
@@ -217,8 +246,8 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
                     ..snackbar(
                       'Success',
                       'Password reset instructions sent to your mobile number',
-                      backgroundColor: Colors.green,
-                      colorText: Colors.white,
+                      backgroundColor: AppColors.green00A,
+                      colorText: AppColors.white,
                     );
                   }
                 },
@@ -227,14 +256,14 @@ class _ForgotIRCTCPasswordScreenState extends State<ForgotIRCTCPasswordScreen> {
                   height: 20,
                   width: 20,
                   child: LoadingAnimationWidget.fourRotatingDots(
-                    color: white,
+                    color: AppColors.white,
                     size: 20,
                   ),
                 )
               : CommonTextWidget.PoppinsSemiBold(
                   fontSize: 16,
                   text: 'SUBMIT',
-                  color: white,
+                  color: AppColors.white,
                 ),
         ));
 }

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/home/presentation/screens/SelfDriveCarsScreen/search_pickup_area_screen.dart';
-import 'package:seemytrip/features/home/presentation/screens/SelfDriveCarsScreen/self_drive_cars_select_dates_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../shared/constants/images.dart';
+import 'search_pickup_area_screen.dart';
+import 'self_drive_cars_select_dates_screen.dart';
 
 class SelfDriveCarsScreen extends StatelessWidget {
    SelfDriveCarsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -24,11 +24,11 @@ class SelfDriveCarsScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Self Drive Cars",
-          color: white,
+          text: 'Self Drive Cars',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -44,9 +44,9 @@ class SelfDriveCarsScreen extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: greyE2E, width: 1),
+                  border: Border.all(color: AppColors.greyE2E, width: 1),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
@@ -59,13 +59,13 @@ class SelfDriveCarsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsMedium(
-                            text:"Pickup & Drop-Off Loaction",
-                            color: grey888,
+                            text: 'Pickup & Drop-Off Loaction',
+                            color: AppColors.grey888,
                             fontSize: 14,
                           ),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "Area,Airport or City",
-                            color: black2E2,
+                            text: 'Area,Airport or City',
+                            color: AppColors.black2E2,
                             fontSize: 14,
                           ),
                         ],
@@ -83,9 +83,9 @@ class SelfDriveCarsScreen extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: greyE2E, width: 1),
+                  border: Border.all(color: AppColors.greyE2E, width: 1),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -97,13 +97,13 @@ class SelfDriveCarsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsMedium(
-                            text: "Pick Up Time",
-                            color: grey888,
+                            text: 'Pick Up Time',
+                            color: AppColors.grey888,
                             fontSize: 12,
                           ),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "Start Date/Time",
-                            color: black2E2,
+                            text: 'Start Date/Time',
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                         ],
@@ -121,9 +121,9 @@ class SelfDriveCarsScreen extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: greyE2E, width: 1),
+                  border: Border.all(color: AppColors.greyE2E, width: 1),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -135,13 +135,13 @@ class SelfDriveCarsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsMedium(
-                            text: "Drop-Off Time",
-                            color: grey888,
+                            text: 'Drop-Off Time',
+                            color: AppColors.grey888,
                             fontSize: 12,
                           ),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "End Date/Time",
-                            color: black2E2,
+                            text: 'End Date/Time',
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                         ],
@@ -153,8 +153,8 @@ class SelfDriveCarsScreen extends StatelessWidget {
             ),
             Spacer(),
             CommonButtonWidget.button(
-              text: "SEARCH",
-              buttonColor: redCA0,
+              text: 'SEARCH',
+              buttonColor: AppColors.redCA0,
               onTap: () {
                 // Get.to(() => CabTerminalScreen1());
               },
@@ -164,5 +164,4 @@ class SelfDriveCarsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

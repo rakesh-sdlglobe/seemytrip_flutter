@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
-// import 'package:seemytrip/Constants/colors.dart';
+// import 'package:seemytrip/core/theme/app_colors.dart';
 // import 'package:seemytrip/Constants/font_family.dart';
 // import 'package:seemytrip/Controller/otp_controller.dart';
 // import 'package:seemytrip/Screens/AuthScreens/full_name_screen.dart';

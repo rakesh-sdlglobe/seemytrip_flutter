@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../controllers/hotel_payment_controller.dart';
 
 class BookingPreviewPage extends StatefulWidget {
@@ -102,13 +101,17 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
     final int numRooms = int.tryParse(roomsCount) ?? 1;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Booking Preview',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        backgroundColor: AppColors.primary,
+        title: Text('Booking Preview',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).appBarTheme.titleTextStyle?.color ?? Theme.of(context).colorScheme.onPrimary
+            )),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).primaryColor,
         elevation: 0,
-        foregroundColor: AppColors.surface,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
         centerTitle: true,
       ),
       body: Stack(
@@ -171,7 +174,10 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                       height: 40,
                       point: LatLng(latitude, longitude),
                       child: Icon(Icons.location_on,
-                          color: AppColors.primary, size: 40),
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B), // Red for light theme
+                          size: 40),
                     ),
                   ],
                 ),
@@ -295,11 +301,15 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                     child: OutlinedButton.icon(
                       onPressed: () => _showMapDialog(latitude, longitude),
                       icon: Icon(Icons.map_outlined,
-                          size: 18, color: AppColors.primary),
+                          size: 18, color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B)), // Red for light theme
                       label: Text(
                         'View on Map',
                         style: TextStyle(
-                          color: AppColors.primary,
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B), // Red for light theme
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -309,9 +319,12 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        side:
-                            BorderSide(color: AppColors.primary.withOpacity(0.3)),
-                        backgroundColor: AppColors.primary.withOpacity(0.05),
+                        side: BorderSide(color: (Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B)).withOpacity(0.3)), // Red for light theme
+                        backgroundColor: (Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B)).withOpacity(0.05), // Red for light theme
                       ),
                     ),
                   ),
@@ -340,9 +353,14 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
             errorBuilder: (context, error, stackTrace) => Container(
               width: 100,
               height: 100,
-              color: Colors.grey[100],
+              color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[800]
+                : Colors.grey[100],
               child: Icon(Icons.king_bed_rounded,
-                  color: AppColors.primary, size: 40),
+                  color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFFFF5722) // Orange-red for dark theme
+                    : const Color(0xFFCA0B0B), // Red for light theme
+                  size: 40),
             ),
           ),
         ),
@@ -407,19 +425,25 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
   Widget _buildRoomDetailChip(IconData icon, String text) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.08),
+        color: (Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFFF5722) // Orange-red for dark theme
+          : const Color(0xFFCA0B0B)).withOpacity(0.08), // Red for light theme
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 14, color: AppColors.primary),
+          Icon(icon, size: 14, color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFFFF5722) // Orange-red for dark theme
+            : const Color(0xFFCA0B0B)), // Red for light theme
           const SizedBox(width: 4),
           Text(
             text,
             style: TextStyle(
               fontSize: 12,
-              color: AppColors.primary.withOpacity(0.9),
+              color: (Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFFFF5722) // Orange-red for dark theme
+                : const Color(0xFFCA0B0B)).withOpacity(0.9), // Red for light theme
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -480,7 +504,11 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
               style: TextStyle(
                 fontSize: isBold ? 15 : 14,
                 fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-                color: isBold ? AppColors.primary : Colors.black87,
+                color: isBold 
+                  ? (Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFFFF5722) // Orange-red for dark theme
+                      : const Color(0xFFCA0B0B)) // Red for light theme
+                  : Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
           ],
@@ -530,7 +558,9 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
             style: TextStyle(
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.w700 : FontWeight.w500,
-              color: isTotal ? AppColors.textPrimary : AppColors.textSecondary,
+              color: isTotal 
+                ? Theme.of(context).textTheme.titleLarge?.color
+                : Theme.of(context).textTheme.bodySmall?.color,
             ),
           ),
           Text(
@@ -538,7 +568,11 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
             style: TextStyle(
               fontSize: isTotal ? 18 : 14,
               fontWeight: isTotal ? FontWeight.w800 : FontWeight.w600,
-              color: isTotal ? AppColors.primary : AppColors.textPrimary,
+              color: isTotal 
+                ? (Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFFFF5722) // Orange-red for dark theme
+                    : const Color(0xFFCA0B0B)) // Red for light theme
+                : Theme.of(context).textTheme.titleLarge?.color,
             ),
           ),
         ],
@@ -666,10 +700,16 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+            borderSide: BorderSide(
+              color: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFFFF5722) // Orange-red for dark theme
+                : const Color(0xFFCA0B0B), // Red for light theme
+              width: 1.5),
           ),
           filled: true,
-          fillColor: Colors.grey[100],
+          fillColor: Theme.of(context).brightness == Brightness.dark
+            ? Colors.grey[800]
+            : Colors.grey[100],
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           prefixIcon: prefixIcon != null
@@ -681,7 +721,9 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
         ),
         validator: validator,
         onSaved: onSaved,
-        cursorColor: AppColors.primary,
+        cursorColor: Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFFF5722) // Orange-red for dark theme
+          : const Color(0xFFCA0B0B), // Red for light theme
       );
 
   Widget _buildBottomBar(double price, double taxes) => Positioned(
@@ -723,7 +765,9 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 22,
-                            color: AppColors.primary,
+                            color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFFFF5722) // Orange-red for dark theme
+                              : const Color(0xFFCA0B0B), // Red for light theme
                             letterSpacing: -0.5),
                       ),
                     ],
@@ -741,8 +785,8 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                             try {
                               setState(() => _isProcessing = true);
                               final double amount = _calculateTotal(
-                                widget.price ?? 0.0,
-                                widget.taxes ?? 0.0,
+                                widget.price,
+                                widget.taxes,
                               );
                               final String formattedAmount = _formatCurrency(amount);
                               await _paymentController.processHotelPayment(
@@ -793,8 +837,10 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                           letterSpacing: 0.2),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.surface,
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFFFF5722) // Orange-red for dark theme
+                        : const Color(0xFFCA0B0B), // Red for light theme
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                           vertical: 16, horizontal: 16),
                       shape: RoundedRectangleBorder(
@@ -835,27 +881,35 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: Colors.green[50],
+                    color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.green.withOpacity(0.2)
+                      : Colors.green[50],
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.check_circle_outline,
-                      size: 40, color: Colors.green[600]),
+                      size: 40, color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.green[400]
+                        : Colors.green[600]),
                 ),
               ),
               const SizedBox(height: 16),
-              const Center(
+              Center(
                 child: Text(
                   'Confirm Booking',
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87),
+                      color: Theme.of(context).textTheme.headlineSmall?.color),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Booking Summary',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 16, 
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).textTheme.titleMedium?.color
+                ),
               ),
               const SizedBox(height: 10),
               _buildDetailItem('Hotel', hotelName),
@@ -924,7 +978,9 @@ class _BookingPreviewPageState extends State<BookingPreviewPage> {
                     child: ElevatedButton(
                       onPressed: _processPayment,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFFFF5722) // Orange-red for dark theme
+                          : const Color(0xFFCA0B0B), // Red for light theme
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -967,16 +1023,16 @@ class AppCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(18),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Theme.of(context).shadowColor.withOpacity(0.04),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey[200]!),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: child,
     );

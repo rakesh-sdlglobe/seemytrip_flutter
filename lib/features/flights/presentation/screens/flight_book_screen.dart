@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/booking/presentation/screens/sort_filter/sort_and_filter_screen.dart';
-import 'package:seemytrip/features/flights/presentation/controllers/flight_book_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/font_family.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/home/presentation/screens/CalendarScreen/calender_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightModifySearch/flight_modify_search.dart';
-import 'package:seemytrip/features/flights/presentation/screens/cheapest_list_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/keep_track_price_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../core/widgets/lists_widget.dart';
+import '../../../../main.dart';
+import '../../../../shared/constants/font_family.dart';
+import '../../../../shared/constants/images.dart';
+import '../../../booking/presentation/screens/sort_filter/sort_and_filter_screen.dart';
+import '../../../home/presentation/screens/CalendarScreen/calender_screen.dart';
+import '../controllers/flight_book_controller.dart';
+import 'FlightModifySearch/flight_modify_search.dart';
+import 'cheapest_list_screen.dart';
+import 'keep_track_price_screen.dart';
 
 
 class FlightBookScreen extends StatelessWidget {
@@ -21,9 +22,8 @@ class FlightBookScreen extends StatelessWidget {
       Get.put(FlightBookController());
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: redF9E,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           Column(
@@ -48,7 +48,7 @@ class FlightBookScreen extends StatelessWidget {
                         child: Container(
                           width: Get.width,
                           decoration: BoxDecoration(
-                            color: white,
+                            color: AppColors.white,
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: ListTile(
@@ -58,16 +58,16 @@ class FlightBookScreen extends StatelessWidget {
                                 Get.back();
                               },
                               child: Icon(Icons.arrow_back,
-                                  color: grey888, size: 20),
+                                  color: AppColors.grey888, size: 20),
                             ),
-                            title: CommonTextWidget.PoppinsRegular(
-                              text: "New Delhi to Mumbai",
-                              color: black2E2,
+                            title: CommonTextWidget.PoppinsRegular( 
+                              text: 'New Delhi to Mumbai',
+                              color: AppColors.black2E2,
                               fontSize: 15,
                             ),
                             subtitle: CommonTextWidget.PoppinsRegular(
-                              text: "24 Sep | 1 Adult | Economy",
-                              color: grey717,
+                              text: '24 Sep | 1 Adult | Economy',
+                              color: AppColors.grey717,
                               fontSize: 12,
                             ),
                             trailing: InkWell(
@@ -80,8 +80,8 @@ class FlightBookScreen extends StatelessWidget {
                                   SvgPicture.asset(draw),
                                   SizedBox(height: 10),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Edit",
-                                    color: redCA0,
+                                    text: 'Edit',
+                                    color: AppColors.redCA0,
                                     fontSize: 12,
                                   ),
                                 ],
@@ -103,7 +103,7 @@ class FlightBookScreen extends StatelessWidget {
                           child: Container(
                             width: Get.width,
                             decoration: BoxDecoration(
-                              color: white,
+                              color: AppColors.white,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Padding(
@@ -114,8 +114,8 @@ class FlightBookScreen extends StatelessWidget {
                                 children: [
                                   SvgPicture.asset(notification),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Price Alert",
-                                    color: redCA0,
+                                    text: 'Price Alert',
+                                    color: AppColors.redCA0,
                                     fontSize: 12,
                                   ),
                                 ],
@@ -130,14 +130,14 @@ class FlightBookScreen extends StatelessWidget {
               ),
               Container(
                 width: Get.width,
-                color: white,
+                color: AppColors.white,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   child: Row(
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          color: redCA0,
+                          color: AppColors.redCA0,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(5),
                             bottomLeft: Radius.circular(5),
@@ -149,8 +149,8 @@ class FlightBookScreen extends StatelessWidget {
                           child: RotatedBox(
                             quarterTurns: 3,
                             child: CommonTextWidget.PoppinsMedium(
-                              text: "SEP",
-                              color: white,
+                              text: 'SEP',
+                              color: AppColors.white,
                               fontSize: 12,
                             ),
                           ),
@@ -176,14 +176,14 @@ class FlightBookScreen extends StatelessWidget {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: controller.selectedIndex == index
-                                          ? redCA0
-                                          : white,
+                          ? AppColors.redCA0
+                          : Theme.of(context).cardColor,
                                       borderRadius: BorderRadius.circular(5),
                                       border: Border.all(
                                           color:
                                               controller.selectedIndex == index
-                                                  ? redCA0
-                                                  : greyE2E,
+                                                  ? AppColors.redCA0
+                                                  : AppColors.greyE2E,
                                           width: 1),
                                     ),
                                     child: Padding(
@@ -193,20 +193,20 @@ class FlightBookScreen extends StatelessWidget {
                                         children: [
                                           CommonTextWidget.PoppinsMedium(
                                             text: Lists.flightBookList1[index]
-                                                ["text1"],
+                                                ['text1'],
                                             color: controller.selectedIndex ==
                                                     index
-                                                ? white
-                                                : grey717,
+                                                ? AppColors.white
+                                                : AppColors.grey717,
                                             fontSize: 10,
                                           ),
                                           CommonTextWidget.PoppinsMedium(
                                             text: Lists.flightBookList1[index]
-                                                ["text2"],
+                                                ['text2'],
                                             color: controller.selectedIndex ==
                                                     index
-                                                ? white
-                                                : grey717,
+                                                ? AppColors.white
+                                                : AppColors.grey717,
                                             fontSize: 10,
                                           ),
                                         ],
@@ -225,7 +225,7 @@ class FlightBookScreen extends StatelessWidget {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: redCA0,
+                            color: AppColors.redCA0,
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Padding(
@@ -247,20 +247,21 @@ class FlightBookScreen extends StatelessWidget {
                   width: Get.width,
                   padding: EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: TabBar(
                     tabs: flightBookController.myTabs,
-                    unselectedLabelColor: black2E2,
+                    unselectedLabelColor: AppColors.black2E2,
                     labelStyle:
-                        TextStyle(fontSize: 16, fontFamily: "PoppinsMedium"),
+                        TextStyle(fontSize: 16, fontFamily: 'PoppinsMedium'),
                     unselectedLabelStyle:
-                        TextStyle(fontSize: 16, fontFamily: "PoppinsMedium"),
-                    labelColor: white,
+                        TextStyle(fontSize: 16, fontFamily: 'PoppinsMedium'),
+                    labelColor: AppColors.white,
                     controller: flightBookController.controller,
                     indicator: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5), color: redCA0),
+                        borderRadius: BorderRadius.circular(5),
+                        color: AppColors.redCA0),
                   ),
                 ),
               ),
@@ -286,7 +287,7 @@ class FlightBookScreen extends StatelessWidget {
                 height: 64,
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: redCA0,
+                  color: AppColors.redCA0,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
@@ -306,7 +307,7 @@ class FlightBookScreen extends StatelessWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(2),
-                                  color: white,
+                                  color: AppColors.white,
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 8),
@@ -316,7 +317,7 @@ class FlightBookScreen extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         height: 1,
-                                        color: grey717,
+                                        color: AppColors.grey717,
                                         fontFamily: FontFamily.PoppinsSemiBold,
                                         fontSize: 12,
                                       ),
@@ -341,8 +342,8 @@ class FlightBookScreen extends StatelessWidget {
                               child: SvgPicture.asset(slidersHorizontal)),
                           SizedBox(height: 2),
                           CommonTextWidget.PoppinsMedium(
-                            text: "Filter",
-                            color: white,
+                            text: 'Filter',
+                            color: AppColors.white,
                             fontSize: 12,
                           ),
                         ],
@@ -356,5 +357,4 @@ class FlightBookScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

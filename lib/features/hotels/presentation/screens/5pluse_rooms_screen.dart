@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../core/widgets/lists_widget.dart';
+import '../../../../main.dart';
+import '../../../../shared/constants/images.dart';
 
 class FivePlusRoomsScreen extends StatelessWidget {
   FivePlusRoomsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
+  Widget build(BuildContext context) => ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
         child: Column(
@@ -20,20 +20,20 @@ class FivePlusRoomsScreen extends StatelessWidget {
           children: [
             Container(
               width: Get.width,
-              color: redF9E.withOpacity(0.75),
+              color: AppColors.redF9E.withValues(alpha: 0.75),
               child: ListTile(
                 contentPadding:
                     EdgeInsets.only(top: 35, left: 24, right: 24, bottom: 15),
                 leading: Image.asset(manager, height: 35, width: 35),
                 title: CommonTextWidget.PoppinsSemiBold(
-                  text: "Group booking made easy!",
-                  color: black2E2,
+                  text: 'Group booking made easy!',
+                  color: AppColors.black2E2,
                   fontSize: 15,
                 ),
                 subtitle: CommonTextWidget.PoppinsRegular(
                   text:
-                      "Save More! Get excting group booking deals for 5+ rooms.",
-                  color: grey717,
+                      'Save More! Get excting group booking deals for 5+ rooms.',
+                  color: AppColors.grey717,
                   fontSize: 12,
                 ),
               ),
@@ -51,9 +51,9 @@ class FivePlusRoomsScreen extends StatelessWidget {
                   child: Container(
                     width: Get.width,
                     decoration: BoxDecoration(
-                      color: grey9B9.withOpacity(0.15),
+                      color: AppColors.grey9B9.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(width: 1, color: greyE2E),
+                      border: Border.all(width: 1, color: AppColors.greyE2E),
                     ),
                     child: Padding(
                       padding:
@@ -68,12 +68,12 @@ class FivePlusRoomsScreen extends StatelessWidget {
                             children: [
                               CommonTextWidget.PoppinsMedium(
                                 text: Lists.fivePlusRoomsList[index]["text1"],
-                                color: redCA0,
+                                color: AppColors.redCA0,
                                 fontSize: 14,
                               ),
                               CommonTextWidget.PoppinsMedium(
                                 text: Lists.fivePlusRoomsList[index]["text2"],
-                                color: grey888,
+                                color: AppColors.grey888,
                                 fontSize: 14,
                               ),
                             ],
@@ -89,8 +89,8 @@ class FivePlusRoomsScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsMedium(
-                text: "Purpose Of Booking",
-                color: grey888,
+                text: 'Purpose Of Booking',
+                color: AppColors.grey888,
                 fontSize: 14,
               ),
             ),
@@ -111,15 +111,15 @@ class FivePlusRoomsScreen extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: white,
-                        border: Border.all(color: greyE2E, width: 1),
+                        color: AppColors.white,
+                        border: Border.all(color: AppColors.greyE2E, width: 1),
                       ),
                       child: Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: CommonTextWidget.PoppinsMedium(
                             text: Lists.purposeOfBookingList[index],
-                            color: grey5F5,
+                            color: AppColors.grey5F5,
                             fontSize: 14,
                           ),
                         ),
@@ -134,5 +134,4 @@ class FivePlusRoomsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

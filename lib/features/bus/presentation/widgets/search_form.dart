@@ -5,18 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-// --- Modern RED Color Scheme ---
-const Color kPrimaryColor = Color(0xFFD32F2F); // A strong, material red
-const Color kPrimaryLightColor =
-    Color(0xFFFFEBEE); // A light shade of the primary color
-const Color kBackgroundColor = Color(0xFFF8F9FA);
-const Color kCardColor = Colors.white;
-const Color kTextPrimaryColor = Color(0xFF212529);
-const Color kTextSecondaryColor = Color(0xFF6C757D);
-const Color kBorderColor = Color(0xFFDEE2E6);
-const Color kPrimaryDarkColor = Color(0xFFC62828);
-const Color kAccentColor = Color(0xFFDD2C00);
-const Color kScaffoldBackgroundColor = Color(0xFFF8F9FA);
+// Theme-aware color functions
+Color kPrimaryColor(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+  ? const Color(0xFFFF5722) // Orange-red for dark theme
+  : const Color(0xFFCA0B0B); // Red for light theme
+
+Color kCardColor(BuildContext context) => Theme.of(context).cardColor;
+Color kTextPrimaryColor(BuildContext context) => Theme.of(context).textTheme.titleLarge?.color ?? Colors.black;
+Color kTextSecondaryColor(BuildContext context) => Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey;
+Color kBorderColor(BuildContext context) => Theme.of(context).dividerColor;
 
 class SearchForm extends StatefulWidget {
   // CHANGED: Now accepts a list of dates and a toggle function
@@ -89,12 +86,12 @@ class _SearchFormState extends State<SearchForm> {
                   titleCentered: true,
                 ),
                 calendarStyle: CalendarStyle(
-                  selectedDecoration: const BoxDecoration(
-                    color: kPrimaryColor,
+                  selectedDecoration: BoxDecoration(
+                    color: kPrimaryColor(context),
                     shape: BoxShape.circle,
                   ),
                   todayDecoration: BoxDecoration(
-                    color: kPrimaryColor.withOpacity(0.3),
+                    color: kPrimaryColor(context).withOpacity(0.3),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -116,7 +113,7 @@ class _SearchFormState extends State<SearchForm> {
             onPressed: () => Navigator.of(context).pop(),
             child: Text("Done",
                 style: GoogleFonts.poppins(
-                    color: kPrimaryColor, fontWeight: FontWeight.bold)),
+                    color: kPrimaryColor(context), fontWeight: FontWeight.bold)),
           )
         ],
       ),
@@ -128,11 +125,11 @@ class _SearchFormState extends State<SearchForm> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       decoration: BoxDecoration(
-        color: kCardColor,
+        color: kCardColor(context),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Theme.of(context).shadowColor.withOpacity(0.08),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),
@@ -156,7 +153,7 @@ class _SearchFormState extends State<SearchForm> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kBorderColor),
+        border: Border.all(color: kBorderColor(context)),
       ),
       child: Stack(
         alignment: Alignment.centerRight,
@@ -169,8 +166,8 @@ class _SearchFormState extends State<SearchForm> {
                 onTap: widget.onDepartureTap,
                 icon: Icons.my_location,
               ),
-              const Divider(
-                  height: 1, color: kBorderColor, indent: 16, endIndent: 16),
+              Divider(
+                  height: 1, color: kBorderColor(context), indent: 16, endIndent: 16),
               _buildCityField(
                 label: 'To',
                 city: widget.destinationCity,
@@ -182,17 +179,17 @@ class _SearchFormState extends State<SearchForm> {
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Material(
-              color: kCardColor,
-              shape: CircleBorder(side: BorderSide(color: kBorderColor)),
+              color: kCardColor(context),
+              shape: CircleBorder(side: BorderSide(color: kBorderColor(context))),
               child: InkWell(
                 onTap: widget.onSwapPressed,
                 borderRadius: BorderRadius.circular(20),
-                child: const SizedBox(
+                child: SizedBox(
                   width: 40,
                   height: 40,
                   child: Icon(
                     Icons.swap_vert_rounded,
-                    color: kPrimaryColor,
+                    color: kPrimaryColor(context),
                     size: 24,
                   ),
                 ),
@@ -218,7 +215,7 @@ class _SearchFormState extends State<SearchForm> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Icon(icon, color: kPrimaryColor, size: 22),
+            Icon(icon, color: kPrimaryColor(context), size: 22),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -228,7 +225,7 @@ class _SearchFormState extends State<SearchForm> {
                     label,
                     style: GoogleFonts.poppins(
                       fontSize: 12,
-                      color: kTextSecondaryColor,
+                      color: kTextSecondaryColor(context),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -240,8 +237,8 @@ class _SearchFormState extends State<SearchForm> {
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: city.value.isEmpty
-                            ? kTextSecondaryColor.withOpacity(0.7)
-                            : kTextPrimaryColor,
+                            ? kTextSecondaryColor(context).withOpacity(0.7)
+                            : kTextPrimaryColor(context),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -275,12 +272,12 @@ class _SearchFormState extends State<SearchForm> {
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: kTextPrimaryColor,
+                color: kTextPrimaryColor(context),
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.calendar_month_outlined,
-                  color: kPrimaryColor),
+              icon: Icon(Icons.calendar_month_outlined,
+                  color: kPrimaryColor(context)),
               onPressed: () => _showCalendarPicker(context),
             )
           ],
@@ -295,8 +292,8 @@ class _SearchFormState extends State<SearchForm> {
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: widget.selectedDates.isEmpty
-                  ? kTextSecondaryColor
-                  : kPrimaryColor,
+                  ? kTextSecondaryColor(context)
+                  : kPrimaryColor(context),
               fontWeight: FontWeight.w500,
             ),
             maxLines: 2,
@@ -320,7 +317,11 @@ class _SearchFormState extends State<SearchForm> {
                   width: 60,
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
-                    color: isSelected ? kPrimaryColor : kPrimaryLightColor,
+                    color: isSelected 
+                      ? kPrimaryColor(context) 
+                      : (Theme.of(context).brightness == Brightness.dark
+                          ? kPrimaryColor(context).withOpacity(0.2)
+                          : kPrimaryColor(context).withOpacity(0.1)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -331,7 +332,7 @@ class _SearchFormState extends State<SearchForm> {
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: isSelected ? Colors.white : kPrimaryColor,
+                          color: isSelected ? Colors.white : kPrimaryColor(context),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -340,7 +341,7 @@ class _SearchFormState extends State<SearchForm> {
                         style: GoogleFonts.poppins(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : kPrimaryColor,
+                          color: isSelected ? Colors.white : kPrimaryColor(context),
                         ),
                       ),
                     ],
@@ -383,13 +384,20 @@ class _SearchFormState extends State<SearchForm> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 8,
-          shadowColor: kPrimaryColor.withOpacity(0.4),
+          shadowColor: kPrimaryColor(context).withOpacity(0.4),
         ),
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            gradient: const LinearGradient(
-              colors: [Color(0xFFE53935), Color(0xFFC62828)],
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFFFF5722) // Orange-red for dark theme
+                  : const Color(0xFFE53935), // Red for light theme
+                Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFFE64A19) // Darker orange-red for dark theme
+                  : const Color(0xFFC62828), // Darker red for light theme
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

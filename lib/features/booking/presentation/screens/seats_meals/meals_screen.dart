@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/images.dart';
 
 class MealsScreen extends StatelessWidget {
   MealsScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
+  Widget build(BuildContext context) => ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
         child: Column(
@@ -19,15 +19,15 @@ class MealsScreen extends StatelessWidget {
           children: [
             Container(
               width: Get.width,
-              color: redF9E.withOpacity(0.75),
+              color: AppColors.redF9E.withOpacity(0.75),
               child: Padding(
                 padding: EdgeInsets.only(top: 38, left: 24, right: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CommonTextWidget.PoppinsRegular(
-                      text: "Pre book your meals",
-                      color: black2E2,
+                      text: 'Pre book your meals',
+                      color: AppColors.black2E2,
                       fontSize: 18,
                     ),
                     SizedBox(height: 15),
@@ -36,7 +36,7 @@ class MealsScreen extends StatelessWidget {
                       width: 122,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: white,
+                        color: AppColors.white,
                       ),
                       child: Padding(
                         padding: EdgeInsets.all(5),
@@ -45,8 +45,8 @@ class MealsScreen extends StatelessWidget {
                             Image.asset(spicejet),
                             SizedBox(width: 10),
                             CommonTextWidget.PoppinsSemiBold(
-                              text: "DEL - BOM",
-                              color: black2E2,
+                              text: 'DEL - BOM',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                           ],
@@ -61,14 +61,14 @@ class MealsScreen extends StatelessWidget {
                           width: 75,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            color: white,
+                            color: AppColors.white,
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 22, vertical: 7),
                             child: CommonTextWidget.PoppinsRegular(
-                              text: "Veg",
-                              color: black2E2,
+                              text: 'Veg',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                           ),
@@ -79,14 +79,14 @@ class MealsScreen extends StatelessWidget {
                           width: 105,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            color: white,
+                            color: AppColors.white,
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 22, vertical: 7),
                             child: CommonTextWidget.PoppinsRegular(
-                              text: "Non Veg",
-                              color: black2E2,
+                              text: 'Non Veg',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                           ),
@@ -107,9 +107,9 @@ class MealsScreen extends StatelessWidget {
                   SizedBox(width: 15),
                   Expanded(
                     child: CommonTextWidget.PoppinsRegular(
-                      text: "Pre-book Your Meals NOW! Select From "
-                          "These Options.",
-                      color: redCA0,
+                      text: 'Pre-book Your Meals NOW! Select From '
+                          'These Options.',
+                      color: AppColors.redCA0,
                       fontSize: 14,
                     ),
                   ),
@@ -120,16 +120,16 @@ class MealsScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsSemiBold(
-                text: "In-flight Meals",
-                color: black2E2,
+                text: 'In-flight Meals',
+                color: AppColors.black2E2,
                 fontSize: 16,
               ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsRegular(
-                text: "Prebook your Inflight meal",
-                color: black2E2,
+                text: 'Prebook your Inflight meal',
+                color: AppColors.black2E2,
                 fontSize: 12,
               ),
             ),
@@ -143,16 +143,16 @@ class MealsScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Image.asset(Lists.mealsList[index]["image"],
+                    leading: Image.asset(Lists.mealsList[index]['image'],
                         height: 52, width: 52),
                     title: CommonTextWidget.PoppinsMedium(
-                      text: Lists.mealsList[index]["text1"],
-                      color: grey717,
+                      text: Lists.mealsList[index]['text1'],
+                      color: AppColors.grey717,
                       fontSize: 12,
                     ),
                     subtitle: CommonTextWidget.PoppinsMedium(
-                      text: Lists.mealsList[index]["text2"],
-                      color: black2E2,
+                      text: Lists.mealsList[index]['text2'],
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                     trailing: Container(
@@ -160,20 +160,20 @@ class MealsScreen extends StatelessWidget {
                       width: 70,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: white,
-                        border: Border.all(color: greyDED, width: 1),
+                        color: AppColors.white,
+                        border: Border.all(color: AppColors.greyDED, width: 1),
                       ),
                       child: Center(
                         child: CommonTextWidget.PoppinsMedium(
-                          text: Lists.mealsList[index]["text2"],
-                          color: black2E2,
+                          text: Lists.mealsList[index]['text2'],
+                          color: AppColors.black2E2,
                           fontSize: 14,
                         ),
                       ),
                     ),
                   ),
                   SizedBox(height: 15),
-                  Divider(color: greyE8E, thickness: 1),
+                  Divider(color: AppColors.greyE8E, thickness: 1),
                   SizedBox(height: 15),
                 ],
               ),
@@ -182,5 +182,4 @@ class MealsScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

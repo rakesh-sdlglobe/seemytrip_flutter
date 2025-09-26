@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/shared/presentation/controllers/refund_policy_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightDetailScreen1/RefundPolicyScreen/baggage_refund_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightDetailScreen1/RefundPolicyScreen/cancellation_refund_screen.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightDetailScreen1/RefundPolicyScreen/date_change_refund_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../../core/theme/app_colors.dart';
+import '../../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../../main.dart';
+import '../../../../../../shared/constants/images.dart';
+import '../../../../../shared/presentation/controllers/refund_policy_controller.dart';
+import 'baggage_refund_screen.dart';
+import 'cancellation_refund_screen.dart';
+import 'date_change_refund_screen.dart';
 
 class RefundPolicyTabScreen extends StatelessWidget {
   RefundPolicyTabScreen({Key? key}) : super(key: key);
@@ -15,9 +16,8 @@ class RefundPolicyTabScreen extends StatelessWidget {
       Get.put(RefundPolicyTabController());
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.whiteF2F,
       body: Stack(
         children: [
           Column(
@@ -42,12 +42,12 @@ class RefundPolicyTabScreen extends StatelessWidget {
                             onTap: () {
                               Get.back();
                             },
-                            child: Icon(Icons.close, color: white, size: 20),
+                            child: Icon(Icons.close, color: AppColors.whiteF2F, size: 20),
                           ),
                           SizedBox(width: 25),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "Refund & Baggage Policy",
-                            color: white,
+                            text: 'Refund & Baggage Policy',
+                            color: AppColors.whiteF2F,
                             fontSize: 18,
                           ),
                         ],
@@ -64,8 +64,8 @@ class RefundPolicyTabScreen extends StatelessWidget {
                     Image.asset(spicejet, height: 30, width: 30),
                     SizedBox(width: 10),
                     CommonTextWidget.PoppinsSemiBold(
-                      text: "DEL - BOM",
-                      color: black2E2,
+                      text: 'DEL - BOM',
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                   ],
@@ -89,11 +89,11 @@ class RefundPolicyTabScreen extends StatelessWidget {
               height: 45,
               width: Get.width,
               decoration: BoxDecoration(
-                color: white,
+                color: AppColors.whiteF2F,
                 borderRadius: BorderRadius.circular(5),
                 boxShadow: [
                   BoxShadow(
-                    color: grey757.withOpacity(0.25),
+                    color: AppColors.grey757.withOpacity(0.25),
                     blurRadius: 6,
                     offset: Offset(0, 1),
                   ),
@@ -106,14 +106,14 @@ class RefundPolicyTabScreen extends StatelessWidget {
                   indicatorSize: TabBarIndicatorSize.label,
                   padding: EdgeInsets.only(left: 24, bottom: 7, right: 20),
                   tabs: refundPolicyTabController.myTabs,
-                  unselectedLabelColor: grey5F5,
+                  unselectedLabelColor: AppColors.grey5F5,
                   labelStyle:
-                      TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 12),
+                      TextStyle(fontFamily: 'PoppinsSemiBold', fontSize: 12),
                   unselectedLabelStyle:
-                      TextStyle(fontFamily: "PoppinsMedium", fontSize: 12),
-                  labelColor: redCA0,
+                      TextStyle(fontFamily: 'PoppinsMedium', fontSize: 12),
+                  labelColor: AppColors.redCA0,
                   controller: refundPolicyTabController.controller,
-                  indicatorColor: redCA0,
+                  indicatorColor: AppColors.redCA0,
                   indicatorWeight: 2.5,
                 ),
               ),
@@ -122,5 +122,4 @@ class RefundPolicyTabScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

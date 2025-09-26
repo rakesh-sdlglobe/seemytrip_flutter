@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/features/train/presentation/screens/train_booking_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:intl/intl.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../features/train/presentation/screens/train_booking_screen.dart';
 
 class StationChangeScreen extends StatelessWidget {
   final String trainName;
@@ -39,19 +40,18 @@ class StationChangeScreen extends StatelessWidget {
 
   // Function to format time from 24-hour to 12-hour format with AM/PM
   String formatTime(String time) {
-    final DateFormat inputFormat = DateFormat("HH:mm");
-    final DateFormat outputFormat = DateFormat("hh:mm a");
+    final DateFormat inputFormat = DateFormat('HH:mm');
+    final DateFormat outputFormat = DateFormat('hh:mm a');
     final DateTime parsedTime = inputFormat.parse(time);
     return outputFormat.format(parsedTime);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: EdgeInsets.only(top: 300),
       child: Container(
         decoration: BoxDecoration(
-          color: white,
+          color: AppColors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -62,7 +62,7 @@ class StationChangeScreen extends StatelessWidget {
             Container(
               width: Get.width,
               decoration: BoxDecoration(
-                color: redCA0,
+                color: AppColors.redCA0,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
@@ -72,8 +72,8 @@ class StationChangeScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 20),
                 child: Center(
                   child: CommonTextWidget.PoppinsMedium(
-                    text: "Station Change",
-                    color: white,
+                    text: 'Station Change',
+                    color: AppColors.white,
                     fontSize: 18,
                   ),
                 ),
@@ -87,16 +87,16 @@ class StationChangeScreen extends StatelessWidget {
                 children: [
                   CommonTextWidget.PoppinsMedium(
                     text:
-                        "You searched for trains between $startStation and $endStation",
-                    color: grey888,
+                        'You searched for trains between $startStation and $endStation',
+                    color: AppColors.grey888,
                     fontSize: 12,
                   ),
                   SizedBox(height: 5),
                   CommonTextWidget.PoppinsMedium(
                     text:
-                        "But this train travels between $trainName ($trainNumber) "
-                        "and $endStation",
-                    color: black2E2,
+                        'But this train travels between $trainName ($trainNumber) '
+                        'and $endStation',
+                    color: AppColors.black2E2,
                     fontSize: 12,
                   ),
                   SizedBox(height: 30),
@@ -105,31 +105,31 @@ class StationChangeScreen extends StatelessWidget {
                   // Image.asset(stationChangeImage2),
                   // SizedBox(height: 30),
                   CommonTextWidget.PoppinsMedium(
-                    text: "Train Schedule",
-                    color: black2E2,
+                    text: 'Train Schedule',
+                    color: AppColors.black2E2,
                     fontSize: 16,
                   ),
                   SizedBox(height: 10),
                   CommonTextWidget.PoppinsMedium(
-                    text: "Departure: ${formatTime(departureTime)}",
-                    color: grey888,
+                    text: 'Departure: ${formatTime(departureTime)}',
+                    color: AppColors.grey888,
                     fontSize: 14,
                   ),
                   CommonTextWidget.PoppinsMedium(
-                    text: "Arrival: ${formatTime(arrivalTime)}",
-                    color: grey888,
+                    text: 'Arrival: ${formatTime(arrivalTime)}',
+                    color: AppColors.grey888,
                     fontSize: 14,
                   ),
                   SizedBox(height: 20),
                   CommonTextWidget.PoppinsMedium(
-                    text: "Amenities",
-                    color: black2E2,
+                    text: 'Amenities',
+                    color: AppColors.black2E2,
                     fontSize: 16,
                   ),
                   SizedBox(height: 10),
                   CommonTextWidget.PoppinsMedium(
-                    text: "WiFi, Food, AC, Charging Points",
-                    color: grey888,
+                    text: 'WiFi, Food, AC, Charging Points',
+                    color: AppColors.grey888,
                     fontSize: 14,
                   ),
                   SizedBox(height: 45),
@@ -141,8 +141,8 @@ class StationChangeScreen extends StatelessWidget {
                           Get.back();
                         },
                         child: CommonTextWidget.PoppinsMedium(
-                          text: "Back",
-                          color: redCA0,
+                          text: 'Back',
+                          color: AppColors.redCA0,
                           fontSize: 16,
                         ),
                       ),
@@ -166,8 +166,8 @@ class StationChangeScreen extends StatelessWidget {
                               ));
                         },
                         child: CommonTextWidget.PoppinsMedium(
-                          text: "OK, Go AHEAD",
-                          color: redCA0,
+                          text: 'OK, Go AHEAD',
+                          color: AppColors.redCA0,
                           fontSize: 16,
                         ),
                       ),
@@ -180,5 +180,4 @@ class StationChangeScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

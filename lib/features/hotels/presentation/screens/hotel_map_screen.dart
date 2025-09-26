@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// A simple model for type safety.
@@ -107,10 +107,10 @@ class _HotelMapScreenState extends State<HotelMapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hotel Locations'),
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         elevation: 1,
         shadowColor: Colors.black.withValues(alpha: 0.1),
-        foregroundColor: white,
+        foregroundColor: AppColors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.back(),

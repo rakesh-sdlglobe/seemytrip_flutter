@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/shared/presentation/controllers/calender_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/font_family.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../shared/constants/font_family.dart';
+import '../../../../shared/presentation/controllers/calender_controller.dart';
 
 class CalenderScreen extends StatelessWidget {
   CalenderScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.whiteF2F,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -23,11 +23,11 @@ class CalenderScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.whiteF2F, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "New Delhi to Mumbai",
-          color: white,
+          text: 'New Delhi to Mumbai',
+          color: AppColors.whiteF2F,
           fontSize: 18,
         ),
       ),
@@ -47,9 +47,7 @@ class CalenderScreen extends StatelessWidget {
               onFormatChanged: (format) {
                 controller.onFormatChange(format);
               },
-              selectedDayPredicate: (day) {
-                return isSameDay(controller.selectedDay, day);
-              },
+              selectedDayPredicate: (day) => isSameDay(controller.selectedDay, day),
               onDaySelected: (selectedDay, focusedDay) {
                 if (!isSameDay(controller.selectedDay, selectedDay)) {
                   controller.onDaySelected(selectedDay, focusedDay);
@@ -63,30 +61,30 @@ class CalenderScreen extends StatelessWidget {
                 weekdayStyle: TextStyle(
                     fontSize: 12,
                     fontFamily: FontFamily.PoppinsRegular,
-                    color: grey717),
+                    color: AppColors.grey717),
               ),
               calendarStyle: CalendarStyle(
                 selectedDecoration: BoxDecoration(
-                    color: redCA0, borderRadius: BorderRadius.circular(4)),
+                    color: AppColors.redCA0, borderRadius: BorderRadius.circular(4)),
                 selectedTextStyle: TextStyle(
-                  color: white,
+                  color: AppColors.whiteF2F,
                   fontFamily: FontFamily.PoppinsMedium,
                   fontSize: 16,
                 ),
                 disabledTextStyle: TextStyle(
-                  color: grey717,
+                  color: AppColors.grey717,
                   fontFamily: FontFamily.PoppinsRegular,
                   fontSize: 16,
                 ),
                 todayDecoration: BoxDecoration(
-                    color: redCA0, borderRadius: BorderRadius.circular(4)),
+                    color: AppColors.redCA0, borderRadius: BorderRadius.circular(4)),
               ),
               headerStyle: HeaderStyle(
                 formatButtonVisible: false,
                 titleTextStyle: TextStyle(
                   fontSize: 12,
                   fontFamily: FontFamily.PoppinsRegular,
-                  color: black2E2,
+                  color: AppColors.black2E2,
                 ),
                 titleCentered: true,
               ),
@@ -96,14 +94,13 @@ class CalenderScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: CommonButtonWidget.button(
-              buttonColor: redCA0,
+              buttonColor: AppColors.redCA0,
               onTap: () {},
-              text: "Done",
+              text: 'Done',
             ),
           ),
           SizedBox(height: 50),
         ],
       ),
     );
-  }
 }

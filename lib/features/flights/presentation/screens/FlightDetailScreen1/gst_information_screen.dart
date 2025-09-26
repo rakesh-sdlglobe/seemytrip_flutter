@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../../core/widgets/common_button_widget.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
@@ -16,7 +16,7 @@ class GstInformationScreen extends StatelessWidget {
       padding:  EdgeInsets.only(top: 350),
       child: Container(
         decoration: BoxDecoration(
-          color: white,
+          color: AppColors.whiteF2F,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -33,7 +33,7 @@ class GstInformationScreen extends StatelessWidget {
                   SizedBox(height: 25),
                   CommonTextWidget.PoppinsSemiBold(
                     text: 'GST Information',
-                    color: black2E2,
+                    color: AppColors.black2E2,
                     fontSize: 18,
                   ),
                   SizedBox(height: 35),
@@ -53,7 +53,7 @@ class GstInformationScreen extends StatelessWidget {
                     onTap: (){
                       Get.back();
                     },
-                    buttonColor: redCA0,
+                    buttonColor: AppColors.redCA0,
                     text: 'CONFIRM',
                   ),
                   SizedBox(height: 30),

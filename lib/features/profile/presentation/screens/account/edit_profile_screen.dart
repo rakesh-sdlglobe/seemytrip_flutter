@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../../core/utils/colors.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../main.dart';
@@ -119,19 +119,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         elevation: 0,
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: white, size: 20),
+          icon: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
           onPressed: () => Get.back(),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'Edit Profile',
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
         actions: [
@@ -141,7 +141,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               padding: EdgeInsets.only(right: 24, top: 20),
               child: CommonTextWidget.PoppinsMedium(
                 text: 'Save',
-                color: white,
+                color: AppColors.white,
                 fontSize: 13,
               ),
             ),
@@ -151,7 +151,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: Obx(() {
         if (loginController.isLoading.value) {
           return Center(child: LoadingAnimationWidget.dotsTriangle(
-            color: redCA0,
+            color: AppColors.redCA0,
             size: 24,
           ));
         }
@@ -167,8 +167,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 Center(
                   child: Stack(
                     alignment: Alignment.bottomRight,
-                    children: [
-                      Icon(Icons.account_circle, size: 130, color: redCA0),
+                    children: [ 
+                      Icon(Icons.account_circle, size: 130, color: AppColors.redCA0),
                       // Optionally add an edit icon here
                     ],
                   ),
@@ -197,7 +197,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       children: [
         CommonTextWidget.PoppinsMedium(
           text: text,
-          color: black2E2,
+          color: AppColors.black2E2,
           fontSize: 14,
         ),
         SizedBox(height: 10),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/common_app_bar.dart';
-import '../../../../core/widgets/common_text_widget.dart';
-import '../../../../core/utils/colors.dart';
-import '../../../../shared/constants/images.dart';
 import '../controllers/hotel_and_homestay_controller.dart';
 import '../controllers/hotel_controller.dart';
 import 'hotel_home_screen.dart';
@@ -17,7 +16,7 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           Column(

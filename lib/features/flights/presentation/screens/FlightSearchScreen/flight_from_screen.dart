@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../../../core/utils/colors.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../controllers/flight_controller.dart';
 
@@ -55,8 +55,8 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
         Get.snackbar(
           'Error',
           errorMessage,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+          backgroundColor: AppColors.redCA0,
+          colorText: AppColors.white,
           duration: Duration(seconds: 5),
         );
       }
@@ -110,7 +110,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Column(
@@ -120,9 +120,9 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
               Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: redF8E,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: greyE8E, width: 1),
+                  border: Border.all(color: AppColors.greyE8E, width: 1),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18),
@@ -133,7 +133,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
                           Get.back();
                         },
                         child:
-                            Icon(Icons.arrow_back, color: black2E2, size: 20),
+                            Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyLarge?.color, size: 20),
                       ),
                       SizedBox(width: 15),
                       Column(
@@ -141,7 +141,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
                         children: [
                           CommonTextWidget.PoppinsMedium(
                             text: 'From',
-                            color: redCA0,
+                            color: AppColors.redCA0,
                             fontSize: 14,
                           ),
                           SizedBox(height: 5),
@@ -172,7 +172,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
                                     text: _fromController.text.isEmpty
                                         ? 'Enter any City/Airport Name'
                                         : _fromController.text,
-                                    color: grey717,
+                                    color: Theme.of(context).textTheme.bodyMedium?.color,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -185,14 +185,14 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
               SizedBox(height: 20),
               CommonTextWidget.PoppinsMedium(
                 text: 'Popular Searches',
-                color: grey717,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 fontSize: 12,
               ),
               Expanded(
                 child: isLoading
                     ? Center(
                       child: LoadingAnimationWidget.dotsTriangle(
-                      color: redCA0,
+                      color: AppColors.redCA0,
                         size: 50,
                       )
                       )
@@ -216,7 +216,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
                                       text: TextSpan(
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
-                                          color: black2E2,
+                                          color: AppColors.black2E2,
                                           fontSize: 16,
                                         ),
                                         children: [
@@ -224,7 +224,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
                                           TextSpan(
                                             text: '($code)',
                                             style: TextStyle(
-                                              color: grey717,
+                                              color: Theme.of(context).textTheme.bodyMedium?.color,
                                               fontSize: 14,
                                             ),
                                           ),
@@ -233,7 +233,7 @@ class _FlightFromScreenState extends State<FlightFromScreen> {
                                     ),
                                     subtitle: CommonTextWidget.PoppinsRegular(
                                       text: name,
-                                      color: grey717,
+                                      color: Theme.of(context).textTheme.bodyMedium?.color,
                                       fontSize: 12,
                                     ),
                                     onTap: () {

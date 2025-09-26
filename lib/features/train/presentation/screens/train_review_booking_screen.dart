@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:seemytrip/main.dart';
 
 class TrainReviewBookingScreen extends StatelessWidget {
-  final String trainName;
-  final String trainNumber;
-  final String startStation;
-  final String endStation;
-  final String seatClass;
-  final double price;
 
   TrainReviewBookingScreen({
     Key? key,
@@ -21,13 +15,18 @@ class TrainReviewBookingScreen extends StatelessWidget {
     required this.seatClass,
     required this.price,
   }) : super(key: key);
+  final String trainName;
+  final String trainNumber;
+  final String startStation;
+  final String endStation;
+  final String seatClass;
+  final double price;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -35,11 +34,11 @@ class TrainReviewBookingScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Review Booking",
-          color: white,
+          text: 'Review Booking',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -52,14 +51,14 @@ class TrainReviewBookingScreen extends StatelessWidget {
                 children: [
                   Container(
                     width: Get.width,
-                    color: yellowF7C.withOpacity(0.3),
+                    color: AppColors.yellowF7C.withValues(alpha: 0.3),
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 15, horizontal: 24),
                       child: CommonTextWidget.PoppinsRegular(
-                        text: "Review booking, complete payment and enter "
-                            "IRCTC login password in 10 mins.",
-                        color: black2E2,
+                        text: 'Review booking, complete payment and enter '
+                            'IRCTC login password in 10 mins.',
+                        color: AppColors.black2E2,
                         fontSize: 14,
                       ),
                     ),
@@ -77,20 +76,20 @@ class TrainReviewBookingScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "Boarding station",
-                                  color: black2E2,
+                                  text: 'Boarding station',
+                                  color: AppColors.black2E2,
                                   fontSize: 14,
                                 ),
                                 CommonTextWidget.PoppinsRegular(
                                   text: startStation,
-                                  color: grey717,
+                                  color: AppColors.grey717,
                                   fontSize: 14,
                                 ),
                               ],
                             ),
                             CommonTextWidget.PoppinsMedium(
-                              text: "5:40 PM (4 Oct)",
-                              color: black2E2,
+                              text: '5:40 PM (4 Oct)',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                           ],
@@ -100,10 +99,10 @@ class TrainReviewBookingScreen extends StatelessWidget {
                           width: Get.width,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: white,
+                            color: AppColors.white,
                             boxShadow: [
                               BoxShadow(
-                                color: grey515.withOpacity(0.25),
+                                color: AppColors.grey515.withValues(alpha: 0.25),
                                 blurRadius: 6,
                                 offset: Offset(0, 1),
                               ),
@@ -111,27 +110,27 @@ class TrainReviewBookingScreen extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: CommonTextWidget.PoppinsSemiBold(
-                              text: "$trainName, $trainNumber",
-                              color: black2E2,
+                              text: '$trainName, $trainNumber',
+                              color: AppColors.black2E2,
                               fontSize: 16,
                             ),
                             subtitle: CommonTextWidget.PoppinsRegular(
                               text: seatClass,
-                              color: grey717,
+                              color: AppColors.grey717,
                               fontSize: 14,
                             ),
                           ),
                         ),
                         SizedBox(height: 20),
                         CommonTextWidget.PoppinsRegular(
-                          text: "Price Breakup",
-                          color: black2E2,
+                          text: 'Price Breakup',
+                          color: AppColors.black2E2,
                           fontSize: 18,
                         ),
                         SizedBox(height: 20),
                         CommonTextWidget.PoppinsSemiBold(
-                          text: "Base Fare",
-                          color: black2E2,
+                          text: 'Base Fare',
+                          color: AppColors.black2E2,
                           fontSize: 14,
                         ),
                         SizedBox(height: 18),
@@ -139,13 +138,13 @@ class TrainReviewBookingScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CommonTextWidget.PoppinsRegular(
-                              text: "Ticket Charge",
-                              color: black2E2,
+                              text: 'Ticket Charge',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                             CommonTextWidget.PoppinsMedium(
-                              text: "₹ $price",
-                              color: black2E2,
+                              text: '₹ $price',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                           ],
@@ -169,7 +168,7 @@ class TrainReviewBookingScreen extends StatelessWidget {
                   Container(
                     height: 60,
                     width: Get.width,
-                    color: black2E2,
+                    color: AppColors.black2E2,
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 24, vertical: 10),
@@ -177,8 +176,8 @@ class TrainReviewBookingScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "₹ $price",
-                            color: white,
+                            text: '₹ $price',
+                            color: AppColors.white,
                             fontSize: 16,
                           ),
                           MaterialButton(
@@ -197,11 +196,11 @@ class TrainReviewBookingScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(40),
                             ),
-                            color: redCA0,
+                            color: AppColors.redCA0,
                             child: CommonTextWidget.PoppinsSemiBold(
                               fontSize: 16,
-                              text: "Pay and Book",
-                              color: white,
+                              text: 'Pay and Book',
+                              color: AppColors.white,
                             ),
                           ),
                         ],
@@ -215,5 +214,4 @@ class TrainReviewBookingScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

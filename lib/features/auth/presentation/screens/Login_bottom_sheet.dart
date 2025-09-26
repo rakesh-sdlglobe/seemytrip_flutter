@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
 
 class LoginSignupBottomSheet extends StatefulWidget {
@@ -80,7 +80,7 @@ class _LoginSignupBottomSheetState extends State<LoginSignupBottomSheet> {
                 isLogin ? 'Login' : 'Sign Up',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: redCA0,
+                      color: AppColors.redCA0,
                     ),
               ),
               SizedBox(height: 20),
@@ -148,7 +148,7 @@ class _LoginSignupBottomSheetState extends State<LoginSignupBottomSheet> {
                 onPressed: isLoading ? null : _handleSubmit, // Disable button when loading
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-                  backgroundColor: redCA0,
+                  backgroundColor: AppColors.redCA0,
                   minimumSize: Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -173,7 +173,7 @@ class _LoginSignupBottomSheetState extends State<LoginSignupBottomSheet> {
                   isLogin
                       ? 'Don’t have an account? Sign Up'
                       : 'Already have an account? Login',
-                  style: TextStyle(color: redCA0),
+                  style: TextStyle(color: AppColors.redCA0),
                 ),
               ),
             ],

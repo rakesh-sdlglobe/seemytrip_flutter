@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/features/auth/presentation/screens/welcome/welcome_screen2.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import 'welcome_screen2.dart';
 
 class WelcomeScreen1 extends StatefulWidget {
   WelcomeScreen1({Key? key}) : super(key: key);
@@ -19,9 +20,8 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
   int index = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -46,14 +46,14 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                     SizedBox(
                       height: 170,
                       child: SvgPicture.asset(
-                        Lists.welcomeList[index]["image"],
+                        Lists.welcomeList[index]['image'],
                         fit: BoxFit.contain,
                       ),
                     ),
                     SizedBox(height: 100),
                     CommonTextWidget.PoppinsMedium(
-                      text: Lists.welcomeList[index]["text"],
-                      color: black2E2,
+                      text: Lists.welcomeList[index]['text'],
+                      color: AppColors.black2E2,
                       fontSize: 18,
                       textAlign: TextAlign.center,
                     ),
@@ -61,8 +61,8 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: CommonTextWidget.PoppinsRegular(
-                        text: Lists.welcomeList[index]["description"],
-                        color: grey717,
+                        text: Lists.welcomeList[index]['description'],
+                        color: AppColors.grey717,
                         fontSize: 12,
                         textAlign: TextAlign.center,
                       ),
@@ -85,7 +85,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                     height: 7,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: index == position ? black2E2 : greyC7C,
+                      color: index == position ? AppColors.black2E2 : AppColors.greyC7C,
                     ),
                   ),
                 ),
@@ -101,8 +101,8 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                     : pageController.nextPage(
                         duration: 300.milliseconds, curve: Curves.ease);
               },
-              buttonColor: redCA0,
-              text: "NEXT",
+              buttonColor: AppColors.redCA0,
+              text: 'NEXT',
             ),
           ),
           Padding(
@@ -112,8 +112,8 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                 Get.to(() => WelcomeScreen2());
               },
               child: CommonTextWidget.PoppinsSemiBold(
-                text: "Skip",
-                color: greyC7C,
+                text: 'Skip',
+                color: AppColors.greyC7C,
                 fontSize: 14,
                 textAlign: TextAlign.center,
               ),
@@ -122,5 +122,4 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
         ],
       ),
     );
-  }
 }

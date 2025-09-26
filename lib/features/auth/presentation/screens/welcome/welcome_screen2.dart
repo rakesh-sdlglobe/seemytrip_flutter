@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/auth/presentation/controllers/welcome2_controller.dart';
-import 'package:seemytrip/features/auth/presentation/screens/login_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../controllers/welcome2_controller.dart';
+import '../login_screen.dart';
 
 class WelcomeScreen2 extends StatelessWidget {
   WelcomeScreen2({Key? key}) : super(key: key);
@@ -22,9 +23,8 @@ class WelcomeScreen2 extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Stack(
         children: [
           // Top Image Container
@@ -55,8 +55,8 @@ class WelcomeScreen2 extends StatelessWidget {
                               Get.to(() => LogInScreen());
                             },
                             child: CommonTextWidget.PoppinsSemiBold(
-                              text: "SKIP",
-                              color: white,
+                              text: 'SKIP',
+                              color: AppColors.white,
                               fontSize: 16,
                             ),
                           ),
@@ -66,19 +66,18 @@ class WelcomeScreen2 extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "Welcome",
-                            color: white,
+                            text: 'Welcome',
+                            color: AppColors.white,
                             fontSize: 35,
                           ),
                           CommonTextWidget.PoppinsMedium(
-                            text: "Select your Language",
-                            color: white,
+                            text: 'Select your Language',
+                            color: AppColors.white,
                             fontSize: 20,
                           ),
                           CommonTextWidget.PoppinsRegular(
-                            text: "You can also change language in App "
-                                "Settings after singning in",
-                            color: greyCAC,
+                            text: 'You can also change language in App ' 'Settings after singning in',
+                            color: AppColors.greyCAC,
                             fontSize: 14,
                           ),
                           SizedBox(height: 50),
@@ -101,7 +100,7 @@ class WelcomeScreen2 extends StatelessWidget {
                   topRight: Radius.circular(30),
                   topLeft: Radius.circular(30),
                 ),
-                color: white,
+                color: AppColors.white,
               ),
               child: Padding(
                 padding: EdgeInsets.only(
@@ -128,12 +127,12 @@ class WelcomeScreen2 extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
                                 color: controller.selectedIndex == index
-                                    ? redCA0
-                                    : greyB9B,
+                                    ? AppColors.redCA0
+                                    : AppColors.greyB9B,
                                 width: 1),
                             color: controller.selectedIndex == index
-                                ? redF9E
-                                : white,
+                                ? AppColors.redF9E
+                                : AppColors.white,
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -150,7 +149,7 @@ class WelcomeScreen2 extends StatelessWidget {
                                     SizedBox(width: 20),
                                     CommonTextWidget.PoppinsMedium(
                                       text: languageList[index]["name"]!,
-                                      color: black2E2,
+                                      color: AppColors.black2E2,
                                       fontSize: 14,
                                     ),
                                   ],
@@ -158,8 +157,8 @@ class WelcomeScreen2 extends StatelessWidget {
                                 CommonTextWidget.PoppinsMedium(
                                   text: languageList[index]["native"]!,
                                   color: controller.selectedIndex == index
-                                      ? redCA0
-                                      : greyC8C,
+                                      ? AppColors.redCA0
+                                      : AppColors.greyC8C,
                                   fontSize: 16,
                                 ),
                               ],
@@ -180,11 +179,11 @@ class WelcomeScreen2 extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              color: white,
+              color: AppColors.white,
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: CommonButtonWidget.button(
-                text: "CONTINUE".tr,
-                buttonColor: redCA0,
+                text: 'CONTINUE',
+                buttonColor: AppColors.redCA0,
                 onTap: () {
                   Get.to(() => LogInScreen());
                 },
@@ -194,5 +193,4 @@ class WelcomeScreen2 extends StatelessWidget {
         ],
       ),
     );
-  }
 }

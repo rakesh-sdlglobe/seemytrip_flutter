@@ -2,17 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:seemytrip/shared/models/bus_models.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 
 // Models and other imports
 
-// --- RED THEME COLORS ---
-const Color kPrimaryColor = Color(0xFFD32F2F);
-const Color kPrimaryDarkColor = Color(0xFFB71C1C);
-const Color kPrimaryLightColor = Color(0xFFFFEBEE);
-const Color kTextPrimaryColor = Color(0xFF212529);
-const Color kTextSecondaryColor = Color(0xFF6C757D);
-const Color kCardBackground = Color(0xFFFFFFFF);
-const Color kDividerColor = Color(0xFFE9ECEF);
+// Theme colors will be accessed through Theme.of(context) and AppColors instead of hardcoded constants
 
 class BusFilterScreen extends StatefulWidget {
   final List<BusSearchResult> results;
@@ -136,9 +130,9 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: kCardBackground,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: DefaultTabController(
         length: 4,
@@ -187,7 +181,7 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
             width: 40,
             height: 5,
             decoration: BoxDecoration(
-              color: kDividerColor,
+              color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(12),
             ),
           ),
@@ -202,7 +196,7 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
               ),
               IconButton(
                 icon:
-                    const Icon(Icons.close_rounded, color: kTextSecondaryColor),
+                    Icon(Icons.close_rounded, color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717),
                 onPressed: () => Get.back(),
               ),
             ],
@@ -214,9 +208,9 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
 
   Widget _buildTabBar() {
     return TabBar(
-      labelColor: kPrimaryColor,
-      unselectedLabelColor: kTextSecondaryColor,
-      indicatorColor: kPrimaryColor,
+      labelColor: AppColors.redCA0,
+      unselectedLabelColor: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
+      indicatorColor: AppColors.redCA0,
       indicatorWeight: 3.0,
       labelStyle:
           GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
@@ -242,7 +236,7 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
           onChanged: (value) {
             if (value != null) setState(() => _currentSort = value);
           },
-          activeColor: kPrimaryColor,
+          activeColor: AppColors.redCA0,
           controlAffinity: ListTileControlAffinity.trailing,
         );
       }).toList(),
@@ -299,23 +293,23 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
       label: Text(label),
       avatar: icon != null
           ? Icon(icon,
-              color: isSelected ? Colors.white : kPrimaryColor, size: 18)
+              color: isSelected ? Colors.white : AppColors.redCA0, size: 18)
           : null,
       selected: isSelected,
       onSelected: onSelected,
       elevation: 0,
       pressElevation: 0,
-      backgroundColor: kPrimaryLightColor,
-      selectedColor: kPrimaryColor,
+      backgroundColor: AppColors.redF9E,
+      selectedColor: AppColors.redCA0,
       checkmarkColor: Colors.white,
       labelStyle: GoogleFonts.poppins(
-        color: isSelected ? Colors.white : kPrimaryDarkColor,
+        color: isSelected ? Colors.white : AppColors.redCA0,
         fontWeight: FontWeight.w600,
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
         side: BorderSide(
-            color: isSelected ? kPrimaryColor : kDividerColor, width: 1.5),
+            color: isSelected ? AppColors.redCA0 : Theme.of(context).dividerColor, width: 1.5),
       ),
     );
   }
@@ -334,8 +328,8 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
           min: 0,
           max: 10000,
           divisions: 20,
-          activeColor: kPrimaryColor,
-          inactiveColor: kPrimaryLightColor,
+          activeColor: AppColors.redCA0,
+          inactiveColor: AppColors.redF9E,
           labels: RangeLabels(
               '₹${_priceRange.start.round()}', '₹${_priceRange.end.round()}'),
           onChanged: (values) => setState(() => _priceRange = values),
@@ -348,14 +342,14 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: kCardBackground,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, -5)),
         ],
-        border: Border(top: BorderSide(color: kDividerColor, width: 1)),
+        border: Border(top: BorderSide(color: Theme.of(context).dividerColor, width: 1)),
       ),
       child: Row(
         children: [
@@ -364,13 +358,13 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
               onPressed: () => _resetFilters(),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                side: const BorderSide(color: kPrimaryColor),
+                side: const BorderSide(color: AppColors.redCA0),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
               child: Text('Reset',
                   style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w700, color: kPrimaryColor)),
+                      fontWeight: FontWeight.w700, color: AppColors.redCA0)),
             ),
           ),
           const SizedBox(width: 16),
@@ -379,7 +373,7 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
               onPressed: _applyFilters,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: kPrimaryColor,
+                backgroundColor: AppColors.redCA0,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),

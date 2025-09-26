@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/home/presentation/controllers/navigation_controller.dart';
-import 'package:seemytrip/features/home/presentation/screens/DrawerScreen/drawer_screen.dart';
-import 'package:seemytrip/features/home/presentation/screens/where_to_go/where_2_go_screen.dart';
-import 'package:seemytrip/features/profile/presentation/screens/account/my_account_screen.dart';
-import 'package:seemytrip/features/trips/presentation/screens/my_trips/my_trip_screen.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/home/presentation/screens/home_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+
+import '../../../../features/home/presentation/controllers/navigation_controller.dart';
+import '../../../../features/home/presentation/screens/DrawerScreen/drawer_screen.dart';
+import '../../../../features/home/presentation/screens/home_screen.dart';
+import '../../../../features/home/presentation/screens/where_to_go/where_2_go_screen.dart';
+import '../../../../features/profile/presentation/screens/account/my_account_screen.dart';
+import '../../../../features/trips/presentation/screens/my_trips/my_trip_screen.dart';
+import '../../../../shared/constants/images.dart';
+import '../../../theme/app_colors.dart';
+import '../../../widgets/common_text_widget.dart';
 
 class NavigationScreen extends StatelessWidget {
-  final String? token;
   NavigationScreen({this.token});
+  final String? token;
 
-  @override
   final NavigationController navigationController =
       Get.put(NavigationController());
 
@@ -29,10 +29,10 @@ class NavigationScreen extends StatelessWidget {
   buildMyNavBar(BuildContext context) => Container(
       height: 85,
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: greyB9B.withOpacity(0.25),
+            color: AppColors.greyB9B.withValues(alpha: 0.25),
             blurRadius: 10,
             spreadRadius: 1,
           ),
@@ -61,8 +61,8 @@ class NavigationScreen extends StatelessWidget {
                   CommonTextWidget.PoppinsMedium(
                     text: "Home",
                     color: navigationController.pageIndex.value == 0
-                        ? redCA0
-                        : greyAAA,
+                        ? AppColors.redCA0
+                        : AppColors.greyAAA,
                     fontSize: 12,
                   ),
                 ],
@@ -80,7 +80,7 @@ class NavigationScreen extends StatelessWidget {
                 SizedBox(height: 6),
                 CommonTextWidget.PoppinsMedium(
                   text: "My Trips",
-                  color: greyAAA,
+                  color: AppColors.greyAAA,
                   fontSize: 12,
                 ),
               ],
@@ -103,8 +103,8 @@ class NavigationScreen extends StatelessWidget {
                   CommonTextWidget.PoppinsMedium(
                     text: "Where2Go",
                     color: navigationController.pageIndex.value == 2
-                        ? redCA0
-                        : greyAAA,
+                        ? AppColors.redCA0
+                        : AppColors.greyAAA,
                     fontSize: 12,
                   ),
                 ],
@@ -122,7 +122,7 @@ class NavigationScreen extends StatelessWidget {
                 SizedBox(height: 6),
                 CommonTextWidget.PoppinsMedium(
                   text: "MY Account",
-                  color: greyAAA,
+                  color: AppColors.greyAAA,
                   fontSize: 12,
                 ),
               ],
@@ -137,9 +137,9 @@ class NavigationScreen extends StatelessWidget {
     final GlobalKey<ScaffoldState> key = GlobalKey();
     return Scaffold(
         key: key,
-        backgroundColor: white,
+        backgroundColor: AppColors.white,
         drawer: Drawer(
-          backgroundColor: white,
+          backgroundColor: AppColors.white,
           child: DrawerScreen(),
         ),
         body: Stack(

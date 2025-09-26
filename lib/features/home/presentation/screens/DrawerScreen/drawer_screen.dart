@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/lists_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -80,7 +80,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       if (loginController.isLoading.value) {
         return Center(
           child: LoadingAnimationWidget.dotsTriangle(
-            color: Colors.red,
+            color: AppColors.redCA0,
             size: 24,
           ),
         );
@@ -88,13 +88,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
 
       return Container(
         width: MediaQuery.of(context).size.width * 0.8, // 80% of screen width
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(
-                color: redCA0,
+                color: AppColors.redCA0,
               ),
               accountName: Text(
                 fullName.isNotEmpty ? fullName : 'Guest User',
@@ -108,20 +108,20 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 style: const TextStyle(fontSize: 14),
               ),
               currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, size: 40, color: redCA0),
+                backgroundColor: AppColors.white,
+                child: Icon(Icons.person, size: 40, color: AppColors.redCA0),
               ),
             ),
             ...Lists.homeDrawerList.map((item) => ListTile(
                   leading: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: redCA0.withOpacity(0.1),
+                      color: AppColors.redCA0.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: SvgPicture.asset(
                       item['image'],
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       width: 24,
                       height: 24,
                     ),

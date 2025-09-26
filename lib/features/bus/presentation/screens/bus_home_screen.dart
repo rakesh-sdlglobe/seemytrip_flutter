@@ -124,7 +124,7 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: Colors.grey.shade200,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       // --- FIX: Wrap the body in Obx and Stack to show a loading overlay ---
       body: Obx(
         () => Stack(

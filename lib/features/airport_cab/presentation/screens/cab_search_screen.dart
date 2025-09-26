@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/cabs/presentation/controllers/cab_search_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/airport_cab/presentation/screens/airport_cabs_screen.dart';
-import 'package:seemytrip/features/airport_cab/presentation/screens/select_travell_date_screen.dart';
-import 'package:seemytrip/features/airport_cab/presentation/screens/cab_terminal_screen1.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_button_widget.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../core/widgets/lists_widget.dart';
+import '../../../../shared/constants/images.dart';
+import '../../../cabs/presentation/controllers/cab_search_controller.dart';
+import 'airport_cabs_screen.dart';
+import 'cab_terminal_screen1.dart';
+import 'select_travell_date_screen.dart';
 
 class CabSearchScreen extends StatelessWidget {
   CabSearchScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -27,11 +27,11 @@ class CabSearchScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Cab Search",
-          color: white,
+          text: 'Cab Search',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -46,18 +46,18 @@ class CabSearchScreen extends StatelessWidget {
                 Container(
                   width: Get.width,
                   decoration: BoxDecoration(
-                    color: yellowF7C.withOpacity(0.35),
+                    color: AppColors.yellowF7C.withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Row(
                       children: [
-                        SvgPicture.asset(info, color: yellowCE8),
+                        SvgPicture.asset(info, color: AppColors.yellowCE8),
                         SizedBox(width: 10),
                         CommonTextWidget.PoppinsRegular(
-                          text: "Pre-book Airport Drop",
-                          color: yellowCE8,
+                          text: 'Pre-book Airport Drop',
+                          color: AppColors.yellowCE8,
                           fontSize: 12,
                         ),
                       ],
@@ -68,9 +68,9 @@ class CabSearchScreen extends StatelessWidget {
                 Container(
                   width: Get.width,
                   decoration: BoxDecoration(
-                    color: grey9B9.withOpacity(0.15),
+                    color: AppColors.grey9B9.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: greyE2E, width: 1),
+                    border: Border.all(color: AppColors.greyE2E, width: 1),
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 14, vertical: 17),
@@ -79,8 +79,8 @@ class CabSearchScreen extends StatelessWidget {
                         SvgPicture.asset(arrowsLeftRight),
                         SizedBox(width: 10),
                         CommonTextWidget.PoppinsMedium(
-                          text: "Travel",
-                          color: grey888,
+                          text: 'Travel',
+                          color: AppColors.grey888,
                           fontSize: 14,
                         ),
                         SizedBox(width: 20),
@@ -103,15 +103,15 @@ class CabSearchScreen extends StatelessWidget {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(4),
-                                      color: white,
+                                      color: AppColors.white,
                                       border: Border.all(
                                           color:
                                               controller.selectedIndex == index
-                                                  ? redCA0
-                                                  : white),
+                                                  ? AppColors.redCA0
+                                                  : AppColors.white),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: grey515.withOpacity(0.25),
+                                          color: AppColors.grey515.withValues(alpha: 0.25),
                                           blurRadius: 6,
                                           offset: Offset(0, 1),
                                         ),
@@ -123,8 +123,8 @@ class CabSearchScreen extends StatelessWidget {
                                       child: CommonTextWidget.PoppinsMedium(
                                         text: Lists.cabSearchList1[index],
                                         color: controller.selectedIndex == index
-                                            ? redCA0
-                                            : black2E2,
+                                            ? AppColors.redCA0
+                                            : AppColors.black2E2,
                                         fontSize: 10,
                                       ),
                                     ),
@@ -153,9 +153,9 @@ class CabSearchScreen extends StatelessWidget {
                       child: Container(
                         width: Get.width,
                         decoration: BoxDecoration(
-                          color: grey9B9.withOpacity(0.15),
+                          color: AppColors.grey9B9.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: greyE2E, width: 1),
+                          border: Border.all(color: AppColors.greyE2E, width: 1),
                         ),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
@@ -169,7 +169,7 @@ class CabSearchScreen extends StatelessWidget {
                                 children: [
                                   CommonTextWidget.PoppinsMedium(
                                     text: Lists.cabSearchList2[index]["text1"],
-                                    color: grey888,
+                                    color: AppColors.grey888,
                                     fontSize: 14,
                                   ),
                                   Row(
@@ -178,13 +178,13 @@ class CabSearchScreen extends StatelessWidget {
                                       CommonTextWidget.PoppinsSemiBold(
                                         text: Lists.cabSearchList2[index]
                                             ["text2"],
-                                        color: black2E2,
+                                        color: AppColors.black2E2,
                                         fontSize: 14,
                                       ),
                                       CommonTextWidget.PoppinsRegular(
                                         text: Lists.cabSearchList2[index]
                                             ["text3"],
-                                        color: black2E2,
+                                        color: AppColors.black2E2,
                                         fontSize: 14,
                                       ),
                                     ],
@@ -205,9 +205,9 @@ class CabSearchScreen extends StatelessWidget {
                   child: Container(
                     width: Get.width,
                     decoration: BoxDecoration(
-                      color: grey9B9.withOpacity(0.15),
+                      color: AppColors.grey9B9.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: greyE2E, width: 1),
+                      border: Border.all(color: AppColors.greyE2E, width: 1),
                     ),
                     child: Padding(
                       padding:
@@ -220,13 +220,13 @@ class CabSearchScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CommonTextWidget.PoppinsMedium(
-                                text: "Pick Up Time",
-                                color: grey888,
+                                text: 'Pick Up Time',
+                                color: AppColors.grey888,
                                 fontSize: 12,
                               ),
                               CommonTextWidget.PoppinsSemiBold(
-                                text: "09 Oct, 10 AM",
-                                color: black2E2,
+                                text: '09 Oct, 10 AM',
+                                color: AppColors.black2E2,
                                 fontSize: 12,
                               ),
                             ],
@@ -251,15 +251,15 @@ class CabSearchScreen extends StatelessWidget {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(4),
-                                        color: white,
+                                        color: AppColors.white,
                                         border: Border.all(
                                             color: controller.selectedIndex1 ==
                                                     index
-                                                ? redCA0
-                                                : white),
+                                                ? AppColors.redCA0
+                                                : AppColors.white),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: grey515.withOpacity(0.25),
+                                            color: AppColors.grey515.withValues(alpha: 0.25),
                                             blurRadius: 6,
                                             offset: Offset(0, 1),
                                           ),
@@ -272,8 +272,8 @@ class CabSearchScreen extends StatelessWidget {
                                           text: Lists.cabSearchList3[index],
                                           color:
                                               controller.selectedIndex1 == index
-                                                  ? redCA0
-                                                  : black2E2,
+                                                  ? AppColors.redCA0
+                                                  : AppColors.black2E2,
                                           fontSize: 10,
                                         ),
                                       ),
@@ -302,10 +302,10 @@ class CabSearchScreen extends StatelessWidget {
                 height: 45,
                 width: 33,
                 decoration: BoxDecoration(
-                  color: white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: greyE2E,
+                    color: AppColors.greyE2E,
                     width: 1,
                   ),
                 ),
@@ -318,8 +318,8 @@ class CabSearchScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 24, right: 24, bottom: 60),
             child: CommonButtonWidget.button(
-              text: "SEARCH",
-              buttonColor: redCA0,
+              text: 'SEARCH',
+              buttonColor: AppColors.redCA0,
               onTap: () {
                 Get.to(() => CabTerminalScreen1());
               },
@@ -328,5 +328,4 @@ class CabSearchScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

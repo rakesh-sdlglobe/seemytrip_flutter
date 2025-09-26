@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/features/train/presentation/controllers/train_contact_information_controller.dart';
 
 // Design Constants
@@ -115,14 +115,16 @@ class _TrainAndBusContactInformationScreenState
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          color: Theme.of(context).brightness == Brightness.dark 
+            ? Colors.grey[800]
+            : Colors.grey[50],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
           child: Text(
             text,
             style: GoogleFonts.poppins(
-              color: redCA0,
+              color: AppColors.redCA0,
               fontWeight: FontWeight.w500,
               fontSize: 14,
             ),
@@ -136,11 +138,11 @@ class _TrainAndBusContactInformationScreenState
       animation: _animationController,
       builder: (context, child) => Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).bottomSheetTheme.backgroundColor ?? Theme.of(context).cardColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
                 blurRadius: 20,
                 offset: const Offset(0, -5),
               ),
@@ -166,22 +168,24 @@ class _TrainAndBusContactInformationScreenState
                             style: GoogleFonts.poppins(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: Theme.of(context).textTheme.headlineSmall?.color ?? Colors.black87,
                               letterSpacing: -0.5,
                             ),
                           ),
                           Material(
                             borderRadius: BorderRadius.circular(12),
-                            color: Colors.grey[50],
+                            color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.grey[800]
+                              : Colors.grey[50],
                             child: InkWell(
                               onTap: () => Get.back(),
                               borderRadius: BorderRadius.circular(12),
                               child: Container(
                                 padding: const EdgeInsets.all(8),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.close_rounded,
                                   size: 24,
-                                  color: Colors.black54,
+                                  color: Theme.of(context).iconTheme.color ?? Colors.black54,
                                 ),
                               ),
                             ),
@@ -202,9 +206,15 @@ class _TrainAndBusContactInformationScreenState
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFF8E1).withOpacity(0.9),
+                          color: Theme.of(context).brightness == Brightness.dark 
+                            ? const Color(0xFF3E2723).withOpacity(0.9)
+                            : const Color(0xFFFFF8E1).withOpacity(0.9),
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFFFFE082)),
+                          border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark 
+                              ? const Color(0xFF8D6E63)
+                              : const Color(0xFFFFE082)
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.orange.withOpacity(0.1),
@@ -216,9 +226,11 @@ class _TrainAndBusContactInformationScreenState
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.info_outline_rounded,
-                              color: Color(0xFFFFA000),
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFFFFB74D)
+                                : const Color(0xFFFFA000),
                               size: 22,
                             ),
                             const SizedBox(width: 14),
@@ -227,7 +239,9 @@ class _TrainAndBusContactInformationScreenState
                                 "Please enter your IRCTC username. You'll need to enter the password for this account after payment to complete your booking.",
                                 style: GoogleFonts.poppins(
                                   fontSize: 13.5,
-                                  color: const Color(0xFF5D4037),
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                    ? const Color(0xFFBCAAA4)
+                                    : const Color(0xFF5D4037),
                                   height: 1.5,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -252,7 +266,7 @@ class _TrainAndBusContactInformationScreenState
                             style: GoogleFonts.poppins(
                               fontSize: 14.5,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                              color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.black87,
                               letterSpacing: -0.2,
                             ),
                           ),
@@ -264,14 +278,18 @@ class _TrainAndBusContactInformationScreenState
                             return AnimatedContainer(
                               duration: _animationDuration,
                               decoration: BoxDecoration(
-                                color: Colors.grey[50],
+                                color: Theme.of(context).brightness == Brightness.dark 
+                                  ? Colors.grey[800]
+                                  : Colors.grey[50],
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
                                   color: hasError
                                       ? Colors.red.withOpacity(0.8)
                                       : hasSuccess
                                           ? Colors.green.withOpacity(0.8)
-                                          : Colors.grey[300]!,
+                                          : Theme.of(context).brightness == Brightness.dark
+                                            ? Colors.grey[600]!
+                                            : Colors.grey[300]!,
                                   width: hasError || hasSuccess ? 1.8 : 1.5,
                                 ),
                                 boxShadow: [
@@ -287,14 +305,14 @@ class _TrainAndBusContactInformationScreenState
                                 controller: _usernameController,
                                 style: GoogleFonts.poppins(
                                   fontSize: 15.5,
-                                  color: Colors.black87,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: -0.1,
                                 ),
                                 decoration: InputDecoration(
                                   hintText: "Enter IRCTC username",
                                   hintStyle: GoogleFonts.poppins(
-                                    color: Colors.grey[500],
+                                    color: Theme.of(context).hintColor,
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,
                                   ),
@@ -309,7 +327,7 @@ class _TrainAndBusContactInformationScreenState
                                         padding: EdgeInsets.only(right: 16),
                                         child: SizedBox(
                                           child: LoadingAnimationWidget.fourRotatingDots(
-                                            color: white,
+                                            color: AppColors.redCA0,
                                             size: 20,
                                           ),
                                         ),
@@ -320,7 +338,7 @@ class _TrainAndBusContactInformationScreenState
                                         padding: EdgeInsets.only(right: 16),
                                         child: Icon(
                                           Icons.check_circle_rounded,
-                                          color: Colors.green,
+                                          color: AppColors.green00A,
                                           size: 22,
                                         ),
                                       );
@@ -401,7 +419,7 @@ class _TrainAndBusContactInformationScreenState
                                 borderRadius: BorderRadius.circular(14),
                                 gradient: LinearGradient(
                                   colors: controller.isUsernameValid.value
-                                      ? [redCA0, redCA0.withOpacity(0.9)]
+                                      ? [AppColors.redCA0, AppColors.redCA0.withValues(alpha: 0.9)]
                                       : [Colors.grey[300]!, Colors.grey[400]!],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -409,7 +427,7 @@ class _TrainAndBusContactInformationScreenState
                                 boxShadow: [
                                   if (controller.isUsernameValid.value)
                                     BoxShadow(
-                                      color: redCA0.withOpacity(0.3),
+                                      color: AppColors.redCA0.withValues(alpha: 0.3),
                                       blurRadius: 15,
                                       offset: const Offset(0, 4),
                                     ),

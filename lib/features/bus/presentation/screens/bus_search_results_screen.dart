@@ -4,26 +4,14 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../../core/widgets/common/cards/app_card.dart';
-import '../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../shared/models/bus_models.dart';
 import '../controllers/bus_controller.dart';
 import '../widgets/bus_filter_screen.dart';
 import 'bus_home_screen.dart';
-import 'bus_seat_layout_screen.dart';
+import 'bus_seat_layout_screen.dart' show BusSeatLayoutScreen, BusSeatLayoutScreenArguments;
 
-// --- REFINED THEME COLORS ---
-const Color kPrimaryColor = Color(0xFFE53935);
-const Color kPrimaryDarkColor = Color(0xFFC62828);
-const Color kPrimaryLightColor = Color(0xFFFFEBEE);
-const Color kTextPrimaryColor = Color(0xFF1A1A1A);
-const Color kTextSecondaryColor = Color(0xFF757575);
-const Color kScaffoldBackgroundColor = Color(0xFFF5F6FA);
-const Color kCardBackground = Color(0xFFFFFFFF);
-const Color kSuccessColor = Color(0xFF2ECC71);
-const Color kDividerColor = Color(0xFFE0E0E0);
-const Color kChipBackground = Color(0xFFFFE6E6);
-const Color kAccentColor = Color(0xFFFFA726);
+// Theme colors will be accessed through Theme.of(context) instead of hardcoded constants
 
 class BusSearchResultsScreenArguments {
   BusSearchResultsScreenArguments({
@@ -97,7 +85,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
         minChildSize: 0.5,
         builder: (_, controller) => Container(
           decoration: BoxDecoration(
-            color: kScaffoldBackgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: BusFilterScreen(
@@ -116,13 +104,13 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
     if (_fadeAnimation == null || _animationController == null) {
       return Center(
           child: LoadingAnimationWidget.fourRotatingDots(
-        color: kPrimaryColor,
+        color: AppColors.redCA0,
         size: 40,
       ));
     }
 
     return Scaffold(
-      backgroundColor: kScaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildModernAppBar(),
       body: Stack(
         children: [
@@ -146,7 +134,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
   }
 
   PreferredSizeWidget _buildModernAppBar() => AppBar(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: AppColors.redCA0,
         foregroundColor: Colors.white,
         toolbarHeight: 90,
         elevation: 0,
@@ -165,7 +153,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
             ],
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: kTextPrimaryColor, size: 20),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2, size: 20),
             onPressed: () => Get.back(),
           ),
         ),
@@ -208,7 +196,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
-            color: kDividerColor.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withOpacity(0.5),
             height: 1,
           ),
         ),
@@ -224,12 +212,14 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
         child: Container(
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
-            color: kCardBackground,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 12,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black.withOpacity(0.4)
+                    : Colors.black.withOpacity(0.08),
+                blurRadius: Theme.of(context).brightness == Brightness.dark ? 16 : 12,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -248,7 +238,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                     const SizedBox(height: 16),
                     Container(
                       height: 1,
-                      color: kDividerColor.withOpacity(0.5),
+                      color: Theme.of(context).dividerColor.withOpacity(0.5),
                     ),
                     const SizedBox(height: 16),
                     LayoutBuilder(
@@ -275,12 +265,12 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
             height: 56,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: kPrimaryLightColor,
+              color: AppColors.redF9E,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.directions_bus_rounded,
-              color: kPrimaryColor,
+              color: AppColors.redCA0,
               size: 28,
             ),
           ),
@@ -294,7 +284,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
-                    color: kTextPrimaryColor,
+                    color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2,
                     height: 1.3,
                   ),
                   maxLines: 1,
@@ -304,14 +294,14 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: kChipBackground,
+                    color: AppColors.redF9E,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: kPrimaryColor.withOpacity(0.2)),
+                    border: Border.all(color: AppColors.redCA0.withOpacity(0.2)),
                   ),
                   child: Text(
                     result.busType.toUpperCase(),
                     style: GoogleFonts.poppins(
-                      color: kPrimaryDarkColor,
+                      color: AppColors.redCA0,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.8,
@@ -324,17 +314,17 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: kSuccessColor.withOpacity(0.15),
+                        color: AppColors.green00A.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.star_rounded, color: kSuccessColor, size: 16),
+                          Icon(Icons.star_rounded, color: AppColors.green00A, size: 16),
                           const SizedBox(width: 4),
                           Text(
                             '4.2',
                             style: GoogleFonts.poppins(
-                              color: kSuccessColor,
+                              color: AppColors.green00A,
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
                             ),
@@ -346,7 +336,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                     Text(
                       '(128 Reviews)',
                       style: GoogleFonts.poppins(
-                        color: kTextSecondaryColor,
+                        color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -394,14 +384,14 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w700,
                 fontSize: 26,
-                color: kPrimaryDarkColor,
+                color: AppColors.redCA0,
               ),
             ),
             const SizedBox(width: 4),
             Text(
               '/seat',
               style: GoogleFonts.poppins(
-                color: kTextSecondaryColor,
+                color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
@@ -412,14 +402,14 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
         Container(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [kPrimaryColor, kPrimaryDarkColor],
+              colors: [AppColors.redCA0, AppColors.redCA0],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: kPrimaryColor.withOpacity(0.3),
+                color: AppColors.redCA0.withOpacity(0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
@@ -453,7 +443,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                     'Could not load seat layout.',
                     snackPosition: SnackPosition.BOTTOM,
                     duration: const Duration(seconds: 3),
-                    backgroundColor: kPrimaryDarkColor,
+                    backgroundColor: AppColors.redCA0,
                     colorText: Colors.white,
                   );
                 }
@@ -463,7 +453,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                   'Failed to load seat layout',
                   snackPosition: SnackPosition.BOTTOM,
                   duration: const Duration(seconds: 3),
-                  backgroundColor: kPrimaryDarkColor,
+                  backgroundColor: AppColors.redCA0,
                   colorText: Colors.white,
                 );
               } finally {
@@ -505,7 +495,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
         children: [
           _buildTimelineRow(
             icon: Icons.radio_button_checked,
-            iconColor: kPrimaryColor,
+            iconColor: AppColors.redCA0,
             time: _formatTime(result.departureTime),
             location: widget.args.fromLocation,
           ),
@@ -515,7 +505,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
               direction: Axis.vertical,
               lineLength: 32,
               lineThickness: 2,
-              dashColor: kTextSecondaryColor.withOpacity(0.4),
+              dashColor: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717.withOpacity(0.4),
             ),
           ),
           Padding(
@@ -524,7 +514,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
               result.duration,
               style: GoogleFonts.poppins(
                 fontSize: 13,
-                color: kAccentColor,
+                color: AppColors.orangeFFB,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -535,12 +525,12 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
               direction: Axis.vertical,
               lineLength: 32,
               lineThickness: 2,
-              dashColor: kTextSecondaryColor.withOpacity(0.4),
+              dashColor: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717.withOpacity(0.4),
             ),
           ),
           _buildTimelineRow(
             icon: Icons.location_on,
-            iconColor: kSuccessColor,
+            iconColor: AppColors.green00A,
             time: _formatTime(result.arrivalTime),
             location: widget.args.toLocation,
           ),
@@ -562,7 +552,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w600,
               fontSize: 16,
-              color: kTextPrimaryColor,
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2,
             ),
           ),
           const SizedBox(width: 16),
@@ -570,7 +560,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
             child: Text(
               location,
               style: GoogleFonts.poppins(
-                color: kTextPrimaryColor,
+                color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -591,20 +581,20 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: kPrimaryLightColor,
+                  color: AppColors.redF9E,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: kPrimaryColor.withOpacity(0.2),
+                      color: AppColors.redCA0.withOpacity(0.2),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.directions_bus_outlined,
                   size: 50,
-                  color: kPrimaryColor,
+                  color: AppColors.redCA0,
                 ),
               ),
               const SizedBox(height: 24),
@@ -613,7 +603,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
-                  color: kTextPrimaryColor,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black2E2,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -622,7 +612,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                 'We couldn’t find any buses for this route. Try adjusting your filters or searching for a different date.',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
-                  color: kTextSecondaryColor,
+                  color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
                   height: 1.6,
                 ),
                 textAlign: TextAlign.center,
@@ -631,7 +621,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
               OutlinedButton(
                 onPressed: () => Get.to(() => const BusHomeScreen()),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: kPrimaryColor, width: 1.5),
+                  side: BorderSide(color: AppColors.redCA0, width: 1.5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -642,7 +632,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    color: kPrimaryColor,
+                    color: AppColors.redCA0,
                   ),
                 ),
               ),
@@ -659,7 +649,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: kPrimaryColor.withOpacity(0.2),
+                color: AppColors.redCA0.withOpacity(0.2),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -678,7 +668,7 @@ class _BusSearchResultsScreenState extends State<BusSearchResultsScreen> with Si
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              backgroundColor: kPrimaryColor,
+              backgroundColor: AppColors.redCA0,
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(

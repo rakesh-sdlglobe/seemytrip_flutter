@@ -5,8 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/common/cards/app_card.dart';
 import '../widgets/hotel_detail_amenities.dart';
 import '../widgets/hotel_detail_header.dart';
@@ -35,6 +33,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => Dialog(
+        backgroundColor: Theme.of(context).cardColor,
         insetPadding: EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: SizedBox(
@@ -60,8 +59,11 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                       point: LatLng(latitude, longitude),
                       width: 40,
                       height: 40,
-                      child:
-                          Icon(Icons.location_pin, color: Colors.red, size: 30),
+                      child: Icon(Icons.location_pin, 
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? const Color(0xFFFF5722) // Orange-red for dark theme
+                          : const Color(0xFFCA0B0B), // Red for light theme
+                        size: 30),
                     ),
                   ],
                 ),
@@ -116,7 +118,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
     final String hotelServicePrice = servicePrice?.toString() ?? '0';
 
     return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(
@@ -133,7 +135,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: AppCard(
-                      color: AppColors.surface,
+                      color: Theme.of(context).cardColor,
                       borderRadius: 12,
                       elevation: 2,
                       margin: EdgeInsets.zero,
@@ -146,7 +148,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                              color: Theme.of(context).textTheme.titleLarge?.color,
                             ),
                           ),
                           SizedBox(height: 12),
@@ -156,11 +158,11 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                               Container(
                                 padding: EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.1),
+                                  color: Theme.of(context).primaryColor.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(Icons.location_on,
-                                    size: 20, color: AppColors.primary),
+                                    size: 20, color: Theme.of(context).primaryColor),
                               ),
                               SizedBox(width: 12),
                               Expanded(
@@ -173,7 +175,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.black87,
+                                        color: Theme.of(context).textTheme.titleMedium?.color,
                                       ),
                                     ),
                                     SizedBox(height: 4),
@@ -182,7 +184,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                           'Unknown Address',
                                       style: TextStyle(
                                         fontSize: 13,
-                                        color: Colors.grey[600],
+                                        color: Theme.of(context).textTheme.bodySmall?.color,
                                       ),
                                     ),
                                   ],
@@ -214,21 +216,21 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: Theme.of(context).primaryColor.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                          color: AppColors.primary.withOpacity(0.2)),
+                                          color: Theme.of(context).primaryColor.withOpacity(0.2)),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Icon(Icons.map_outlined,
-                                            size: 16, color: AppColors.primary),
+                                            size: 16, color: Theme.of(context).primaryColor),
                                         SizedBox(width: 6),
                                         Text(
                                           "View on Map",
                                           style: TextStyle(
-                                            color: AppColors.primary,
+                                            color: Theme.of(context).primaryColor,
                                             fontSize: 13,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -265,7 +267,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                     Text(
                                       rating.toStringAsFixed(1),
                                       style: TextStyle(
-                                        color: Colors.amber[800],
+                                        color: Theme.of(context).brightness == Brightness.dark 
+                                          ? Colors.amber[400]
+                                          : Colors.amber[800],
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -277,7 +281,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                               Text(
                                 "(245 Reviews)",
                                 style: TextStyle(
-                                  color: Colors.grey[600],
+                                  color: Theme.of(context).textTheme.bodySmall?.color,
                                   fontSize: 13,
                                 ),
                               ),
@@ -293,11 +297,11 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Theme.of(context).shadowColor.withOpacity(0.05),
                           blurRadius: 10,
                           offset: Offset(0, 4),
                         ),
@@ -326,7 +330,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.black87,
+                                      color: Theme.of(context).textTheme.titleMedium?.color,
                                     ),
                                   ),
                                   SizedBox(height: 2),
@@ -336,7 +340,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                         : 'Select dates',
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey[700],
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
                                     ),
                                   ),
                                 ],
@@ -347,7 +351,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                 Get.to(() => SelectCheckInDateScreen());
                               },
                               icon: Icon(Icons.edit_outlined,
-                                  color: AppColors.primary, size: 20),
+                                  color: Theme.of(context).primaryColor, size: 20),
                               padding: EdgeInsets.zero,
                               constraints: BoxConstraints(),
                               visualDensity: VisualDensity.compact,
@@ -355,7 +359,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                           ],
                         ),
                         Divider(
-                            height: 24, thickness: 1, color: Colors.grey[200]),
+                            height: 24, thickness: 1, color: Theme.of(context).dividerColor),
                         Row(
                           children: <Widget>[
                             Container(
@@ -377,7 +381,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.black87,
+                                      color: Theme.of(context).textTheme.titleMedium?.color,
                                     ),
                                   ),
                                   SizedBox(height: 2),
@@ -385,7 +389,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                     guests,
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.grey[700],
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
                                     ),
                                   ),
                                 ],
@@ -417,11 +421,11 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Theme.of(context).shadowColor.withOpacity(0.05),
                           blurRadius: 10,
                           offset: Offset(0, 4),
                         ),
@@ -447,7 +451,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black87,
+                                color: Theme.of(context).textTheme.titleMedium?.color,
                               ),
                             ),
                           ],
@@ -476,7 +480,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                   Text(
                                     '4.5/5',
                                     style: TextStyle(
-                                      color: Colors.amber[800],
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                        ? Colors.amber[400]
+                                        : Colors.amber[800],
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -488,7 +494,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                             Text(
                               "(245 Reviews)",
                               style: TextStyle(
-                                color: Colors.grey[600],
+                                color: Theme.of(context).textTheme.bodySmall?.color,
                                 fontSize: 13,
                               ),
                             ),
@@ -499,7 +505,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                           "\"Great location, clean rooms, and friendly staff. The service was excellent and the amenities were top-notch. Highly recommended!\"",
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[700],
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                             fontStyle: FontStyle.italic,
                           ),
                         ),
@@ -513,7 +519,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                             child: Text(
                               'View All Reviews',
                               style: TextStyle(
-                                color: AppColors.primary,
+                                color: Theme.of(context).primaryColor,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -531,10 +537,10 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
         bottomNavigationBar: Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).bottomAppBarTheme.color ?? Theme.of(context).cardColor,
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
                 blurRadius: 10,
                 offset: Offset(0, -2),
               ),
@@ -555,7 +561,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                       Text(
                         'Starting from',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -567,7 +573,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                           Text(
                             '₹${hotelServicePrice}',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                : const Color(0xFFCA0B0B), // Red for light theme
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               height: 1.1,
@@ -579,7 +587,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                             child: Text(
                               'per night',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.textSecondary,
+                                    color: Theme.of(context).textTheme.bodySmall?.color,
                                   ),
                             ),
                           ),
@@ -588,7 +596,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                       Text(
                         'Incl. of taxes & fees',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.success,
+                              color: Colors.green,
                               fontWeight: FontWeight.w500,
                             ),
                       ),
@@ -609,7 +617,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                             ));
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                          ? const Color(0xFFFF5722) // Orange-red for dark theme
+                          : const Color(0xFFCA0B0B), // Red for light theme
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(

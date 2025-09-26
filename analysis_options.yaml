@@ -11,6 +11,7 @@ analyzer:
     implicit-dynamic: false
   errors:
     # Treat missing required parameters as a warning (not error)
+    avoid_classes_with_only_static_members: ignore
     missing_required_param: warning
     # Treat missing returns as a warning (not error)
     missing_return: warning

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../../../core/utils/colors.dart';
+import '../../../../../../core/theme/app_colors.dart';
 import '../../../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../../../core/widgets/common_button_widget.dart';
 import '../../../../../../core/widgets/common_text_widget.dart';
@@ -17,9 +17,9 @@ class AddTravellerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -27,11 +27,11 @@ class AddTravellerScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.close, color: white, size: 20),
+          child: Icon(Icons.close, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'Add Traveller',
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -40,13 +40,13 @@ class AddTravellerScreen extends StatelessWidget {
         children: [
           Container(
             width: Get.width,
-            color: orangeEB9.withOpacity(0.2),
+            color: AppColors.orangeEB9.withValues(alpha: 0.2),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: CommonTextWidget.PoppinsRegular(
                 text: 'Enter name as mentioned on your passport for '
                     'Goverment approved IDs.',
-                color: black2E2,
+                color: AppColors.black2E2,
                 fontSize: 13,
               ),
             ),
@@ -62,18 +62,18 @@ class AddTravellerScreen extends StatelessWidget {
                     width: Get.width,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: greyE2E, width: 1),
+                      border: Border.all(color: AppColors.greyE2E, width: 1),
                     ),
                     child: ListTile(
                       leading: SvgPicture.asset(scan),
                       title: CommonTextWidget.PoppinsMedium(
                         text: 'Scan to auto-fill this form!',
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 13,
                       ),
                       subtitle: CommonTextWidget.PoppinsRegular(
                         text: 'Fetch details from your passport',
-                        color: grey717,
+                        color: AppColors.grey717,
                         fontSize: 13,
                       ),
                       trailing: InkWell(
@@ -86,7 +86,7 @@ class AddTravellerScreen extends StatelessWidget {
                         },
                         child: CommonTextWidget.PoppinsMedium(
                           text: 'SCAN',
-                          color: redCA0,
+                          color: AppColors.redCA0,
                           fontSize: 13,
                         ),
                       ),
@@ -95,7 +95,7 @@ class AddTravellerScreen extends StatelessWidget {
                   SizedBox(height: 30),
                   CommonTextWidget.PoppinsMedium(
                     text: 'GENDER',
-                    color: grey717,
+                    color: AppColors.grey717,
                     fontSize: 14,
                   ),
                   SizedBox(height: 15),
@@ -106,13 +106,13 @@ class AddTravellerScreen extends StatelessWidget {
                           height: 50,
                           width: Get.width,
                           decoration: BoxDecoration(
-                            border: Border.all(color: greyE2E, width: 1),
+                            border: Border.all(color: AppColors.greyE2E, width: 1),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Center(
                             child: CommonTextWidget.PoppinsMedium(
                               text: 'MALE',
-                              color: redCA0,
+                              color: AppColors.redCA0,
                               fontSize: 16,
                             ),
                           ),
@@ -124,13 +124,13 @@ class AddTravellerScreen extends StatelessWidget {
                           height: 50,
                           width: Get.width,
                           decoration: BoxDecoration(
-                            border: Border.all(color: greyE2E, width: 1),
+                            border: Border.all(color: AppColors.greyE2E, width: 1),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Center(
                             child: CommonTextWidget.PoppinsMedium(
                               text: 'FEMALE',
-                              color: redCA0,
+                              color: AppColors.redCA0,
                               fontSize: 16,
                             ),
                           ),
@@ -153,7 +153,7 @@ class AddTravellerScreen extends StatelessWidget {
                   Spacer(),
                   CommonButtonWidget.button(
                     text: 'CONFIRM',
-                    buttonColor: redCA0,
+                    buttonColor: AppColors.redCA0,
                     onTap: () {
                       Get.back();
                     },

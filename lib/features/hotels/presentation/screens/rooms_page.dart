@@ -3,7 +3,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import '../../../../core/theme/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -28,7 +27,7 @@ class RoomsPage extends StatelessWidget {
         builder:
             (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
           if (!snapshot.hasData) {
-            return _buildShimmerEffect(height: height);
+            return _buildShimmerEffect(height: height, context: context);
           }
 
           final SharedPreferences prefs = snapshot.data!;
@@ -43,11 +42,11 @@ class RoomsPage extends StatelessWidget {
               fit: BoxFit.cover,
               errorBuilder: (BuildContext context, Object error,
                       StackTrace? stackTrace) =>
-                  _buildErrorWidget(height: height),
+                  _buildErrorWidget(height: height, context: context),
               loadingBuilder: (BuildContext context, Widget child,
                   ImageChunkEvent? loadingProgress) {
                 if (loadingProgress == null) return child;
-                return _buildShimmerEffect(height: height);
+                return _buildShimmerEffect(height: height, context: context);
               },
             );
           }
@@ -62,35 +61,35 @@ class RoomsPage extends StatelessWidget {
             height: height,
             fit: BoxFit.cover,
             placeholder: (BuildContext context, String url) =>
-                _buildShimmerEffect(height: height),
+                _buildShimmerEffect(height: height, context: context),
             errorWidget: (BuildContext context, String url, Object error) =>
-                _buildErrorWidget(height: height),
+                _buildErrorWidget(height: height, context: context),
           );
         },
       );
 
-  Widget _buildShimmerEffect({required double height}) => Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
+  Widget _buildShimmerEffect({required double height, required BuildContext context}) => Shimmer.fromColors(
+        baseColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[700]! : Colors.grey[300]!,
+        highlightColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[600]! : Colors.grey[100]!,
         child: Container(
           width: double.infinity,
           height: height,
-          color: AppColors.surface,
+          color: Theme.of(context).cardColor,
         ),
       );
 
-  Widget _buildErrorWidget({required double height}) => Container(
+  Widget _buildErrorWidget({required double height, required BuildContext context}) => Container(
         width: double.infinity,
         height: height,
-        color: AppColors.surface,
+        color: Theme.of(context).cardColor,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Icon(Icons.broken_image, size: 40, color: Colors.grey[400]),
+            Icon(Icons.broken_image, size: 40, color: Theme.of(context).iconTheme.color?.withOpacity(0.5)),
             SizedBox(height: 8),
             Text(
               'Failed to load image',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color),
             ),
           ],
         ),
@@ -111,20 +110,20 @@ class RoomsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Room', style: TextStyle(color: AppColors.surface)),
-        backgroundColor: AppColors.primary,
+        title: Text('Select Room', style: TextStyle(color: Theme.of(context).appBarTheme.titleTextStyle?.color ?? Theme.of(context).colorScheme.onPrimary)),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor ?? Theme.of(context).primaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.surface),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).colorScheme.onPrimary),
           onPressed: () => Get.back(),
         ),
       ),
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: hotelRooms.isEmpty
           ? Center(
               child: Text(
                 'No rooms available',
-                style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodySmall?.color),
               ),
             )
           : ListView.builder(
@@ -163,16 +162,16 @@ class RoomsPage extends StatelessWidget {
                 return Container(
                   margin: EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
+                        color: Theme.of(context).shadowColor.withOpacity(0.03),
                         blurRadius: 15,
                         offset: Offset(0, 6),
                       ),
                     ],
-                    border: Border.all(color: Colors.grey[100]!),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,11 +195,15 @@ class RoomsPage extends StatelessWidget {
                                 Container(
                                   padding: EdgeInsets.all(6),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary.withOpacity(0.1),
+                                    color: Theme.of(context).brightness == Brightness.dark
+                                      ? Theme.of(context).primaryColor.withOpacity(0.2)
+                                      : Theme.of(context).primaryColor.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Icon(Icons.king_bed_rounded,
-                                      color: AppColors.primary, size: 20),
+                                      color: Theme.of(context).brightness == Brightness.dark
+                                        ? Theme.of(context).primaryColor.withOpacity(0.9)
+                                        : Theme.of(context).primaryColor, size: 20),
                                 ),
                                 SizedBox(width: 12),
                                 Expanded(
@@ -213,7 +216,7 @@ class RoomsPage extends StatelessWidget {
                                         style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 17,
-                                          color: AppColors.textPrimary,
+                                          color: Theme.of(context).textTheme.titleLarge?.color,
                                           letterSpacing: -0.2,
                                         ),
                                       ),
@@ -222,7 +225,7 @@ class RoomsPage extends StatelessWidget {
                                         '${searchParams['adults'] ?? 2} Adults • ${searchParams['rooms'] ?? 1} Room',
                                         style: TextStyle(
                                           fontSize: 13,
-                                          color: AppColors.textSecondary,
+                                          color: Theme.of(context).textTheme.bodySmall?.color,
                                         ),
                                       ),
                                     ],
@@ -241,17 +244,17 @@ class RoomsPage extends StatelessWidget {
                                     "body": Style(
                                       fontSize: FontSize(13),
                                       fontFamily: 'Poppins',
-                                      color: AppColors.textSecondary,
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
                                       margin: Margins.zero,
                                       padding: HtmlPaddings.zero,
                                     ),
                                     "strong": Style(
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                                      color: Theme.of(context).textTheme.titleMedium?.color,
                                     ),
                                     "b": Style(
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                                      color: Theme.of(context).textTheme.titleMedium?.color,
                                     ),
                                   },
                                 ),
@@ -264,7 +267,7 @@ class RoomsPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                                  color: Theme.of(context).textTheme.titleMedium?.color,
                                 ),
                               ),
                               SizedBox(height: 8),
@@ -277,23 +280,29 @@ class RoomsPage extends StatelessWidget {
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 10, vertical: 6),
                                           decoration: BoxDecoration(
-                                            color: Colors.grey[50],
+                                            color: Theme.of(context).brightness == Brightness.dark
+                                              ? Colors.grey[800]
+                                              : Colors.grey[50],
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                             border: Border.all(
-                                                color: Colors.grey[200]!),
+                                                color: Theme.of(context).brightness == Brightness.dark
+                                                  ? Colors.grey[700]!
+                                                  : Colors.grey[200]!),
                                           ),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
                                               Icon(Icons.check_circle,
                                                   size: 14,
-                                                  color: AppColors.primary),
+                                                  color: Theme.of(context).brightness == Brightness.dark
+                                                    ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                                    : const Color(0xFFCA0B0B)), // Red for light theme
                                               SizedBox(width: 6),
                                               Text(
                                                 a.toString(),
                                                 style: TextStyle(
-                                                  color: Colors.grey[800],
+                                                  color: Theme.of(context).textTheme.bodyMedium?.color,
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -309,9 +318,13 @@ class RoomsPage extends StatelessWidget {
                               padding: EdgeInsets.symmetric(
                                   vertical: 16, horizontal: 16),
                               decoration: BoxDecoration(
-                                color: Colors.grey[50],
+                                color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.grey[800]
+                                  : Colors.grey[50],
                                 borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: Colors.grey[100]!),
+                                border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.grey[700]!
+                                  : Colors.grey[100]!),
                               ),
                               child: Row(
                                 mainAxisAlignment:
@@ -325,7 +338,7 @@ class RoomsPage extends StatelessWidget {
                                         'Starting from',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: AppColors.textSecondary,
+                                          color: Theme.of(context).textTheme.bodySmall?.color,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -335,7 +348,9 @@ class RoomsPage extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w700,
-                                            color: AppColors.primary,
+                                            color: Theme.of(context).brightness == Brightness.dark
+                                              ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                              : const Color(0xFFCA0B0B), // Red for light theme
                                           ),
                                           children: <InlineSpan>[
                                             TextSpan(text: '₹$price '),
@@ -343,7 +358,7 @@ class RoomsPage extends StatelessWidget {
                                               text: 'per night',
                                               style: TextStyle(
                                                 fontSize: 12,
-                                                color: AppColors.textSecondary,
+                                                color: Theme.of(context).textTheme.bodySmall?.color,
                                                 fontWeight: FontWeight.normal,
                                               ),
                                             ),
@@ -354,7 +369,7 @@ class RoomsPage extends StatelessWidget {
                                       Text(
                                         '+ ₹$taxes taxes & fees',
                                         style: TextStyle(
-                                          color: AppColors.textSecondary,
+                                          color: Theme.of(context).textTheme.bodySmall?.color,
                                           fontSize: 11,
                                         ),
                                       ),
@@ -365,15 +380,21 @@ class RoomsPage extends StatelessWidget {
                                       padding: EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 6),
                                       decoration: BoxDecoration(
-                                        color: Colors.green[50],
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                          ? Colors.green.withOpacity(0.2)
+                                          : Colors.green[50],
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
-                                            color: Colors.green[100]!),
+                                            color: Theme.of(context).brightness == Brightness.dark
+                                              ? Colors.green.withOpacity(0.3)
+                                              : Colors.green[100]!),
                                       ),
                                       child: Text(
                                         room['Offer'],
                                         style: TextStyle(
-                                          color: Colors.green[800],
+                                          color: Theme.of(context).brightness == Brightness.dark
+                                            ? Colors.green[300]
+                                            : Colors.green[800],
                                           fontWeight: FontWeight.w600,
                                           fontSize: 12,
                                         ),
@@ -386,7 +407,7 @@ class RoomsPage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Divider(color: Colors.grey[200], height: 1, thickness: 1),
+                      Divider(color: Theme.of(context).dividerColor, height: 1, thickness: 1),
                       Padding(
                         padding: const EdgeInsets.all(16)
                             .copyWith(top: 12, bottom: 12),
@@ -400,7 +421,7 @@ class RoomsPage extends StatelessWidget {
                                     'Total for your stay',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: AppColors.textSecondary,
+                                      color: Theme.of(context).textTheme.bodySmall?.color,
                                     ),
                                   ),
                                   SizedBox(height: 2),
@@ -409,7 +430,7 @@ class RoomsPage extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
-                                      color: AppColors.textPrimary,
+                                      color: Theme.of(context).textTheme.titleLarge?.color,
                                     ),
                                   ),
                                 ],
@@ -444,8 +465,10 @@ class RoomsPage extends StatelessWidget {
                                       ));
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: AppColors.surface,
+                                  backgroundColor: Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                    : const Color(0xFFCA0B0B), // Red for light theme
+                                  foregroundColor: Colors.white,
                                   padding: EdgeInsets.symmetric(
                                       vertical: 14, horizontal: 16),
                                   shape: RoundedRectangleBorder(

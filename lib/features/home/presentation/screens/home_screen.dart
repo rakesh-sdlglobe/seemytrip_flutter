@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common_text_widget.dart';
 import '../../../../core/widgets/lists_widget.dart';
 import '../../../../main.dart';
@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: context.scaffoldBg,
       key: _key,
       body: ScrollConfiguration(
         behavior: MyBehavior(),
@@ -59,12 +59,12 @@ class HomeScreen extends StatelessWidget {
                           //   children: [
                           //     CommonTextWidget.PoppinsRegular(
                           //       text: "Good Morning",
-                          //       color: white,
+                          //       color: AppColors.white,
                           //       fontSize: 14,
                           //     ),
                           //     CommonTextWidget.PoppinsMedium(
                           //       text: "Andrew Smith",
-                          //       color: white,
+                          //       color: AppColors.white,
                           //       fontSize: 16,
                           //     ),
                           //   ],
@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                           height: 44,
                           width: Get.width,
                           decoration: BoxDecoration(
-                            color: white,
+                            color: context.cardBg,
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Padding(
@@ -96,11 +96,11 @@ class HomeScreen extends StatelessWidget {
                                 horizontal: 15, vertical: 10),
                             child: Row(
                               children: [
-                                Icon(CupertinoIcons.search, color: grey717),
+                                Icon(CupertinoIcons.search, color: context.secondaryText),
                                 SizedBox(width: 15),
                                 CommonTextWidget.PoppinsRegular(
-                                  text: "Try Mumbai to Pune Bus....  ",
-                                  color: grey717,
+                                  text: 'Try Mumbai to Pune Bus....  ',
+                                  color: context.secondaryText,
                                   fontSize: 15,
                                 ),
                               ],
@@ -116,7 +116,7 @@ class HomeScreen extends StatelessWidget {
                 padding: EdgeInsets.only(top: 250),
                 child: Container(
                   width: Get.width,
-                  color: white,
+                  color: context.scaffoldBg,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -137,8 +137,8 @@ class HomeScreen extends StatelessWidget {
                                       height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "airportCabs".tr,
-                                    color: black2E2,
+                                    text: 'airportCabs'.tr,
+                                    color: context.primaryText,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
                                   ),
@@ -155,8 +155,8 @@ class HomeScreen extends StatelessWidget {
                                   Image.asset(homeStays, height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "homeStays".tr,
-                                    color: black2E2,
+                                    text: 'homeStays'.tr,
+                                    color: context.primaryText,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
                                   ),
@@ -174,8 +174,8 @@ class HomeScreen extends StatelessWidget {
                                       height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "outstationCabs".tr,
-                                    color: black2E2,
+                                    text: 'outstationCabs'.tr,
+                                    color: context.primaryText,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
                                   ),
@@ -193,8 +193,8 @@ class HomeScreen extends StatelessWidget {
                                       height: 55, width: 55),
                                   SizedBox(height: 8),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "hourlyStays".tr,
-                                    color: black2E2,
+                                    text: 'hourlyStays'.tr,
+                                    color: context.primaryText,
                                     fontSize: 12,
                                     textAlign: TextAlign.center,
                                   ),
@@ -209,10 +209,10 @@ class HomeScreen extends StatelessWidget {
                         height: 50,
                         width: Get.width,
                         decoration: BoxDecoration(
-                          color: white,
+                          color: context.cardBg,
                           boxShadow: [
                             BoxShadow(
-                              color: grey656.withOpacity(0.25),
+                              color: AppColors.grey656.withOpacity(0.25),
                               blurRadius: 5,
                             ),
                           ],
@@ -227,15 +227,15 @@ class HomeScreen extends StatelessWidget {
                             itemBuilder: (context, index) => Padding(
                               padding: EdgeInsets.only(right: 9),
                               child: InkWell(
-                                onTap: Lists.homeList1[index]["onTap"],
+                                onTap: Lists.homeList1[index]['onTap'],
                                 child: Row(
                                   children: [
                                     SvgPicture.asset(
-                                        Lists.homeList1[index]["image"]),
+                                        Lists.homeList1[index]['image']),
                                     SizedBox(width: 6),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: Lists.homeList1[index]["text"],
-                                      color: black2E2,
+                                      text: Lists.homeList1[index]['text'],
+                                      color: context.primaryText,
                                       fontSize: 12,
                                     ),
                                     SizedBox(width: 9),
@@ -244,7 +244,7 @@ class HomeScreen extends StatelessWidget {
                                         : SizedBox(
                                             height: 30,
                                             child: VerticalDivider(
-                                              color: greyD9D,
+                                              color: AppColors.greyD9D,
                                               thickness: 1,
                                             ),
                                           ),
@@ -259,8 +259,8 @@ class HomeScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "Welcome Offers for you!".tr,
-                          color: black2E2,
+                          text: 'Welcome Offers for you!'.tr,
+                          color: context.primaryText,
                           fontSize: 16,
                         ),
                       ),
@@ -291,8 +291,8 @@ class HomeScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: CommonTextWidget.PoppinsSemiBold(
-                          text: "Tourism Flagship stores".tr,
-                          color: black2E2,
+                          text: 'Tourism Flagship stores'.tr,
+                          color: context.primaryText,
                           fontSize: 16,
                         ),
                       ),
@@ -304,10 +304,10 @@ class HomeScreen extends StatelessWidget {
                           width: Get.width,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: white,
+                            color: AppColors.white,
                             boxShadow: [
                               BoxShadow(
-                                color: grey656.withOpacity(0.25),
+                                color: AppColors.grey656.withOpacity(0.25),
                                 blurRadius: 5,
                               ),
                             ],
@@ -336,8 +336,8 @@ class HomeScreen extends StatelessWidget {
                                   Image.asset(saudiaImage,
                                       height: 50, width: 85),
                                   CommonTextWidget.PoppinsBold(
-                                    text: "Saudi Arabia, \nHere We Come!",
-                                    color: black2E2,
+                                    text: 'Saudi Arabia, \nHere We  Come!',
+                                    color: context.primaryText,
                                     fontSize: 14,
                                   ),
                                   SizedBox(height: 8),
@@ -346,12 +346,12 @@ class HomeScreen extends StatelessWidget {
                                     width: 95,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
-                                      color: redCA0,
+                                      color: AppColors.redCA0,
                                     ),
                                     child: Center(
                                       child: CommonTextWidget.PoppinsMedium(
-                                        text: "Explore Now!",
-                                        color: white,
+                                        text: 'Explore Now!',
+                                        color: AppColors.white,
                                         fontSize: 12,
                                       ),
                                     ),
@@ -369,20 +369,20 @@ class HomeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CommonTextWidget.PoppinsSemiBold(
-                              text: "Latest Collections for you",
-                              color: black2E2,
+                              text: 'Latest Collections for you',
+                              color: context.primaryText,
                               fontSize: 16,
                             ),
                             Row(
                               children: [
                                 CommonTextWidget.PoppinsRegular(
-                                  text: "View All",
-                                  color: redCA0,
+                                  text: 'View All',
+                                  color: AppColors.redCA0,
                                   fontSize: 14,
                                 ),
                                 SizedBox(width: 8),
                                 Icon(Icons.arrow_forward_ios,
-                                    color: redCA0, size: 18),
+                                    color: AppColors.redCA0, size: 18),
                               ],
                             ),
                           ],
@@ -401,10 +401,10 @@ class HomeScreen extends StatelessWidget {
                             width: Get.width,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              color: white,
+                              color: context.cardBg,
                               boxShadow: [
                                 BoxShadow(
-                                  color: grey656.withOpacity(0.25),
+                                  color: AppColors.grey656.withOpacity(0.25),
                                   blurRadius: 5,
                                 ),
                               ],
@@ -421,7 +421,7 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                     image: DecorationImage(
                                       image: AssetImage(
-                                        Lists.homeList2[index]["image"],
+                                        Lists.homeList2[index]['image'],
                                       ),
                                       fit: BoxFit.fill,
                                     ),
@@ -439,38 +439,38 @@ class HomeScreen extends StatelessWidget {
                                       Row(
                                         children: [
                                           Icon(Icons.location_on,
-                                              color: redCA0, size: 18),
+                                              color: AppColors.redCA0, size: 18),
                                           SizedBox(width: 7),
                                           CommonTextWidget.PoppinsSemiBold(
                                             text: Lists.homeList2[index]
-                                                ["text1"],
-                                            color: redCA0,
+                                                ['text1'],
+                                            color: AppColors.redCA0,
                                             fontSize: 10,
                                           ),
                                         ],
                                       ),
                                       CommonTextWidget.PoppinsMedium(
-                                        text: Lists.homeList2[index]["text2"],
-                                        color: black2E2,
+                                        text: Lists.homeList2[index]['text2'],
+                                        color: context.primaryText,
                                         fontSize: 10,
                                       ),
                                       CommonTextWidget.PoppinsMedium(
-                                        text: "5-8 Working Days",
-                                        color: blue1F9,
+                                        text: '5-8 Working Days',
+                                        color: AppColors.blue1F9,
                                         fontSize: 12,
                                       ),
                                       Row(
                                         children: [
                                           CommonTextWidget.PoppinsMedium(
                                             text: Lists.homeList2[index]
-                                                ["text3"],
-                                            color: black2E2,
+                                                ['text3'],
+                                            color: context.primaryText,
                                             fontSize: 12,
                                           ),
                                           SizedBox(width: 10),
                                           CommonTextWidget.PoppinsRegular(
-                                            text: "Per Person",
-                                            color: grey717,
+                                            text: 'Per Person',
+                                            color: AppColors.grey717,
                                             fontSize: 10,
                                           ),
                                         ],
@@ -496,11 +496,11 @@ class HomeScreen extends StatelessWidget {
                       height: 88,
                       width: Get.width,
                       decoration: BoxDecoration(
-                        color: white,
+                        color: context.cardBg,
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: grey757.withOpacity(0.25),
+                            color: AppColors.grey757.withOpacity(0.25),
                             blurRadius: 6,
                             offset: Offset(0, 1),
                           ),
@@ -524,7 +524,7 @@ class HomeScreen extends StatelessWidget {
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
                                 text: 'flight'.tr,
-                                color: black2E2,
+                                color: context.primaryText,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,
                               ),
@@ -540,8 +540,8 @@ class HomeScreen extends StatelessWidget {
                               Image.asset(train, height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "train".tr,
-                                color: black2E2,
+                                  text: 'train'.tr,
+                                  color: context.primaryText,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,
                               ),
@@ -557,8 +557,8 @@ class HomeScreen extends StatelessWidget {
                               Image.asset(hotel, height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "hotel".tr,
-                                color: black2E2,
+                                  text: 'hotel'.tr,
+                                  color: context.primaryText,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,
                               ),
@@ -576,7 +576,7 @@ class HomeScreen extends StatelessWidget {
                         //       SizedBox(height: 8),
                         //       CommonTextWidget.PoppinsMedium(
                         //         text: "holidayPackages".tr,
-                        //         color: black2E2,
+                          //         color: context.primaryText,
                         //         fontSize: 12,
                         //         textAlign: TextAlign.center,
                         //       ),
@@ -593,8 +593,8 @@ class HomeScreen extends StatelessWidget {
                                   height: 55, width: 55),
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Bus".tr,
-                                color: black2E2,
+                                  text: 'Bus'.tr,
+                                  color: context.primaryText,
                                 fontSize: 12,
                                 textAlign: TextAlign.center,
                               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seemytrip/features/shared/presentation/controllers/suitable_for_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_button_widget.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:seemytrip/core/widgets/lists_widget.dart';
@@ -10,11 +10,10 @@ class SuitableScreen extends StatelessWidget {
   SuitableScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -22,19 +21,19 @@ class SuitableScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.close, color: white, size: 20),
+          child: Icon(Icons.close, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Suitable For",
-          color: white,
+          text: 'Suitable For',
+          color: AppColors.white,
           fontSize: 18,
         ),
-        actions: [
+        actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 20, right: 24),
             child: CommonTextWidget.PoppinsMedium(
-              text: "CLEAR ALL",
-              color: white,
+              text: 'CLEAR ALL',
+              color: AppColors.white,
               fontSize: 12,
             ),
           ),
@@ -42,13 +41,13 @@ class SuitableScreen extends StatelessWidget {
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: CommonTextWidget.PoppinsMedium(
-              text: "Suitable For",
-              color: black2E2,
+              text: 'Suitable For',
+              color: AppColors.black2E2,
               fontSize: 14,
             ),
           ),
@@ -67,63 +66,59 @@ class SuitableScreen extends StatelessWidget {
               physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.only(top: 15, left: 24, right: 75, bottom: 5),
               itemCount: Lists.suitableForList.length,
-              itemBuilder: (context, index) {
-                return InkWell(
+              itemBuilder: (BuildContext context, int index) => InkWell(
                   onTap: () {
                     controller.onIndexChange(index);
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      boxShadow: [
+                      boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: grey515.withOpacity(0.25),
+                          color: AppColors.grey515.withOpacity(0.25),
                           offset: Offset(0, 1),
                           blurRadius: 6,
                         ),
                       ],
                       border: Border.all(
                           color:
-                              controller.selectedIndex == index ? redCA0 : white),
-                      color: white,
+                              controller.selectedIndex == index ? AppColors.redCA0 : AppColors.white),
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: <Widget>[
                         CommonTextWidget.PoppinsRegular(
-                          text: Lists.suitableForList[index]["text1"],
+                          text: Lists.suitableForList[index]['text1'],
                           color: controller.selectedIndex == index
-                              ? redCA0
-                              : black2E2,
+                              ? AppColors.redCA0
+                              : AppColors.black2E2,
                           fontSize: 12,
                         ),
                         CommonTextWidget.PoppinsRegular(
-                          text: Lists.suitableForList[index]["text2"],
+                          text: Lists.suitableForList[index]['text2'],
                           color: controller.selectedIndex == index
-                              ? redCA0
-                              : grey717,
+                              ? AppColors.redCA0
+                              : AppColors.grey717,
                           fontSize: 12,
                         ),
                       ],
                     ),
                   ),
-                );
-              },
+                ),
             ),
           ),
           Spacer(),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: CommonButtonWidget.button(
-              buttonColor: redCA0,
+              buttonColor: AppColors.redCA0,
               onTap: () {},
-              text: "APPLY",
+              text: 'APPLY',
             ),
           ),
           SizedBox(height: 60),
         ],
       ),
     );
-  }
 }

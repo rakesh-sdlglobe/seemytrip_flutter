@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../core/widgets/common_button_widget.dart';
 import '../../../../core/widgets/common_text_widget.dart';
@@ -25,9 +25,9 @@ class HotelReviewBookingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -35,11 +35,11 @@ class HotelReviewBookingScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'Review Booking',
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -66,10 +66,10 @@ class HotelReviewBookingScreen extends StatelessWidget {
                   child: Container(
                     width: Get.width,
                     decoration: BoxDecoration(
-                      color: white,
+                      color: AppColors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: grey515.withOpacity(0.25),
+                          color: AppColors.grey515.withValues(alpha: 0.25),
                           blurRadius: 6,
                           offset: Offset(0, 1),
                         ),
@@ -83,7 +83,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
                             text: 'I am booking for',
-                            color: black2E2,
+                            color: AppColors.black2E2,
                             fontSize: 14,
                           ),
                           SizedBox(height: 10),
@@ -108,12 +108,12 @@ class HotelReviewBookingScreen extends StatelessWidget {
                                         child: controller.selectedIndex == index
                                             ? SvgPicture.asset(selectedIcon)
                                             : SvgPicture.asset(unSelectedIcon,
-                                                color: greyD0D),
+                                                colorFilter: ColorFilter.mode(AppColors.greyD0D, BlendMode.srcIn)),
                                       ),
                                       SizedBox(width: 8),
                                       CommonTextWidget.PoppinsRegular(
                                         text: Lists.cabTerminal2List1[index],
-                                        color: black2E2,
+                                        color: AppColors.black2E2,
                                         fontSize: 14,
                                       ),
                                     ],
@@ -125,7 +125,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                           SizedBox(height: 15),
                           CommonTextWidget.PoppinsRegular(
                             text: 'Name',
-                            color: black2E2,
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                           SizedBox(height: 5),
@@ -135,8 +135,8 @@ class HotelReviewBookingScreen extends StatelessWidget {
                                 height: 45,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
-                                  color: grey9B9.withOpacity(0.25),
-                                  border: Border.all(color: greyE2E, width: 1),
+                                  color: AppColors.grey9B9.withValues(alpha: 0.25),
+                                  border: Border.all(color: AppColors.greyE2E, width: 1),
                                 ),
                                 child: Center(
                                   child: Padding(
@@ -146,13 +146,13 @@ class HotelReviewBookingScreen extends StatelessWidget {
                                       children: [
                                         CommonTextWidget.PoppinsRegular(
                                           text: 'Mr.',
-                                          color: black2E2,
+                                          color: AppColors.black2E2,
                                           fontSize: 14,
                                         ),
                                         SizedBox(width: 5),
                                         SvgPicture.asset(arrowDownIcon,
                                             colorFilter: ColorFilter.mode(
-                                                black2E2, BlendMode.srcIn)),
+                                                AppColors.black2E2, BlendMode.srcIn)),
                                       ],
                                     ),
                                   ),
@@ -179,7 +179,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                           SizedBox(height: 15),
                           CommonTextWidget.PoppinsRegular(
                             text: 'Email',
-                            color: black2E2,
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                           SizedBox(height: 5),
@@ -193,7 +193,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                             padding: EdgeInsets.symmetric(horizontal: 24),
                             child: CommonTextWidget.PoppinsRegular(
                               text: 'Contact No',
-                              color: black2E2,
+                              color: AppColors.black2E2,
                               fontSize: 12,
                             ),
                           ),
@@ -204,8 +204,8 @@ class HotelReviewBookingScreen extends StatelessWidget {
                                 height: 45,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
-                                  color: grey9B9.withValues(alpha: 0.25),
-                                  border: Border.all(color: greyE2E, width: 1),
+                                  color: AppColors.grey9B9.withValues(alpha: 0.25),
+                                  border: Border.all(color: AppColors.greyE2E, width: 1),
                                 ),
                                 child: Center(
                                   child: Padding(
@@ -215,12 +215,12 @@ class HotelReviewBookingScreen extends StatelessWidget {
                                       children: [
                                         CommonTextWidget.PoppinsRegular(
                                           text: '+91.',
-                                          color: black2E2,
+                                          color: AppColors.black2E2,
                                           fontSize: 14,
                                         ),
                                         SizedBox(width: 5),
                                         SvgPicture.asset(arrowDownIcon,
-                                            color: black2E2),
+                                            colorFilter: ColorFilter.mode(AppColors.black2E2, BlendMode.srcIn)),
                                       ],
                                     ),
                                   ),
@@ -239,7 +239,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                           SizedBox(height: 18),
                           Image.asset(hotelReviewBookingImage4, height: 20),
                           SizedBox(height: 10),
-                          Divider(color: greyE8E, thickness: 1),
+                          Divider(color: AppColors.greyE8E, thickness: 1),
                           SizedBox(height: 5),
                           InkWell(
                             onTap: () {
@@ -247,7 +247,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                             },
                             child: CommonTextWidget.PoppinsSemiBold(
                               text: '+ Add Another Guest',
-                              color: blue1F9,
+                              color: AppColors.blue1F9,
                               fontSize: 13,
                             ),
                           ),
@@ -265,7 +265,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: FontFamily.PoppinsRegular,
                         fontSize: 12,
-                        color: grey969,
+                        color: AppColors.grey969,
                       ),
                       children: <TextSpan>[
                         TextSpan(
@@ -273,21 +273,21 @@ class HotelReviewBookingScreen extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 12,
                               fontFamily: FontFamily.PoppinsRegular,
-                              color: blue1F9),
+                              color: AppColors.blue1F9),
                         ),
                         TextSpan(
                           text: 'and ',
                           style: TextStyle(
                               fontSize: 12,
                               fontFamily: FontFamily.PoppinsRegular,
-                              color: grey969),
+                              color: AppColors.grey969),
                         ),
                         TextSpan(
                           text: 'Cancellation & Property Booking Policies',
                           style: TextStyle(
                               fontSize: 12,
                               fontFamily: FontFamily.PoppinsRegular,
-                              color: blue1F9),
+                              color: AppColors.blue1F9),
                         ),
                       ],
                     ),
@@ -301,7 +301,7 @@ class HotelReviewBookingScreen extends StatelessWidget {
                     onTap: () {
                       Get.to(() => SelectPaymentMethodScreen());
                     },
-                    buttonColor: redCA0,
+                    buttonColor: AppColors.redCA0,
                   ),
                 ),
                 SizedBox(height: 60),

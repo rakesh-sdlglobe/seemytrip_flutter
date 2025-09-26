@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_button_widget.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:seemytrip/core/widgets/lists_widget.dart';
@@ -10,11 +10,10 @@ class EditYourSearchScreen extends StatelessWidget {
   EditYourSearchScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -22,11 +21,11 @@ class EditYourSearchScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.close, color: white, size: 20),
+          child: Icon(Icons.close, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Edit your search",
-          color: white,
+          text: 'Edit your search',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -45,8 +44,8 @@ class EditYourSearchScreen extends StatelessWidget {
                 child: Container(
                   width: Get.width,
                   decoration: BoxDecoration(
-                    color: grey9B9.withOpacity(0.15),
-                    border: Border.all(color: greyE2E, width: 1),
+                    color: AppColors.grey9B9.withValues(alpha: 0.15),
+                    border: Border.all(color: AppColors.greyE2E, width: 1),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: ListTile(
@@ -55,12 +54,12 @@ class EditYourSearchScreen extends StatelessWidget {
                     ),
                     title: CommonTextWidget.PoppinsMedium(
                       text: Lists.editYourSearchList[index]["text1"],
-                      color: grey888,
+                      color: AppColors.grey888,
                       fontSize: 14,
                     ),
                     subtitle: CommonTextWidget.PoppinsSemiBold(
                       text: Lists.editYourSearchList[index]["text2"],
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                   ),
@@ -69,14 +68,13 @@ class EditYourSearchScreen extends StatelessWidget {
             ),
             Spacer(),
             CommonButtonWidget.button(
-              text: "SEARCH",
+              text: 'SEARCH',
               onTap: () {},
-              buttonColor: redCA0,
+              buttonColor: AppColors.redCA0,
             ),
             SizedBox(height: 60),
           ],
         ),
       ),
     );
-  }
 }

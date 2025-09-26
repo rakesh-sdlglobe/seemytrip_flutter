@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class BusCalendarWidget extends StatefulWidget {
-  final DateTime? selectedDate;
-  final Function(DateTime) onDateSelected;
-  final DateTime? firstDay;
-  final DateTime? lastDay;
 
   const BusCalendarWidget({
     Key? key,
@@ -15,6 +11,10 @@ class BusCalendarWidget extends StatefulWidget {
     this.firstDay,
     this.lastDay,
   }) : super(key: key);
+  final DateTime? selectedDate;
+  final Function(DateTime) onDateSelected;
+  final DateTime? firstDay;
+  final DateTime? lastDay;
 
   @override
   _BusCalendarWidgetState createState() => _BusCalendarWidgetState();
@@ -94,11 +94,11 @@ class _BusCalendarWidgetState extends State<BusCalendarWidget> {
         calendarFormat: CalendarFormat.month,
         calendarStyle: CalendarStyle(
           todayDecoration: BoxDecoration(
-            color: redCA0.withOpacity(0.3),
+            color: AppColors.redCA0.withValues(alpha: 0.3),
             shape: BoxShape.circle,
           ),
           selectedDecoration: BoxDecoration(
-            color: redCA0,
+            color: AppColors.redCA0,
             shape: BoxShape.circle,
           ),
           todayTextStyle: const TextStyle(

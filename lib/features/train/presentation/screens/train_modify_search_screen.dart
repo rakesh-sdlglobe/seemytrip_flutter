@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/features/train/presentation/controllers/train_detail_controller.dart';
 import 'package:seemytrip/features/train/presentation/screens/train_detail_screen.dart';
@@ -114,7 +114,7 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
     String dayOfWeek = DateFormat('EEEE').format(selectedDate);
 
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       body: Stack(
         children: [
           Column(
@@ -133,7 +133,7 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
           if (isLoading)
             Center(
               child: LoadingAnimationWidget.dotsTriangle(
-                color: redCA0,
+                color: AppColors.redCA0,
                 size: 20,
               ),
             ),
@@ -142,8 +142,7 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
+  Widget _buildHeader() => Container(
       height: 100,
       width: Get.width,
       decoration: BoxDecoration(
@@ -161,11 +160,11 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
               onTap: () {
                 Get.back();
               },
-              child: Icon(Icons.close, color: white, size: 20),
+              child: Icon(Icons.close, color: AppColors.white, size: 20),
             ),
             CommonTextWidget.PoppinsSemiBold(
-              text: "Modify Search",
-              color: white,
+              text: 'Modify Search',
+              color: AppColors.white,
               fontSize: 18,
             ),
             Container(),
@@ -173,18 +172,16 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildStationSelection() {
-    return Stack(
+  Widget _buildStationSelection() => Stack(
       alignment: Alignment.centerRight,
       children: [
         Column(
           children: [
             _buildStationField(
-                "From", selectedFromStation, _navigateToFromScreen),
+                'From', selectedFromStation, _navigateToFromScreen),
             SizedBox(height: 10),
-            _buildStationField("To", selectedToStation, _navigateToToScreen),
+            _buildStationField('To', selectedToStation, _navigateToToScreen),
           ],
         ),
         Positioned(
@@ -205,19 +202,17 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
         ),
       ],
     );
-  }
 
-  Widget _buildStationField(String label, String? station, Function() onTap) {
-    return Padding(
+  Widget _buildStationField(String label, String? station, Function() onTap) => Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.15),
+            color: AppColors.greyE2E.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(width: 1, color: greyE2E),
+            border: Border.all(width: 1, color: AppColors.greyE2E),
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
@@ -231,14 +226,14 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
                     Text(
                       label,
                       style: TextStyle(
-                          color: Colors.grey[600],
+                          color: AppColors.grey363,
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
-                      station ?? "Select $label Station",
+                      station ?? 'Select $label Station',
                       style: TextStyle(
-                        color: station == null ? grey888 : black2E2,
+                        color: station == null ? AppColors.grey888 : AppColors.black2E2,
                         fontSize: 16,
                       ),
                     ),
@@ -250,10 +245,8 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildDateSelection(String formattedDate, String dayOfWeek) {
-    return Padding(
+  Widget _buildDateSelection(String formattedDate, String dayOfWeek) => Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: InkWell(
         onTap: () {
@@ -263,8 +256,8 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
           width: Get.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.grey.withOpacity(0.15),
-            border: Border.all(color: Colors.grey[300]!, width: 1),
+            color: AppColors.greyE2E.withValues(alpha: 0.15),
+            border: Border.all(color: AppColors.greyE2E, width: 1),
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -279,10 +272,8 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
         ),
       ),
     );
-  }
 
-  Widget _buildDateInfo(String formattedDate, String dayOfWeek) {
-    return Expanded(
+  Widget _buildDateInfo(String formattedDate, String dayOfWeek) => Expanded(
       child: Row(
         children: [
           SvgPicture.asset('assets/images/calendarPlus.svg'),
@@ -291,23 +282,23 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "DATE",
+                'DATE',
                 style: TextStyle(
-                    color: Colors.grey[600],
+                    color: AppColors.grey363,
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
               ),
               Text(
                 formattedDate,
                 style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w600),
               ),
               Text(
                 dayOfWeek,
                 style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.black,
                     fontSize: 12,
                     fontWeight: FontWeight.w400),
               ),
@@ -316,33 +307,29 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
         ],
       ),
     );
-  }
 
-  Widget _buildDateOptions() {
-    return Expanded(
+  Widget _buildDateOptions() => Expanded(
       child: Row(
         children: [
           _buildDateOption(
-              "Tomorrow", _setDateToTomorrow, selectedDateOption == 1),
+              'Tomorrow', _setDateToTomorrow, selectedDateOption == 1),
           SizedBox(width: 5),
           _buildDateOption(
-              "Day After", _setDateToDayAfter, selectedDateOption == 2),
+              'Day After', _setDateToDayAfter, selectedDateOption == 2),
         ],
       ),
     );
-  }
 
-  Widget _buildDateOption(String label, Function() onTap, bool isSelected) {
-    return Expanded(
+  Widget _buildDateOption(String label, Function() onTap, bool isSelected) => Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           height: 30,
           decoration: BoxDecoration(
-            color: isSelected ? Colors.red : Colors.white,
+            color: isSelected ? AppColors.redCA0 : AppColors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.25),
+                color: AppColors.greyE2E.withValues(alpha: 0.25),
                 blurRadius: 6,
                 offset: Offset(0, 1),
               ),
@@ -353,21 +340,19 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
             child: Text(
               label,
               style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.redAccent,
+                  color: isSelected ? AppColors.white : AppColors.redCA0,
                   fontSize: 10),
             ),
           ),
         ),
       ),
     );
-  }
 
-  Widget _buildModifySearchButton() {
-    return Padding(
+  Widget _buildModifySearchButton() => Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: CommonButtonWidget.button(
-        text: "MODIFY SEARCH",
-        buttonColor: redCA0,
+        text: 'MODIFY SEARCH',
+        buttonColor: AppColors.redCA0,
         onTap: () async {
           setState(() {
             isLoading = true;
@@ -394,5 +379,4 @@ class _TrainModifySearchScreenState extends State<TrainModifySearchScreen> {
         },
       ),
     );
-  }
 }

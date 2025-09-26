@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/features/bus/presentation/controllers/bus_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import '../controllers/bus_controller.dart';
 
 class BusGoingToScreen extends StatefulWidget {
   const BusGoingToScreen({Key? key}) : super(key: key);
@@ -78,24 +77,26 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Select Destination City',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Theme.of(context).appBarTheme.titleTextStyle?.color ?? Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           onPressed: () => Get.back(),
         ),
-        backgroundColor: redCA0,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFFF5722) // Orange-red for dark theme
+          : const Color(0xFFCA0B0B), // Red for light theme
         elevation: 0,
         centerTitle: true,
-        foregroundColor: white,
+        foregroundColor: Colors.white,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(16),
@@ -109,11 +110,11 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Theme.of(context).shadowColor.withOpacity(0.1),
                   spreadRadius: 1,
                   blurRadius: 10,
                   offset: const Offset(0, 2),
@@ -122,11 +123,15 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
             ),
             child: TextField(
               controller: searchController,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
               decoration: InputDecoration(
                 hintText: "Search for a city...",
-                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 15),
-                prefixIcon: Icon(Icons.search_rounded, color: redCA0, size: 24),
+                hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 15),
+                prefixIcon: Icon(Icons.search_rounded, 
+                  color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFFFF5722) // Orange-red for dark theme
+                    : const Color(0xFFCA0B0B), // Red for light theme
+                  size: 24),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
               ),
@@ -143,21 +148,25 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[700],
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: redCA0.withOpacity(0.1),
+                    color: (Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFFFF5722) // Orange-red for dark theme
+                      : const Color(0xFFCA0B0B)).withValues(alpha: 0.1), // Red for light theme
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Obx(() => Text(
                     '${filteredCities.length} cities',
                     style: TextStyle(
                       fontSize: 12,
-                      color: redCA0,
+                      color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFFFF5722) // Orange-red for dark theme
+                        : const Color(0xFFCA0B0B), // Red for light theme
                       fontWeight: FontWeight.w500,
                     ),
                   )),
@@ -177,7 +186,9 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                     children: [
                       SizedBox(
                         child: LoadingAnimationWidget.dotsTriangle(
-                          color: redCA0,
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B), // Red for light theme
                           size: 40,
                         ),
                       ),
@@ -186,7 +197,7 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                         'Loading cities...',
                         style: TextStyle(
                           fontSize: 16,
-                          color: white,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -204,14 +215,16 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                       Icon(
                         Icons.error_outline_rounded,
                         size: 64,
-                        color: Colors.red[300],
+                        color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.red[400]
+                          : Colors.red[300],
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Failed to load cities',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.black54,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -221,7 +234,9 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                         icon: const Icon(Icons.refresh_rounded, size: 20),
                         label: const Text('Retry'),
                         style: TextButton.styleFrom(
-                          foregroundColor: redCA0,
+                          foregroundColor: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFFFF5722) // Orange-red for dark theme
+                            : const Color(0xFFCA0B0B), // Red for light theme
                         ),
                       ),
                     ],
@@ -238,14 +253,16 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                       Icon(
                         Icons.search_off_rounded,
                         size: 64,
-                        color: Colors.grey[300],
+                        color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[600]
+                          : Colors.grey[300],
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'No cities found',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -254,7 +271,7 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                         'Try a different search term',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[400],
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                     ],
@@ -267,7 +284,7 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                 itemCount: filteredCities.length,
                 separatorBuilder: (context, index) => Divider(
                   height: 1,
-                  color: Colors.grey[200],
+                  color: Theme.of(context).dividerColor,
                   indent: 16,
                   endIndent: 16,
                 ),
@@ -293,12 +310,16 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: redCA0.withOpacity(0.1),
+                                color: (Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                  : const Color(0xFFCA0B0B)).withValues(alpha: 0.1), // Red for light theme
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
                                 Icons.place_rounded,
-                                color: redCA0,
+                                color: Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFFFF5722) // Orange-red for dark theme
+                                  : const Color(0xFFCA0B0B), // Red for light theme
                                 size: 24,
                               ),
                             ),
@@ -306,10 +327,10 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                             Expanded(
                               child: Text(
                                 city['CityName'] ?? 'Unknown City',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -317,7 +338,7 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
                             ),
                             Icon(
                               Icons.chevron_right_rounded,
-                              color: Colors.grey[400],
+                              color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
                               size: 24,
                             ),
                           ],

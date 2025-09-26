@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../core/widgets/common_button_widget.dart';
 import '../../../../core/widgets/common_text_widget.dart';
@@ -14,9 +14,9 @@ class SelectGuestScreen extends StatelessWidget {
   final TextEditingController lastNameController = TextEditingController();
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: white,
+        backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: redCA0,
+          backgroundColor: AppColors.redCA0,
           automaticallyImplyLeading: false,
           elevation: 0,
           centerTitle: true,
@@ -24,11 +24,11 @@ class SelectGuestScreen extends StatelessWidget {
             onTap: () {
               Get.back();
             },
-            child: Icon(Icons.cancel, color: white, size: 20),
+            child: Icon(Icons.cancel, color: AppColors.white, size: 20),
           ),
           title: CommonTextWidget.PoppinsSemiBold(
             text: 'Select Guests',
-            color: white,
+            color: AppColors.white,
             fontSize: 18,
           ),
         ),
@@ -40,24 +40,24 @@ class SelectGuestScreen extends StatelessWidget {
               SizedBox(height: 15),
               CommonTextWidget.PoppinsSemiBold(
                 text: 'Add new Guest',
-                color: black2E2,
+                color: AppColors.black2E2,
                 fontSize: 16,
               ),
               CommonTextWidget.PoppinsRegular(
                 text:
                     'Name should be per official govt. ID & travelers below 18 '
                     'years od age cannot travel alone.',
-                color: black2E2,
+                color: AppColors.black2E2,
                 fontSize: 12,
               ),
               SizedBox(height: 15),
               Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: white,
+                  color: AppColors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: grey515.withOpacity(0.25),
+                      color: AppColors.grey515.withOpacity(0.25),
                       blurRadius: 6,
                       offset: Offset(0, 1),
                     ),
@@ -71,7 +71,7 @@ class SelectGuestScreen extends StatelessWidget {
                     children: [
                       CommonTextWidget.PoppinsRegular(
                         text: 'NAME AS PER PASSPORT',
-                        color: grey717,
+                        color: AppColors.grey717,
                         fontSize: 14,
                       ),
                       SizedBox(height: 10),
@@ -81,8 +81,8 @@ class SelectGuestScreen extends StatelessWidget {
                             height: 45,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              color: grey9B9.withOpacity(0.25),
-                              border: Border.all(color: greyE2E, width: 1),
+                              color: AppColors.grey9B9.withOpacity(0.25),
+                              border: Border.all(color: AppColors.greyE2E, width: 1),
                             ),
                             child: Center(
                               child: Padding(
@@ -91,12 +91,12 @@ class SelectGuestScreen extends StatelessWidget {
                                   children: [
                                     CommonTextWidget.PoppinsRegular(
                                       text: 'Mr.',
-                                      color: black2E2,
+                                      color: AppColors.black2E2,
                                       fontSize: 14,
                                     ),
                                     SizedBox(width: 5),
                                     SvgPicture.asset(arrowDownIcon,
-                                        color: black2E2),
+                                        color: AppColors.black2E2),
                                   ],
                                 ),
                               ),
@@ -130,7 +130,7 @@ class SelectGuestScreen extends StatelessWidget {
               CommonButtonWidget.button(
                 text: 'DONE',
                 onTap: () {},
-                buttonColor: redCA0,
+                buttonColor: AppColors.redCA0,
               ),
               SizedBox(height: 60),
             ],

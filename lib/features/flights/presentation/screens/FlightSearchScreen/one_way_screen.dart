@@ -1,25 +1,19 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../../../../core/utils/colors.dart';
-import '../../../../../core/widgets/common_button_widget.dart';
-import '../../../../../core/widgets/common_text_widget.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../../core/widgets/lists_widget.dart';
 import '../../../../../main.dart';
 import '../../../../../shared/constants/images.dart';
 import '../../controllers/flight_controller.dart';
 import '../../controllers/flight_search_controller.dart';
 import 'custom_dialogbox.dart';
-import 'datepicker.dart';
 import 'flight_from_screen.dart';
 import 'flight_to_screen.dart';
-import 'from_station_selector.dart';
 import 'offer_make_your_trip_screen.dart';
-import 'to_station_selector.dart';
 
 class OneWayScreen extends StatefulWidget {
   const OneWayScreen({Key? key}) : super(key: key);
@@ -76,8 +70,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
       Get.snackbar(
         'Error',
         'Failed to select departure airport',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: AppColors.redCA0,
+        colorText: AppColors.white,
       );
     }
   }
@@ -101,14 +95,13 @@ class _OneWayScreenState extends State<OneWayScreen> {
       Get.snackbar(
         'Error',
         'Failed to select arrival airport',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        backgroundColor: AppColors.redCA0,
+        colorText: AppColors.white,
       );
     }
   }
 
-  Future<void> _selectDate(BuildContext context,
-      {bool isReturnDate = false}) async {
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
@@ -146,358 +139,813 @@ class _OneWayScreenState extends State<OneWayScreen> {
   Widget build(BuildContext context) {
     final String formattedDepartureDate =
         DateFormat('dd MMM').format(selectedDate);
-    // final String formattedReturnDate = returnDate != null
-    //     ? DateFormat('dd MMM').format(returnDate!)
-    //     : 'Select Return Date';
     final String dayOfWeekDeparture = DateFormat('EEEE').format(selectedDate);
-    // final String dayOfWeekReturn =
-    //     returnDate != null ? DateFormat('EEEE').format(returnDate!) : '';
+    
     return ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.grey363
+                    : AppColors.whiteF2F,
+                Theme.of(context).scaffoldBackgroundColor,
+              ],
+            ),
+          ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FromStationSelector(
-              selectedFromStation: selectedFromStation,
-              onTap: _navigateToFromScreen,
-            ),
-            SizedBox(height: 15),
-            ToStationSelector(
-              selectedToStation: selectedToStation,
-              onTap: _navigateToToScreen,
-            ),
-            SizedBox(height: 15),
-            DatePickerWidget(
-              title: 'DATE',
-              formattedDate: formattedDepartureDate,
-              dayOfWeek: dayOfWeekDeparture,
-              onTap: () => _selectDate(context),
-            ),
-            SizedBox(height: 18),
-            // Return Date Button - Commented out as per requirement
-            // GestureDetector(
-            //   onTap: () {
-            //     setState(() {
-            //       isReturnDateVisible = !isReturnDateVisible;
-            //     });
-            //   },
-            //   child: Container(
-            //     width: Get.width,
-            //     margin: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            //     padding: EdgeInsets.all(15),
-            //     decoration: BoxDecoration(
-            //       color: white,
-            //       borderRadius: BorderRadius.circular(10),
-            //       border: Border.all(color: Colors.grey.shade300),
-            //     ),
-            //     child: Row(
-            //       children: [
-            //         Container(
-            //           height: 24,
-            //           width: 24,
-            //           decoration: BoxDecoration(
-            //             color: isReturnDateVisible ? redCA0 : Colors.transparent,
-            //             borderRadius: BorderRadius.circular(4),
-            //             border: Border.all(
-            //               color: isReturnDateVisible ? redCA0 : Colors.grey,
-            //             ),
-            //           ),
-            //           child: isReturnDateVisible
-            //               ? Icon(Icons.check, color: white, size: 16)
-            //               : null,
-            //         ),
-            //         SizedBox(width: 15),
-            //         Column(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             CommonTextWidget.PoppinsMedium(
-            //               text: '+ ADD RETURN DATE',
-            //               color: redCA0,
-            //               fontSize: 14,
-            //             ),
-            //             CommonTextWidget.PoppinsMedium(
-            //               text: 'Save more on round trips!',
-            //               color: grey888,
-            //               fontSize: 14,
-            //             ),
-            //           ],
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            SizedBox(height: 15),
-
-            // Return Date Picker - Commented out as per requirement
-            // if (isReturnDateVisible)
-            //   DatePickerWidget(
-            //     title: 'RETURN DATE',
-            //     formattedDate: formattedReturnDate,
-            //     dayOfWeek: dayOfWeekReturn,
-            //     onTap: () => _selectDate(context, isReturnDate: true),
-            //   ),
-
-            SizedBox(height: 15),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: GestureDetector(
-                onTap: _selectTravelersAndClass,
-                child: Container(
-                  width: Get.width,
+              const SizedBox(height: 20),
+              
+              // Modern Flight Search Card
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: grey9B9.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(width: 1, color: greyE2E),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
-                    child: Row(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withOpacity(0.4)
+                          : Theme.of(context).shadowColor.withOpacity(0.1),
+                      blurRadius: Theme.of(context).brightness == Brightness.dark ? 16 : 20,
+                      offset: const Offset(0, 8),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with flight icon
+                    Row(
                       children: [
-                        SvgPicture.asset(user),
-                        SizedBox(width: 15),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppColors.redCA0.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.flight_takeoff_rounded,
+                            color: AppColors.redCA0,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CommonTextWidget.PoppinsMedium(
-                              text: 'TRAVELLERS & CLASS',
-                              color: grey888,
-                              fontSize: 14,
+                            Text(
+                              'Book Your Flight',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                              ),
                             ),
-                            Row(
-                              children: [
-                                CommonTextWidget.PoppinsSemiBold(
-                                  text:
-                                      '${flightSearchController.travelers.value} ,',
-                                  color: black2E2,
-                                  fontSize: 18,
-                                ),
-                                SizedBox(width: 10.0),
-                                CommonTextWidget.PoppinsMedium(
-                                  text: travelClass,
-                                  color: grey888,
+                            Text(
+                              'Find the best deals for your journey',
+                              style: TextStyle(
                                   fontSize: 14,
-                                ),
-                              ],
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: 32),
+                    
+                    // From and To Selection with modern design
+                    _buildModernRouteSelector(context),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Date Selection with modern design
+                    _buildModernDateSelector(context, formattedDepartureDate, dayOfWeekDeparture),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Travelers & Class with modern design
+                    _buildModernTravelersSelector(context),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Modern Search Button
+                    _buildModernSearchButton(context),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(height: 15),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: CommonTextWidget.PoppinsMedium(
-                text: 'SPECIAL FARES (OPTIONAL)',
-                color: grey888,
-                fontSize: 14,
-              ),
-            ),
-            SizedBox(
-              height: 70,
-              width: Get.width,
-              child: ScrollConfiguration(
-                behavior: MyBehavior(),
-                child: ListView.builder(
-                  itemCount: Lists.flightSearchList2.length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  padding:
-                      EdgeInsets.only(top: 13, bottom: 13, left: 24, right: 12),
-                  itemBuilder: (BuildContext context, int index) => Padding(
-                    padding: EdgeInsets.only(right: 12),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedFareIndex =
-                              index; // Update the selected fare index
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: selectedFareIndex == index
-                              ? redCA0 // Highlight the selected fare
-                              : white,
-                          border: Border.all(
-                            color:
-                                selectedFareIndex == index ? redCA0 : greyE2E,
-                            width: 1,
-                          ),
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: CommonTextWidget.PoppinsMedium(
-                              text: Lists.flightSearchList2[index],
-                              color: selectedFareIndex == index
-                                  ? white // Change text color for selected fare
-                                  : grey5F5,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
+              
+              const SizedBox(height: 32),
+              
+              // Special Fares Section with modern design
+              _buildModernSpecialFares(context),
+              
+              const SizedBox(height: 32),
+              
+              // Modern Offers Section
+              _buildModernOffersSection(context),
+              
+              const SizedBox(height: 24),
+              
+              // Modern Fare Calendar Section
+              _buildModernFareCalendar(context),
+              
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildModernRouteSelector(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.grey363.withOpacity(0.3)
+            : AppColors.greyEEE.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          // From Section
+          GestureDetector(
+            onTap: _navigateToFromScreen,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.blue1F9.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.flight_takeoff,
+                      color: AppColors.blue1F9,
+                      size: 20,
                     ),
                   ),
-                ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'From',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          selectedFromStation ?? 'Select departure city',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: selectedFromStation != null 
+                                ? Theme.of(context).textTheme.bodyLarge?.color
+                                : Theme.of(context).hintColor,
+                          ),
+                        ),
+                        if (selectedFromCode != null)
+                          Text(
+                            selectedFromCode!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 25),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Obx(() {
-                final FlightController flightController =
-                    Get.find<FlightController>();
-                return CommonButtonWidget.button(
-                  buttonColor: redCA0,
+          ),
+          
+          // Divider with swap button
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: 1,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                color: Theme.of(context).dividerColor,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor,
+                    width: 1,
+                  ),
+                ),
+                    child: GestureDetector(
+                      onTap: () {
+                    // Swap from and to
+                        setState(() {
+                      final tempStation = selectedFromStation;
+                      final tempCode = selectedFromCode;
+                      selectedFromStation = selectedToStation;
+                      selectedFromCode = selectedToCode;
+                      selectedToStation = tempStation;
+                      selectedToCode = tempCode;
+                        });
+                      },
+                  child: Icon(
+                    Icons.swap_vert,
+                    color: AppColors.redCA0,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          // To Section
+          GestureDetector(
+            onTap: _navigateToToScreen,
+                      child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                      color: AppColors.green00A.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.flight_land,
+                      color: AppColors.green00A,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'To',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          selectedToStation ?? 'Select destination city',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: selectedToStation != null 
+                                ? Theme.of(context).textTheme.bodyLarge?.color
+                                : Theme.of(context).hintColor,
+                          ),
+                        ),
+                        if (selectedToCode != null)
+                          Text(
+                            selectedToCode!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).textTheme.bodyMedium?.color,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildModernDateSelector(BuildContext context, String formattedDate, String dayOfWeek) {
+    return GestureDetector(
+      onTap: () => _selectDate(context),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.grey363.withOpacity(0.3)
+              : AppColors.greyEEE.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.orangeFFB.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.calendar_today,
+                color: AppColors.orangeEB9,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Departure Date',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    formattedDate,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                  ),
+                  Text(
+                    dayOfWeek,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildModernTravelersSelector(BuildContext context) {
+    return GestureDetector(
+      onTap: _selectTravelersAndClass,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.grey363.withOpacity(0.3)
+              : AppColors.greyEEE.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.redCA0.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.people,
+                color: AppColors.redCA0,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Travelers & Class',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Obx(() => Text(
+                    '${flightSearchController.travelers.value} Traveler${flightSearchController.travelers.value > 1 ? 's' : ''}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                  )),
+                  Text(
+                    travelClass,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildModernSearchButton(BuildContext context) {
+    return Obx(() {
+      final FlightController flightController = Get.find<FlightController>();
+      return Container(
+        width: double.infinity,
+        height: 56,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: [AppColors.redCA0, AppColors.redCA0.withOpacity(0.8)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.redCA0.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
                   onTap: () async {
-                    if (selectedFromStation == null ||
-                        selectedToStation == null) {
+              if (selectedFromStation == null || selectedToStation == null) {
                       Get.snackbar(
-                        'Error',
+                  'Missing Information',
                         'Please select both departure and arrival airports',
-                        backgroundColor: Colors.red,
+                        backgroundColor: AppColors.redCA0,
                         colorText: Colors.white,
+                  icon: const Icon(Icons.info_outline, color: Colors.white),
+                  snackPosition: SnackPosition.TOP,
                       );
                       return;
                     }
 
                     try {
-                      // Format date as YYYY-MM-DD
-                      final String formattedDate =
-                          DateFormat('yyyy-MM-dd').format(selectedDate);
+                final String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
 
                       await flightController.searchAndShowFlights(
                         fromAirportCode: selectedFromCode!,
                         toAirportCode: selectedToCode!,
                         departDate: formattedDate,
                         adults: travelers,
-                        travelClass: travelClass == 'Economy'
-                            ? 'E'
-                            : travelClass == 'Business'
-                                ? 'B'
-                                : 'F',
-                        flightType: 'O', // One-way
-                      );
-
-                      // The searchAndShowFlights method will handle navigation
+                  travelClass: travelClass == 'Economy' ? 'E' : travelClass == 'Business' ? 'B' : 'F',
+                  flightType: 'O',
+                );
                     } catch (e) {
                       Get.snackbar(
-                        'Error',
+                  'Search Error',
                         'Failed to search flights: ${e.toString()}',
-                        backgroundColor: Colors.red,
+                        backgroundColor: AppColors.redCA0,
                         colorText: Colors.white,
+                  icon: const Icon(Icons.error_outline, color: Colors.white),
+                  snackPosition: SnackPosition.TOP,
                       );
                     }
                   },
+            child: Center(
                   child: flightController.isLoading.value
                       ? LoadingAnimationWidget.threeRotatingDots(
-                          color: Colors.white,
+                          color: AppColors.white,
                           size: 24,
                         )
-                      : Text(
-                          'SEARCH FLIGHTS',
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: AppColors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Search Flights',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
                           ),
                         ),
                 );
-              }),
+    });
+  }
+  
+  Widget _buildModernSpecialFares(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Special Fares',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
-            SizedBox(height: 20),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CommonTextWidget.PoppinsSemiBold(
-                    text: 'OFFERS',
-                    color: black2E2,
-                    fontSize: 16,
-                  ),
-                  Row(
-                    children: [
-                      CommonTextWidget.PoppinsRegular(
-                        text: 'View All',
-                        color: redCA0,
-                        fontSize: 14,
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward_ios, color: redCA0, size: 18),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Divider(color: greyDED, thickness: 1),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: InkWell(
-                onTap: () {
-                  Get.to(() => OfferMakeYourTripScreen());
-                },
-                child: CarouselSlider.builder(
-                  itemCount: 4,
-                  itemBuilder: (context, index, realIndex) => Container(
-                    height: 170,
-                    width: Get.width,
+          ),
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 50,
+          child: ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: ListView.builder(
+              itemCount: Lists.flightSearchList2.length,
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemBuilder: (BuildContext context, int index) => Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedFareIndex = selectedFareIndex == index ? null : index;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        image: DecorationImage(
-                            image: AssetImage(flightSearchImage),
-                            fit: BoxFit.fill,
-                            filterQuality: FilterQuality.high)),
+                      borderRadius: BorderRadius.circular(25),
+                      color: selectedFareIndex == index
+                          ? AppColors.redCA0
+                          : Theme.of(context).cardColor,
+                      border: Border.all(
+                        color: selectedFareIndex == index
+                            ? AppColors.redCA0
+                            : Theme.of(context).dividerColor,
+                        width: 1.5,
+                      ),
+                      boxShadow: selectedFareIndex == index
+                          ? [
+                              BoxShadow(
+                                color: AppColors.redCA0.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : [],
+                    ),
+                    child: Text(
+                      Lists.flightSearchList2[index],
+                      style: TextStyle(
+                        color: selectedFareIndex == index
+                            ? AppColors.white
+                            : Theme.of(context).textTheme.bodyMedium?.color,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                  options: CarouselOptions(
-                      autoPlay: true,
-                      height: 170,
-                      enableInfiniteScroll: true,
-                      enlargeCenterPage: true,
-                      onPageChanged: (index, reason) {
-                        // realStateController.sliderIndex.value = index;
-                      }),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildModernOffersSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+            Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+              Text(
+                'Special Offers',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Get.to(() => OfferMakeYourTripScreen()),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.redCA0.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'View All',
+                        style: TextStyle(
+                          color: AppColors.redCA0,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: AppColors.redCA0,
+                        size: 14,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          height: 180,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+                child: CarouselSlider.builder(
+                  itemCount: 4,
+                  itemBuilder: (context, index, realIndex) => Container(
+                    width: Get.width,
+                    decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        flightSearchImage,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.3),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                  ),
+                  options: CarouselOptions(
+                      autoPlay: true,
+                height: 180,
+                viewportFraction: 0.9,
+                      enableInfiniteScroll: true,
+                      enlargeCenterPage: true,
+                autoPlayInterval: const Duration(seconds: 4),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildModernFareCalendar(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.redF9E,
+            AppColors.redF9E.withOpacity(0.7),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
             Container(
-              width: Get.width,
-              color: redF9E,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.calendar_month,
+              color: AppColors.redCA0,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CommonTextWidget.PoppinsRegular(
-                      text:
-                          'Explore the cheapest flight from New Delhi to Mumbai',
-                      color: black2E2,
-                      fontSize: 14,
-                    ),
-                    Row(
-                      children: [
-                        CommonTextWidget.PoppinsMedium(
-                          text: 'EXPLORE FARE CALENDAR',
-                          color: redCA0,
+                Text(
+                  'Find Cheaper Flights',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                      color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.black2E2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Explore flexible dates for better deals',
+                  style: TextStyle(
                           fontSize: 14,
+                    color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.grey717,
                         ),
-                        SizedBox(width: 10),
-                        Icon(Icons.arrow_forward, color: redCA0, size: 16),
-                      ],
                     ),
                   ],
                 ),
               ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.redCA0,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Explore',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward,
+                  color: AppColors.white,
+                  size: 16,
             ),
           ],
         ),
+          ),
+        ],
       ),
     );
   }

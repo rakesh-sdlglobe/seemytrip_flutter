@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../../../core/theme/app_colors.dart';
 
 import '../../../../core/widgets/common_text_widget.dart';
-import '../../../../core/utils/colors.dart';
 import '../../../../shared/constants/images.dart';
 import '../controllers/hotel_controller.dart';
 import '../screens/hotel_detail_search_screen.dart';
@@ -76,8 +76,8 @@ class _HotelImagesAppBarState extends State<HotelImagesAppBar> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: _currentPage == dotIndex
-                                ? redCA0
-                                : Colors.white.withValues(alpha: 0.8),
+                                ? AppColors.redCA0
+                                : AppColors.white.withValues(alpha: 0.8),
                           ),
                         ),
                       ),
@@ -180,7 +180,7 @@ class _HotelImagesAppBarState extends State<HotelImagesAppBar> {
                           widget.isFavorite
                               ? Icons.favorite
                               : Icons.favorite_border,
-                          color: redCA0,
+                          color: AppColors.redCA0,
                         ),
                       ),
                       SizedBox(width: 20),

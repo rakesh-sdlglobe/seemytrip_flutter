@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+
+import '../../../../../../core/theme/app_colors.dart';
+import '../../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../../shared/constants/images.dart';
 
 class ScanScreen extends StatelessWidget {
   ScanScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       height: 407,
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.whiteF2F,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
@@ -27,15 +27,15 @@ class ScanScreen extends StatelessWidget {
             children: [
               SizedBox(height: 25),
               CommonTextWidget.PoppinsSemiBold(
-                text: "Scan to auto-fill this form!",
-                color: black2E2,
+                text: 'Scan to auto-fill this form!',
+                color: AppColors.black2E2,
                 fontSize: 18,
               ),
               SizedBox(height: 10),
               CommonTextWidget.PoppinsRegular(
-                text: "Your experience would be mediocre without "
-                    "the permissions we need.",
-                color: grey717,
+                text: 'Your experience would be mediocre without '
+                    'the permissions we need.',
+                color: AppColors.grey717,
                 fontSize: 16,
               ),
               SizedBox(height: 30),
@@ -45,8 +45,8 @@ class ScanScreen extends StatelessWidget {
               SizedBox(height: 30),
               CommonTextWidget.PoppinsRegular(
                 text:
-                    "With this, you will be able to doenload your tickets & upload images to submit reviews on our app.",
-                color: grey717,
+                    'With this, you will be able to doenload your tickets & upload images to submit reviews on our app.',
+                color: AppColors.grey717,
                 fontSize: 16,
               ),
               SizedBox(height: 50),
@@ -58,14 +58,14 @@ class ScanScreen extends StatelessWidget {
                       Get.back();
                     },
                     child: CommonTextWidget.PoppinsMedium(
-                      text: "NO, NOT NOW",
-                      color: redCA0,
+                      text: 'NO, NOT NOW',
+                      color: AppColors.redCA0,
                       fontSize: 16,
                     ),
                   ),
                   CommonTextWidget.PoppinsMedium(
-                    text: "YES, GO AHEAD",
-                    color: redCA0,
+                    text: 'YES, GO AHEAD',
+                    color: AppColors.redCA0,
                     fontSize: 16,
                   ),
                 ],
@@ -76,5 +76,4 @@ class ScanScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

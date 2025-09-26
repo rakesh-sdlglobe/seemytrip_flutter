@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
 
 class UpComingTripScreen extends StatelessWidget {
   UpComingTripScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
+  Widget build(BuildContext context) => ScrollConfiguration(
       behavior: MyBehavior(),
       child: ListView.builder(
         padding: EdgeInsets.only(top: 20, left: 24, right: 24),
@@ -23,10 +22,10 @@ class UpComingTripScreen extends StatelessWidget {
             width: Get.width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: white,
+              color: AppColors.whiteF2F,
               boxShadow: [
                 BoxShadow(
-                  color: grey656.withOpacity(0.25),
+                  color: AppColors.grey656.withValues(alpha: 0.25),
                   blurRadius: 5,
                 ),
               ],
@@ -57,13 +56,13 @@ class UpComingTripScreen extends StatelessWidget {
                       children: [
                         CommonTextWidget.PoppinsSemiBold(
                           text:
-                              "Top 5 Indian Destinations for a Fun Family Trip ",
-                          color: black2E2,
+                              'Top 5 Indian Destinations for a Fun Family Trip ',
+                          color: AppColors.black2E2,
                           fontSize: 13,
                         ),
                         CommonTextWidget.PoppinsRegular(
-                          text: "Explore Himachal Pradesh & 4 more places",
-                          color: grey5F5,
+                          text: 'Explore Himachal Pradesh & 4 more places',
+                          color: AppColors.grey5F5,
                           fontSize: 12,
                         ),
                       ],
@@ -76,5 +75,4 @@ class UpComingTripScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

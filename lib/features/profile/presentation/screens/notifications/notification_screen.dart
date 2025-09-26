@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
 
 class NotificationScreen extends StatelessWidget {
   NotificationScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -20,11 +19,11 @@ class NotificationScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Notification",
-          color: white,
+          text: 'Notification',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -38,20 +37,20 @@ class NotificationScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 35),
               child: Row(
                 children: [
-                  Image.asset(Lists.notificationList[index]["image"],
+                  Image.asset(Lists.notificationList[index]['image'],
                       height: 20, width: 20),
                   SizedBox(width: 18),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CommonTextWidget.PoppinsSemiBold(
-                        text: Lists.notificationList[index]["text1"],
-                        color: black2E2,
+                        text: Lists.notificationList[index]['text1'],
+                        color: AppColors.black2E2,
                         fontSize: 14,
                       ),
                       CommonTextWidget.PoppinsMedium(
-                        text: Lists.notificationList[index]["text2"],
-                        color: grey717,
+                        text: Lists.notificationList[index]['text2'],
+                        color: AppColors.grey717,
                         fontSize: 12,
                       ),
                     ],
@@ -64,19 +63,18 @@ class NotificationScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsRegular(
                 text:
-                    "You have successfully canceled your Booking with on December 24....",
-                color: grey717,
+                    'You have successfully canceled your Booking with on December 24....',
+                color: AppColors.grey717,
                 fontSize: 13,
               ),
             ),
             SizedBox(height: 15),
             index == 3
                 ? SizedBox.shrink()
-                : Divider(thickness: 1, color: greyDED),
+                : Divider(thickness: 1, color: AppColors.greyDED),
             SizedBox(height: 15),
           ],
         ),
       ),
     );
-  }
 }

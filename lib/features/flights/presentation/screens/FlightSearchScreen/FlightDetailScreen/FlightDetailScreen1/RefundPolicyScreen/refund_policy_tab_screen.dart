@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../../../../main.dart';
 import '../../../../../../../../shared/constants/images.dart';
@@ -17,7 +17,7 @@ class RefundPolicyTabScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       body: Stack(
         children: [
           Column(
@@ -42,12 +42,12 @@ class RefundPolicyTabScreen extends StatelessWidget {
                             onTap: () {
                               Get.back();
                             },
-                            child: Icon(Icons.close, color: white, size: 20),
+                            child: Icon(Icons.close, color: AppColors.white, size: 20),
                           ),
                           SizedBox(width: 25),
                           CommonTextWidget.PoppinsSemiBold(
                             text: "Refund & Baggage Policy",
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 18,
                           ),
                         ],
@@ -65,7 +65,7 @@ class RefundPolicyTabScreen extends StatelessWidget {
                     SizedBox(width: 10),
                     CommonTextWidget.PoppinsSemiBold(
                       text: "DEL - BOM",
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                   ],
@@ -89,11 +89,11 @@ class RefundPolicyTabScreen extends StatelessWidget {
               height: 45,
               width: Get.width,
               decoration: BoxDecoration(
-                color: white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(5),
                 boxShadow: [
                   BoxShadow(
-                    color: grey757.withOpacity(0.25),
+                    color: AppColors.grey757.withOpacity(0.25),
                     blurRadius: 6,
                     offset: Offset(0, 1),
                   ),
@@ -106,14 +106,14 @@ class RefundPolicyTabScreen extends StatelessWidget {
                   indicatorSize: TabBarIndicatorSize.label,
                   padding: EdgeInsets.only(left: 24, bottom: 7, right: 20),
                   tabs: refundPolicyTabController.myTabs,
-                  unselectedLabelColor: grey5F5,
+                  unselectedLabelColor: AppColors.grey5F5,
                   labelStyle:
                       TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 12),
                   unselectedLabelStyle:
                       TextStyle(fontFamily: "PoppinsMedium", fontSize: 12),
-                  labelColor: redCA0,
+                  labelColor: AppColors.redCA0,
                   controller: refundPolicyTabController.controller,
-                  indicatorColor: redCA0,
+                  indicatorColor: AppColors.redCA0,
                   indicatorWeight: 2.5,
                 ),
               ),

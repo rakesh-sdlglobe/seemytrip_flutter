@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/features/flights/presentation/screens/flight_book_screen.dart';
 import 'package:seemytrip/core/widgets/common_button_widget.dart';
@@ -13,8 +13,7 @@ class OneWayScreen1 extends StatelessWidget {
   OneWayScreen1({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
+  Widget build(BuildContext context) => ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
         child: Column(
@@ -32,9 +31,9 @@ class OneWayScreen1 extends StatelessWidget {
                   child: Container(
                     width: Get.width,
                     decoration: BoxDecoration(
-                      color: grey9B9.withOpacity(0.15),
+                      color: AppColors.grey9B9.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(width: 1, color: greyE2E),
+                      border: Border.all(width: 1, color: AppColors.greyE2E),
                     ),
                     child: Padding(
                       padding:
@@ -50,7 +49,7 @@ class OneWayScreen1 extends StatelessWidget {
                               children: [
                                 CommonTextWidget.PoppinsMedium(
                                   text: Lists.flightSearchList1[index]["text1"],
-                                  color: grey888,
+                                  color: AppColors.grey888,
                                   fontSize: 14,
                                 ),
                                 Row(
@@ -58,20 +57,20 @@ class OneWayScreen1 extends StatelessWidget {
                                     CommonTextWidget.PoppinsSemiBold(
                                       text: Lists.flightSearchList1[index]
                                           ["text2"],
-                                      color: black2E2,
+                                      color: AppColors.black2E2,
                                       fontSize: 18,
                                     ),
                                     CommonTextWidget.PoppinsMedium(
                                       text: Lists.flightSearchList1[index]
                                           ["text3"],
-                                      color: grey888,
+                                      color: AppColors.grey888,
                                       fontSize: 12,
                                     ),
                                   ],
                                 ),
                                 CommonTextWidget.PoppinsRegular(
                                   text: Lists.flightSearchList1[index]["text4"],
-                                  color: grey888,
+                                  color: AppColors.grey888,
                                   fontSize: 12,
                                 ),
                               ],
@@ -89,9 +88,9 @@ class OneWayScreen1 extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1, color: greyE2E),
+                  border: Border.all(width: 1, color: AppColors.greyE2E),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
@@ -100,12 +99,12 @@ class OneWayScreen1 extends StatelessWidget {
                     children: [
                       CommonTextWidget.PoppinsMedium(
                         text: "+ADD RETURN DATE",
-                        color: redCA0,
+                        color: AppColors.redCA0,
                         fontSize: 14,
                       ),
                       CommonTextWidget.PoppinsMedium(
                         text: "Save more on round trop!",
-                        color: grey888,
+                        color: AppColors.grey888,
                         fontSize: 14,
                       ),
                     ],
@@ -119,9 +118,9 @@ class OneWayScreen1 extends StatelessWidget {
               child: Container(
                 width: Get.width,
                 decoration: BoxDecoration(
-                  color: grey9B9.withOpacity(0.15),
+                  color: AppColors.grey9B9.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(width: 1, color: greyE2E),
+                  border: Border.all(width: 1, color: AppColors.greyE2E),
                 ),
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
@@ -134,19 +133,19 @@ class OneWayScreen1 extends StatelessWidget {
                         children: [
                           CommonTextWidget.PoppinsMedium(
                             text: "TRAVELLERS & CLASS",
-                            color: grey888,
+                            color: AppColors.grey888,
                             fontSize: 14,
                           ),
                           Row(
                             children: [
                               CommonTextWidget.PoppinsSemiBold(
                                 text: "1,",
-                                color: black2E2,
+                                color: AppColors.black2E2,
                                 fontSize: 18,
                               ),
                               CommonTextWidget.PoppinsMedium(
                                 text: "TEconomy/Premium Economy",
-                                color: grey888,
+                                color: AppColors.grey888,
                                 fontSize: 14,
                               ),
                             ],
@@ -163,7 +162,7 @@ class OneWayScreen1 extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsMedium(
                 text: "SPECIAL FARES (OPTIONAL)",
-                color: grey888,
+                color: AppColors.grey888,
                 fontSize: 14,
               ),
             ),
@@ -184,15 +183,15 @@ class OneWayScreen1 extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: white,
-                        border: Border.all(color: greyE2E, width: 1),
+                        color: AppColors.white,
+                        border: Border.all(color: AppColors.greyE2E, width: 1),
                       ),
                       child: Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: CommonTextWidget.PoppinsMedium(
                             text: Lists.flightSearchList2[index],
-                            color: grey5F5,
+                            color: AppColors.grey5F5,
                             fontSize: 14,
                           ),
                         ),
@@ -206,7 +205,7 @@ class OneWayScreen1 extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonButtonWidget.button(
-                buttonColor: redCA0,
+                buttonColor: AppColors.redCA0,
                 onTap: () {
                   Get.to(() => FlightBookScreen());
                 },
@@ -218,5 +217,4 @@ class OneWayScreen1 extends StatelessWidget {
         ),
       ),
     );
-  }
 }

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:seemytrip/core/utils/colors.dart';
 
 class HotelDetailOverview extends StatefulWidget {
-  final Map<String, dynamic> hotelDetail;
 
   const HotelDetailOverview({Key? key, required this.hotelDetail}) : super(key: key);
+  final Map<String, dynamic> hotelDetail;
 
   @override
   _HotelDetailOverviewState createState() => _HotelDetailOverviewState();
@@ -34,7 +33,7 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
   }
 
   /// Formats a given text into a list of TextSpans for display.
-  List<TextSpan> _formatText(String text) {
+  List<TextSpan> _formatText(String text, BuildContext context) {
     final lines = text.split('\n');
     final spans = <TextSpan>[];
 
@@ -46,7 +45,7 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w600,
               fontSize: 15,
-              color: Colors.black87,
+              color: Theme.of(context).textTheme.titleMedium?.color,
             ),
           ),
         );
@@ -56,7 +55,7 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
             text: line,
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: Colors.grey[800],
+              color: Theme.of(context).textTheme.bodyMedium?.color,
               height: 1.6,
             ),
           ),
@@ -73,7 +72,7 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
   @override
   Widget build(BuildContext context) {
     final overviewText = _removeHtmlTags(widget.hotelDetail['Description']?.toString());
-    final formattedText = _formatText(overviewText);
+    final formattedText = _formatText(overviewText, context);
     
     final textPainter = TextPainter(
       text: TextSpan(
@@ -81,7 +80,7 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
         style: GoogleFonts.poppins(
           fontSize: 14, 
           height: 1.6, 
-          color: Colors.grey[800]
+          color: Theme.of(context).textTheme.bodyMedium?.color
         ),
       ),
       maxLines: _maxLinesCollapsed,
@@ -93,11 +92,11 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -114,13 +113,17 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.deepPurple.withOpacity(0.2)
+                      : Colors.purple.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.info_outline, 
                     size: 20, 
-                    color: Colors.purple,
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.deepPurple[300]
+                      : Colors.purple,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -129,7 +132,7 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
               ],
@@ -142,7 +145,7 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
               text: TextSpan(
                 style: GoogleFonts.poppins(
                   fontSize: 14,
-                  color: Colors.grey[800],
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                   height: 1.6,
                 ),
                 children: formattedText,
@@ -165,7 +168,9 @@ class _HotelDetailOverviewState extends State<HotelDetailOverview> {
                   child: Text(
                     _isExpanded ? 'Read Less' : 'Read More',
                     style: GoogleFonts.poppins(
-                      color: redCA0,
+                      color: Theme.of(context).brightness == Brightness.dark 
+                        ? const Color(0xFFFF5722) // Orange-red for dark theme
+                        : const Color(0xFFCA0B0B), // Red for light theme
                       fontWeight: FontWeight.w500,
                       fontSize: 13,
                     ),

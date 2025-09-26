@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/font_family.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
@@ -11,11 +11,10 @@ class HolidayPackageReviewScreen extends StatelessWidget {
   HolidayPackageReviewScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: redF9E,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.redF9E,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -23,11 +22,11 @@ class HolidayPackageReviewScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Review Page",
-          color: white,
+          text: 'Review Page',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -55,10 +54,10 @@ class HolidayPackageReviewScreen extends StatelessWidget {
                         width: Get.width,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          color: white,
+                          color: AppColors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: grey515.withOpacity(0.25),
+                              color: AppColors.grey515.withValues(alpha: 0.25),
                               offset: Offset(0, 1),
                               blurRadius: 6,
                             ),
@@ -67,17 +66,17 @@ class HolidayPackageReviewScreen extends StatelessWidget {
                         child: ListTile(
                           leading: CommonTextWidget.PoppinsMedium(
                             text: Lists.holidayPackageReviewList[index]
-                                ["text1"],
-                            color: black2E2,
+                                ['text1'],
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                           title: CommonTextWidget.PoppinsMedium(
                             text: Lists.holidayPackageReviewList[index]
-                                ["text2"],
-                            color: black2E2,
+                                ['text2'],
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
-                          trailing: Icon(Icons.edit, color: redCA0),
+                          trailing: Icon(Icons.edit, color: AppColors.redCA0),
                         ),
                       ),
                     ),
@@ -100,7 +99,7 @@ class HolidayPackageReviewScreen extends StatelessWidget {
                 children: [
                   Container(
                     width: Get.width,
-                    color: black2E2,
+                    color: AppColors.black2E2,
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 24, vertical: 10),
@@ -111,22 +110,22 @@ class HolidayPackageReviewScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Reserve for ₹ 11,000*",
+                                'Reserve for ₹ 11,000*',
                                 style: TextStyle(
-                                  color: greyD7D,
+                                  color: AppColors.greyD7D,
                                   fontSize: 10,
                                   fontFamily: FontFamily.PoppinsMedium,
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               ),
                               CommonTextWidget.PoppinsSemiBold(
-                                text: "₹ 1,05,046",
-                                color: white,
+                                text: '₹ 1,05,046',
+                                color: AppColors.white,
                                 fontSize: 14,
                               ),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Grand Total - 2 Travellers",
-                                color: greyD7D,
+                                text: 'Grand Total - 2 Travellers',
+                                color: AppColors.greyD7D,
                                 fontSize: 8,
                               ),
                             ],
@@ -135,14 +134,14 @@ class HolidayPackageReviewScreen extends StatelessWidget {
                             onPressed: () {},
                             height: 40,
                             minWidth: 140,
-                            shape: RoundedRectangleBorder(
+                            shape:  RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(40),
                             ),
-                            color: redCA0,
+                            color: AppColors.redCA0,
                             child: CommonTextWidget.PoppinsSemiBold(
                               fontSize: 16,
-                              text: "Continue",
-                              color: white,
+                              text: 'Continue',
+                              color: AppColors.white,
                             ),
                           ),
                         ],
@@ -156,5 +155,4 @@ class HolidayPackageReviewScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

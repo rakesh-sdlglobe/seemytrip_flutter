@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/font_family.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightDetailScreen/flight_detail_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/common_button_widget.dart';
+import '../../../../core/widgets/common_text_widget.dart';
+import '../../../../core/widgets/lists_widget.dart';
+import '../../../../main.dart';
+import '../../../../shared/constants/font_family.dart';
+import '../../../../shared/constants/images.dart';
+import 'FlightDetailScreen/flight_detail_screen.dart';
 
 class CheapestListScreen extends StatefulWidget {
   CheapestListScreen({Key? key}) : super(key: key);
@@ -19,8 +20,7 @@ class CheapestListScreen extends StatefulWidget {
 
 class _CheapestListScreenState extends State<CheapestListScreen> {
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
+  Widget build(BuildContext context) => ScrollConfiguration(
       behavior: MyBehavior(),
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 24),
@@ -33,15 +33,15 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    Lists.cheapestList[index]["isSelected"] =
-                        !Lists.cheapestList[index]["isSelected"];
+                    Lists.cheapestList[index]['isSelected'] =
+                        !Lists.cheapestList[index]['isSelected'];
                   });
                 },
                 child: Container(
                   width: Get.width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: white,
+                    color: AppColors.white,
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(15),
@@ -56,8 +56,8 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                             ),
                             SizedBox(width: 8),
                             CommonTextWidget.PoppinsMedium(
-                              text: "SpiceJet",
-                              color: black2E2,
+                              text: 'SpiceJet',
+                              color: AppColors.black2E2,
                               fontSize: 12,
                             ),
                           ],
@@ -69,13 +69,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                             Column(
                               children: [
                                 CommonTextWidget.PoppinsSemiBold(
-                                  text: Lists.cheapestList[index]["text1"],
-                                  color: black2E2,
+                                  text: Lists.cheapestList[index]['text1'],
+                                  color: AppColors.black2E2,
                                   fontSize: 14,
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "New Delhi",
-                                  color: black2E2,
+                                  text: 'New Delhi',
+                                  color: AppColors.black2E2,
                                   fontSize: 10,
                                 ),
                               ],
@@ -85,21 +85,21 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                 RichText(
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
-                                    text: Lists.cheapestList[index]["text2"],
+                                    text: Lists.cheapestList[index]['text2'],
                                     style: TextStyle(
                                       fontFamily: FontFamily.PoppinsMedium,
                                       fontSize: 12,
-                                      color: grey717,
+                                      color: AppColors.grey717,
                                     ),
                                     children: <TextSpan>[
                                       TextSpan(
                                         text: Lists.cheapestList[index]
-                                            ["text3"],
+                                            ['text3'],
                                         style: TextStyle(
                                             fontSize: 12,
                                             fontFamily:
                                                 FontFamily.PoppinsMedium,
-                                            color: black2E2),
+                                            color: AppColors.grey717),
                                       ),
                                     ],
                                   ),
@@ -109,12 +109,12 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                   width: 46,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
-                                    color: redCA0.withOpacity(0.25),
+                                    color: AppColors.redCA0.withOpacity(0.25),
                                   ),
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "Non Stop",
-                                  color: grey717,
+                                  text: 'Non Stop',
+                                  color: AppColors.grey717,
                                   fontSize: 10,
                                 ),
                               ],
@@ -122,13 +122,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                             Column(
                               children: [
                                 CommonTextWidget.PoppinsSemiBold(
-                                  text: Lists.cheapestList[index]["text4"],
-                                  color: black2E2,
+                                  text: Lists.cheapestList[index]['text4'],
+                                  color: AppColors.black2E2,
                                   fontSize: 14,
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "Mumbai",
-                                  color: black2E2,
+                                  text: 'Mumbai',
+                                  color: AppColors.black2E2,
                                   fontSize: 10,
                                 ),
                               ],
@@ -136,13 +136,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                             Column(
                               children: [
                                 CommonTextWidget.PoppinsSemiBold(
-                                  text: Lists.cheapestList[index]["text5"],
-                                  color: black2E2,
+                                  text: Lists.cheapestList[index]['text5'],
+                                  color: AppColors.black2E2,
                                   fontSize: 14,
                                 ),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: "View Prices",
-                                  color: redCA0,
+                                  text: 'View Prices',
+                                  color: AppColors.redCA0,
                                   fontSize: 10,
                                 ),
                               ],
@@ -155,18 +155,18 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                           width: Get.width,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: orangeFFB.withOpacity(0.25),
+                            color: AppColors.orangeFFB.withOpacity(0.25),
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 7),
                             child: Row(
                               children: [
-                                Icon(Icons.circle, size: 14, color: redCA0),
+                                Icon(Icons.circle, size: 14, color: AppColors.redCA0),
                                 SizedBox(width: 7),
                                 CommonTextWidget.PoppinsRegular(
                                   text:
-                                      "Use MMTBONUS and get FLAT Rs. 970 instant discount",
-                                  color: black2E2,
+                                      'Use MMTBONUS and get FLAT Rs. 970 instant discount',
+                                  color: AppColors.black2E2,
                                   fontSize: 9,
                                 ),
                               ],
@@ -178,7 +178,7 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                   ),
                 ),
               ),
-              Lists.cheapestList[index]["isSelected"] == true
+              Lists.cheapestList[index]['isSelected'] == true
                   ? ListView.builder(
                       shrinkWrap: true,
                       itemCount: Lists.flightBookTicketDetailList.length,
@@ -192,7 +192,7 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                             width: Get.width,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              color: white,
+                              color: AppColors.white,
                             ),
                             child: Padding(
                               padding: EdgeInsets.all(15),
@@ -210,13 +210,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                           CommonTextWidget.PoppinsSemiBold(
                                             text: Lists
                                                     .flightBookTicketDetailList[
-                                                index1]["text1"],
-                                            color: black2E2,
+                                                index1]['text1'],
+                                            color: AppColors.black2E2,
                                             fontSize: 14,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
-                                            text: "Fare offered by airline.",
-                                            color: grey717,
+                                            text: 'Fare offered by airline.',
+                                            color: AppColors.grey717,
                                             fontSize: 10,
                                           ),
                                         ],
@@ -228,13 +228,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                           CommonTextWidget.PoppinsSemiBold(
                                             text: Lists
                                                     .flightBookTicketDetailList[
-                                                index1]["text2"],
-                                            color: black2E2,
+                                                index1]['text2'],
+                                            color: AppColors.black2E2,
                                             fontSize: 16,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
-                                            text: "4 Seats left at this price",
-                                            color: redCA0,
+                                            text: '4 Seats left at this price',
+                                            color: AppColors.redCA0,
                                             fontSize: 10,
                                           ),
                                         ],
@@ -257,13 +257,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                             child: SvgPicture.asset(briefcase),
                                           ),
                                           CommonTextWidget.PoppinsMedium(
-                                            text: "Cabin bag",
-                                            color: black2E2,
+                                            text: 'Cabin bag',
+                                            color: AppColors.black2E2,
                                             fontSize: 12,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
-                                            text: "7 Kgs",
-                                            color: grey717,
+                                            text: '7 Kgs',
+                                            color: AppColors.grey717,
                                             fontSize: 12,
                                           ),
                                         ],
@@ -276,13 +276,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                             child: SvgPicture.asset(backpack),
                                           ),
                                           CommonTextWidget.PoppinsMedium(
-                                            text: "Check-in",
-                                            color: black2E2,
+                                            text: 'Check-in',
+                                            color: AppColors.black2E2,
                                             fontSize: 12,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
-                                            text: "15 Kgs",
-                                            color: grey717,
+                                            text: '15 Kgs',
+                                            color: AppColors.grey717,
                                             fontSize: 12,
                                           ),
                                         ],
@@ -296,14 +296,14 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                                 SvgPicture.asset(currencyInr),
                                           ),
                                           CommonTextWidget.PoppinsMedium(
-                                            text: "Cancellation",
-                                            color: black2E2,
+                                            text: 'Cancellation',
+                                            color: AppColors.black2E2,
                                             fontSize: 12,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
                                             text:
-                                                "Cancellation fee starting ₹ 3,600",
-                                            color: grey717,
+                                                'Cancellation fee starting ₹ 3,600',
+                                            color: AppColors.grey717,
                                             fontSize: 12,
                                           ),
                                         ],
@@ -315,17 +315,17 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                                 bottom: 10, right: 10),
                                             child: SvgPicture.asset(
                                                 calendarPlus1,
-                                                color: redCA0),
+                                                color: AppColors.redCA0),
                                           ),
                                           CommonTextWidget.PoppinsMedium(
-                                            text: "Date Change",
-                                            color: black2E2,
+                                            text: 'Date Change',
+                                            color: AppColors.black2E2,
                                             fontSize: 12,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
                                             text:
-                                                "Date Change fee starting ₹ 3,350",
-                                            color: grey717,
+                                                'Date Change fee starting ₹ 3,350',
+                                            color: AppColors.grey717,
                                             fontSize: 12,
                                           ),
                                         ],
@@ -338,13 +338,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                             child: SvgPicture.asset(seat),
                                           ),
                                           CommonTextWidget.PoppinsMedium(
-                                            text: "Seat",
-                                            color: black2E2,
+                                            text: 'Seat',
+                                            color: AppColors.black2E2,
                                             fontSize: 12,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
-                                            text: "Free Seat available",
-                                            color: grey717,
+                                            text: 'Free Seat available',
+                                            color: AppColors.grey717,
                                             fontSize: 12,
                                           ),
                                         ],
@@ -356,13 +356,13 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                             child: SvgPicture.asset(dish),
                                           ),
                                           CommonTextWidget.PoppinsMedium(
-                                            text: "Meal",
-                                            color: black2E2,
+                                            text: 'Meal',
+                                            color: AppColors.black2E2,
                                             fontSize: 12,
                                           ),
                                           CommonTextWidget.PoppinsRegular(
-                                            text: "Get complimentary",
-                                            color: grey717,
+                                            text: 'Get complimentary',
+                                            color: AppColors.grey717,
                                             fontSize: 12,
                                           ),
                                         ],
@@ -371,11 +371,11 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
                                   ),
                                   SizedBox(height: 20),
                                   CommonButtonWidget.button(
-                                    buttonColor: redCA0,
+                                    buttonColor: AppColors.redCA0,
                                     onTap: () {
                                       Get.to(() => FlightDetailScreen());
                                     },
-                                    text: "Book Now",
+                                    text: 'Book Now',
                                   ),
                                   SizedBox(height: 5),
                                 ],
@@ -391,5 +391,4 @@ class _CheapestListScreenState extends State<CheapestListScreen> {
         ),
       ),
     );
-  }
 }

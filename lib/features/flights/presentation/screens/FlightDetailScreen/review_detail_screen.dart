@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/booking/presentation/screens/seats_meals/seats_meals_addone_tab_screen.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/main.dart';
+import '../../../../booking/presentation/screens/seats_meals/seats_meals_addone_tab_screen.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../main.dart';
 
 class ReviewDetailScreen extends StatelessWidget {
   ReviewDetailScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: EdgeInsets.only(top: 350),
       child: Container(
         decoration: BoxDecoration(
-          color: white,
+          color: AppColors.whiteF2F,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -29,33 +28,33 @@ class ReviewDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonTextWidget.PoppinsSemiBold(
-                    text: "Review Details",
-                    color: black2E2,
+                    text: 'Review Details',
+                    color: AppColors.black2E2,
                     fontSize: 18,
                   ),
                   SizedBox(height: 10),
                   CommonTextWidget.PoppinsRegular(
-                    text: "Please ensure that the spelling of your name "
-                        "and other details match with your travel "
-                        "document govt. ID, as there cannot be "
-                        "changed later errors might lead to cancel "
-                        "penalties.",
-                    color: grey717,
+                    text: 'Please ensure that the spelling of your name '
+                        'and other details match with your travel '
+                        'document govt. ID, as there cannot be '
+                        'changed later errors might lead to cancel '
+                        'penalties.',
+                    color: AppColors.grey717,
                     fontSize: 14,
                   ),
                   SizedBox(height: 10),
                   Container(
                     height: 4,
                     width: 30,
-                    color: redCA0,
+                    color: AppColors.redCA0,
                   ),
                   SizedBox(height: 20),
                   Container(
                     width: Get.width,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: greyE2E, width: 1),
-                      color: white,
+                      border: Border.all(color: AppColors.greyE2E, width: 1),
+                      color: AppColors.whiteF2F,
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(15),
@@ -63,8 +62,8 @@ class ReviewDetailScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsMedium(
-                            text: "ADULT 1",
-                            color: black2E2,
+                            text: 'ADULT 1',
+                            color: AppColors.black2E2,
                             fontSize: 14,
                           ),
                           SizedBox(height: 10),
@@ -75,18 +74,18 @@ class ReviewDetailScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CommonTextWidget.PoppinsRegular(
-                                    text: "Name :",
-                                    color: grey717,
+                                    text: 'Name :',
+                                    color: AppColors.grey717,
                                     fontSize: 14,
                                   ),
                                   CommonTextWidget.PoppinsRegular(
-                                    text: "Last Name :",
-                                    color: grey717,
+                                    text: 'Last Name :',
+                                    color: AppColors.grey717,
                                     fontSize: 14,
                                   ),
                                   CommonTextWidget.PoppinsRegular(
-                                    text: "Gender :",
-                                    color: grey717,
+                                    text: 'Gender :',
+                                    color: AppColors.grey717,
                                     fontSize: 14,
                                   ),
                                 ],
@@ -95,18 +94,18 @@ class ReviewDetailScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "John",
-                                    color: black2E2,
+                                    text: 'John',
+                                    color: AppColors.black2E2,
                                     fontSize: 14,
                                   ),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Deo",
-                                    color: black2E2,
+                                    text: 'Deo',
+                                    color: AppColors.black2E2,
                                     fontSize: 14,
                                   ),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Male",
-                                    color: black2E2,
+                                    text: 'Male',
+                                    color: AppColors.black2E2,
                                     fontSize: 14,
                                   ),
                                 ],
@@ -127,8 +126,8 @@ class ReviewDetailScreen extends StatelessWidget {
                           Get.back();
                         },
                         child: CommonTextWidget.PoppinsMedium(
-                          text: "EDIT",
-                          color: redCA0,
+                          text: 'EDIT',
+                          color: AppColors.redCA0,
                           fontSize: 16,
                         ),
                       ),
@@ -137,8 +136,8 @@ class ReviewDetailScreen extends StatelessWidget {
                           Get.to(() => SeatsMealsAddOneTabScreen());
                         },
                         child: CommonTextWidget.PoppinsMedium(
-                          text: "CONFIRM",
-                          color: redCA0,
+                          text: 'CONFIRM',
+                          color: AppColors.redCA0,
                           fontSize: 16,
                         ),
                       ),
@@ -151,5 +150,4 @@ class ReviewDetailScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

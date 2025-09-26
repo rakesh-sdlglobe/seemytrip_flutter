@@ -6,7 +6,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:seemytrip/features/hotels/presentation/controllers/hotel_image_controller.dart';
 
-import '../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 
 class HotelImageScreen extends StatefulWidget {
   final List<Map<String, String>> imageList;
@@ -176,7 +176,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                 color: Color(0xFFF5F5F5),
                 child: Center(
                   child: LoadingAnimationWidget.fourRotatingDots(
-                    color: redCA0,
+                    color: AppColors.redCA0,
                     size: 40,
                   ),
                 ),
@@ -246,7 +246,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                   backgroundDecoration: BoxDecoration(color: Colors.black),
                   loadingBuilder: (BuildContext context, ImageChunkEvent? event) => Center(
                     child: LoadingAnimationWidget.dotsTriangle(
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       size: 40,
                     ),
                   ),

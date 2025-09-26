@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/shared/presentation/controllers/sort_and_filter_controller.dart';
-import 'package:seemytrip/features/booking/presentation/screens/sort_filter/filter_screen.dart';
-import 'package:seemytrip/features/booking/presentation/screens/sort_filter/sort_by_screen.dart';
-import 'package:seemytrip/core/widgets/common_button_widget.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_button_widget.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../../../shared/presentation/controllers/sort_and_filter_controller.dart';
+import 'filter_screen.dart';
+import 'sort_by_screen.dart';
 
 class SortAndFilterScreen extends StatelessWidget {
   SortAndFilterScreen({Key? key}) : super(key: key);
@@ -15,9 +16,8 @@ class SortAndFilterScreen extends StatelessWidget {
   final FilterController filterController = Get.put(FilterController());
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       body: Stack(
         children: [
           Column(
@@ -40,27 +40,27 @@ class SortAndFilterScreen extends StatelessWidget {
                         onTap: () {
                           Get.back();
                         },
-                        child: Icon(Icons.close, color: white, size: 20),
+                        child: Icon(Icons.close, color: AppColors.white, size: 20),
                       ),
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "Sort & Filters",
-                            color: white,
+                            text: 'Sort & Filters',
+                            color: AppColors.white,
                             fontSize: 18,
                           ),
                           CommonTextWidget.PoppinsMedium(
-                            text: "85 out 82 result",
-                            color: white,
+                            text: '85 out 82 result',
+                            color: AppColors.white,
                             fontSize: 12,
                           ),
                         ],
                       ),
                       Obx(() => filterController.isSelected.value == true
                           ? CommonTextWidget.PoppinsMedium(
-                              text: "Clear",
-                              color: white,
+                              text: 'Clear',
+                              color: AppColors.white,
                               fontSize: 12,
                             )
                           : SizedBox.shrink()),
@@ -85,11 +85,11 @@ class SortAndFilterScreen extends StatelessWidget {
               height: 45,
               width: Get.width,
               decoration: BoxDecoration(
-                color: white,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(5),
                 boxShadow: [
                   BoxShadow(
-                    color: grey757.withOpacity(0.25),
+                    color: AppColors.grey757.withOpacity(0.25),
                     blurRadius: 6,
                     offset: Offset(0, 1),
                   ),
@@ -99,14 +99,14 @@ class SortAndFilterScreen extends StatelessWidget {
                 indicatorSize: TabBarIndicatorSize.label,
                 padding: EdgeInsets.only(left: 50, bottom: 7, right: 50),
                 tabs: sortAndFilterTabController.myTabs,
-                unselectedLabelColor: grey5F5,
+                unselectedLabelColor: AppColors.grey5F5,
                 labelStyle:
-                    TextStyle(fontFamily: "PoppinsSemiBold", fontSize: 14),
+                    TextStyle(fontFamily: 'PoppinsSemiBold', fontSize: 14),
                 unselectedLabelStyle:
-                    TextStyle(fontFamily: "PoppinsMedium", fontSize: 14),
-                labelColor: redCA0,
+                    TextStyle(fontFamily: 'PoppinsMedium', fontSize: 14),
+                labelColor: AppColors.redCA0,
                 controller: sortAndFilterTabController.controller,
-                indicatorColor: redCA0,
+                indicatorColor: AppColors.redCA0,
                 indicatorWeight: 2.5,
               ),
             ),
@@ -116,13 +116,12 @@ class SortAndFilterScreen extends StatelessWidget {
             left: 24,
             right: 24,
             child: CommonButtonWidget.button(
-              text: "Apply",
+              text: 'Apply',
               onTap: () {},
-              buttonColor: redCA0,
+              buttonColor: AppColors.redCA0,
             ),
           ),
         ],
       ),
     );
-  }
 }

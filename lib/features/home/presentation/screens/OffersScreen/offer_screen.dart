@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/features/home/presentation/controllers/offer_controller.dart';
 import 'package:seemytrip/features/home/presentation/screens/OffersScreen/offer_detail_screen.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
@@ -11,11 +11,10 @@ class OfferScreen extends StatelessWidget {
   OfferScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -23,11 +22,11 @@ class OfferScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Offers",
-          color: white,
+          text: 'Offers',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -59,11 +58,11 @@ class OfferScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               color: controller.selectedIndex == index
-                                  ? redCA0.withOpacity(0.12)
-                                  : white,
+                                  ? AppColors.redCA0.withValues(alpha: 0.12)
+                                  : AppColors.white,
                               boxShadow: [
                                 BoxShadow(
-                                  color: grey515.withOpacity(0.25),
+                                  color: AppColors.grey515.withOpacity(0.25),
                                   blurRadius: 6,
                                   offset: Offset(0, 1),
                                 ),
@@ -75,8 +74,8 @@ class OfferScreen extends StatelessWidget {
                                 child: CommonTextWidget.PoppinsMedium(
                                   text: Lists.offerList1[index],
                                   color: controller.selectedIndex == index
-                                      ? redCA0
-                                      : black2E2,
+                                      ? AppColors.redCA0.withValues(alpha: 1)
+                                      : AppColors.black2E2,
                                   fontSize: 14,
                                 ),
                               ),
@@ -113,5 +112,4 @@ class OfferScreen extends StatelessWidget {
         ),
       ),
     );
-  }
 }

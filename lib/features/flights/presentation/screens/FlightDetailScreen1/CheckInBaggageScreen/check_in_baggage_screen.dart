@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
 
+import '../../../../../../core/theme/app_colors.dart';
+import '../../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../../core/widgets/lists_widget.dart';
+import '../../../../../../shared/constants/images.dart';
 import '../FareBreakUpScreen1/fare_break_up_screen1.dart';
 
 class CheckInBaggageScreen extends StatelessWidget {
   CheckInBaggageScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: redF9E,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.redF9E,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -24,11 +23,11 @@ class CheckInBaggageScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.close, color: white, size: 20),
+          child: Icon(Icons.close, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Check-in Baggage",
-          color: white,
+          text: 'Check-in Baggage',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -41,7 +40,7 @@ class CheckInBaggageScreen extends StatelessWidget {
               width: Get.width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
-                color: white,
+                color: AppColors.white,
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -56,8 +55,8 @@ class CheckInBaggageScreen extends StatelessWidget {
                           Image.asset(spicejet, height: 30, width: 30),
                           SizedBox(width: 10),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "DEL - BOM",
-                            color: black2E2,
+                            text: 'DEL - BOM',
+                            color: AppColors.black2E2,
                             fontSize: 14,
                           ),
                         ],
@@ -67,8 +66,8 @@ class CheckInBaggageScreen extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15),
                       child: CommonTextWidget.PoppinsRegular(
-                        text: "Included Check-in baggage per person - 15 KGS",
-                        color: black2E2,
+                        text: 'Included Check-in baggage per person - 15 KGS',
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                     ),
@@ -82,27 +81,27 @@ class CheckInBaggageScreen extends StatelessWidget {
                           ListTile(
                             leading: SvgPicture.asset(weightScale),
                             title: CommonTextWidget.PoppinsMedium(
-                              text: Lists.checkInBaggageList[index]["text1"],
-                              color: black2E2,
+                              text: Lists.checkInBaggageList[index]['text1'],
+                              color: AppColors.black2E2,
                               fontSize: 12,
                             ),
                             subtitle: CommonTextWidget.PoppinsMedium(
-                              text: Lists.checkInBaggageList[index]["text2"],
-                              color: black2E2,
+                              text: Lists.checkInBaggageList[index]['text2'],
+                              color: AppColors.black2E2,
                               fontSize: 12,
                             ),
                             trailing: Container(
                               height: 30,
                               width: 70,
                               decoration: BoxDecoration(
-                                color: white,
+                                color: AppColors.white,
                                 borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: greyD9D, width: 1),
+                                border: Border.all(color: AppColors.greyD9D, width: 1),
                               ),
                               child: Center(
                                 child: CommonTextWidget.PoppinsMedium(
-                                  text: "ADD",
-                                  color: black2E2,
+                                  text: 'ADD',
+                                  color: AppColors.black2E2,
                                   fontSize: 16,
                                 ),
                               ),
@@ -111,7 +110,7 @@ class CheckInBaggageScreen extends StatelessWidget {
                           ),
                           index == 4
                               ? SizedBox.shrink()
-                              : Divider(color: greyE8E, thickness: 1),
+                              : Divider(color: AppColors.greyE8E, thickness: 1),
                         ],
                       ),
                     ),
@@ -127,7 +126,7 @@ class CheckInBaggageScreen extends StatelessWidget {
               child: Container(
                 height: 60,
                 width: Get.width,
-                color: black2E2,
+                color: AppColors.black2E2,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   child: Row(
@@ -138,13 +137,13 @@ class CheckInBaggageScreen extends StatelessWidget {
                           Column(
                             children: [
                               CommonTextWidget.PoppinsSemiBold(
-                                text: "₹ 5,950",
-                                color: white,
+                                text: '₹ 5,950',
+                                color: AppColors.white,
                                 fontSize: 16,
                               ),
                               CommonTextWidget.PoppinsMedium(
-                                text: "FOR 1 ADULT",
-                                color: white,
+                                text: 'FOR 1 ADULT',
+                                color: AppColors.white,
                                 fontSize: 10,
                               ),
                             ],
@@ -165,11 +164,11 @@ class CheckInBaggageScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        color: redCA0,
+                        color: AppColors.redCA0,
                         child: CommonTextWidget.PoppinsSemiBold(
                           fontSize: 16,
-                          text: "CONTINUE",
-                          color: white,
+                          text: 'CONTINUE',
+                          color: AppColors.white,
                         ),
                       ),
                     ],
@@ -181,5 +180,4 @@ class CheckInBaggageScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+import '../../../../../../core/theme/app_colors.dart';
+import '../../../../../../core/widgets/common_text_widget.dart';
 
 class DateChangeRefundScreen extends StatelessWidget {
   DateChangeRefundScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20),
@@ -153,7 +152,7 @@ class DateChangeRefundScreen extends StatelessWidget {
                 width: Get.width / 2.4,
                 decoration: BoxDecoration(
                   color: Colors.transparent,
-                  border: Border.all(color: greyAFA, width: 0.5),
+                  border: Border.all(color: AppColors.greyAFA, width: 0.5),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(5),
                     bottomLeft: Radius.circular(5),
@@ -167,7 +166,7 @@ class DateChangeRefundScreen extends StatelessWidget {
                         height: 67,
                         width: Get.width,
                         decoration: BoxDecoration(
-                          color: whiteF2F,
+                          color: AppColors.whiteF2F,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(5),
                           ),
@@ -179,14 +178,14 @@ class DateChangeRefundScreen extends StatelessWidget {
                             children: [
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Time frame",
-                                color: black2E2,
+                                text: 'Time frame',
+                                color: AppColors.black2E2,
                                 fontSize: 12.0,
                               ),
                               SizedBox(height: 1),
                               CommonTextWidget.PoppinsRegular(
-                                text: "(From Scheduled flight Departure)",
-                                color: grey717,
+                                text: '(From Scheduled flight Departure)',
+                                color: AppColors.grey717,
                                 fontSize: 10.0,
                               ),
                             ],
@@ -198,8 +197,8 @@ class DateChangeRefundScreen extends StatelessWidget {
                       top: 79,
                       left: 10,
                       child: CommonTextWidget.PoppinsMedium(
-                        text: "0 hours to 2 hours*",
-                        color: black2E2,
+                        text: '0 hours to 2 hours*',
+                        color: AppColors.black2E2,
                         fontSize: 10,
                       ),
                     ),
@@ -207,8 +206,8 @@ class DateChangeRefundScreen extends StatelessWidget {
                       top: 131,
                       left: 10,
                       child: CommonTextWidget.PoppinsMedium(
-                        text: "2 hours to 4 days*",
-                        color: black2E2,
+                        text: '2 hours to 4 days*',
+                        color: AppColors.black2E2,
                         fontSize: 10,
                       ),
                     ),
@@ -216,8 +215,8 @@ class DateChangeRefundScreen extends StatelessWidget {
                       top: 195,
                       left: 10,
                       child: CommonTextWidget.PoppinsMedium(
-                        text: "4 days to 365 days*",
-                        color: black2E2,
+                        text: '4 days to 365 days*',
+                        color: AppColors.black2E2,
                         fontSize: 10,
                       ),
                     ),
@@ -228,8 +227,8 @@ class DateChangeRefundScreen extends StatelessWidget {
                 height: 250,
                 width: Get.width / 2.4,
                 decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(color: greyAFA, width: 0.5),
+                  color: AppColors.transparent,
+                  border: Border.all(color: AppColors.greyAFA, width: 0.5),
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(5),
                     bottomRight: Radius.circular(5),
@@ -243,7 +242,7 @@ class DateChangeRefundScreen extends StatelessWidget {
                         height: 67,
                         width: Get.width,
                         decoration: BoxDecoration(
-                          color: whiteF2F,
+                          color: AppColors.whiteF2F,
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(5),
                           ),
@@ -255,15 +254,15 @@ class DateChangeRefundScreen extends StatelessWidget {
                             children: [
                               SizedBox(height: 8),
                               CommonTextWidget.PoppinsMedium(
-                                text: "Airline Fee + MMT Fee+ fare difference",
-                                color: black2E2,
+                                text: 'Airline Fee + MMT Fee+ fare difference',
+                                color: AppColors.black2E2,
                                 textAlign: TextAlign.end,
                                 fontSize: 12.0,
                               ),
                               SizedBox(height: 1),
                               CommonTextWidget.PoppinsRegular(
-                                text: "(Per passenger)",
-                                color: grey717,
+                                text: '(Per passenger)',
+                                color: AppColors.grey717,
                                 fontSize: 10.0,
                               ),
                             ],
@@ -275,8 +274,8 @@ class DateChangeRefundScreen extends StatelessWidget {
                       top: 79,
                       left: 17,
                       child: CommonTextWidget.PoppinsMedium(
-                        text: "ADULT : Non Chargeable",
-                        color: black2E2,
+                        text: 'ADULT : Non Chargeable',
+                        color: AppColors.black2E2,
                         fontSize: 10,
                       ),
                     ),
@@ -284,8 +283,8 @@ class DateChangeRefundScreen extends StatelessWidget {
                       top: 131,
                       left: 17,
                       child: CommonTextWidget.PoppinsMedium(
-                        text: "ADULT : ₹ 3,350 + ₹ 300 +\nFare difference",
-                        color: black2E2,
+                        text: 'ADULT : ₹ 3,350 + ₹ 300 +\nFare difference',
+                        color: AppColors.black2E2,
                         textAlign: TextAlign.end,
                         fontSize: 10,
                       ),
@@ -294,8 +293,8 @@ class DateChangeRefundScreen extends StatelessWidget {
                       top: 195,
                       left: 17,
                       child: CommonTextWidget.PoppinsMedium(
-                        text: "ADULT : ₹ 2,535 + ₹ 300 +\nFare difference",
-                        color: black2E2,
+                        text: 'ADULT : ₹ 2,535 + ₹ 300 +\nFare difference',
+                        color: AppColors.black2E2,
                         textAlign: TextAlign.end,
                         fontSize: 10,
                       ),
@@ -310,8 +309,8 @@ class DateChangeRefundScreen extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: CommonTextWidget.PoppinsRegular(
-            text: "*From the Date of departure",
-            color: grey717,
+            text: '*From the Date of departure',
+            color: AppColors.grey717,
             fontSize: 10,
           ),
         ),
@@ -321,19 +320,19 @@ class DateChangeRefundScreen extends StatelessWidget {
           child: Container(
             width: Get.width,
             decoration: BoxDecoration(
-              color: orangeEB9.withOpacity(0.2),
+              color: AppColors.orangeEB9.withOpacity(0.2),
               borderRadius: BorderRadius.circular(3),
             ),
             child: Padding(
               padding: EdgeInsets.all(10),
               child: CommonTextWidget.PoppinsMedium(
                 text:
-                    "Important: The Baggage info is indicative. MakeMyTrip does "
-                    "not guarantee the accuracy of the information. Kindly check "
-                    "with airline website for accurate cancellation information. "
-                    "The baggage allowance may vary according to stop-overs "
-                    "connecting flights and charges in airline rules.",
-                color: black2E2,
+                    'Important: The Baggage info is indicative. MakeMyTrip does '
+                    'not guarantee the accuracy of the information. Kindly check '
+                    'with airline website for accurate cancellation information. '
+                    'The baggage allowance may vary according to stop-overs '
+                    'connecting flights and charges in airline rules.',
+                color: AppColors.black2E2,
                 fontSize: 10,
               ),
             ),
@@ -341,5 +340,4 @@ class DateChangeRefundScreen extends StatelessWidget {
         ),
       ],
     );
-  }
 }

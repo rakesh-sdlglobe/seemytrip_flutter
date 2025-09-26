@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 import 'package:seemytrip/main.dart';
@@ -11,9 +11,9 @@ class OfferMakeYourTripScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -21,11 +21,11 @@ class OfferMakeYourTripScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: "MakeYourTrip",
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -47,7 +47,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
               ),
               Container(
                 width: Get.width,
-                color: redF9E,
+                color: AppColors.redF9E,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   child: Column(
@@ -56,7 +56,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                       CommonTextWidget.PoppinsMedium(
                         text:
                             "Flate 13% off up to Rs.1500 on your first flight booking.",
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 14,
                       ),
                       SizedBox(height: 6),
@@ -64,12 +64,12 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                         children: [
                           CommonTextWidget.PoppinsRegular(
                             text: "Use Code:",
-                            color: grey888,
+                            color: AppColors.grey888,
                             fontSize: 12,
                           ),
                           CommonTextWidget.PoppinsMedium(
                             text: " WELCOMEMMT",
-                            color: redCA0,
+                            color: AppColors.redCA0,
                             fontSize: 14,
                           ),
                         ],
@@ -82,11 +82,11 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        color: redCA0,
+                        color: AppColors.redCA0,
                         child: CommonTextWidget.PoppinsRegular(
                           fontSize: 12,
                           text: "BOOK NOW",
-                          color: white,
+                          color: AppColors.white,
                         ),
                       )
                     ],
@@ -99,7 +99,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                 child: CommonTextWidget.PoppinsMedium(
                   fontSize: 14,
                   text: "Offer Details:",
-                  color: black2E2,
+                  color: AppColors.black2E2,
                 ),
               ),
               SizedBox(height: 10),
@@ -107,23 +107,23 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Table(
                   border: TableBorder(
-                    bottom: BorderSide(color: greyE2E, width: 1),
-                    top: BorderSide(color: greyE2E, width: 1),
-                    left: BorderSide(color: greyE2E, width: 1),
-                    right: BorderSide(color: greyE2E, width: 1),
-                    verticalInside: BorderSide(color: greyE2E, width: 1),
+                    bottom: BorderSide(color: AppColors.greyE2E, width: 1),
+                    top: BorderSide(color: AppColors.greyE2E, width: 1),
+                    left: BorderSide(color: AppColors.greyE2E, width: 1),
+                    right: BorderSide(color: AppColors.greyE2E, width: 1),
+                    verticalInside: BorderSide(color: AppColors.greyE2E, width: 1),
                   ),
                   children: [
                     TableRow(
                       decoration: BoxDecoration(
-                        color: black2E2.withOpacity(0.7),
+                        color: AppColors.black2E2.withOpacity(0.7),
                       ),
                       children: [
                         Padding(
                           padding: EdgeInsets.only(top: 5, left: 15, bottom: 5),
                           child: CommonTextWidget.PoppinsMedium(
                             text: "Coupon Code",
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 12,
                           ),
                         ),
@@ -131,7 +131,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                           padding: EdgeInsets.only(top: 5, left: 30, bottom: 5),
                           child: CommonTextWidget.PoppinsMedium(
                             text: "Category",
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 12,
                           ),
                         ),
@@ -139,7 +139,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                           padding: EdgeInsets.only(top: 5, left: 20, bottom: 5),
                           child: CommonTextWidget.PoppinsMedium(
                             text: "Offer Details",
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 12,
                           ),
                         ),
@@ -151,7 +151,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                           padding: EdgeInsets.only(top: 35, left: 15),
                           child: CommonTextWidget.PoppinsMedium(
                             text: "WELCOMEMMT",
-                            color: redCA0,
+                            color: AppColors.redCA0,
                             fontSize: 12,
                           ),
                         ),
@@ -160,7 +160,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                               top: 20, left: 15, right: 15, bottom: 20),
                           child: CommonTextWidget.PoppinsRegular(
                             text: "Domestic Flights",
-                            color: grey888,
+                            color: AppColors.grey888,
                             fontSize: 12,
                             textAlign: TextAlign.center,
                           ),
@@ -170,7 +170,7 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                               top: 20, left: 15, right: 15, bottom: 20),
                           child: CommonTextWidget.PoppinsRegular(
                             text: "Get FLAT 13% up to Rs. 1500 OFF",
-                            color: grey888,
+                            color: AppColors.grey888,
                             fontSize: 12,
                             textAlign: TextAlign.center,
                           ),
@@ -186,13 +186,13 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.circle, color: black2E2, size: 10),
+                    Icon(Icons.circle, color: AppColors.black2E2, size: 10),
                     SizedBox(width: 10),
                     Expanded(
                       child: CommonTextWidget.PoppinsRegular(
                         text:
                             "Get FLAT 13% up to Rs. 1500 OFF on your first flight booking!",
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                     ),
@@ -205,13 +205,13 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.circle, color: black2E2, size: 10),
+                    Icon(Icons.circle, color: AppColors.black2E2, size: 10),
                     SizedBox(width: 10),
                     Expanded(
                       child: CommonTextWidget.PoppinsRegular(
                         text:
                             "This coupon is valid only on your first domestic flight booking on MMT.",
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                     ),
@@ -224,13 +224,13 @@ class OfferMakeYourTripScreen extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.circle, color: black2E2, size: 10),
+                    Icon(Icons.circle, color: AppColors.black2E2, size: 10),
                     SizedBox(width: 10),
                     Expanded(
                       child: CommonTextWidget.PoppinsRegular(
                         text:
                             "On the application of the dealcode WELCOMEMMT, discount will automatically decuted amount.",
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 12,
                       ),
                     ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../core/widgets/common_button_widget.dart';
 import '../../../../core/widgets/common_text_widget.dart';
@@ -21,7 +21,7 @@ class CabTerminalScreen2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: SingleChildScrollView(
@@ -46,11 +46,11 @@ class CabTerminalScreen2 extends StatelessWidget {
                         onTap: () {
                           Get.back();
                         },
-                        child: Icon(Icons.arrow_back, color: white, size: 20),
+                        child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                       ),
                       CommonTextWidget.PoppinsSemiBold(
                         text: 'Terminal 1C to Delhi...',
-                        color: white,
+                        color: AppColors.white,
                         fontSize: 18,
                       ),
                       Container(),
@@ -81,7 +81,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                               CommonTextWidget.PoppinsRegular(
                                 text: 'SHEDULED PICKUP',
                                 fontSize: 12,
-                                color: Color(0xff717171),
+                                color: AppColors.black2E2,
                               ),
                               SizedBox(height: 1),
                               Row(
@@ -90,12 +90,12 @@ class CabTerminalScreen2 extends StatelessWidget {
                                   CommonTextWidget.PoppinsMedium(
                                     text: '11 oct,',
                                     fontSize: 15,
-                                    color: black2E2,
+                                    color: AppColors.black2E2,
                                   ),
                                   CommonTextWidget.PoppinsRegular(
                                     text: '10:00 AM',
                                     fontSize: 12,
-                                    color: grey717,
+                                    color: AppColors.grey717,
                                   )
                                 ],
                               )
@@ -106,13 +106,13 @@ class CabTerminalScreen2 extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.edit_outlined,
-                                color: redCA0,
+                                color: AppColors.redCA0,
                               ),
                               SizedBox(height: 1),
                               CommonTextWidget.PoppinsMedium(
                                 text: 'Edit',
                                 fontSize: 15,
-                                color: redCA0,
+                                color: AppColors.redCA0,
                               ),
                             ],
                           ),
@@ -130,34 +130,34 @@ class CabTerminalScreen2 extends StatelessWidget {
                   width: Get.width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: grey9B9.withOpacity(0.15),
-                    border: Border.all(color: greyE2E, width: 1),
+                    color: AppColors.grey9B9.withValues(alpha: 0.15),
+                    border: Border.all(color: AppColors.greyE2E, width: 1),
                   ),
                   child: Center(
                     child: CommonTextWidget.PoppinsMedium(
                       text:
                           'Distance for selected route is 9kms | Approx 0.5 hr(s)',
-                      color: grey575,
+                      color: AppColors.grey575,
                       fontSize: 10,
                     ),
                   ),
                 ),
               ),
               SizedBox(height: 20),
-              Divider(color: greyE8E, thickness: 5),
+              Divider(color: AppColors.greyE8E, thickness: 5),
               SizedBox(height: 15),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Image.asset(cabTerminalImage3),
               ),
               SizedBox(height: 20),
-              Divider(color: greyE8E, thickness: 5),
+              Divider(color: AppColors.greyE8E, thickness: 5),
               SizedBox(height: 10),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsSemiBold(
                   text: 'Cab & Driver Details',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 18,
                 ),
               ),
@@ -168,7 +168,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                   text:
                       'QR Code & MMT Affiliate Counter details will be shared '
                       'after Booking.',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 11,
                 ),
               ),
@@ -178,7 +178,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                   text:
                       'Show your booking details at MMt Afilitate Counter at the '
                       'Airport and quickly into a cab.',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 11,
                 ),
               ),
@@ -187,7 +187,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsSemiBold(
                   text: 'Cab Images',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 14,
                 ),
               ),
@@ -198,13 +198,13 @@ class CabTerminalScreen2 extends StatelessWidget {
                   width: Get.width,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
-                    color: yellowF7C.withOpacity(0.35),
+                    color: AppColors.yellowF7C.withValues(alpha: 0.35),
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     child: CommonTextWidget.PoppinsMedium(
                       text: 'These are only representative images.',
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                   ),
@@ -224,12 +224,12 @@ class CabTerminalScreen2 extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Divider(color: greyE8E, thickness: 5),
+              Divider(color: AppColors.greyE8E, thickness: 5),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsSemiBold(
                   text: 'Cab & Driver Details',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 18,
                 ),
               ),
@@ -239,13 +239,13 @@ class CabTerminalScreen2 extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.circle, color: black2E2, size: 10),
+                    Icon(Icons.circle, color: AppColors.black2E2, size: 10),
                     SizedBox(width: 10),
                     Expanded(
                       child: CommonTextWidget.PoppinsMedium(
                         text:
                             'Airport Entry Charges and Driver Allowance are included',
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 11,
                       ),
                     ),
@@ -258,12 +258,12 @@ class CabTerminalScreen2 extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.circle, color: black2E2, size: 10),
+                    Icon(Icons.circle, color: AppColors.black2E2, size: 10),
                     SizedBox(width: 10),
                     Expanded(
                       child: CommonTextWidget.PoppinsMedium(
                         text: '9 kms included Fare beyound 9 Kms : ₹18/Km ',
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 11,
                       ),
                     ),
@@ -276,13 +276,13 @@ class CabTerminalScreen2 extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.circle, color: black2E2, size: 10),
+                    Icon(Icons.circle, color: AppColors.black2E2, size: 10),
                     SizedBox(width: 10),
                     Expanded(
                       child: CommonTextWidget.PoppinsMedium(
                         text: 'Space for 2 Luggage Bags - More luggage can be '
                             'adjusted in seating ares with driver consent.',
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 11,
                       ),
                     ),
@@ -295,14 +295,14 @@ class CabTerminalScreen2 extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.circle, color: black2E2, size: 10),
+                    Icon(Icons.circle, color: AppColors.black2E2, size: 10),
                     SizedBox(width: 10),
                     Expanded(
                       child: CommonTextWidget.PoppinsMedium(
                         text: 'Cancellation info '
                             '\nTill 11 Oct 10:00 AM - Free '
                             '\nAfter 11 Oct 10:00 AM - 100% penalty',
-                        color: black2E2,
+                        color: AppColors.black2E2,
                         fontSize: 11,
                       ),
                     ),
@@ -310,13 +310,13 @@ class CabTerminalScreen2 extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Divider(color: greyE8E, thickness: 5),
+              Divider(color: AppColors.greyE8E, thickness: 5),
               SizedBox(height: 14),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsSemiBold(
                   text: 'I am booking for',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 16,
                 ),
               ),
@@ -342,12 +342,15 @@ class CabTerminalScreen2 extends StatelessWidget {
                             child: controller.selectedIndex == index
                                 ? SvgPicture.asset(selectedIcon)
                                 : SvgPicture.asset(unSelectedIcon,
-                                    color: greyD0D),
+                                    colorFilter: ColorFilter.mode(
+                                      AppColors.greyD0D,
+                                      BlendMode.srcIn,
+                                    )),
                           ),
                           SizedBox(width: 8),
                           CommonTextWidget.PoppinsRegular(
                             text: Lists.cabTerminal2List1[index],
-                            color: black2E2,
+                            color: AppColors.black2E2,
                             fontSize: 14,
                           ),
                         ],
@@ -361,7 +364,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsRegular(
                   text: 'Name',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 12,
                 ),
               ),
@@ -374,8 +377,8 @@ class CabTerminalScreen2 extends StatelessWidget {
                       height: 45,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: grey9B9.withOpacity(0.25),
-                        border: Border.all(color: greyE2E, width: 1),
+                        color: AppColors.grey9B9.withValues(alpha: 0.25),
+                        border: Border.all(color: AppColors.greyE2E, width: 1),
                       ),
                       child: Center(
                         child: Padding(
@@ -384,11 +387,11 @@ class CabTerminalScreen2 extends StatelessWidget {
                             children: [
                               CommonTextWidget.PoppinsRegular(
                                 text: 'Mr.',
-                                color: black2E2,
+                                color: AppColors.black2E2,
                                 fontSize: 14,
                               ),
                               SizedBox(width: 5),
-                              SvgPicture.asset(arrowDownIcon, color: black2E2),
+                              SvgPicture.asset(arrowDownIcon, color: AppColors.black2E2),
                             ],
                           ),
                         ),
@@ -418,7 +421,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsRegular(
                   text: 'Email',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 12,
                 ),
               ),
@@ -436,7 +439,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsRegular(
                   text: 'Contact No',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 12,
                 ),
               ),
@@ -449,8 +452,8 @@ class CabTerminalScreen2 extends StatelessWidget {
                       height: 45,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: grey9B9.withOpacity(0.25),
-                        border: Border.all(color: greyE2E, width: 1),
+                        color: AppColors.grey9B9.withValues(alpha: 0.25),
+                        border: Border.all(color: AppColors.greyE2E, width: 1),
                       ),
                       child: Center(
                         child: Padding(
@@ -459,11 +462,11 @@ class CabTerminalScreen2 extends StatelessWidget {
                             children: [
                               CommonTextWidget.PoppinsRegular(
                                 text: '+91.',
-                                color: black2E2,
+                                color: AppColors.black2E2,
                                 fontSize: 14,
                               ),
                               SizedBox(width: 5),
-                              SvgPicture.asset(arrowDownIcon, color: black2E2),
+                              SvgPicture.asset(arrowDownIcon, color: AppColors.black2E2),
                             ],
                           ),
                         ),
@@ -481,13 +484,13 @@ class CabTerminalScreen2 extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Divider(color: greyE8E, thickness: 5),
+              Divider(color: AppColors.greyE8E, thickness: 5),
               SizedBox(height: 15),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: CommonTextWidget.PoppinsSemiBold(
                   text: 'Payment options',
-                  color: black2E2,
+                  color: AppColors.black2E2,
                   fontSize: 18,
                 ),
               ),
@@ -507,16 +510,16 @@ class CabTerminalScreen2 extends StatelessWidget {
                       },
                       child: controller.selectedIndex1 == index
                           ? SvgPicture.asset(selectedIcon)
-                          : SvgPicture.asset(unSelectedIcon, color: greyD0D),
+                          : SvgPicture.asset(unSelectedIcon, colorFilter: ColorFilter.mode(AppColors.greyD0D, BlendMode.srcIn)),
                     ),
                     title: CommonTextWidget.PoppinsMedium(
                       text: Lists.cabTerminal2List2[index]['text1'],
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                     trailing: CommonTextWidget.PoppinsMedium(
                       text: Lists.cabTerminal2List2[index]['text2'],
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       fontSize: 14,
                     ),
                   ),
@@ -530,7 +533,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: FontFamily.PoppinsRegular,
                       fontSize: 12,
-                      color: grey969,
+                      color: AppColors.grey969,
                     ),
                     children: <TextSpan>[
                       TextSpan(
@@ -538,21 +541,21 @@ class CabTerminalScreen2 extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 12,
                             fontFamily: FontFamily.PoppinsRegular,
-                            color: blue1F9),
+                            color: AppColors.blue1F9),
                       ),
                       TextSpan(
                         text: 'and ',
                         style: TextStyle(
                             fontSize: 12,
                             fontFamily: FontFamily.PoppinsRegular,
-                            color: grey969),
+                            color: AppColors.grey969),
                       ),
                       TextSpan(
                         text: 'Cancellation & Property Booking Policies',
                         style: TextStyle(
                             fontSize: 12,
                             fontFamily: FontFamily.PoppinsRegular,
-                            color: blue1F9),
+                            color: AppColors.blue1F9),
                       ),
                     ],
                   ),
@@ -564,7 +567,7 @@ class CabTerminalScreen2 extends StatelessWidget {
                 child: CommonButtonWidget.button(
                   text: 'Next',
                   onTap: () {},
-                  buttonColor: redCA0,
+                  buttonColor: AppColors.redCA0,
                 ),
               ),
               SizedBox(height: 50),

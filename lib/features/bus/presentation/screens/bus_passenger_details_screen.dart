@@ -4,54 +4,61 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'passenger_form.dart';
 
-// --- REFINED THEME & STYLES ---
-class _AppStyles {
-  // Colors aligned with BusSearchResultsScreen and BusSeatLayoutScreen
-  static const Color primary = Color(0xFFE53935); // Softer red
-  static const Color primaryVariant = Color(0xFFC62828); // Darker for depth
-  static const Color accent = Color(0xFFFFA726); // Orange for highlights
-  static const Color textPrimary = Color(0xFF1A1A1A); // Softer black
-  static const Color textSecondary = Color(0xFF757575); // Neutral grey
-  static const Color background = Color(0xFFF5F6FA); // Clean background
-  static const Color cardBackground = Colors.white;
-  static const Color error = Color(0xFFD32F2F);
-  static const Color success = Color(0xFF2ECC71);
-  static const Color divider = Color(0xFFE0E0E0);
-  static const Color iconColor = Color(0xFF757575);
+// --- THEME-AWARE COLOR SYSTEM ---
+class ThemeAwareColors {
+  static Color primary(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFFF5722) // Orange-red for dark theme
+    : const Color(0xFFE53935); // Red for light theme
+  
+  static Color primaryVariant(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFE64A19) // Darker orange-red for dark theme
+    : const Color(0xFFC62828); // Darker red for light theme
+  
+  static Color accent(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFFFB74D) // Orange accent for dark theme
+    : const Color(0xFFFFA726); // Orange accent for light theme
+  
+  static Color success(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFF4CAF50) // Green for dark theme
+    : const Color(0xFF2ECC71); // Green for light theme
+  
+  static Color error(BuildContext context) => Theme.of(context).brightness == Brightness.dark
+    ? const Color(0xFFEF5350) // Light red for dark theme
+    : const Color(0xFFD32F2F); // Red for light theme
+}
 
-  // Text Styles
-  static final TextStyle title = GoogleFonts.poppins(
+class ThemeAwareStyles {
+  static TextStyle title(BuildContext context) => GoogleFonts.poppins(
     fontWeight: FontWeight.w600,
-    color: textPrimary,
+    color: Theme.of(context).textTheme.titleLarge?.color,
     fontSize: 20,
     letterSpacing: 0.2,
   );
 
-  static final TextStyle cardTitle = GoogleFonts.poppins(
+  static TextStyle cardTitle(BuildContext context) => GoogleFonts.poppins(
     fontWeight: FontWeight.w600,
-    color: textPrimary,
+    color: Theme.of(context).textTheme.titleLarge?.color,
     fontSize: 16,
   );
 
-  static final TextStyle body = GoogleFonts.poppins(
-    color: textPrimary,
+  static TextStyle body(BuildContext context) => GoogleFonts.poppins(
+    color: Theme.of(context).textTheme.bodyLarge?.color,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.5,
   );
 
-  static final TextStyle subtitle = GoogleFonts.poppins(
-    color: textSecondary,
+  static TextStyle subtitle(BuildContext context) => GoogleFonts.poppins(
+    color: Theme.of(context).textTheme.bodySmall?.color,
     fontSize: 13,
     height: 1.4,
   );
 
-  static final TextStyle button = GoogleFonts.poppins(
+  static TextStyle button(BuildContext context) => GoogleFonts.poppins(
     fontWeight: FontWeight.w600,
     fontSize: 16,
     color: Colors.white,
@@ -199,7 +206,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         'Success',
         'Proceeding to payment...',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: _AppStyles.success,
+        backgroundColor: ThemeAwareColors.success(context),
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
@@ -210,7 +217,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         'Error',
         'Please fill all required fields correctly.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: _AppStyles.error,
+        backgroundColor: ThemeAwareColors.error(context),
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
@@ -222,13 +229,13 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
     if (_fadeAnimation == null || _animationController == null) {
       return Center(
           child: LoadingAnimationWidget.fourRotatingDots(
-        color: _AppStyles.primary,
+        color: ThemeAwareColors.primary(context),
         size: 40,
       ));
     }
 
     return Scaffold(
-      backgroundColor: _AppStyles.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: _buildAppBar(),
       body: FadeTransition(
         opacity: _fadeAnimation!,
@@ -257,35 +264,35 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   }
 
   PreferredSizeWidget _buildAppBar() => AppBar(
-        backgroundColor: _AppStyles.cardBackground,
+        backgroundColor: Theme.of(context).cardColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        shadowColor: _AppStyles.primary.withOpacity(0.1),
+        shadowColor: ThemeAwareColors.primary(context).withOpacity(0.1),
         leading: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: _AppStyles.background,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Theme.of(context).shadowColor.withOpacity(0.08),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: _AppStyles.textPrimary, size: 20),
+            icon: Icon(Icons.arrow_back_ios_new_rounded,
+                color: Theme.of(context).textTheme.titleLarge?.color, size: 20),
             onPressed: () => Get.back(),
           ),
         ),
-        title: Text('Passenger Details', style: _AppStyles.title),
+        title: Text('Passenger Details', style: ThemeAwareStyles.title(context)),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
-            color: _AppStyles.divider.withOpacity(0.5),
+            color: Theme.of(context).dividerColor.withOpacity(0.5),
             height: 1,
           ),
         ),
@@ -293,11 +300,11 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
 
   Widget _buildCard({required Widget child}) => Container(
         decoration: BoxDecoration(
-          color: _AppStyles.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Theme.of(context).shadowColor.withOpacity(0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -318,7 +325,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               children: [
                 Text(
                   '${widget.fromCity} → ${widget.toCity}',
-                  style: _AppStyles.title.copyWith(fontSize: 18),
+                  style: ThemeAwareStyles.title(context).copyWith(fontSize: 18),
                   overflow: TextOverflow.ellipsis,
                 ),
                 InkWell(
@@ -332,11 +339,11 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   child: Row(
                     children: [
                       Text('Details',
-                          style: _AppStyles.body
-                              .copyWith(color: _AppStyles.accent)),
+                          style: ThemeAwareStyles.body(context)
+                              .copyWith(color: ThemeAwareColors.accent(context))),
                       const SizedBox(width: 4),
                       Icon(Icons.arrow_forward_ios_rounded,
-                          size: 14, color: _AppStyles.accent),
+                          size: 14, color: ThemeAwareColors.accent(context)),
                     ],
                   ),
                 ),
@@ -344,34 +351,34 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             ),
             const SizedBox(height: 8),
             Text(widget.busName,
-                style: _AppStyles.subtitle.copyWith(fontSize: 14)),
+                style: ThemeAwareStyles.subtitle(context).copyWith(fontSize: 14)),
             const SizedBox(height: 12),
-            Container(height: 1, color: _AppStyles.divider.withOpacity(0.5)),
+            Container(height: 1, color: Theme.of(context).dividerColor.withOpacity(0.5)),
             const SizedBox(height: 12),
             Text(
               '${widget.selectedSeats.length} Traveller(s) • ${widget.travelDate}',
-              style: _AppStyles.body,
+              style: ThemeAwareStyles.body(context),
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.access_time, size: 16, color: _AppStyles.iconColor),
+                Icon(Icons.access_time, size: 16, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                 const SizedBox(width: 8),
                 Text(
                   '${widget.departureTime} - ${widget.arrivalTime}',
-                  style: _AppStyles.body.copyWith(fontSize: 13),
+                  style: ThemeAwareStyles.body(context).copyWith(fontSize: 13),
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.location_on, size: 16, color: _AppStyles.iconColor),
+                Icon(Icons.location_on, size: 16, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '${widget.boardingPoint} → ${widget.droppingPoint}',
-                    style: _AppStyles.body.copyWith(fontSize: 13),
+                    style: ThemeAwareStyles.body(context).copyWith(fontSize: 13),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -383,7 +390,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
 
   Widget _buildTripDetailsModal() => Container(
         decoration: BoxDecoration(
-          color: _AppStyles.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(16),
@@ -394,52 +401,52 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Trip Details', style: _AppStyles.title),
+                Text('Trip Details', style: ThemeAwareStyles.title(context)),
                 IconButton(
-                  icon: const Icon(Icons.close, color: _AppStyles.textPrimary),
+                  icon: Icon(Icons.close, color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            Text('Route', style: _AppStyles.cardTitle),
+            Text('Route', style: ThemeAwareStyles.cardTitle(context)),
             const SizedBox(height: 8),
             Text(
               '${widget.fromCity} → ${widget.toCity}',
-              style: _AppStyles.body,
+              style: ThemeAwareStyles.body(context),
             ),
             const SizedBox(height: 12),
-            Text('Bus', style: _AppStyles.cardTitle),
+            Text('Bus', style: ThemeAwareStyles.cardTitle(context)),
             const SizedBox(height: 8),
-            Text(widget.busName, style: _AppStyles.body),
+            Text(widget.busName, style: ThemeAwareStyles.body(context)),
             const SizedBox(height: 12),
-            Text('Date & Time', style: _AppStyles.cardTitle),
+            Text('Date & Time', style: ThemeAwareStyles.cardTitle(context)),
             const SizedBox(height: 8),
             Text(
               '${widget.travelDate} | ${widget.departureTime} - ${widget.arrivalTime}',
-              style: _AppStyles.body,
+              style: ThemeAwareStyles.body(context),
             ),
             const SizedBox(height: 12),
-            Text('Boarding & Dropping', style: _AppStyles.cardTitle),
+            Text('Boarding & Dropping', style: ThemeAwareStyles.cardTitle(context)),
             const SizedBox(height: 8),
             Text(
               '${widget.boardingPoint} → ${widget.droppingPoint}',
-              style: _AppStyles.body,
+              style: ThemeAwareStyles.body(context),
             ),
             const SizedBox(height: 12),
-            Text('Seats', style: _AppStyles.cardTitle),
+            Text('Seats', style: ThemeAwareStyles.cardTitle(context)),
             const SizedBox(height: 8),
             Text(
               widget.selectedSeats.join(', '),
-              style: _AppStyles.body,
+              style: ThemeAwareStyles.body(context),
             ),
             const SizedBox(height: 16),
-            Text('Total Fare', style: _AppStyles.cardTitle),
+            Text('Total Fare', style: ThemeAwareStyles.cardTitle(context)),
             const SizedBox(height: 8),
             Text(
               '₹${(widget.fare * widget.selectedSeats.length).toStringAsFixed(2)}',
-              style: _AppStyles.body.copyWith(
-                color: _AppStyles.accent,
+              style: ThemeAwareStyles.body(context).copyWith(
+                color: ThemeAwareColors.accent(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -451,11 +458,11 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Contact Details', style: _AppStyles.cardTitle),
+            Text('Contact Details', style: ThemeAwareStyles.cardTitle(context)),
             const SizedBox(height: 8),
             Text(
               'Your ticket & updates will be sent here',
-              style: _AppStyles.subtitle,
+              style: ThemeAwareStyles.subtitle(context),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -463,18 +470,18 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               decoration: InputDecoration(
                 labelText: 'Email ID',
                 prefixIcon: Icon(Icons.email_outlined,
-                    size: 20, color: _AppStyles.iconColor),
+                    size: 20, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.primary, width: 1.5),
+                  borderSide: BorderSide(color: ThemeAwareColors.primary(context), width: 1.5),
                 ),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -494,18 +501,18 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               decoration: InputDecoration(
                 labelText: 'Phone Number',
                 prefixIcon: Icon(Icons.phone_outlined,
-                    size: 20, color: _AppStyles.iconColor),
+                    size: 20, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.primary, width: 1.5),
+                  borderSide: BorderSide(color: ThemeAwareColors.primary(context), width: 1.5),
                 ),
               ),
               keyboardType: TextInputType.phone,
@@ -526,18 +533,18 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               decoration: InputDecoration(
                 labelText: 'Emergency Contact Number',
                 prefixIcon: Icon(Icons.emergency_outlined,
-                    size: 20, color: _AppStyles.iconColor),
+                    size: 20, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.primary, width: 1.5),
+                  borderSide: BorderSide(color: ThemeAwareColors.primary(context), width: 1.5),
                 ),
               ),
               keyboardType: TextInputType.phone,
@@ -558,18 +565,18 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               decoration: InputDecoration(
                 labelText: 'Special Requirements (Optional)',
                 prefixIcon: Icon(Icons.accessibility_new,
-                    size: 20, color: _AppStyles.iconColor),
+                    size: 20, color: Theme.of(context).iconTheme.color ?? Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.divider),
+                  borderSide: BorderSide(color: Theme.of(context).dividerColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: _AppStyles.primary, width: 1.5),
+                  borderSide: BorderSide(color: ThemeAwareColors.primary(context), width: 1.5),
                 ),
               ),
               maxLines: 2,
@@ -589,7 +596,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               decoration: BoxDecoration(
                 border: Border(
                   bottom:
-                      BorderSide(color: _AppStyles.divider.withOpacity(0.3)),
+                      BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.3)),
                 ),
               ),
               child: Column(
@@ -600,23 +607,23 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: _AppStyles.primary.withOpacity(0.1),
+                          color: ThemeAwareColors.primary(context).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(Icons.people_alt_rounded,
-                            color: _AppStyles.primary, size: 20),
+                            color: ThemeAwareColors.primary(context), size: 20),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         'Passenger Details',
-                        style: _AppStyles.cardTitle.copyWith(fontSize: 18),
+                        style: ThemeAwareStyles.cardTitle(context).copyWith(fontSize: 18),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Enter details for each passenger. All fields are mandatory.',
-                    style: _AppStyles.subtitle.copyWith(fontSize: 13),
+                    style: ThemeAwareStyles.subtitle(context).copyWith(fontSize: 13),
                   ),
                 ],
               ),
@@ -671,7 +678,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //       borderRadius: BorderRadius.circular(20),
   //       boxShadow: [
   //         BoxShadow(
-  //           color: _AppStyles.primary.withOpacity(0.04),
+  //           color: ThemeAwareColors.primary(context).withOpacity(0.04),
   //           blurRadius: 12,
   //           spreadRadius: 1,
   //           offset: const Offset(0, 6),
@@ -689,13 +696,13 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                 begin: Alignment.topLeft,
   //                 end: Alignment.bottomRight,
   //                 colors: [
-  //                   _AppStyles.primary.withOpacity(0.03),
-  //                   _AppStyles.primary.withOpacity(0.01),
+  //                   ThemeAwareColors.primary(context).withOpacity(0.03),
+  //                   ThemeAwareColors.primary(context).withOpacity(0.01),
   //                 ],
   //               ),
   //               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
   //               border: Border(
-  //                 bottom: BorderSide(color: _AppStyles.divider.withOpacity(0.2)),
+  //                 bottom: BorderSide(color: Theme.of(context).dividerColor.withOpacity(0.2)),
   //               ),
   //             ),
   //             child: Row(
@@ -706,7 +713,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                     Container(
   //                       padding: const EdgeInsets.all(6),
   //                       decoration: BoxDecoration(
-  //                         color: _AppStyles.primary,
+  //                         color: ThemeAwareColors.primary(context),
   //                         shape: BoxShape.circle,
   //                       ),
   //                       child: Text(
@@ -721,9 +728,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                     const SizedBox(width: 12),
   //                     Text(
   //                       'Passenger Details',
-  //                       style: _AppStyles.cardTitle.copyWith(
+  //                       style: ThemeAwareStyles.cardTitle(context).copyWith(
   //                         fontSize: 16,
-  //                         color: _AppStyles.textPrimary,
+  //                         color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black,
   //                       ),
   //                     ),
   //                   ],
@@ -731,20 +738,20 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                 Container(
   //                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
   //                   decoration: BoxDecoration(
-  //                     color: _AppStyles.primary.withOpacity(0.1),
+  //                     color: ThemeAwareColors.primary(context).withOpacity(0.1),
   //                     borderRadius: BorderRadius.circular(12),
   //                   ),
   //                   child: Row(
   //                     mainAxisSize: MainAxisSize.min,
   //                     children: [
   //                       Icon(Icons.event_seat_rounded,
-  //                           color: _AppStyles.primary, size: 16),
+  //                           color: ThemeAwareColors.primary(context), size: 16),
   //                       const SizedBox(width: 6),
   //                       Text(
   //                         'Seat ${widget.selectedSeats[index]}',
-  //                         style: _AppStyles.body.copyWith(
+  //                         style: ThemeAwareStyles.body(context).copyWith(
   //                           fontWeight: FontWeight.w600,
-  //                           color: _AppStyles.primary,
+  //                           color: ThemeAwareColors.primary(context),
   //                           fontSize: 13,
   //                         ),
   //                       ),
@@ -766,9 +773,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                   children: [
   //                     Text(
   //                       'Full Name',
-  //                       style: _AppStyles.subtitle.copyWith(
+  //                       style: ThemeAwareStyles.subtitle(context).copyWith(
   //                         fontSize: 13,
-  //                         color: _AppStyles.textSecondary,
+  //                         color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey,
   //                         fontWeight: FontWeight.w500,
   //                       ),
   //                     ),
@@ -778,7 +785,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                         borderRadius: BorderRadius.circular(14),
   //                         boxShadow: [
   //                           BoxShadow(
-  //                             color: _AppStyles.primary.withOpacity(0.04),
+  //                             color: ThemeAwareColors.primary(context).withOpacity(0.04),
   //                             blurRadius: 8,
   //                             offset: const Offset(0, 2),
   //                           ),
@@ -786,15 +793,15 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                       ),
   //                       child: TextFormField(
   //                         controller: _nameControllers[index],
-  //                         style: _AppStyles.body.copyWith(
+  //                         style: ThemeAwareStyles.body(context).copyWith(
   //                           fontSize: 15,
-  //                           color: _AppStyles.textPrimary,
+  //                           color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black,
   //                           height: 1.4,
   //                         ),
   //                         decoration: InputDecoration(
   //                           hintText: 'Enter full name',
-  //                           hintStyle: _AppStyles.body.copyWith(
-  //                             color: _AppStyles.textSecondary.withOpacity(0.7),
+  //                           hintStyle: ThemeAwareStyles.body(context).copyWith(
+  //                             color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey.withOpacity(0.7),
   //                             fontSize: 15,
   //                           ),
   //                           border: OutlineInputBorder(
@@ -808,7 +815,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                           focusedBorder: OutlineInputBorder(
   //                             borderRadius: BorderRadius.circular(14),
   //                             borderSide: BorderSide(
-  //                               color: _AppStyles.primary,
+  //                               color: ThemeAwareColors.primary(context),
   //                               width: 1.5,
   //                             ),
   //                           ),
@@ -818,7 +825,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                           ),
   //                           prefixIcon: Icon(
   //                             Icons.person_outline_rounded,
-  //                             color: _AppStyles.primary,
+  //                             color: ThemeAwareColors.primary(context),
   //                             size: 22,
   //                           ),
   //                           filled: true,
@@ -852,9 +859,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                         children: [
   //                           Text(
   //                             'Age',
-  //                             style: _AppStyles.subtitle.copyWith(
+  //                             style: ThemeAwareStyles.subtitle(context).copyWith(
   //                               fontSize: 13,
-  //                               color: _AppStyles.textSecondary,
+  //                               color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey,
   //                               fontWeight: FontWeight.w500,
   //                             ),
   //                           ),
@@ -864,7 +871,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                               borderRadius: BorderRadius.circular(14),
   //                               boxShadow: [
   //                                 BoxShadow(
-  //                                   color: _AppStyles.primary.withOpacity(0.04),
+  //                                   color: ThemeAwareColors.primary(context).withOpacity(0.04),
   //                                   blurRadius: 8,
   //                                   offset: const Offset(0, 2),
   //                                 ),
@@ -872,15 +879,15 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                             ),
   //                             child: TextFormField(
   //                               controller: _ageControllers[index],
-  //                               style: _AppStyles.body.copyWith(
+  //                               style: ThemeAwareStyles.body(context).copyWith(
   //                                 fontSize: 15,
-  //                                 color: _AppStyles.textPrimary,
+  //                                 color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black,
   //                                 height: 1.4,
   //                               ),
   //                               decoration: InputDecoration(
   //                                 hintText: 'Age',
-  //                                 hintStyle: _AppStyles.body.copyWith(
-  //                                   color: _AppStyles.textSecondary.withOpacity(0.7),
+  //                                 hintStyle: ThemeAwareStyles.body(context).copyWith(
+  //                                   color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey.withOpacity(0.7),
   //                                   fontSize: 15,
   //                                 ),
   //                                 border: OutlineInputBorder(
@@ -894,7 +901,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                                 focusedBorder: OutlineInputBorder(
   //                                   borderRadius: BorderRadius.circular(14),
   //                                   borderSide: BorderSide(
-  //                                     color: _AppStyles.primary,
+  //                                     color: ThemeAwareColors.primary(context),
   //                                     width: 1.5,
   //                                   ),
   //                                 ),
@@ -904,7 +911,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                                 ),
   //                                 prefixIcon: Icon(
   //                                   Icons.cake_rounded,
-  //                                   color: _AppStyles.primary,
+  //                                   color: ThemeAwareColors.primary(context),
   //                                   size: 20,
   //                                 ),
   //                                 filled: true,
@@ -928,9 +935,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                           children: [
   //                             Text(
   //                               'Gender',
-  //                               style: _AppStyles.subtitle.copyWith(
+  //                               style: ThemeAwareStyles.subtitle(context).copyWith(
   //                                 fontSize: 13,
-  //                                 color: _AppStyles.textSecondary,
+  //                                 color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey,
   //                                 fontWeight: FontWeight.w500,
   //                               ),
   //                             ),
@@ -963,9 +970,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                         const SizedBox(height: 16),
   //                         Text(
   //                           'ID Proof (Required for age 5+)',
-  //                           style: _AppStyles.subtitle.copyWith(
+  //                           style: ThemeAwareStyles.subtitle(context).copyWith(
   //                             fontSize: 13,
-  //                             color: _AppStyles.textSecondary,
+  //                             color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey,
   //                             fontWeight: FontWeight.w500,
   //                           ),
   //                         ),
@@ -977,9 +984,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                               flex: 4,
   //                               child: Container(
   //                                 decoration: BoxDecoration(
-  //                                   color: _AppStyles.background,
+  //                                   color: Theme.of(context).scaffoldBackgroundColor,
   //                                   borderRadius: BorderRadius.circular(10),
-  //                                   border: Border.all(color: _AppStyles.divider),
+  //                                   border: Border.all(color: Theme.of(context).dividerColor),
   //                                 ),
   //                                 child: DropdownButtonHideUnderline(
   //                                   child: ButtonTheme(
@@ -988,21 +995,21 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                                       value: _selectedIdProofTypes[index],
   //                                       isExpanded: true,
   //                                       icon: Icon(Icons.keyboard_arrow_down_rounded,
-  //                                           color: _AppStyles.primary, size: 22),
+  //                                           color: ThemeAwareColors.primary(context), size: 22),
   //                                       decoration: InputDecoration(
   //                                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
   //                                         border: InputBorder.none,
   //                                         hintText: 'ID Type',
-  //                                         hintStyle: _AppStyles.body.copyWith(
+  //                                         hintStyle: ThemeAwareStyles.body(context).copyWith(
   //                                           fontSize: 15,
-  //                                           color: _AppStyles.textSecondary,
+  //                                           color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey,
   //                                         ),
   //                                         prefixIcon: Icon(Icons.badge_outlined,
-  //                                             color: _AppStyles.primary.withOpacity(0.7), size: 20),
+  //                                             color: ThemeAwareColors.primary(context).withOpacity(0.7), size: 20),
   //                                       ),
-  //                                       style: _AppStyles.body.copyWith(
+  //                                       style: ThemeAwareStyles.body(context).copyWith(
   //                                         fontSize: 15,
-  //                                         color: _AppStyles.textPrimary,
+  //                                         color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black,
   //                                       ),
   //                                       dropdownColor: Colors.white,
   //                                       items: _idProofTypes.map((String type) {
@@ -1010,7 +1017,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                                           value: type,
   //                                           child: Text(
   //                                             type,
-  //                                             style: _AppStyles.body.copyWith(fontSize: 15),
+  //                                             style: ThemeAwareStyles.body(context).copyWith(fontSize: 15),
   //                                             overflow: TextOverflow.ellipsis,
   //                                           ),
   //                                         );
@@ -1033,30 +1040,30 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   //                               flex: 6,
   //                               child: TextFormField(
   //                                 controller: _idNumberControllers[index],
-  //                                 style: _AppStyles.body.copyWith(fontSize: 15, color: _AppStyles.textPrimary),
+  //                                 style: ThemeAwareStyles.body(context).copyWith(fontSize: 15, color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black),
   //                                 decoration: InputDecoration(
   //                                   labelText: 'ID Number',
-  //                                   labelStyle: _AppStyles.subtitle.copyWith(fontSize: 13, color: _AppStyles.textSecondary),
-  //                                   floatingLabelStyle: TextStyle(color: _AppStyles.primary),
+  //                                   labelStyle: ThemeAwareStyles.subtitle(context).copyWith(fontSize: 13, color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey),
+  //                                   floatingLabelStyle: TextStyle(color: ThemeAwareColors.primary(context)),
   //                                   hintText: 'Enter ID number',
-  //                                   hintStyle: _AppStyles.body.copyWith(color: _AppStyles.textSecondary, fontSize: 15),
+  //                                   hintStyle: ThemeAwareStyles.body(context).copyWith(color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey, fontSize: 15),
   //                                   border: OutlineInputBorder(
   //                                     borderRadius: BorderRadius.circular(10),
-  //                                     borderSide: BorderSide(color: _AppStyles.divider),
+  //                                     borderSide: BorderSide(color: Theme.of(context).dividerColor),
   //                                   ),
   //                                   enabledBorder: OutlineInputBorder(
   //                                     borderRadius: BorderRadius.circular(10),
-  //                                     borderSide: BorderSide(color: _AppStyles.divider),
+  //                                     borderSide: BorderSide(color: Theme.of(context).dividerColor),
   //                                   ),
   //                                   focusedBorder: OutlineInputBorder(
   //                                     borderRadius: BorderRadius.circular(10),
-  //                                     borderSide: BorderSide(color: _AppStyles.primary, width: 1.5),
+  //                                     borderSide: BorderSide(color: ThemeAwareColors.primary(context), width: 1.5),
   //                                   ),
   //                                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
   //                                   filled: true,
-  //                                   fillColor: _AppStyles.background,
+  //                                   fillColor: Theme.of(context).scaffoldBackgroundColor,
   //                                   prefixIcon: Icon(Icons.credit_card_rounded,
-  //                                       color: _AppStyles.primary.withOpacity(0.7), size: 20),
+  //                                       color: ThemeAwareColors.primary(context).withOpacity(0.7), size: 20),
   //                                 ),
   //                                 onChanged: (_) => _validateForm(),
   //                                 validator: (value) {
@@ -1087,7 +1094,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             Row(
               children: [
                 Icon(Icons.verified_user_outlined,
-                    color: _AppStyles.primary, size: 22),
+                    color: ThemeAwareColors.primary(context), size: 22),
               ],
             ),
           ],
@@ -1104,7 +1111,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       padding: EdgeInsets.fromLTRB(
           16, 12, 16, MediaQuery.of(context).padding.bottom + 16),
       decoration: BoxDecoration(
-        color: _AppStyles.cardBackground,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -1123,9 +1130,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             children: [
               Text(
                 '₹${finalFare.toStringAsFixed(0)}',
-                style: _AppStyles.title.copyWith(
+                style: ThemeAwareStyles.title(context).copyWith(
                   fontSize: 24,
-                  color: _AppStyles.accent,
+                  color: ThemeAwareColors.accent(context),
                 ),
               ),
               InkWell(
@@ -1139,10 +1146,10 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                 },
                 child: Text(
                   'View Fare Details',
-                  style: _AppStyles.subtitle.copyWith(
-                    color: _AppStyles.accent,
+                  style: ThemeAwareStyles.subtitle(context).copyWith(
+                    color: ThemeAwareColors.accent(context),
                     decoration: TextDecoration.underline,
-                    decorationColor: _AppStyles.accent,
+                    decorationColor: ThemeAwareColors.accent(context),
                   ),
                 ),
               ),
@@ -1151,20 +1158,20 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
           ElevatedButton(
             onPressed: _isFormValid ? _onProceed : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: _AppStyles.primary,
+              backgroundColor: ThemeAwareColors.primary(context),
               disabledBackgroundColor:
-                  _AppStyles.textSecondary.withOpacity(0.4),
+                  Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey.withOpacity(0.4),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 0,
-              shadowColor: _AppStyles.primary.withOpacity(0.3),
+              shadowColor: ThemeAwareColors.primary(context).withOpacity(0.3),
             ),
             child: Text(
               'Proceed',
-              style: _AppStyles.button,
+              style: ThemeAwareStyles.button(context),
             ),
           ),
         ],
@@ -1175,7 +1182,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   Widget _buildFareDetailsModal(double totalFare, double finalFare) =>
       Container(
         decoration: BoxDecoration(
-          color: _AppStyles.cardBackground,
+          color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.all(16),
@@ -1186,9 +1193,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Fare Details', style: _AppStyles.title),
+                Text('Fare Details', style: ThemeAwareStyles.title(context)),
                 IconButton(
-                  icon: const Icon(Icons.close, color: _AppStyles.textPrimary),
+                  icon: Icon(Icons.close, color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -1199,9 +1206,9 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               children: [
                 Text(
                     'Base Fare (${widget.selectedSeats.length} seat${widget.selectedSeats.length == 1 ? '' : 's'})',
-                    style: _AppStyles.body),
+                    style: ThemeAwareStyles.body(context)),
                 Text('₹${totalFare.toStringAsFixed(0)}',
-                    style: _AppStyles.body),
+                    style: ThemeAwareStyles.body(context)),
               ],
             ),
             if (_tripProtectionEnabled) ...[
@@ -1211,27 +1218,27 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                 children: [
                   Text(
                       'Trip Protection (${widget.selectedSeats.length} traveller${widget.selectedSeats.length == 1 ? '' : 's'})',
-                      style: _AppStyles.body),
+                      style: ThemeAwareStyles.body(context)),
                   Text(
                       '₹${(109 * widget.selectedSeats.length).toStringAsFixed(0)}',
-                      style: _AppStyles.body),
+                      style: ThemeAwareStyles.body(context)),
                 ],
               ),
             ],
             const SizedBox(height: 12),
-            Container(height: 1, color: _AppStyles.divider.withOpacity(0.5)),
+            Container(height: 1, color: Theme.of(context).dividerColor.withOpacity(0.5)),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Total Fare',
                     style:
-                        _AppStyles.body.copyWith(fontWeight: FontWeight.w600)),
+                        ThemeAwareStyles.body(context).copyWith(fontWeight: FontWeight.w600)),
                 Text(
                   '₹${finalFare.toStringAsFixed(0)}',
-                  style: _AppStyles.body.copyWith(
+                  style: ThemeAwareStyles.body(context).copyWith(
                     fontWeight: FontWeight.w600,
-                    color: _AppStyles.accent,
+                    color: ThemeAwareColors.accent(context),
                   ),
                 ),
               ],
@@ -1241,66 +1248,3 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       );
 }
 
-class _GenderSelector extends StatelessWidget {
-  const _GenderSelector({required this.isSelected, required this.onPressed});
-
-  final List<bool> isSelected;
-  final ValueChanged<int> onPressed;
-
-  @override
-  Widget build(BuildContext context) => InputDecorator(
-        decoration: InputDecoration(
-          labelText: 'Gender',
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.only(top: 0, bottom: 12),
-          labelStyle: _AppStyles.subtitle.copyWith(fontSize: 14),
-        ),
-        child: Row(
-          children: [
-            _buildGenderOption(context, 'Male', 0),
-            const SizedBox(width: 12),
-            _buildGenderOption(context, 'Female', 1),
-          ],
-        ),
-      );
-
-  Widget _buildGenderOption(BuildContext context, String text, int index) {
-    final bool selected = isSelected[index];
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => onPressed(index),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          height: 48,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected
-                ? _AppStyles.primary.withOpacity(0.15)
-                : _AppStyles.background,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: selected ? _AppStyles.primary : _AppStyles.divider,
-              width: 1.5,
-            ),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: _AppStyles.primary.withOpacity(0.2),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Text(
-            text,
-            style: _AppStyles.body.copyWith(
-              color: selected ? _AppStyles.primary : _AppStyles.textSecondary,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

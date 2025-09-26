@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/utils/colors.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/common_textfeild_widget.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../core/widgets/lists_widget.dart';
@@ -17,7 +17,7 @@ class ApplyTouristVisaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       body: ScrollConfiguration(
         behavior: MyBehavior(),
         child: SingleChildScrollView(
@@ -45,11 +45,11 @@ class ApplyTouristVisaScreen extends StatelessWidget {
                               Get.back();
                             },
                             child:
-                                Icon(Icons.arrow_back, color: white, size: 20),
+                                Icon(Icons.arrow_back, color: AppColors.white, size: 20),
                           ),
                           CommonTextWidget.PoppinsSemiBold(
                             text: 'Apply Tourist Visa',
-                            color: white,
+                            color: AppColors.white,
                             fontSize: 18,
                           ),
                           InkWell(
@@ -58,7 +58,7 @@ class ApplyTouristVisaScreen extends StatelessWidget {
                             },
                             child: CommonTextWidget.PoppinsMedium(
                               text: 'City',
-                              color: white,
+                              color: AppColors.white,
                               fontSize: 13,
                             ),
                           ),
@@ -71,7 +71,7 @@ class ApplyTouristVisaScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsRegular(
                       text: 'Our Top Destinations',
-                      color: black2E2,
+                      color: AppColors.black2E2,
                       fontSize: 18,
                     ),
                   ),
@@ -79,7 +79,7 @@ class ApplyTouristVisaScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: CommonTextWidget.PoppinsMedium(
                       text: 'Tourist Visas only',
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       fontSize: 12,
                     ),
                   ),
@@ -110,10 +110,10 @@ class ApplyTouristVisaScreen extends StatelessWidget {
                 padding: EdgeInsets.only(top: 110, left: 24, right: 24),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: white,
+                    color: AppColors.white,
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                        color: grey515.withOpacity(0.25),
+                        color: AppColors.grey515.withValues(alpha: 0.25),
                         blurRadius: 6,
                         offset: Offset(0, 1),
                       ),

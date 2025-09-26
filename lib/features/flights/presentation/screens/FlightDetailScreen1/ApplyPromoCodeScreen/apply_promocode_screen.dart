@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/shared/constants/font_family.dart';
 import 'package:seemytrip/shared/constants/images.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
@@ -15,9 +15,9 @@ class ApplyPromoCodeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -25,11 +25,11 @@ class ApplyPromoCodeScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.close, color: white, size: 20),
+          child: Icon(Icons.close, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: "Apply Promo Code",
-          color: white,
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -41,46 +41,46 @@ class ApplyPromoCodeScreen extends StatelessWidget {
             SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.text,
-              cursorColor: black2E2,
+              cursorColor: AppColors.black2E2,
               controller: promoCodeController,
               style: TextStyle(
-                color: black2E2,
+                color: AppColors.black2E2,
                 fontSize: 14,
                 fontFamily: FontFamily.PoppinsRegular,
               ),
               decoration: InputDecoration(
                 hintText: "Enter promo code here",
                 hintStyle: TextStyle(
-                  color: grey717,
+                  color: AppColors.grey717,
                   fontSize: 12,
                   fontFamily: FontFamily.PoppinsRegular,
                 ),
                 suffixIcon: Padding(
                   padding: EdgeInsets.all(14),
                   child: CommonTextWidget.PoppinsMedium(
-                    color: redCA0,
+                    color: AppColors.redCA0,
                     fontSize: 14,
                     text: "APPLY",
                   ),
                 ),
                 filled: true,
-                fillColor: white,
+                fillColor: AppColors.white,
                 contentPadding: EdgeInsets.only(left: 14),
                 disabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: redCA0, width: 1)),
+                    borderSide: BorderSide(color: AppColors.redCA0, width: 1)),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: redCA0, width: 1)),
+                    borderSide: BorderSide(color: AppColors.redCA0, width: 1)),
                 focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: redCA0, width: 1)),
+                    borderSide: BorderSide(color: AppColors.redCA0, width: 1)),
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: redCA0, width: 1)),
+                    borderSide: BorderSide(color: AppColors.redCA0, width: 1)),
                 errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(color: redCA0, width: 1)),
+                    borderSide: BorderSide(color: AppColors.redCA0, width: 1)),
               ),
             ),
             SizedBox(height: 20),
@@ -95,7 +95,7 @@ class ApplyPromoCodeScreen extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 10),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: whiteF2F,
+                        color: AppColors.whiteF2F,
                         borderRadius: BorderRadius.circular(3),
                       ),
                       child: Padding(
@@ -105,7 +105,7 @@ class ApplyPromoCodeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.circle_outlined, color: grey959),
+                            Icon(Icons.circle_outlined, color: AppColors.grey959),
                             SizedBox(width: 15),
                             Expanded(
                               child: Column(
@@ -113,17 +113,17 @@ class ApplyPromoCodeScreen extends StatelessWidget {
                                 children: [
                                   CommonTextWidget.PoppinsSemiBold(
                                     text: Lists.promoCodeList[index]["text1"],
-                                    color: black2E2,
+                                    color: AppColors.black2E2,
                                     fontSize: 14,
                                   ),
                                   CommonTextWidget.PoppinsRegular(
                                     text: Lists.promoCodeList[index]["text2"],
-                                    color: black2E2,
+                                    color: AppColors.black2E2,
                                     fontSize: 10,
                                   ),
                                   CommonTextWidget.PoppinsSemiBold(
                                     text: "T&Cs apply",
-                                    color: redCA0,
+                                    color: AppColors.redCA0,
                                     fontSize: 10,
                                   ),
                                 ],

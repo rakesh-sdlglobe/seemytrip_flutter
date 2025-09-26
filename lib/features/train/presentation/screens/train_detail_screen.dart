@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common_text_widget.dart';
 import '../../../../main.dart';
 import '../../../../shared/constants/font_family.dart';
@@ -102,7 +102,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
     ..setInitialSelectedIndex(widget.selectedDate);
 
     return Scaffold(
-      backgroundColor: redF9E,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           Column(
@@ -118,7 +118,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           if (isLoading)
             Center(
               child: LoadingAnimationWidget.dotsTriangle(
-                color: redCA0,
+                color: AppColors.redCA0,
                 size: 80,
               ),
             ),
@@ -141,7 +141,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
         child: Container(
           width: Get.width,
           decoration: BoxDecoration(
-            color: white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(5),
           ),
           child: ListTile(
@@ -150,16 +150,20 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
               onTap: () {
                 Get.back();
               },
-              child: Icon(Icons.arrow_back, color: grey888, size: 20),
+              child: Icon(
+                Icons.arrow_back, 
+                color: Theme.of(context).iconTheme.color ?? AppColors.grey888, 
+                size: 20
+              ),
             ),
             title: CommonTextWidget.PoppinsRegular(
               text: '${widget.fromStation} To ${widget.toStation}',
-              color: black2E2,
+              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
               fontSize: 15,
             ),
             subtitle: CommonTextWidget.PoppinsRegular(
               text: DateFormat('dd MMM, EEEE').format(widget.selectedDate),
-              color: grey717,
+              color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
               fontSize: 12,
             ),
             trailing: InkWell(
@@ -181,7 +185,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                   SizedBox(height: 10),
                   CommonTextWidget.PoppinsMedium(
                     text: 'Edit',
-                    color: redCA0,
+                    color: AppColors.redCA0,
                     fontSize: 12,
                   ),
                 ],
@@ -195,10 +199,10 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
   Widget _buildDateSelector(TrainDetailController controller) => Container(
       width: Get.width,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -216,7 +220,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                 style: TextStyle(
                   fontFamily: FontFamily.PoppinsSemiBold,
                   fontSize: 14,
-                  color: Colors.black87,
+                  color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
                 ),
               ),
             ),
@@ -244,10 +248,18 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                         margin: EdgeInsets.symmetric(horizontal: 4),
                         width: 60,
                         decoration: BoxDecoration(
-                          color: isSelected ? redCA0.withOpacity(0.1) : Colors.grey[50],
+                          color: isSelected 
+                            ? AppColors.redCA0.withOpacity(0.1) 
+                            : Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.grey[800] 
+                              : Colors.grey[50],
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isSelected ? redCA0 : Colors.grey[200]!,
+                            color: isSelected 
+                              ? AppColors.redCA0 
+                              : Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[600]!
+                                : Colors.grey[200]!,
                             width: 1.5,
                           ),
                         ),
@@ -259,7 +271,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                               style: TextStyle(
                                 fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsMedium,
                                 fontSize: 12,
-                                color: isSelected ? redCA0 : Colors.grey[600],
+                                color: isSelected 
+                                  ? AppColors.redCA0 
+                                  : Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[600],
                               ),
                             ),
                             SizedBox(height: 4),
@@ -267,7 +281,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                               width: 32,
                               height: 32,
                               decoration: BoxDecoration(
-                                color: isSelected ? redCA0 : Colors.transparent,
+                                color: isSelected ? AppColors.redCA0 : Colors.transparent,
                                 shape: BoxShape.circle,
                               ),
                               child: Center(
@@ -276,7 +290,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                                   style: TextStyle(
                                     fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsMedium,
                                     fontSize: 14,
-                                    color: isSelected ? Colors.white : Colors.black87,
+                                    color: isSelected 
+                                      ? AppColors.white 
+                                      : Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87,
                                   ),
                                 ),
                               ),
@@ -287,7 +303,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                               style: TextStyle(
                                 fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsRegular,
                                 fontSize: 10,
-                                color: isSelected ? redCA0 : Colors.grey[600],
+                                color: isSelected 
+                                  ? AppColors.redCA0 
+                                  : Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
                               ),
                             ),
                           ],
@@ -354,11 +372,11 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                         padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: Theme.of(context).shadowColor.withOpacity(0.05),
                                 blurRadius: 10,
                                 offset: Offset(0, 4),
                               ),
@@ -401,7 +419,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
               children: [
                 Icon(
                   Icons.train_outlined,
-                  color: Colors.grey[400],
+                  color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.grey[600] 
+                    : Colors.grey[400],
                   size: 64,
                 ),
                 SizedBox(height: 16),
@@ -410,7 +430,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                   style: TextStyle(
                     fontFamily: FontFamily.PoppinsSemiBold,
                     fontSize: 18,
-                    color: Colors.grey[700],
+                    color: Theme.of(context).textTheme.headlineSmall?.color ?? Colors.grey[700],
                   ),
                 ),
                 SizedBox(height: 8),
@@ -420,7 +440,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                   style: TextStyle(
                     fontFamily: FontFamily.PoppinsRegular,
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[600],
                   ),
                 ),
                 SizedBox(height: 24),
@@ -429,7 +449,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                     // Refresh or modify search
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: redCA0,
+                    backgroundColor: AppColors.redCA0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -458,12 +478,12 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
               Container(
                 padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: redCA0.withOpacity(0.1),
+                  color: AppColors.redCA0.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
                   Icons.train_rounded,
-                  color: redCA0,
+                  color: AppColors.redCA0,
                   size: 20,
                 ),
               ),
@@ -476,7 +496,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                       train['trainName'] ?? 'N/A',
                       style: TextStyle(
                         fontFamily: FontFamily.PoppinsSemiBold,
-                        color: black2E2,
+                        color: Theme.of(context).textTheme.titleLarge?.color ?? AppColors.black2E2,
                         fontSize: 16,
                       ),
                       maxLines: 1,
@@ -487,7 +507,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                       'Train No: ${train['trainNumber'] ?? 'N/A'}, ${train['trainType'] ?? ''}',
                       style: TextStyle(
                         fontFamily: FontFamily.PoppinsRegular,
-                        color: Colors.grey[600],
+                        color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
                         fontSize: 12,
                       ),
                     ),
@@ -501,7 +521,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           train['trainClass'] ?? 'N/A',
           style: TextStyle(
             fontFamily: FontFamily.PoppinsMedium,
-            color: greyB8B,
+            color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.greyB8B,
             fontSize: 14,
           ),
         ),
@@ -516,13 +536,13 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
         Column(
           children: [
             CommonTextWidget.PoppinsSemiBold(
-              text: formatTime(train['departureTime']) ?? 'N/A',
-              color: black2E2,
+              text: formatTime(train['departureTime'] ?? '00:00'),
+              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
               fontSize: 14,
             ),
             CommonTextWidget.PoppinsMedium(
               text: train['fromStnCode'] ?? 'N/A',
-              color: greyB8B,
+              color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.greyB8B,
               fontSize: 14,
             ),
           ],
@@ -532,19 +552,19 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
             Container(
               height: 2,
               width: 30,
-              color: greyDBD,
+              color: Theme.of(context).dividerColor,
             ),
             SizedBox(width: 15),
             CommonTextWidget.PoppinsMedium(
               text: train['duration'] ?? 'N/A',
-              color: grey717,
+              color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
               fontSize: 12,
             ),
             SizedBox(width: 15),
             Container(
               height: 2,
               width: 30,
-              color: greyDBD,
+              color: Theme.of(context).dividerColor,
             ),
           ],
         ),
@@ -552,12 +572,12 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           children: [
             CommonTextWidget.PoppinsSemiBold(
               text: arrival['formattedArrivalTime'] ?? 'N/A',
-              color: black2E2,
+              color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
               fontSize: 14,
             ),
             CommonTextWidget.PoppinsMedium(
               text: train['toStnCode'] ?? 'N/A',
-              color: greyB8B,
+              color: Theme.of(context).textTheme.bodyMedium?.color ?? AppColors.greyB8B,
               fontSize: 14,
             ),
           ],
@@ -571,7 +591,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
       children: [
         CommonTextWidget.PoppinsMedium(
           text: "Distance: ${train['distance'] ?? 'N/A'} km",
-          color: grey717,
+          color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
           fontSize: 12,
         ),
         GestureDetector(
@@ -583,10 +603,10 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           child: Text(
             'view Routes',
             style: TextStyle(
-                color: redCA0,
+                color: AppColors.redCA0,
                 fontSize: 13,
                 decoration: TextDecoration.underline,
-                decorationColor: Colors.red),
+                decorationColor: AppColors.redCA0),
           ),
         ),
       ],
@@ -625,7 +645,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           return SizedBox.shrink();
         }
 
-        final bool isPastDate = now.isAfter(availabilityDate);
+        // final bool isPastDate = now.isAfter(availabilityDate);
 
         // Define the availability status and color scheme
         String status = availability['availablityStatus'] ?? 'N/A';
@@ -730,14 +750,14 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: redCA0.withOpacity(0.1),
+              color: AppColors.redCA0.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: redCA0, width: 1),
+              border: Border.all(color: AppColors.redCA0, width: 1),
             ),
             child: Center(
               child: CommonTextWidget.PoppinsMedium(
                 text: 'Train has already departed',
-                color: redCA0,
+                color: AppColors.redCA0,
                 fontSize: 14,
               ),
             ),
@@ -767,20 +787,30 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                       : 'N/A';
                   if (availabilityStatus != 'N/A') {
                     if (availabilityStatus.contains('AVAILABLE')) {
-                      boxColor = const Color.fromARGB(255, 237, 250, 237);
+                      boxColor = Theme.of(context).brightness == Brightness.dark 
+                        ? const Color.fromARGB(255, 26, 46, 26)
+                        : const Color.fromARGB(255, 237, 250, 237);
                     } else if (availabilityStatus.contains('WL')) {
-                      boxColor = const Color.fromARGB(255, 255, 246, 235);
+                      boxColor = Theme.of(context).brightness == Brightness.dark 
+                        ? const Color.fromARGB(255, 46, 36, 26)
+                        : const Color.fromARGB(255, 255, 246, 235);
                     } else if (availabilityStatus.contains('RAC')) {
-                      boxColor = const Color.fromARGB(173, 216, 230, 255);
+                      boxColor = Theme.of(context).brightness == Brightness.dark 
+                        ? const Color.fromARGB(173, 26, 36, 46)
+                        : const Color.fromARGB(173, 216, 230, 255);
                     } else {
-                      boxColor = Colors.grey[300]!;
+                      boxColor = Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.grey[800]! 
+                        : Colors.grey[300]!;
                     }
                   } else {
-                    boxColor = Colors.grey[300]!;
+                    boxColor = Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.grey[800]! 
+                      : Colors.grey[300]!;
                   }
 
                   // Set color based on availability status
-                  Color borderColor = Colors.grey[300]!;
+                  Color borderColor;
                   String availabilityStatus2 = seat['avlDayList'] != null &&
                           seat['avlDayList'].isNotEmpty
                       ? seat['avlDayList'][0]['availablityStatus'] ?? 'N/A'
@@ -793,10 +823,14 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                     } else if (availabilityStatus2.contains('RAC')) {
                       borderColor = const Color.fromARGB(172, 51, 123, 248);
                     } else {
-                      borderColor = Colors.grey[300]!;
+                      borderColor = Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.grey[600]! 
+                        : Colors.grey[300]!;
                     }
                   } else {
-                    borderColor = Colors.grey[300]!;
+                    borderColor = Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.grey[600]! 
+                      : Colors.grey[300]!;
                   }
 
                   // Filter classes based on enqClass
@@ -916,7 +950,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                           color: boxColor,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.25),
+                              color: Theme.of(context).shadowColor.withOpacity(0.25),
                               blurRadius: 6,
                               offset: Offset(0, 1),
                             ),
@@ -936,14 +970,14 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                                 children: [
                                   CommonTextWidget.PoppinsMedium(
                                     text: seat['enqClass'] ?? 'N/A',
-                                    color: Colors.black,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
                                     fontSize: 13,
                                   ),
                                   CommonTextWidget.PoppinsMedium(
                                     text: seat['totalFare'] != null
                                         ? "₹${seat['totalFare']}"
                                         : 'Regret',
-                                    color: Colors.black,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
                                     fontSize: 13,
                                   ),
                                 ],
@@ -995,11 +1029,11 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           height: 70,
           width: Get.width,
           decoration: BoxDecoration(
-            color: redCA0,
+            color: AppColors.redCA0,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Theme.of(context).shadowColor.withOpacity(0.15),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -1030,7 +1064,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                         slidersHorizontal,
                         height: 20,
                         width: 20,
-                        color: redCA0,
+                        colorFilter: ColorFilter.mode(AppColors.redCA0, BlendMode.srcIn),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -1051,8 +1085,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
       ),
     );
 
-  Widget _buildToggleButton(String text, RxBool toggleValue) => Obx(() {
-      return GestureDetector(
+  Widget _buildToggleButton(String text, RxBool toggleValue) => Obx(() => GestureDetector(
         onTap: () {
           toggleValue.value = !toggleValue.value;
           setState(() {
@@ -1065,12 +1098,12 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: toggleValue.value
-                ? const Color(0xFF1976D2)
-                : const Color(0xFFEDEDED),
+                ? AppColors.redCA0
+                : Theme.of(context).cardColor,
             boxShadow: toggleValue.value
                 ? [
                     BoxShadow(
-                      color: redCA0.withOpacity(0.3),
+                      color: AppColors.redCA0.withValues(alpha: 0.3),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -1080,14 +1113,15 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
           child: Text(
             text,
             style: TextStyle(
-              color: toggleValue.value ? Colors.white : Colors.black87,
+              color: toggleValue.value 
+                ? Colors.white 
+                : Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87,
               fontSize: 14,
               fontFamily: FontFamily.PoppinsSemiBold,
             ),
           ),
         ),
-      );
-    });
+      ));
 
   String getFormattedSeatsData(Map<String, dynamic> seat) {
     final String availabilityStatus =

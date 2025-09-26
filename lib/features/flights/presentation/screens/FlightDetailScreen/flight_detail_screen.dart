@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/flights/presentation/controllers/flight_detail_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/flights/presentation/screens/FlightDetailScreen1/flight_detail_screen1.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/images.dart';
+import '../../controllers/flight_detail_controller.dart';
+import '../FlightDetailScreen1/flight_detail_screen1.dart';
 
 class FlightDetailScreen extends StatelessWidget {
   FlightDetailScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: redF9E,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.redF9E,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Flight Details",
-          color: white,
+          text: 'Flight Details',
+          color: AppColors.whiteF2F,
           fontSize: 18,
         ),
         actions: [
@@ -33,7 +33,7 @@ class FlightDetailScreen extends StatelessWidget {
               onTap: () {
                 Get.back();
               },
-              child: Icon(Icons.close, color: white, size: 20),
+              child: Icon(Icons.close, color: AppColors.whiteF2F, size: 20),
             ),
           ),
         ],
@@ -50,7 +50,7 @@ class FlightDetailScreen extends StatelessWidget {
                     Container(
                       width: Get.width,
                       decoration: BoxDecoration(
-                        color: white,
+                        color: AppColors.whiteF2F,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10),
                           topRight: Radius.circular(10),
@@ -75,13 +75,13 @@ class FlightDetailScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   CommonTextWidget.PoppinsSemiBold(
-                                    text: "DEL - BOM",
-                                    color: white,
+                                    text: 'DEL - BOM',
+                                    color: AppColors.whiteF2F,
                                     fontSize: 18,
                                   ),
                                   CommonTextWidget.PoppinsMedium(
-                                    text: "Non stop | 2 hrs 15 mins | Economy",
-                                    color: white,
+                                    text: 'Non stop | 2 hrs 15 mins | Economy',
+                                    color: AppColors.whiteF2F,
                                     fontSize: 14,
                                   ),
                                 ],
@@ -102,8 +102,8 @@ class FlightDetailScreen extends StatelessWidget {
                                     ),
                                     SizedBox(width: 8),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: "SpiceJet  | SG8169",
-                                      color: black2E2,
+                                      text: 'SpiceJet  | SG8169',
+                                      color: AppColors.black2E2,
                                       fontSize: 12,
                                     ),
                                   ],
@@ -114,18 +114,18 @@ class FlightDetailScreen extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     CommonTextWidget.PoppinsSemiBold(
-                                      text: "19.45",
-                                      color: black2E2,
+                                      text: '19.45',
+                                      color: AppColors.black2E2,
                                       fontSize: 20,
                                     ),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: "-- 2 hrs 15 mins --",
-                                      color: black2E2,
+                                      text: '-- 2 hrs 15 mins --',
+                                      color: AppColors.black2E2,
                                       fontSize: 12,
                                     ),
                                     CommonTextWidget.PoppinsSemiBold(
-                                      text: "22.00",
-                                      color: black2E2,
+                                      text: '22.00',
+                                      color: AppColors.black2E2,
                                       fontSize: 20,
                                     ),
                                   ],
@@ -136,14 +136,14 @@ class FlightDetailScreen extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     CommonTextWidget.PoppinsRegular(
-                                      text: "Sat, 24 Sep 22",
-                                      color: black2E2,
+                                      text: 'Sat, 24 Sep 22',
+                                      color: AppColors.black2E2,
                                       fontSize: 12,
                                     ),
                                     SvgPicture.asset(watch),
                                     CommonTextWidget.PoppinsRegular(
-                                      text: "Sat, 24 Sep 22",
-                                      color: black2E2,
+                                      text: 'Sat, 24 Sep 22',
+                                      color: AppColors.black2E2,
                                       fontSize: 12,
                                     ),
                                   ],
@@ -157,23 +157,23 @@ class FlightDetailScreen extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         CommonTextWidget.PoppinsMedium(
-                                          text: "New Delhi",
-                                          color: black2E2,
+                                          text: 'New Delhi',
+                                          color: AppColors.black2E2,
                                           fontSize: 12,
                                         ),
                                         CommonTextWidget.PoppinsRegular(
-                                          text: "Indira Gandhi",
-                                          color: black2E2,
+                                          text: 'Indira Gandhi',
+                                          color: AppColors.black2E2,
                                           fontSize: 12,
                                         ),
                                         CommonTextWidget.PoppinsRegular(
-                                          text: "International Airport",
-                                          color: black2E2,
+                                          text: 'International Airport',
+                                          color: AppColors.black2E2,
                                           fontSize: 12,
                                         ),
                                         CommonTextWidget.PoppinsRegular(
-                                          text: "Terminal 3",
-                                          color: grey717,
+                                          text: 'Terminal 3',
+                                          color: AppColors.grey717,
                                           fontSize: 12,
                                         ),
                                       ],
@@ -183,23 +183,23 @@ class FlightDetailScreen extends StatelessWidget {
                                           CrossAxisAlignment.end,
                                       children: [
                                         CommonTextWidget.PoppinsMedium(
-                                          text: "Mumbai",
-                                          color: black2E2,
+                                          text: 'Mumbai',
+                                          color: AppColors.black2E2,
                                           fontSize: 12,
                                         ),
                                         CommonTextWidget.PoppinsRegular(
-                                          text: "Chhatrapati Shivaji",
-                                          color: black2E2,
+                                          text: 'Chhatrapati Shivaji',
+                                          color: AppColors.black2E2,
                                           fontSize: 12,
                                         ),
                                         CommonTextWidget.PoppinsRegular(
-                                          text: "International Airport",
-                                          color: black2E2,
+                                          text: 'International Airport',
+                                          color: AppColors.black2E2,
                                           fontSize: 12,
                                         ),
                                         CommonTextWidget.PoppinsRegular(
-                                          text: "Terminal 2",
-                                          color: grey717,
+                                          text: 'Terminal 2',
+                                          color: AppColors.grey717,
                                           fontSize: 12,
                                         ),
                                       ],
@@ -227,7 +227,7 @@ class FlightDetailScreen extends StatelessWidget {
                               width: Get.width,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: white,
+                                color: AppColors.whiteF2F,
                               ),
                               child: Padding(
                                 padding: EdgeInsets.all(15),
@@ -248,14 +248,14 @@ class FlightDetailScreen extends StatelessWidget {
                                                 height: 18,
                                                 width: 18,
                                                 decoration: BoxDecoration(
-                                                    color: white,
+                                                    color: AppColors.whiteF2F,
                                                     shape: BoxShape.circle,
                                                     border: Border.all(
                                                         color: controller
                                                                     .selectedIndex ==
                                                                 index
-                                                            ? redCA0
-                                                            : grey717)),
+                                                            ? AppColors.redCA0
+                                                            : AppColors.grey717)),
                                                 alignment: Alignment.center,
                                                 child: controller
                                                             .selectedIndex ==
@@ -265,7 +265,7 @@ class FlightDetailScreen extends StatelessWidget {
                                                         width: 10,
                                                         decoration:
                                                             BoxDecoration(
-                                                                color: redCA0,
+                                                                color: AppColors.redCA0,
                                                                 shape: BoxShape
                                                                     .circle),
                                                       )
@@ -281,14 +281,14 @@ class FlightDetailScreen extends StatelessWidget {
                                                     .PoppinsSemiBold(
                                                   text: Lists
                                                           .flightBookTicketDetailList[
-                                                      index]["text1"],
-                                                  color: black2E2,
+                                                      index]['text1'],
+                                                  color: AppColors.black2E2,
                                                   fontSize: 14,
                                                 ),
                                                 CommonTextWidget.PoppinsRegular(
                                                   text:
-                                                      "Fare offered by airline.",
-                                                  color: grey717,
+                                                      'Fare offered by airline.',
+                                                  color: AppColors.grey717,
                                                   fontSize: 10,
                                                 ),
                                               ],
@@ -298,8 +298,8 @@ class FlightDetailScreen extends StatelessWidget {
                                         CommonTextWidget.PoppinsSemiBold(
                                           text:
                                               Lists.flightBookTicketDetailList[
-                                                  index]["text2"],
-                                          color: black2E2,
+                                                  index]['text2'],
+                                          color: AppColors.black2E2,
                                           fontSize: 16,
                                         ),
                                       ],
@@ -321,13 +321,13 @@ class FlightDetailScreen extends StatelessWidget {
                                                   SvgPicture.asset(briefcase),
                                             ),
                                             CommonTextWidget.PoppinsMedium(
-                                              text: "Cabin bag",
-                                              color: black2E2,
+                                              text: 'Cabin bag',
+                                              color: AppColors.black2E2,
                                               fontSize: 12,
                                             ),
                                             CommonTextWidget.PoppinsRegular(
-                                              text: "7 Kgs",
-                                              color: grey717,
+                                              text: '7 Kgs',
+                                              color: AppColors.grey717,
                                               fontSize: 12,
                                             ),
                                           ],
@@ -340,13 +340,13 @@ class FlightDetailScreen extends StatelessWidget {
                                               child: SvgPicture.asset(backpack),
                                             ),
                                             CommonTextWidget.PoppinsMedium(
-                                              text: "Check-in",
-                                              color: black2E2,
+                                              text: 'Check-in',
+                                              color: AppColors.black2E2,
                                               fontSize: 12,
                                             ),
                                             CommonTextWidget.PoppinsRegular(
-                                              text: "15 Kgs",
-                                              color: grey717,
+                                              text: '15 Kgs',
+                                              color: AppColors.grey717,
                                               fontSize: 12,
                                             ),
                                           ],
@@ -360,14 +360,14 @@ class FlightDetailScreen extends StatelessWidget {
                                                   SvgPicture.asset(currencyInr),
                                             ),
                                             CommonTextWidget.PoppinsMedium(
-                                              text: "Cancellation",
-                                              color: black2E2,
+                                              text: 'Cancellation',
+                                              color: AppColors.black2E2,
                                               fontSize: 12,
                                             ),
                                             CommonTextWidget.PoppinsRegular(
                                               text:
-                                                  "Cancellation fee starting ₹ 3,600",
-                                              color: grey717,
+                                                  'Cancellation fee starting ₹ 3,600',
+                                              color: AppColors.grey717,
                                               fontSize: 12,
                                             ),
                                           ],
@@ -379,17 +379,17 @@ class FlightDetailScreen extends StatelessWidget {
                                                   bottom: 10, right: 10),
                                               child: SvgPicture.asset(
                                                   calendarPlus1,
-                                                  color: redCA0),
+                                                  color: AppColors.redCA0),
                                             ),
                                             CommonTextWidget.PoppinsMedium(
-                                              text: "Date Change",
-                                              color: black2E2,
+                                              text: 'Date Change',
+                                              color: AppColors.black2E2,
                                               fontSize: 12,
                                             ),
                                             CommonTextWidget.PoppinsRegular(
                                               text:
-                                                  "Date Change fee starting ₹ 3,350",
-                                              color: grey717,
+                                                  'Date Change fee starting ₹ 3,350',
+                                              color: AppColors.grey717,
                                               fontSize: 12,
                                             ),
                                           ],
@@ -402,13 +402,13 @@ class FlightDetailScreen extends StatelessWidget {
                                               child: SvgPicture.asset(seat),
                                             ),
                                             CommonTextWidget.PoppinsMedium(
-                                              text: "Seat",
-                                              color: black2E2,
+                                              text: 'Seat',
+                                              color: AppColors.black2E2,
                                               fontSize: 12,
                                             ),
                                             CommonTextWidget.PoppinsRegular(
-                                              text: "Free Seat available",
-                                              color: grey717,
+                                              text: 'Free Seat available',
+                                              color: AppColors.grey717,
                                               fontSize: 12,
                                             ),
                                           ],
@@ -421,13 +421,13 @@ class FlightDetailScreen extends StatelessWidget {
                                               child: SvgPicture.asset(dish),
                                             ),
                                             CommonTextWidget.PoppinsMedium(
-                                              text: "Meal",
-                                              color: black2E2,
+                                              text: 'Meal',
+                                              color: AppColors.black2E2,
                                               fontSize: 12,
                                             ),
                                             CommonTextWidget.PoppinsRegular(
-                                              text: "Get complimentary",
-                                              color: grey717,
+                                              text: 'Get complimentary',
+                                              color: AppColors.grey717,
                                               fontSize: 12,
                                             ),
                                           ],
@@ -453,7 +453,7 @@ class FlightDetailScreen extends StatelessWidget {
             bottom: 40,
             child: Container(
               width: Get.width,
-              color: black2E2,
+              color: AppColors.black2E2,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 child: Row(
@@ -462,13 +462,13 @@ class FlightDetailScreen extends StatelessWidget {
                     Column(
                       children: [
                         CommonTextWidget.PoppinsSemiBold(
-                          text: "₹ 5,950",
-                          color: white,
+                          text: '₹ 5,950',
+                          color: AppColors.whiteF2F,
                           fontSize: 16,
                         ),
                         CommonTextWidget.PoppinsMedium(
-                          text: "FOR 1 ADULT",
-                          color: white,
+                          text: 'FOR 1 ADULT',
+                          color: AppColors.whiteF2F,
                           fontSize: 10,
                         ),
                       ],
@@ -482,11 +482,11 @@ class FlightDetailScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40),
                       ),
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       child: CommonTextWidget.PoppinsSemiBold(
                         fontSize: 16,
-                        text: "CONTINUE",
-                        color: white,
+                        text: 'CONTINUE',
+                        color: AppColors.whiteF2F,
                       ),
                     ),
                   ],
@@ -497,5 +497,4 @@ class FlightDetailScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

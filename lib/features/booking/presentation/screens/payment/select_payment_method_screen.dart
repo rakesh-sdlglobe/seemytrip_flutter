@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/shared/constants/font_family.dart';
-import 'package:seemytrip/shared/constants/images.dart';
-import 'package:seemytrip/features/booking/presentation/screens/payment/fare_breakUp_screen.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import '../../../../../shared/constants/font_family.dart';
+import '../../../../../shared/constants/images.dart';
+import 'fare_breakUp_screen.dart';
 
 class SelectPaymentMethodScreen extends StatelessWidget {
   SelectPaymentMethodScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: redF9E.withOpacity(0.75),
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.redF9E.withOpacity(0.75),
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -25,11 +25,11 @@ class SelectPaymentMethodScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "Select Payment Mode",
-          color: white,
+          text: 'Select Payment Mode',
+          color: AppColors.white,
           fontSize: 18,
         ),
       ),
@@ -43,7 +43,7 @@ class SelectPaymentMethodScreen extends StatelessWidget {
                 children: [
                   Container(
                     width: Get.width,
-                    color: white,
+                    color: AppColors.white,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24),
                       child: Column(
@@ -51,41 +51,41 @@ class SelectPaymentMethodScreen extends StatelessWidget {
                         children: [
                           SizedBox(height: 10),
                           CommonTextWidget.PoppinsSemiBold(
-                            text: "New Delhi - Mumbai",
-                            color: black2E2,
+                            text: 'New Delhi - Mumbai',
+                            color: AppColors.black2E2,
                             fontSize: 14,
                           ),
                           CommonTextWidget.PoppinsRegular(
-                            text: "Departure Thu, 29 Sep",
-                            color: grey717,
+                            text: 'Departure Thu, 29 Sep',
+                            color: AppColors.grey717,
                             fontSize: 12,
                           ),
                           SizedBox(height: 8),
                           CommonTextWidget.PoppinsMedium(
-                            text: "1)JohnDoe",
-                            color: black2E2,
+                            text: '1)JohnDoe',
+                            color: AppColors.black2E2,
                             fontSize: 12,
                           ),
                           SizedBox(height: 8),
-                          Divider(color: greyE8E, thickness: 1),
+                          Divider(color: AppColors.greyE8E, thickness: 1),
                           SizedBox(height: 10),
                           ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading:
                                 Image.asset(spicejet, height: 30, width: 30),
                             title: CommonTextWidget.PoppinsMedium(
-                              text: "DEL - BOM",
-                              color: black2E2,
+                              text: 'DEL - BOM',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                             subtitle: CommonTextWidget.PoppinsRegular(
-                              text: "Thu Sep 29 | 07:55 - 09:35",
-                              color: black2E2,
+                              text: 'Thu Sep 29 | 07:55 - 09:35',
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                             trailing: CommonTextWidget.PoppinsRegular(
-                              text: "Non Stop",
-                              color: grey717,
+                              text: 'Non Stop',
+                              color: AppColors.grey717,
                               fontSize: 14,
                             ),
                           ),
@@ -100,8 +100,8 @@ class SelectPaymentMethodScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CommonTextWidget.PoppinsSemiBold(
-                          text: "Other pay options",
-                          color: black2E2,
+                          text: 'Other pay options',
+                          color: AppColors.black2E2,
                           fontSize: 16,
                         ),
                         SizedBox(height: 12),
@@ -109,7 +109,7 @@ class SelectPaymentMethodScreen extends StatelessWidget {
                           width: Get.width,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
-                            color: white,
+                            color: AppColors.white,
                           ),
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
@@ -120,31 +120,31 @@ class SelectPaymentMethodScreen extends StatelessWidget {
                               children: [
                                 ListTile(
                                   onTap: Lists.selectPaymentMethodList[index]
-                                      ["onTap"],
+                                      ['onTap'],
                                   horizontalTitleGap: -2,
                                   leading: Image.asset(
                                       Lists.selectPaymentMethodList[index]
-                                          ["image"],
+                                          ['image'],
                                       height: 25,
                                       width: 25),
                                   title: CommonTextWidget.PoppinsMedium(
                                     text: Lists.selectPaymentMethodList[index]
-                                        ["text1"],
-                                    color: black2E2,
+                                        ['text1'],
+                                    color: AppColors.black2E2,
                                     fontSize: 14,
                                   ),
                                   subtitle: CommonTextWidget.PoppinsRegular(
                                     text: Lists.selectPaymentMethodList[index]
-                                        ["text2"],
-                                    color: black2E2,
+                                        ['text2'],
+                                    color: AppColors.black2E2,
                                     fontSize: 12,
                                   ),
                                   trailing: Icon(Icons.arrow_forward_ios,
-                                      color: redCA0),
+                                      color: AppColors.redCA0),
                                 ),
                                 index == 3
                                     ? SizedBox.shrink()
-                                    : Divider(color: greyE8E, thickness: 1),
+                                    : Divider(color: AppColors.greyE8E, thickness: 1),
                               ],
                             ),
                           ),
@@ -158,54 +158,54 @@ class SelectPaymentMethodScreen extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(
                         text:
-                            "By continuing to pay, I understand and agree with the ",
+                            'By continuing to pay, I understand and agree with the ',
                         style: TextStyle(
                           fontFamily: FontFamily.PoppinsRegular,
                           fontSize: 12,
-                          color: black2E2,
+                          color: AppColors.black2E2,
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: "Privacy Policy, ",
+                            text: 'Privacy Policy, ',
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: FontFamily.PoppinsRegular,
-                                color: redCA0),
+                                color: AppColors.redCA0),
                           ),
                           TextSpan(
-                            text: "the ",
+                            text: 'the ',
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: FontFamily.PoppinsRegular,
-                                color: black2E2),
+                                color: AppColors.black2E2),
                           ),
                           TextSpan(
-                            text: "User Agreement ",
+                            text: 'User Agreement ',
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: FontFamily.PoppinsRegular,
-                                color: redCA0),
+                                color: AppColors.redCA0),
                           ),
                           TextSpan(
-                            text: "and ",
+                            text: 'and ',
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: FontFamily.PoppinsRegular,
-                                color: black2E2),
+                                color: AppColors.black2E2),
                           ),
                           TextSpan(
-                            text: "Terms of Service ",
+                            text: 'Terms of Service ',
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: FontFamily.PoppinsRegular,
-                                color: redCA0),
+                                color: AppColors.redCA0),
                           ),
                           TextSpan(
-                            text: "of MakeYourTrip. ",
+                            text: 'of MakeYourTrip. ',
                             style: TextStyle(
                                 fontSize: 12,
                                 fontFamily: FontFamily.PoppinsRegular,
-                                color: black2E2),
+                                color: AppColors.black2E2),
                           ),
                         ],
                       ),
@@ -223,7 +223,7 @@ class SelectPaymentMethodScreen extends StatelessWidget {
               child: Container(
                 height: 65,
                 width: Get.width,
-                color: black2E2,
+                color: AppColors.black2E2,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   child: Row(
@@ -234,26 +234,26 @@ class SelectPaymentMethodScreen extends StatelessWidget {
                         children: [
                           RichText(
                             text: TextSpan(
-                              text: "₹ 5,950 ",
+                              text: '₹ 5,950 ',
                               style: TextStyle(
                                 fontFamily: FontFamily.PoppinsSemiBold,
                                 fontSize: 16,
-                                color: white,
+                                color: AppColors.white,
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: "Due now ",
+                                  text: 'Due now ',
                                   style: TextStyle(
                                       fontSize: 10,
                                       fontFamily: FontFamily.PoppinsMedium,
-                                      color: grey8E8),
+                                      color: AppColors.grey8E8),
                                 ),
                               ],
                             ),
                           ),
                           CommonTextWidget.PoppinsMedium(
-                            text: "Convenience Fee added",
-                            color: grey8E8,
+                            text: 'Convenience Fee added',
+                            color: AppColors.grey8E8,
                             fontSize: 10,
                           ),
                         ],
@@ -277,5 +277,4 @@ class SelectPaymentMethodScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

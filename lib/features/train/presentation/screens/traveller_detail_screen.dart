@@ -4,7 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../../core/utils/common_textfeild_widget.dart';
 import '../controllers/train_detail_controller.dart';
 import '../controllers/travellerDetailController.dart';
-import '../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../core/widgets/common_button_widget.dart';
 import '../../../../core/widgets/common_text_widget.dart';
 
@@ -97,7 +97,7 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColors.white,
       appBar: _buildAppBar(),
       // Use Obx ONLY for parts reacting to controller state (like isLoading)
       body: SafeArea(
@@ -128,14 +128,14 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
               child: Obx( // Use Obx here for the button's loading state
                 () => CommonButtonWidget.button(
                   text: controller.isLoading.value ? null : 'SAVE',
-                  buttonColor: redCA0,
+                  buttonColor: AppColors.redCA0,
                   onTap: controller.isLoading.value ? null : _handleSave,
                   child: controller.isLoading.value
                       ? SizedBox(
                           height: 24,
                           width: 24,
                           child: LoadingAnimationWidget.fourRotatingDots(
-                            color: white,
+                            color: AppColors.white,
                             size: 20,
                           ),
                         )
@@ -149,7 +149,7 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
     );
 
   AppBar _buildAppBar() => AppBar(
-      backgroundColor: redCA0,
+      backgroundColor: AppColors.redCA0,
       automaticallyImplyLeading: false,
       elevation: 0,
       centerTitle: true,
@@ -157,11 +157,11 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
         onTap: () {
           Get.back();
         },
-        child: Icon(Icons.arrow_back, color: white, size: 20),
+        child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
       ),
       title: CommonTextWidget.PoppinsSemiBold(
         text: 'Traveller Details',
-        color: white,
+        color: AppColors.white,
         fontSize: 18,
       ),
     );
@@ -173,7 +173,7 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
       children: <Widget>[
         CommonTextWidget.PoppinsMedium(
           text: label,
-          color: grey717,
+          color: AppColors.grey717,
           fontSize: 12,
         ),
         SizedBox(height: 5),
@@ -201,7 +201,7 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
             children: <Widget>[
               CommonTextWidget.PoppinsMedium(
                 text: 'Gender',
-                color: grey717,
+                color: AppColors.grey717,
                 fontSize: 12,
               ),
               SizedBox(height: 5),
@@ -210,22 +210,20 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
                  decoration: InputDecoration(
                    hintText: 'Select Gender', // Add hint text
                    contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: greyBEB)),
-                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: greyBEB)),
-                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: redCA0, width: 1.5)),
-                   filled: true, fillColor: greyE2E.withOpacity(0.5),
+                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
+                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
+                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.redCA0, width: 1.5)),
+                   filled: true, fillColor: AppColors.greyE2E.withOpacity(0.5),
                  ),
                 value: _selectedGender, // Use state variable
                 isExpanded: true,
-                icon: Icon(Icons.arrow_drop_down, color: grey717),
-                items: genderItems.map((String value) {
-                  return DropdownMenuItem<String>(
+                icon: Icon(Icons.arrow_drop_down, color: AppColors.grey717),
+                items: genderItems.map((String value) => DropdownMenuItem<String>(
                     value: value,
                     child: CommonTextWidget.PoppinsRegular(
-                      text: value, color: black2E2, fontSize: 14,
+                      text: value, color: AppColors.black2E2, fontSize: 14,
                     ),
-                  );
-                }).toList(),
+                  )).toList(),
                 onChanged: (String? newValue) {
                   // Update state when changed
                   setState(() {
@@ -247,7 +245,7 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
       children: <Widget>[
         CommonTextWidget.PoppinsMedium(
           text: 'Berth Preference',
-          color: grey717,
+          color: AppColors.grey717,
           fontSize: 12,
         ),
         SizedBox(height: 5),
@@ -256,20 +254,20 @@ class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
            decoration: InputDecoration(
              hintText: 'Select Preference', // Add hint text
              contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-             border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: greyBEB)),
-             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: greyBEB)),
-             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: redCA0, width: 1.5)),
-             filled: true, fillColor: greyE2E.withOpacity(0.5),
+             border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
+             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
+             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.redCA0, width: 1.5)),
+             filled: true, fillColor: AppColors.greyE2E.withOpacity(0.5),
            ),
           value: _selectedBerth, // Use state variable
           isExpanded: true,
-          icon: Icon(Icons.arrow_drop_down, color: grey717),
+          icon: Icon(Icons.arrow_drop_down, color: AppColors.grey717),
           // ignore: prefer_expression_function_bodies
           items: berthItems.map((String value) { // Use updated berthItems list
             return DropdownMenuItem<String>(
               value: value,
               child: CommonTextWidget.PoppinsRegular(
-                text: value, color: black2E2, fontSize: 14,
+                text: value, color: AppColors.black2E2, fontSize: 14,
               ),
             );
           }).toList(),

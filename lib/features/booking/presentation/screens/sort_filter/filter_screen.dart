@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/features/shared/presentation/controllers/sort_and_filter_controller.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/main.dart';
+import '../../../../shared/presentation/controllers/sort_and_filter_controller.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
 
 class FilterScreen extends StatelessWidget {
   FilterScreen({Key? key}) : super(key: key);
   final FilterController filterController = Get.put(FilterController());
 
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
+  Widget build(BuildContext context) => ScrollConfiguration(
       behavior: MyBehavior(),
       child: SingleChildScrollView(
         child: Column(
@@ -22,8 +21,8 @@ class FilterScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsLight(
-                text: "Stops From New Delhi",
-                color: grey717,
+                text: 'Stops From New Delhi',
+                color: AppColors.grey717,
                 fontSize: 18,
               ),
             ),
@@ -51,11 +50,11 @@ class FilterScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: controller.selectedIndex == index
-                                ? redCA0
-                                : white,
+                                ? AppColors.redCA0
+                                : AppColors.white,
                             boxShadow: [
                               BoxShadow(
-                                color: grey7B7.withOpacity(0.25),
+                                color: AppColors.grey7B7.withOpacity(0.25),
                                 offset: Offset(0, 1),
                                 blurRadius: 6,
                               ),
@@ -67,24 +66,24 @@ class FilterScreen extends StatelessWidget {
                               children: [
                                 SizedBox(height: 5),
                                 CommonTextWidget.PoppinsMedium(
-                                  text: Lists.filterList1[index]["text1"],
+                                  text: Lists.filterList1[index]['text1'],
                                   color: controller.selectedIndex == index
-                                      ? white
-                                      : black2E2,
+                                      ? AppColors.white
+                                      : AppColors.black2E2,
                                   fontSize: 25,
                                 ),
                                 CommonTextWidget.PoppinsRegular(
-                                  text: Lists.filterList1[index]["text2"],
+                                  text: Lists.filterList1[index]['text2'],
                                   color: controller.selectedIndex == index
-                                      ? white
-                                      : black2E2,
+                                      ? AppColors.white
+                                      : AppColors.black2E2,
                                   fontSize: 12,
                                 ),
                                 CommonTextWidget.PoppinsRegular(
-                                  text: Lists.filterList1[index]["text3"],
+                                  text: Lists.filterList1[index]['text3'],
                                   color: controller.selectedIndex == index
-                                      ? white
-                                      : grey717,
+                                      ? AppColors.white
+                                      : AppColors.grey717,
                                   fontSize: 12,
                                 ),
                               ],
@@ -97,13 +96,13 @@ class FilterScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Divider(thickness: 1, color: greyEEE),
+            Divider(thickness: 1, color: AppColors.greyEEE),
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsLight(
-                text: "Departure From New Delhi",
-                color: grey717,
+                text: 'Departure From New Delhi',
+                color: AppColors.grey717,
                 fontSize: 18,
               ),
             ),
@@ -123,8 +122,7 @@ class FilterScreen extends StatelessWidget {
                 padding:
                     EdgeInsets.only(left: 24, right: 24, top: 15, bottom: 20),
                 itemCount: Lists.filterList2.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
+                itemBuilder: (context, index) => InkWell(
                     onTap: () {
                       controller.onIndexChange1(index);
                       filterController.isSelected.value = true;
@@ -132,11 +130,12 @@ class FilterScreen extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color:
-                            controller.selectedIndex1 == index ? redCA0 : white,
+                        color: controller.selectedIndex1 == index
+                            ? AppColors.redCA0
+                            : AppColors.white,
                         boxShadow: [
                           BoxShadow(
-                            color: grey7B7.withOpacity(0.25),
+                            color: AppColors.grey7B7.withOpacity(0.25),
                             offset: Offset(0, 1),
                             blurRadius: 6,
                           ),
@@ -146,24 +145,23 @@ class FilterScreen extends StatelessWidget {
                         child: CommonTextWidget.PoppinsRegular(
                           text: Lists.filterList2[index],
                           color: controller.selectedIndex1 == index
-                              ? white
-                              : grey717,
+                              ? AppColors.white
+                              : AppColors.grey717,
                           fontSize: 12,
                           textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
               ),
             ),
-            Divider(thickness: 1, color: greyEEE),
+            Divider(thickness: 1, color: AppColors.greyEEE),
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsLight(
-                text: "Arrival at Mumbai",
-                color: grey717,
+                text: 'Arrival at Mumbai',
+                color: AppColors.grey717,
                 fontSize: 18,
               ),
             ),
@@ -183,8 +181,7 @@ class FilterScreen extends StatelessWidget {
                 padding:
                     EdgeInsets.only(left: 24, right: 24, top: 15, bottom: 20),
                 itemCount: Lists.filterList2.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
+                itemBuilder: (context, index) => InkWell(
                     onTap: () {
                       controller.onIndexChange2(index);
                       filterController.isSelected.value = true;
@@ -192,11 +189,12 @@ class FilterScreen extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color:
-                            controller.selectedIndex2 == index ? redCA0 : white,
+                        color: controller.selectedIndex2 == index
+                            ? AppColors.redCA0
+                            : AppColors.white,
                         boxShadow: [
                           BoxShadow(
-                            color: grey7B7.withOpacity(0.25),
+                            color: AppColors.grey7B7.withOpacity(0.25),
                             offset: Offset(0, 1),
                             blurRadius: 6,
                           ),
@@ -206,24 +204,23 @@ class FilterScreen extends StatelessWidget {
                         child: CommonTextWidget.PoppinsRegular(
                           text: Lists.filterList2[index],
                           color: controller.selectedIndex2 == index
-                              ? white
-                              : grey717,
+                              ? AppColors.white
+                              : AppColors.grey717,
                           fontSize: 12,
                           textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                  );
-                },
+                  ),
               ),
             ),
-            Divider(thickness: 1, color: greyEEE),
+            Divider(thickness: 1, color: AppColors.greyEEE),
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsLight(
-                text: "Airline",
-                color: grey717,
+                text: 'Airline',
+                color: AppColors.grey717,
                 fontSize: 18,
               ),
             ),
@@ -245,21 +242,21 @@ class FilterScreen extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Image.asset(
-                              Lists.filterList3[index]["image"],
+                              Lists.filterList3[index]['image'],
                               height: 30,
                               width: 30,
                             ),
                             SizedBox(width: 15),
                             CommonTextWidget.PoppinsRegular(
-                              text: Lists.filterList3[index]["text1"],
-                              color: black2E2,
+                              text: Lists.filterList3[index]['text1'],
+                              color: AppColors.black2E2,
                               fontSize: 14,
                             ),
                           ],
                         ),
                         title: CommonTextWidget.PoppinsRegular(
-                          text: Lists.filterList3[index]["text2"],
-                          color: grey717,
+                          text: Lists.filterList3[index]['text2'],
+                          color: AppColors.grey717,
                           fontSize: 14,
                         ),
                         trailing: InkWell(
@@ -273,19 +270,19 @@ class FilterScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               color: controller.selectedIndex3 == index
-                                  ? redCA0
-                                  : white,
+                                  ? AppColors.redCA0
+                                  : AppColors.white,
                               border: Border.all(
                                 color: controller.selectedIndex3 == index
-                                    ? redCA0
-                                    : grey717,
+                                    ? AppColors.redCA0
+                                    : AppColors.grey717,
                                 width: 1.5,
                               ),
                             ),
                             child: Center(
                               child: Icon(
                                 Icons.check,
-                                color: white,
+                                color: AppColors.white,
                                 size: 14,
                               ),
                             ),
@@ -293,7 +290,7 @@ class FilterScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Divider(thickness: 1, color: greyEEE),
+                    Divider(thickness: 1, color: AppColors.greyEEE),
                   ],
                 ),
               ),
@@ -302,8 +299,8 @@ class FilterScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: CommonTextWidget.PoppinsLight(
-                text: "Other filter",
-                color: grey717,
+                text: 'Other filter',
+                color: AppColors.grey717,
                 fontSize: 18,
               ),
             ),
@@ -314,8 +311,8 @@ class FilterScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonTextWidget.PoppinsRegular(
-                    text: "Refundable Fares",
-                    color: black2E2,
+                    text: 'Refundable Fares',
+                    color: AppColors.black2E2,
                     fontSize: 14,
                   ),
                   Obx(
@@ -331,18 +328,20 @@ class FilterScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color:
-                              filterController.select.isTrue ? redCA0 : white,
+                              filterController.select.isTrue
+                                  ? AppColors.redCA0
+                                  : AppColors.white,
                           border: Border.all(
                             color: filterController.select.isTrue
-                                ? redCA0
-                                : grey717,
+                                ? AppColors.redCA0
+                                : AppColors.grey717,
                             width: 1.5,
                           ),
                         ),
                         child: Center(
                           child: Icon(
                             Icons.check,
-                            color: white,
+                            color: AppColors.white,
                             size: 14,
                           ),
                         ),
@@ -353,11 +352,10 @@ class FilterScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 18),
-            Divider(thickness: 1, color: greyEEE),
+            Divider(thickness: 1, color: AppColors.greyEEE),
             SizedBox(height: 20),
           ],
         ),
       ),
     );
-  }
 }

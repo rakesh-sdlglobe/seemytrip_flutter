@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
-import '../../../../core/utils/colors.dart';
 import '../controllers/view_train_routes_controller.dart';
 
 class ViewTrainRoutes extends StatelessWidget {
@@ -26,8 +26,8 @@ class ViewTrainRoutes extends StatelessWidget {
               style: TextStyle(color: Colors.white),
             )),
         centerTitle: true,
-        backgroundColor: redCA0,
-        foregroundColor: white,
+        backgroundColor: AppColors.redCA0,
+        foregroundColor: AppColors.white,
         elevation: 1,
         actions: <Widget>[
           IconButton(
@@ -58,7 +58,7 @@ class ViewTrainRoutes extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (viewRouteController.isLoading.value) {
-                return Center(child: LoadingAnimationWidget.fourRotatingDots(color: white, size: 20));
+                return Center(child: LoadingAnimationWidget.fourRotatingDots(color: AppColors.white, size: 20));
               }
               if (viewRouteController.trainSchedule.isEmpty) {
                 return Center(child: Text('No data available'));
@@ -86,9 +86,9 @@ class ViewTrainRoutes extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 6.0),
                       child: Card(
                         color: isFirst
-                            ? Colors.red.shade100
+                            ? AppColors.redCA0.withOpacity(0.1)
                             : isLast
-                                ? Colors.blue.shade100
+                                ? AppColors.blueCA0.withOpacity(0.1)
                                 : Colors.white,
                         elevation: 2,
                         margin: EdgeInsets.fromLTRB(8, 0, 12, 0),
@@ -103,9 +103,9 @@ class ViewTrainRoutes extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                   fontSize: isFirst || isLast ? 16 : 14,
                                   color: isFirst
-                                      ? Colors.red[800]
+                                      ? AppColors.redCA0
                                       : isLast
-                                          ? Colors.blue[800]
+                                          ? AppColors.blueCA0
                                           : Colors.black,
                                 ),
                               ),

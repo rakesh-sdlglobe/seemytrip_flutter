@@ -1,22 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:seemytrip/features/home/presentation/screens/where_to_go/international_detail_screen1.dart';
-import 'package:seemytrip/features/home/presentation/screens/where_to_go/international_select_city_screen.dart';
-import 'package:seemytrip/main.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../../main.dart';
+import 'international_detail_screen1.dart';
+import 'international_select_city_screen.dart';
 
 class InterNationalScreen extends StatelessWidget {
   InterNationalScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: white,
+  Widget build(BuildContext context) => Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: redCA0,
+        backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
@@ -24,11 +24,11 @@ class InterNationalScreen extends StatelessWidget {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: white, size: 20),
+          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: "From Ahmedabad",
-          color: white,
+          text: 'From Ahmedabad',
+          color: AppColors.white,
           fontSize: 18,
         ),
         actions: [
@@ -38,7 +38,7 @@ class InterNationalScreen extends StatelessWidget {
             },
             child: Padding(
               padding: EdgeInsets.only(right: 24),
-              child: Icon(CupertinoIcons.search, color: white),
+              child: Icon(CupertinoIcons.search, color: AppColors.white),
             ),
           ),
         ],
@@ -69,5 +69,4 @@ class InterNationalScreen extends StatelessWidget {
         ],
       ),
     );
-  }
 }

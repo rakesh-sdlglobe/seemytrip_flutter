@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/lists_widget.dart';
 
 class FromStationSelector extends StatelessWidget {
@@ -21,9 +21,9 @@ class FromStationSelector extends StatelessWidget {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.15),
+            color: AppColors.greyE2E.withOpacity(0.15),
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(width: 1, color: greyE2E),
+            border: Border.all(width: 1, color: AppColors.greyE2E),
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
@@ -45,7 +45,7 @@ class FromStationSelector extends StatelessWidget {
                       Text(
                         'From',
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: AppColors.grey717,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
@@ -53,7 +53,7 @@ class FromStationSelector extends StatelessWidget {
                       Text(
                         selectedFromStation ?? 'Select From Station',
                         style: TextStyle(
-                          color: selectedFromStation == null ? grey888 : black2E2,
+                          color: selectedFromStation == null ? AppColors.grey888 : AppColors.black2E2,
                           fontSize: 16,
                         ),
                         overflow: TextOverflow.ellipsis,

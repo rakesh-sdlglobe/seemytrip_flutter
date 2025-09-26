@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:seemytrip/core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import 'package:seemytrip/core/widgets/common_text_widget.dart';
 
 class HotelDetailAttractions extends StatelessWidget {
-  final Map<String, dynamic> hotelDetail;
 
   const HotelDetailAttractions({Key? key, required this.hotelDetail}) : super(key: key);
+  final Map<String, dynamic> hotelDetail;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.place_outlined, color: redCA0, size: 20),
+            Icon(Icons.place_outlined, color: AppColors.redCA0, size: 20),
             SizedBox(width: 8),
             CommonTextWidget.PoppinsMedium(
-              text: "Nearby Attractions",
-              color: black2E2,
+              text: 'Nearby Attractions',
+              color: AppColors.black2E2,
               fontSize: 17,
             ),
           ],
@@ -33,7 +32,7 @@ class HotelDetailAttractions extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: greyE8E),
+                  border: Border.all(color: AppColors.greyE8E),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,13 +73,13 @@ class HotelDetailAttractions extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Row(
                           children: [
-                            Icon(Icons.location_on, size: 16, color: redCA0),
+                            Icon(Icons.location_on, size: 16, color: AppColors.redCA0),
                             SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 plainText,
                                 style: TextStyle(
-                                  color: black2E2,
+                                  color: AppColors.black2E2,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -96,14 +95,13 @@ class HotelDetailAttractions extends StatelessWidget {
             : Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  "No nearby attractions listed.",
+                  'No nearby attractions listed.',
                   style: TextStyle(
-                    color: grey717,
+                    color: AppColors.grey717,
                     fontSize: 14,
                   ),
                 ),
               ),
       ],
     );
-  }
 }

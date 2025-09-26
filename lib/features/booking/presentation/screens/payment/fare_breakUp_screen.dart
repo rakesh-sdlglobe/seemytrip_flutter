@@ -2,19 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:seemytrip/core/utils/colors.dart';
-import 'package:seemytrip/core/widgets/common_text_widget.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/common_text_widget.dart';
 
 class FareBreakUpScreen extends StatelessWidget {
   FareBreakUpScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.only(top: 350),
       child: Container(
         decoration: BoxDecoration(
-          color: white,
+          color: AppColors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -25,7 +24,7 @@ class FareBreakUpScreen extends StatelessWidget {
             Container(
               width: Get.width,
               decoration: BoxDecoration(
-                color: redCA0,
+                color: AppColors.redCA0,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
@@ -40,11 +39,11 @@ class FareBreakUpScreen extends StatelessWidget {
                       onTap: () {
                         Get.back();
                       },
-                      child: Icon(Icons.close, color: white, size: 20),
+                      child: Icon(Icons.close, color: AppColors.white, size: 20),
                     ),
                     CommonTextWidget.PoppinsMedium(
-                      text: "Fare Breakup",
-                      color: white,
+                      text: 'Fare Breakup',
+                      color: AppColors.white,
                       fontSize: 18,
                     ),
                     SizedBox.shrink(),
@@ -59,20 +58,19 @@ class FareBreakUpScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonTextWidget.PoppinsMedium(
-                    text: "Convenience Fee",
-                    color: black2E2,
+                    text: 'Convenience Fee',
+                    color: AppColors.black2E2,
                     fontSize: 14,
                   ),
                   CommonTextWidget.PoppinsMedium(
-                    text: "₹ 299",
-                    color: black2E2,
+                    text: '₹ 299',
                     fontSize: 14,
                   ),
                 ],
               ),
             ),
             SizedBox(height: 20),
-            Divider(color: greyE8E, thickness: 1),
+            Divider(color: AppColors.greyE8E, thickness: 1),
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
@@ -80,20 +78,19 @@ class FareBreakUpScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonTextWidget.PoppinsMedium(
-                    text: "Fare",
-                    color: black2E2,
+                    text: 'Fare',
+                    color: AppColors.black2E2,
                     fontSize: 14,
                   ),
                   CommonTextWidget.PoppinsMedium(
-                    text: "₹ 5,057",
-                    color: black2E2,
+                    text: '₹ 5,057',
                     fontSize: 14,
                   ),
                 ],
               ),
             ),
             SizedBox(height: 20),
-            Divider(color: greyE8E, thickness: 10),
+            Divider(color: AppColors.greyE8E, thickness: 10),
             SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
@@ -104,20 +101,19 @@ class FareBreakUpScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CommonTextWidget.PoppinsMedium(
-                        text: "DUE NOW",
-                        color: black2E2,
+                        text: 'DUE NOW',
+                        color: AppColors.black2E2,
                         fontSize: 18,
                       ),
                       CommonTextWidget.PoppinsMedium(
-                        text: "*Prices inclusive of GST wherever indicated",
-                        color: grey717,
+                        text: '*Prices inclusive of GST wherever indicated',
                         fontSize: 10,
                       ),
                     ],
                   ),
                   CommonTextWidget.PoppinsMedium(
-                    text: "₹ 5,057",
-                    color: black2E2,
+                    text: '₹ 5,057',
+                    color: AppColors.black2E2,
                     fontSize: 14,
                   ),
                 ],
@@ -128,4 +124,4 @@ class FareBreakUpScreen extends StatelessWidget {
       ),
     );
   }
-}
+

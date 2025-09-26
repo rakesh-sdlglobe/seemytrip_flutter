@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../core/utils/colors.dart';
+import 'package:seemytrip/core/theme/app_colors.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../shared/constants/images.dart';
 import '../../../../train/presentation/screens/train_modify_search_screen.dart';
@@ -130,14 +130,14 @@ class _OneWayResultsScreenState extends State<OneWayResultsScreen> {
   Widget build(BuildContext context) => Theme(
       data: Theme.of(context).copyWith(
         colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: redCA0,
-              secondary: redCA0,
-              onPrimary: Colors.white,
+              primary: AppColors.redCA0,
+              secondary: AppColors.redCA0,
+              onPrimary: AppColors.white,
             ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: redCA0,
-            foregroundColor: Colors.white,
+            backgroundColor: AppColors.redCA0,
+            foregroundColor: AppColors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -145,35 +145,35 @@ class _OneWayResultsScreenState extends State<OneWayResultsScreen> {
           ),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
           elevation: 0,
           titleTextStyle: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
         ),
         textTheme: Theme.of(context).textTheme.apply(
-              bodyColor: Colors.black87,
-              displayColor: Colors.black87,
+              bodyColor: Theme.of(context).textTheme.bodyLarge?.color,
+              displayColor: Theme.of(context).textTheme.displayLarge?.color,
             ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: Text(
             'Select Flight',
             style: GoogleFonts.poppins(
-              color: Colors.black,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
           ),
           centerTitle: true,
           elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: Theme.of(context).cardColor,
+          foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, size: 20),
             onPressed: () => Get.back(),
@@ -187,14 +187,16 @@ class _OneWayResultsScreenState extends State<OneWayResultsScreen> {
               Container(
                 margin: const EdgeInsets.all(16),
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withOpacity(0.3)
+                          : Colors.grey.withOpacity(0.1),
                       spreadRadius: 1,
-                      blurRadius: 4,
+                      blurRadius: Theme.of(context).brightness == Brightness.dark ? 8 : 4,
                       offset: const Offset(0, 2),
                     ),
                   ],
@@ -219,7 +221,7 @@ class _OneWayResultsScreenState extends State<OneWayResultsScreen> {
                               Text(
                                 '${_formatDate(searchParams['departDate'])} • ${searchParams['adults']} Adult${searchParams['adults'] > 1 ? 's' : ''} • ${searchParams['travelClass']} Class',
                                 style: GoogleFonts.poppins(
-                                  color: Colors.grey[600],
+                                  color: AppColors.grey717,
                                   fontSize: 14,
                                 ),
                               ),
@@ -230,13 +232,13 @@ class _OneWayResultsScreenState extends State<OneWayResultsScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-  color: redCA0.withOpacity(0.1),
+                            color: AppColors.redCA0.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Text(
                             'One Way',
                             style: GoogleFonts.poppins(
-                              color: redCA0,
+                              color: AppColors.redCA0,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -287,9 +289,9 @@ class _OneWayResultsScreenState extends State<OneWayResultsScreen> {
                         margin: const EdgeInsets.only(right: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
-color: redCA0.withOpacity(0.1),
+color: AppColors.redCA0.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: redCA0.withOpacity(0.2)),
+                          border: Border.all(color: AppColors.redCA0.withOpacity(0.2)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -298,7 +300,7 @@ color: redCA0.withOpacity(0.1),
                               filterText,
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
-                                color: redCA0,
+                                color: AppColors.redCA0,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -308,7 +310,7 @@ color: redCA0.withOpacity(0.1),
                                 _filters.remove(entry.key);
                                 setState(() {});
                               },
-                              child: Icon(Icons.close, size: 16, color: Colors.blue[800]),
+                              child: Icon(Icons.close, size: 16, color: AppColors.blueCA0),
                             ),
                           ],
                         ),
@@ -433,7 +435,7 @@ color: redCA0.withOpacity(0.1),
                         Icon(
                           Icons.airplanemode_inactive,
                           size: 64,
-                          color: redCA0.withOpacity(0.5),
+                          color: AppColors.redCA0.withOpacity(0.5),
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -441,7 +443,7 @@ color: redCA0.withOpacity(0.1),
                               ? 'No flights match your filters.'
                               : 'No flights found for the selected criteria.',
                           style: GoogleFonts.poppins(
-                            color: Colors.grey[600],
+                            color: AppColors.grey717,
                             fontSize: 16,
                           ),
                           textAlign: TextAlign.center,
@@ -456,7 +458,7 @@ color: redCA0.withOpacity(0.1),
                             child: Text(
                               'Clear all filters',
                               style: GoogleFonts.poppins(
-                                color: redCA0,
+                                color: AppColors.redCA0,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -482,11 +484,11 @@ color: redCA0.withOpacity(0.1),
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: AppColors.grey717.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 8,
             offset: const Offset(0, 2),
@@ -517,7 +519,7 @@ color: redCA0.withOpacity(0.1),
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: redCA0,
+                        color: AppColors.redCA0,
                       ),
                     ),
                   ],
@@ -565,7 +567,7 @@ color: redCA0.withOpacity(0.1),
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
+                                color: AppColors.grey717,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -575,7 +577,7 @@ color: redCA0.withOpacity(0.1),
                                   'Base Fare: ',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: Colors.grey[600],
+                                    color: AppColors.grey717,
                                   ),
                                 ),
                                 Text(
@@ -583,14 +585,14 @@ color: redCA0.withOpacity(0.1),
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.grey[800],
+                                    color: AppColors.grey717,
                                   ),
                                 ),
                                 Text(
                                   'Taxes: ',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: Colors.grey[600],
+                                    color: AppColors.grey717,
                                   ),
                                 ),
                                 Text(
@@ -598,7 +600,7 @@ color: redCA0.withOpacity(0.1),
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.grey[800],
+                                    color: AppColors.grey717,
                                   ),
                                 ),
                               ],
@@ -610,7 +612,7 @@ color: redCA0.withOpacity(0.1),
                                   flight['IsRefundable'] ? 'Refundable' : 'Non-Refundable',
                                   style: GoogleFonts.poppins(
                                     fontSize: 11,
-                                    color: flight['IsRefundable'] ? Colors.green[600] : Colors.orange[600],
+                                    color: flight['IsRefundable'] ? AppColors.green00A : AppColors.orangeEB9,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -627,7 +629,7 @@ color: redCA0.withOpacity(0.1),
                           Get.to(() => OneWayFlightDetailsScreen(flight: flight, searchParams: searchParams));  
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: redCA0,
+                          backgroundColor: AppColors.redCA0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -637,7 +639,7 @@ color: redCA0.withOpacity(0.1),
                         child: Text(
                           'Select',
                           style: GoogleFonts.poppins(
-                            color: Colors.white,
+                            color: AppColors.white,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -663,7 +665,7 @@ color: redCA0.withOpacity(0.1),
   }) => Container(
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
     decoration: BoxDecoration(
-      color: isArrival ? Colors.blue[50] : null,
+      color: isArrival ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
       borderRadius: BorderRadius.circular(8),
     ),
     child: Column(
@@ -674,14 +676,14 @@ color: redCA0.withOpacity(0.1),
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: isArrival ? Theme.of(context).primaryColor : Colors.black,
+            color: isArrival ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
         const SizedBox(height: 2),
         Text(
           location,
           style: GoogleFonts.poppins(
-            color: isArrival ? Colors.blue[800] : Colors.grey[700],
+            color: isArrival ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodyMedium?.color,
             fontSize: 13,
             fontWeight: isArrival ? FontWeight.w500 : FontWeight.normal,
           ),
@@ -691,7 +693,7 @@ color: redCA0.withOpacity(0.1),
           Text(
             'Terminal $terminal',
             style: GoogleFonts.poppins(
-              color: Colors.grey[500],
+              color: Theme.of(context).textTheme.bodySmall?.color,
               fontSize: 11,
             ),
           ),
@@ -701,7 +703,7 @@ color: redCA0.withOpacity(0.1),
           Text(
             _formatDate(date),
             style: GoogleFonts.poppins(
-              color: isArrival ? Colors.blue[700] : Colors.grey[500],
+              color: isArrival ? Theme.of(context).primaryColor : Theme.of(context).textTheme.bodySmall?.color,
               fontSize: 11,
               fontWeight: isArrival ? FontWeight.w500 : FontWeight.normal,
             ),
@@ -720,7 +722,7 @@ color: redCA0.withOpacity(0.1),
         duration,
         style: GoogleFonts.poppins(
           fontSize: 12,
-          color: Colors.grey[600],
+          color: Theme.of(context).textTheme.bodyMedium?.color,
         ),
       ),
       const SizedBox(height: 6),
@@ -730,19 +732,19 @@ color: redCA0.withOpacity(0.1),
           Container(
             height: 1,
             width: 80,
-            color: Colors.grey[300],
+            color: Theme.of(context).dividerColor,
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.blue[50],
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               stops == '0' ? 'Non-stop' : '$stops ${stops == '1' ? 'stop' : 'stops'}',
               style: GoogleFonts.poppins(
                 fontSize: 11,
-                color: Colors.grey[800],
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -771,19 +773,19 @@ color: redCA0.withOpacity(0.1),
           child: Container(
             width: Get.width,
             decoration: BoxDecoration(
-              color: white,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(5),
             ),
             child: ListTile(
               horizontalTitleGap: -5,
               title: CommonTextWidget.PoppinsRegular(
                 text: '${searchParams['fromAirport']} - ${searchParams['toAirport']}',
-                color: black2E2,
+                color: AppColors.black2E2,
                 fontSize: 15,
               ),
               subtitle: CommonTextWidget.PoppinsRegular(
                 text: DateFormat('dd MMM, EEEE').format(DateTime.now()),
-                color: grey717,
+                color: AppColors.grey717,
                 fontSize: 12,
               ),
               trailing: InkWell(
@@ -801,7 +803,7 @@ color: redCA0.withOpacity(0.1),
                     const SizedBox(height: 10),
                     CommonTextWidget.PoppinsMedium(
                       text: 'Edit',
-                      color: redCA0,
+                      color: AppColors.redCA0,
                       fontSize: 12,
                     ),
                   ],
@@ -820,28 +822,28 @@ color: redCA0.withOpacity(0.1),
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: AppColors.grey50,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
           Row(
             children: [
-              Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+              Icon(Icons.calendar_today, size: 16, color: AppColors.grey2E2),
               const SizedBox(width: 4),
               Text(dateFormat.format(date),
-                  style: TextStyle(fontSize: 12, color: Colors.grey[800], fontWeight: FontWeight.w500)),
+                  style: TextStyle(fontSize: 12, color: AppColors.grey2E2, fontWeight: FontWeight.w500)),
             ],
           ),
           const SizedBox(width: 12),
           Row(
             children: [
-              Icon(Icons.people_outline, size: 16, color: Colors.grey[600]),
+              Icon(Icons.people_outline, size: 16, color: AppColors.grey2E2),
               const SizedBox(width: 4),
               Text(
                 '${params['adults'] ?? 1} Adult${params['adults'] != null && params['adults'] > 1 ? 's' : ''}'
                 '${params['children'] != null && params['children'] > 0 ? ', ${params['children']} Child${params['children'] > 1 ? 'ren' : ''}' : ''}',
-                style: TextStyle(fontSize: 12, color: Colors.grey[800], fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 12, color: AppColors.grey2E2, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -872,24 +874,24 @@ color: redCA0.withOpacity(0.1),
   Widget _buildFilterChip(String label, IconData icon) => Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         child: Material(
-          color: Colors.transparent,
+          color: AppColors.transparent,
           child: InkWell(
             onTap: () {},
             borderRadius: BorderRadius.circular(20),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: AppColors.grey50,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: AppColors.grey2E2),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(icon, size: 16, color: Theme.of(Get.context!).primaryColor),
+                  Icon(icon, size: 16, color: AppColors.grey2E2),
                   const SizedBox(width: 6),
                   Text(label,
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black87)),
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.bodyLarge?.color)),
                 ],
               ),
             ),
@@ -917,19 +919,19 @@ color: redCA0.withOpacity(0.1),
   Widget _buildSortOption(String label, IconData icon) => Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
         child: Material(
-          color: Colors.transparent,
+          color: AppColors.transparent,
           child: InkWell(
             onTap: () {},
             borderRadius: BorderRadius.circular(8),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: AppColors.grey2E2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
+                    color: Theme.of(context).shadowColor.withOpacity(0.03),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -938,11 +940,11 @@ color: redCA0.withOpacity(0.1),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(icon, size: 16, color: Colors.grey[700]),
+                  Icon(icon, size: 16, color: AppColors.grey2E2),
                   const SizedBox(width: 6),
-                  Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.grey[800])),
+                  Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.grey2E2)),
                   const SizedBox(width: 4),
-                  Icon(Icons.arrow_drop_down, size: 18, color: Colors.grey[600]),
+                  Icon(Icons.arrow_drop_down, size: 18, color: AppColors.grey2E2),
                 ],
               ),
             ),
@@ -952,7 +954,7 @@ color: redCA0.withOpacity(0.1),
 
   Widget _buildDetailItem(IconData icon, String text) => Row(
         children: [
-          Icon(icon, size: 16, color: Colors.grey),
+          Icon(icon, size: 16, color: AppColors.grey2E2),
           const SizedBox(width: 4),
           Text(text, style: const TextStyle(fontSize: 12)),
         ],

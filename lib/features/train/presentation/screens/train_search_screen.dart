@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/utils/colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/buttons/app_button.dart';
 import '../../../../core/widgets/common/common_app_bar.dart';
 import '../../../../shared/constants/images.dart';
@@ -112,7 +112,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
     bool isFormValid = selectedFromStation != null && selectedToStation != null;
 
     return Scaffold(
-      backgroundColor: Color(0xFFF5F7FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
@@ -150,13 +150,13 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
   Widget _buildHeader() => CommonAppBar(
         title: 'Train Search',
         subtitle: 'Plan your journey with ease',
-        textColor: white,
+        textColor: AppColors.white,
         showBackButton: true,
       );
 
   Widget _buildStationSelection() => Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -257,8 +257,8 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
                         color: station == null
-                            ? Colors.grey[400]
-                            : Color(0xFF1A1A1A),
+                            ? Theme.of(context).hintColor
+                            : Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                   ],
@@ -272,7 +272,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
 
   Widget _buildDateSelection(String formattedDate, String dayOfWeek) => Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -341,7 +341,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                   style: GoogleFonts.inter(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1A1A1A),
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                     // overflow: TextOverflow.ellipsis,
                   ),
                 ),
