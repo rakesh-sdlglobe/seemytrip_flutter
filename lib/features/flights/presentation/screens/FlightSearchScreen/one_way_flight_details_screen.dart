@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
+import '../../../../../core/widgets/dynamic_language_selector.dart';
+import '../../../../../core/widgets/global_language_wrapper.dart';
 
 class OneWayFlightDetailsScreen extends StatelessWidget {
 
@@ -17,10 +19,15 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
     debugPrint('✈️ One Way Flight Details: $flight');
     debugPrint('🔍 Search Parameters: $searchParams');
 
-    return Scaffold(
+    return GlobalLanguageWrapper(
+      child: Scaffold(
       appBar: AppBar(
-        title: const Text('Flight Details'),
+        title: Text('flightDetails'.tr),
         elevation: 0,
+        actions: [
+          QuickLanguageSwitcher(),
+          SizedBox(width: 16),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -35,7 +42,7 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildTripSummary() {
@@ -56,8 +63,8 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Trip Summary',
+            Text(
+              'tripSummary'.tr,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -65,11 +72,11 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
             ),
             const Divider(thickness: 1.5),
             const SizedBox(height: 8),
-            _buildInfoRow('From', from),
-            _buildInfoRow('To', to),
-            _buildInfoRow('Departure', _formatDate(departureDate)),
-            _buildInfoRow('Passengers', '$passengers ${passengers == 1 ? 'Passenger' : 'Passengers'}' ),
-            _buildInfoRow('Class', travelClass),
+            _buildInfoRow('from'.tr, from),
+            _buildInfoRow('to'.tr, to),
+            _buildInfoRow('departure'.tr, _formatDate(departureDate)),
+            _buildInfoRow('passengers'.tr, '$passengers ${passengers == 1 ? 'passenger'.tr : 'passengers'.tr}' ),
+            _buildInfoRow('class'.tr, travelClass),
           ],
         ),
       ),
@@ -91,10 +98,10 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
             child: Text(
-              'Flight Itinerary',
+              'flightItinerary'.tr,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -115,7 +122,7 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Duration: $duration',
+                  '${'duration'.tr}: $duration',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
@@ -176,7 +183,7 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Text(
-                  'Flight ${segmentIndex + 1} of $totalSegments',
+                  '${'flight'.tr} ${segmentIndex + 1} ${'of'.tr} $totalSegments',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Colors.grey[600],
@@ -216,7 +223,7 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${airlineCode ?? 'Flight'} $flightNumber'.trim(),
+                      '${airlineCode.isNotEmpty ? airlineCode : 'flight'.tr} $flightNumber'.trim(),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -302,7 +309,7 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        stops > 0 ? '$stops ${stops == 1 ? 'stop' : 'stops'}' : 'Non-stop',
+                        stops > 0 ? '$stops ${stops == 1 ? 'stop'.tr : 'stops'.tr}' : 'nonStop'.tr,
                         style: TextStyle(
                           fontSize: 11,
                           color: Colors.grey[600],
@@ -360,8 +367,8 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Duration: $duration'),
-                Text(stops > 0 ? '$stops ${stops == 1 ? 'stop' : 'stops'}' : 'Non-stop'),
+                Text('${'duration'.tr}: $duration'),
+                Text(stops > 0 ? '$stops ${stops == 1 ? 'stop'.tr : 'stops'.tr}' : 'nonStop'.tr),
               ],
             ),
           ],
@@ -389,8 +396,8 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Fare Summary',
+            Text(
+              'fareSummary'.tr,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -398,11 +405,11 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
             ),
             const Divider(thickness: 1.5),
             const SizedBox(height: 8),
-            _buildInfoRow('Base Fare', _formatCurrency(baseFare)),
-            _buildInfoRow('Taxes & Fees', _formatCurrency(tax)),
+            _buildInfoRow('baseFare'.tr, _formatCurrency(baseFare)),
+            _buildInfoRow('taxesAndFees'.tr, _formatCurrency(tax)),
             const Divider(),
             _buildInfoRow(
-              'Total Amount',
+              'totalAmount'.tr,
               _formatCurrency(totalFare),
               isTotal: true,
             ),
@@ -416,7 +423,7 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  isRefundable ? 'Fully Refundable' : 'Non-Refundable',
+                  isRefundable ? 'fullyRefundable'.tr : 'nonRefundable'.tr,
                   style: TextStyle(
                     color: isRefundable ? Colors.green : Colors.orange,
                     fontWeight: FontWeight.w500,
@@ -427,9 +434,9 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                _buildBaggageInfo('Baggage', baggageAllowance),
+                _buildBaggageInfo('baggage'.tr, baggageAllowance),
                 const SizedBox(width: 16),
-                _buildBaggageInfo('Cabin', cabinBaggage),
+                _buildBaggageInfo('cabin'.tr, cabinBaggage),
               ],
             ),
           ],
@@ -467,8 +474,8 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Additional Information',
+            Text(
+              'additionalInformation'.tr,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -476,10 +483,10 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
             ),
             const Divider(thickness: 1.5),
             const SizedBox(height: 8),
-            _buildInfoRow('Last Booking Time', _formatDateTime(flight['lastBookingTime'] ?? '')),
-            _buildInfoRow('Check-in Closes', '60 minutes before departure'),
-            _buildInfoRow('Web Check-in', 'Available 48-2 hours before departure'),
-            _buildInfoRow('Cancellation Policy', 'As per airline rules'),
+            _buildInfoRow('lastBookingTime'.tr, _formatDateTime(flight['lastBookingTime'] ?? '')),
+            _buildInfoRow('checkInCloses'.tr, '60 ${'minutesBeforeDeparture'.tr}'),
+            _buildInfoRow('webCheckIn'.tr, 'availableHoursBeforeDeparture'.tr),
+            _buildInfoRow('cancellationPolicy'.tr, 'asPerAirlineRules'.tr),
           ],
         ),
       ),
@@ -493,13 +500,13 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
           onPressed: () {
             // Handle booking
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Booking flight...')),
+              SnackBar(content: Text('bookingFlight'.tr)),
             );
           },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
           ),
-          child: const Text('Book Now'),
+          child: Text('bookNow'.tr),
         ),
       ),
     );
@@ -551,11 +558,11 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
       
       if (date.year == now.year && date.month == now.month) {
         if (date.day == now.day) {
-          dayInfo = 'Today, ';
+          dayInfo = '${'today'.tr}, ';
         } else if (date.day == now.day + 1) {
-          dayInfo = 'Tomorrow, ';
+          dayInfo = '${'tomorrow'.tr}, ';
         } else if (date.day == now.day - 1) {
-          dayInfo = 'Yesterday, ';
+          dayInfo = '${'yesterday'.tr}, ';
         }
       }
       
@@ -585,11 +592,11 @@ class OneWayFlightDetailsScreen extends StatelessWidget {
       
       if (dateTime.year == now.year && dateTime.month == now.month) {
         if (dateTime.day == now.day) {
-          dayInfo = 'Today, ';
+          dayInfo = '${'today'.tr}, ';
         } else if (dateTime.day == now.day + 1) {
-          dayInfo = 'Tomorrow, ';
+          dayInfo = '${'tomorrow'.tr}, ';
         } else if (dateTime.day == now.day - 1) {
-          dayInfo = 'Yesterday, ';
+          dayInfo = '${'yesterday'.tr}, ';
         }
       }
       

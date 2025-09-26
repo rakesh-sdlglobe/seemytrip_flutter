@@ -93,7 +93,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: 'My Account',
+          text: 'myAccount'.tr,
           color: AppColors.white,
           fontSize: 18,
         ),
@@ -128,7 +128,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                         ),
                       ),
                       title: CommonTextWidget.PoppinsMedium(
-                        text: fullName.isNotEmpty ? fullName : 'Guest User',
+                        text: fullName.isNotEmpty ? fullName : 'guestUser'.tr,
                         color: AppColors.black2E2,
                         fontSize: 18,
                       ),

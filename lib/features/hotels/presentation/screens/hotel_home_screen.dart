@@ -185,9 +185,9 @@ class HotelHomeScreen extends StatelessWidget {
               _buildSearchCard(
                 context: context,
                 onTap: () => Get.to(() => SearchCityScreen()),
-                title: 'Destination',
+                title: 'destination'.tr,
                 subtitle: _searchCtrl.selectedCity.value?.name ??
-                    'Select city or hotel',
+                    'selectCityOrHotel'.tr,
                 icon: Icons.location_on_outlined,
                 showDivider: true,
               ),
@@ -198,9 +198,9 @@ class HotelHomeScreen extends StatelessWidget {
                   _buildSearchCard(
                     context: context,
                     onTap: _selectDates,
-                    title: 'Check-in',
+                    title: 'checkIn'.tr,
                     subtitle: _searchCtrl.checkInDate.value == null
-                        ? 'Add date'
+                        ? 'addDate'.tr
                         : DateFormat('EEE, dd MMM yyyy').format(
                             _searchCtrl.checkInDate.value!),
                     icon: Icons.calendar_today_outlined,
@@ -210,9 +210,9 @@ class HotelHomeScreen extends StatelessWidget {
                   _buildSearchCard(
                     context: context,
                     onTap: _selectDates,
-                    title: 'Check-out',
+                    title: 'checkOut'.tr,
                     subtitle: _searchCtrl.checkOutDate.value == null
-                        ? 'Add date'
+                        ? 'addDate'.tr
                         : DateFormat('EEE, dd MMM yyyy').format(
                             _searchCtrl.checkOutDate.value!),
                     icon: Icons.calendar_today_outlined,
@@ -239,7 +239,7 @@ class HotelHomeScreen extends StatelessWidget {
                     _roomsGuestController.onDone(result);
                   }
                 },
-                title: 'Rooms & Guests',
+                title: 'roomsAndGuests'.tr,
                 subtitle: _roomsGuestController.subtitleSummary,
                 icon: Icons.people_outline,
               ),
@@ -260,6 +260,6 @@ class HotelHomeScreen extends StatelessWidget {
             ? () => _searchCtrl.performSearch(_roomsGuestController.roomGuestData)
             : () {},
         isLoading: _searchCtrl.isLoading.value,
-        text: 'SEARCH HOTELS',
+        text: 'searchHotels'.tr,
       );
 }

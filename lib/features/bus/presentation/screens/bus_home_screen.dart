@@ -17,8 +17,8 @@ class BusHomeScreen extends StatefulWidget {
 
 class _BusHomeScreenState extends State<BusHomeScreen> {
   final BusController _busController = Get.put(BusController());
-  final RxString selectedDepartureCity = 'Select city'.obs;
-  final RxString selectedDestinationCity = 'Select city'.obs;
+  final RxString selectedDepartureCity = 'selectCity'.tr.obs;
+  final RxString selectedDestinationCity = 'selectCity'.tr.obs;
   final RxInt departureCityId = 0.obs;
   final RxInt destinationCityId = 0.obs;
   DateTime _selectedDate = DateTime.now();
@@ -34,7 +34,7 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
     );
     if (selectedCity != null) {
       selectedDepartureCity.value =
-          selectedCity['name']?.toString() ?? 'Select city';
+          selectedCity['name']?.toString() ?? 'selectCity'.tr;
       departureCityId.value =
           int.tryParse(selectedCity['id']?.toString() ?? '0') ?? 0;
     }
@@ -48,7 +48,7 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
     );
     if (selectedCity != null) {
       selectedDestinationCity.value =
-          selectedCity['name']?.toString() ?? 'Select city';
+          selectedCity['name']?.toString() ?? 'selectCity'.tr;
       destinationCityId.value =
           int.tryParse(selectedCity['id']?.toString() ?? '0') ?? 0;
     }
@@ -112,8 +112,8 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
     } catch (e) {
       print('Error during search: $e');
       Get.snackbar(
-        'Error',
-        'Failed to search for buses. Please try again.',
+        'error'.tr,
+        'failedToSearchBuses'.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {

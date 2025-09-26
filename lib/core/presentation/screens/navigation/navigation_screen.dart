@@ -10,7 +10,6 @@ import '../../../../features/profile/presentation/screens/account/my_account_scr
 import '../../../../features/trips/presentation/screens/my_trips/my_trip_screen.dart';
 import '../../../../shared/constants/images.dart';
 import '../../../theme/app_colors.dart';
-import '../../../widgets/common_text_widget.dart';
 
 class NavigationScreen extends StatelessWidget {
   NavigationScreen({this.token});
@@ -26,111 +25,155 @@ class NavigationScreen extends StatelessWidget {
     MyAccountScreen(),
   ];
 
-  buildMyNavBar(BuildContext context) => Container(
+  Widget buildMyNavBar(BuildContext context) => Container(
       height: 85,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : AppColors.white,
+        borderRadius: BorderRadius.circular(25),
+        border: Theme.of(context).brightness == Brightness.dark ? Border.all(
+          color: AppColors.borderDark.withValues(alpha: 0.3),
+          width: 1,
+        ) : null,
         boxShadow: [
           BoxShadow(
-            color: AppColors.greyB9B.withValues(alpha: 0.25),
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.shadowDark.withValues(alpha: 0.3)
+                : AppColors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: Offset(0, 8),
+          ),
+          BoxShadow(
+            color: AppColors.redCA0.withValues(alpha: 0.1),
             blurRadius: 10,
-            spreadRadius: 1,
+            spreadRadius: 0,
+            offset: Offset(0, 4),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.only(top: 20),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Obx(
-              () => Column(
-                children: [
-                  InkWell(
-                    enableFeedback: false,
-                    onTap: () {
-                      navigationController.pageIndex.value = 0;
-                    },
-                    child: SvgPicture.asset(
-                      navigationController.pageIndex.value == 0
-                          ? homeSelectedIcon
-                          : homeUnSelectedIcon,
-                    ),
-                  ),
-                  SizedBox(height: 6),
-                  CommonTextWidget.PoppinsMedium(
-                    text: "Home",
-                    color: navigationController.pageIndex.value == 0
-                        ? AppColors.redCA0
-                        : AppColors.greyAAA,
-                    fontSize: 12,
-                  ),
-                ],
-              ),
+            _buildNavItem(
+              context: context,
+              icon: homeSelectedIcon,
+              unselectedIcon: homeUnSelectedIcon,
+              label: "home".tr,
+              index: 0,
+              isSelected: navigationController.pageIndex.value == 0,
+              onTap: () => navigationController.pageIndex.value = 0,
             ),
-            Column(
-              children: [
-                InkWell(
-                  enableFeedback: false,
-                  onTap: () {
-                    Get.to(() => MyTripScreen());
-                  },
-                  child: SvgPicture.asset(suitcaseIcon),
-                ),
-                SizedBox(height: 6),
-                CommonTextWidget.PoppinsMedium(
-                  text: "My Trips",
-                  color: AppColors.greyAAA,
-                  fontSize: 12,
-                ),
-              ],
+            _buildNavItem(
+              context: context,
+              icon: suitcaseIcon,
+              unselectedIcon: suitcaseIcon,
+              label: "myTrips".tr,
+              index: 1,
+              isSelected: false,
+              onTap: () => Get.to(() => MyTripScreen()),
             ),
-            Obx(
-              () => Column(
-                children: [
-                  InkWell(
-                    enableFeedback: false,
-                    onTap: () {
-                      navigationController.pageIndex.value = 2;
-                    },
-                    child: SvgPicture.asset(
-                      navigationController.pageIndex.value == 2
-                          ? selectedRightArrow
-                          : unSelectedRightArrow,
-                    ),
-                  ),
-                  SizedBox(height: 6),
-                  CommonTextWidget.PoppinsMedium(
-                    text: "Where2Go",
-                    color: navigationController.pageIndex.value == 2
-                        ? AppColors.redCA0
-                        : AppColors.greyAAA,
-                    fontSize: 12,
-                  ),
-                ],
-              ),
+            _buildNavItem(
+              context: context,
+              icon: selectedRightArrow,
+              unselectedIcon: unSelectedRightArrow,
+              label: "whereToGo".tr,
+              index: 2,
+              isSelected: navigationController.pageIndex.value == 2,
+              onTap: () => navigationController.pageIndex.value = 2,
             ),
-            Column(
-              children: [
-                InkWell(
-                  enableFeedback: false,
-                  onTap: () {
-                    Get.to(() => MyAccountScreen());
-                  },
-                  child: SvgPicture.asset(userIcon),
-                ),
-                SizedBox(height: 6),
-                CommonTextWidget.PoppinsMedium(
-                  text: "MY Account",
-                  color: AppColors.greyAAA,
-                  fontSize: 12,
-                ),
-              ],
+            _buildNavItem(
+              context: context,
+              icon: userIcon,
+              unselectedIcon: userIcon,
+              label: "myAccount".tr,
+              index: 3,
+              isSelected: false,
+              onTap: () => Get.to(() => MyAccountScreen()),
             ),
           ],
         ),
       ),
     );
+
+  Widget _buildNavItem({
+    required BuildContext context,
+    required String icon,
+    required String unselectedIcon,
+    required String label,
+    required int index,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Obx(() {
+      final isCurrentlySelected = navigationController.pageIndex.value == index;
+      return Expanded(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            decoration: BoxDecoration(
+              color: isCurrentlySelected 
+                  ? AppColors.redCA0.withValues(alpha: 0.1) 
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: isCurrentlySelected 
+                        ? AppColors.redCA0.withValues(alpha: 0.15) 
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: SvgPicture.asset(
+                    isCurrentlySelected ? icon : unselectedIcon,
+                    height: 20,
+                    width: 20,
+                    colorFilter: isCurrentlySelected 
+                        ? null 
+                        : ColorFilter.mode(
+                            Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.greyAAA, 
+                            BlendMode.srcIn
+                          ),
+                  ),
+                ),
+                SizedBox(height: 2),
+                AnimatedDefaultTextStyle(
+                  duration: Duration(milliseconds: 200),
+                  style: TextStyle(
+                    color: isCurrentlySelected 
+                        ? AppColors.redCA0 
+                        : (Theme.of(context).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.greyAAA),
+                    fontSize: 10,
+                    fontWeight: isCurrentlySelected 
+                        ? FontWeight.w600 
+                        : FontWeight.w500,
+                  ),
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

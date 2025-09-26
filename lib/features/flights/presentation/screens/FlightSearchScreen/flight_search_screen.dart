@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:seemytrip/core/theme/app_colors.dart';
+import '../../../../../core/widgets/dynamic_language_selector.dart';
+import '../../../../../core/widgets/global_language_wrapper.dart';
 import '../../../../../shared/constants/images.dart';
 import '../../controllers/flight_search_controller.dart';
 import 'multicity_screen.dart';
@@ -35,7 +37,8 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
   }
   
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => GlobalLanguageWrapper(
+    child: Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
@@ -80,7 +83,8 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
           ),
         ],
       ),
-    );
+    ),
+  );
   
   Widget _buildModernHeader(BuildContext context) => Container(
       height: 120,
@@ -148,7 +152,7 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Flight Search',
+                          'flightSearch'.tr,
                           style: TextStyle(
                             color: AppColors.white,
                             fontSize: 22,
@@ -160,7 +164,7 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Find the best flights for your journey',
+                      'findBestFlights'.tr,
                       style: TextStyle(
                         color: AppColors.white.withOpacity(0.9),
                         fontSize: 14,
@@ -170,6 +174,9 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
                   ],
                 ),
               ),
+              
+              // Language Selector
+              QuickLanguageSwitcher(),
             ],
           ),
         ),
@@ -296,7 +303,7 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Special Offer!',
+                  'specialOffer'.tr,
                   style: TextStyle(
                     color: AppColors.redCA0,
                     fontSize: 14,
@@ -305,7 +312,7 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Get FLAT 13% OFF* on your first booking! Use code: WELCOMEMMT',
+                  'getFlatOff'.tr,
                   style: TextStyle(
                     color: AppColors.redCA0.withOpacity(0.8),
                     fontSize: 12,
@@ -334,4 +341,4 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
         ],
       ),
     );
-}
+  }

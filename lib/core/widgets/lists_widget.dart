@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'coming_soon_screen.dart';
 import 'package:seemytrip/features/booking/presentation/screens/payment/mobile_wallet_screen.dart';
 import 'package:seemytrip/features/booking/presentation/screens/payment/net_banking_screen.dart';
 import 'package:seemytrip/features/booking/presentation/screens/payment/pay_by_card_screen.dart';
@@ -13,11 +14,8 @@ import 'package:seemytrip/features/home/presentation/screens/HolidayPackagesScre
 import 'package:seemytrip/features/home/presentation/screens/HolidayPackagesScreen/suitable_screen.dart';
 import 'package:seemytrip/features/hotels/presentation/screens/search_city_screen.dart';
 import 'package:seemytrip/features/hotels/presentation/screens/select_checkin_date_screen.dart';
-import 'package:seemytrip/features/home/presentation/screens/OffersScreen/offer_screen.dart';
-import 'package:seemytrip/features/home/presentation/screens/SelfDriveCarsScreen/self_drive_cars_screen.dart';
 import 'package:seemytrip/features/train/presentation/screens/train_from_screen.dart';
 import 'package:seemytrip/features/train/presentation/screens/train_to_screen.dart';
-import 'package:seemytrip/features/home/presentation/screens/VisaServicesScreen/apply_tourist_visa_screen.dart';
 import 'package:seemytrip/features/home/presentation/screens/where_to_go/international_screen.dart';
 import 'package:seemytrip/features/profile/presentation/screens/account/my_giftcard_screen.dart';
 import 'package:seemytrip/features/profile/presentation/screens/account/my_wishlist_screen.dart';
@@ -127,27 +125,29 @@ class Lists {
       'image': offerIcon,
       'text': 'offers'.tr,
       'onTap': () {
-        Get.to(() => OfferScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'Offers'));
       },
     },
     {
       'image': selfDrive,
       'text': 'selfDrive'.tr,
       'onTap': () {
-        Get.to(() => SelfDriveCarsScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'Self Drive'));
       },
     },
     {
       'image': visaServices,
       'text': 'visaServices'.tr,
       'onTap': () {
-        Get.to(() => ApplyTouristVisaScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'Visa Services'));
       },
     },
     {
       'image': flightStatus,
       'text': 'flightStatus'.tr,
-      'onTap': () {},
+      'onTap': () {
+        Get.to(() => ComingSoonScreen(moduleName: 'Flight Status'));
+      },
     },
   ];
 
@@ -212,49 +212,49 @@ class Lists {
   static List<Map> where2GoList1 = [
     {
       'image': where2GoFamilyTripImage,
-      'text': 'Family Trip',
+      'text': 'familyTrip'.tr,
     },
     {
       'image': where2GoFriendsTripImage,
-      'text': 'Friends Trip',
+      'text': 'friendsTrip'.tr,
     },
     {
       'image': where2GoWeekendTripImage,
-      'text': 'Weekend Trip',
+      'text': 'weekendTrip'.tr,
     },
   ];
 
   static List<Map> where2GoList2 = [
     {
       'image': international,
-      'text': 'International',
+      'text': 'international'.tr,
       'onTap': () {
         Get.to(() => InterNationalScreen());
       },
     },
     {
       'image': honyMoon,
-      'text': 'Honeymoon',
+      'text': 'honeymoon'.tr,
       'onTap': () {},
     },
     {
       'image': weekend,
-      'text': 'Weekend',
+      'text': 'weekend'.tr,
       'onTap': () {},
     },
     {
       'image': romantic,
-      'text': 'Romantic',
+      'text': 'romantic'.tr,
       'onTap': () {},
     },
     {
       'image': beach,
-      'text': 'Beach',
+      'text': 'beach'.tr,
       'onTap': () {},
     },
     {
       'image': mountain,
-      'text': 'Mountain',
+      'text': 'mountain'.tr,
       'onTap': () {},
     },
   ];
@@ -877,25 +877,25 @@ class Lists {
 
   static List<Map> hotelList1 = [
     {
-      'text': 'Popular',
+      'text': 'popular'.tr,
       'onTap': () {
         Get.to(() => PopularFilterScreen());
       },
     },
     {
-      'text': 'Price',
+      'text': 'price'.tr,
       'onTap': () {
         Get.to(() => PriceRangeScreen());
       },
     },
     {
-      'text': 'Locality',
+      'text': 'locality'.tr,
       'onTap': () {
         Get.to(() => LocalityScreen());
       },
     },
     {
-      'text': 'Star Rating',
+      'text': 'starRating'.tr,
       'onTap': () {
         Get.to(() => PropertyTypeScreen());
       },
@@ -1038,7 +1038,7 @@ class Lists {
   static List<Map> bookBusAndTrainList = [
     {
       'image': bookTrainUndergroundImage,
-      'text': 'Book Trains Tickets',
+      'text': 'bookTrainsTickets'.tr,
     },
     // {
     //   "image": bookBusFrontOfBusImage,
@@ -1047,14 +1047,14 @@ class Lists {
   ];
 
   static List trainAndBusInformationServiceList = [
-    'Live Train status',
-    'Check PNR Status',
-    'Food in Trains',
-    'Train Schedule',
-    'Train Availability',
-    'Live Station',
-    'Coch Position',
-    'Vacant Chart',
+    'liveTrainStatus'.tr,
+    'checkPNRStatus'.tr,
+    'foodInTrains'.tr,
+    'trainSchedule'.tr,
+    'trainAvailability'.tr,
+    'liveStation'.tr,
+    'coachPosition'.tr,
+    'vacantChart'.tr,
   ];
 
   static List<Map> trainAndBusFromToList = [
@@ -1354,15 +1354,15 @@ class Lists {
 
   static List<Map> hotelChoiceList = [
     {
-      'text1': '3 star',
+      'text1': 'threeStar'.tr,
       'text2': '(18)',
     },
     {
-      'text1': '4 star',
+      'text1': 'fourStar'.tr,
       'text2': '(75)',
     },
     {
-      'text1': '5 star',
+      'text1': 'fiveStar'.tr,
       'text2': '(80)',
     },
   ];
@@ -1723,57 +1723,59 @@ class Lists {
   static List<Map> homeDrawerList = [
     {
       'image': suitcaseIcon,
-      'text': 'View/Manage Trips',
+      'text': 'viewManageTrips'.tr,
       'onTap': () {
         Get.to(() => MyTripScreen());
       },
     },
     {
       'image' : tagIcon,
-      'text': 'Transaction History',
+      'text': 'transactionHistory'.tr,
       'onTap': () {
-        Get.to(() => TransactionHistoryScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'Transaction History'));
       },
     },
     {
       'image': heartIcon,
-      'text': 'Wishlist',
+      'text': 'wishlist'.tr,
       'onTap': () {
-        Get.to(() => MyWishListScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'Wishlist'));
       },
     },
     {
       'image': giftCardIcon,
-      'text': 'My Gift Cards',
+      'text': 'myGiftCards'.tr,
       'onTap': () {
-        Get.to(() => MyGiftCardScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'My Gift Cards'));
       },
     },
     {
       'image': bellIcon,
-      'text': 'Notifactions',
+      'text': 'notifications'.tr,
       'onTap': () {
         Get.to(() => NotificationScreen());
       },
     },
     {
       'image': starIcon,
-      'text': 'Rate us',
-      'onTap': () {},
+      'text': 'rateUs'.tr,
+      'onTap': () {
+        Get.to(() => ComingSoonScreen(moduleName: 'Rate Us'));
+      },
     },
     {
       'image': settingIcon,
-      'text': 'Settings',
+      'text': 'settings'.tr,
       'onTap': () {
         Get.to(() => SettingScreen());
       },
     },
     {
       'image': powerOffIcon,
-      'text': 'Logout',
+      'text': 'logout'.tr,
       'onTap': () {
         Get.defaultDialog(
-          backgroundColor: AppColors.white,
+          backgroundColor: Theme.of(Get.context!).brightness == Brightness.dark ? AppColors.surfaceDark : AppColors.white,
           contentPadding: EdgeInsets.zero,
           title: '',
           titlePadding: EdgeInsets.zero,
@@ -1783,12 +1785,12 @@ class Lists {
               children: [
                 CommonTextWidget.PoppinsSemiBold(
                   text: 'Log Out',
-                  color: AppColors.black2E2,
+                  color: Theme.of(Get.context!).brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.black2E2,
                   fontSize: 18,
                 ),
                 CommonTextWidget.PoppinsRegular(
                   text: 'Are you sure?',
-                  color: AppColors.black2E2,
+                  color: Theme.of(Get.context!).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.black2E2,
                   fontSize: 15,
                 ),
                 SizedBox(height: 22),
@@ -1804,14 +1806,23 @@ class Lists {
                           height: 40,
                           width: Get.width,
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.black2E2, width: 1),
-                            color: AppColors.white,
+                            border: Border.all(
+                              color: Theme.of(Get.context!).brightness == Brightness.dark 
+                                  ? AppColors.borderDark 
+                                  : AppColors.black2E2, 
+                              width: 1
+                            ),
+                            color: Theme.of(Get.context!).brightness == Brightness.dark 
+                                ? AppColors.surfaceDark 
+                                : AppColors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
                             child: CommonTextWidget.PoppinsMedium(
                               text: 'Cancel',
-                              color: AppColors.black2E2,
+                              color: Theme.of(Get.context!).brightness == Brightness.dark 
+                                  ? AppColors.textPrimaryDark 
+                                  : AppColors.black2E2,
                               fontSize: 16,
                             ),
                           ),
@@ -1879,7 +1890,7 @@ class Lists {
   static List<Map> hotelDetailList1 = [
     {
       'image': calendarPlus,
-      'text1': 'Check-In & Check-Out',
+      'text1': 'checkInAndCheckOut'.tr,
       'text2': '28 Sep, Thu - 30 Sep, Fri',
       'onTap': () {
         Get.to(() => SelectCheckInDateScreen());
@@ -1887,7 +1898,7 @@ class Lists {
     },
     {
       'image': user,
-      'text1': 'Rooms & Guests',
+      'text1': 'roomsAndGuests'.tr,
       'text2': '1 Rooms, 2 Adults',
       'onTap': () {
         Get.to(() => HotelAndHomeStay());

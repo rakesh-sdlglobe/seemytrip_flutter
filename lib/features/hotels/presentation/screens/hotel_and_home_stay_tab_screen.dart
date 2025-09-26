@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/common/common_app_bar.dart';
 import '../controllers/hotel_and_homestay_controller.dart';
 import '../controllers/hotel_controller.dart';
@@ -22,7 +21,7 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
           Column(
             children: [
               CommonAppBar(
-                title: 'Hotels',
+                title: 'hotels'.tr,
                 showBackButton: true,
                 // height: 255,
               ),

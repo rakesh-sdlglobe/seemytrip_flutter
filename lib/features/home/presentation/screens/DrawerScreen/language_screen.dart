@@ -7,15 +7,6 @@ import 'package:seemytrip/core/widgets/common_text_widget.dart';
 class LanguageScreen extends StatelessWidget {
   LanguageScreen({Key? key}) : super(key: key);
 
-  final Map<String, Locale> languageMap = {
-    'English': Locale('en'),
-    'हिन्दी': Locale('hi'),
-    'தமிழ்': Locale('ta'),
-    'ಕನ್ನಡ': Locale('kn'),
-    'తెలుగు': Locale('te'),
-    'ଓଡ଼ିଆ': Locale('or'),
-  };
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(LanguageController());
@@ -32,7 +23,7 @@ class LanguageScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: 'Language',
+          text: 'language'.tr,
           color: AppColors.white,
           fontSize: 18,
         ),
@@ -45,61 +36,92 @@ class LanguageScreen extends StatelessWidget {
             children: [
               SizedBox(height: 20),
               CommonTextWidget.PoppinsSemiBold(
-                text: 'Select Language',
+                text: 'selectLanguage'.tr,
                 color: AppColors.black2E2,
                 fontSize: 16,
               ),
               SizedBox(height: 30),
               GetBuilder<LanguageController>(
-                builder: (controller) => ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: languageMap.length,
-                  itemBuilder: (context, index) {
-                    final languageName = languageMap.keys.elementAt(index);
-                    final locale = languageMap[languageName]!;
-                    
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 30),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CommonTextWidget.PoppinsMedium(
-                            text: languageName,
-                            color: AppColors.grey717,
-                            fontSize: 14,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              controller.onLanguageSelected(locale);
-                              Get.updateLocale(locale);
-                            },
-                            child: Container(
-                              height: 18,
-                              width: 18,
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: AppColors.redCA0),
-                              ),
-                              alignment: Alignment.center,
-                              child: Get.locale == locale
-                                  ? Container(
-                                      height: 10,
-                                      width: 10,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.redCA0,
-                                        shape: BoxShape.circle,
+                builder: (controller) {
+                  final languageList = controller.getLanguageList();
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: languageList.length,
+                    itemBuilder: (context, index) {
+                      final languageEntry = languageList[index];
+                      final languageCode = languageEntry.key;
+                      final languageData = languageEntry.value;
+                      final locale = languageData['locale'] as Locale;
+                      final nativeName = languageData['nativeName'] as String;
+                      final isSelected = controller.currentLocale.value.languageCode == languageCode;
+                      
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 30),
+                        child: InkWell(
+                          onTap: () {
+                            controller.onLanguageSelected(locale);
+                            // Show a brief success message
+                            Get.snackbar(
+                              'languageChanged'.tr,
+                              '${'languageChanged'.tr} $nativeName',
+                              snackPosition: SnackPosition.BOTTOM,
+                              duration: Duration(seconds: 2),
+                              backgroundColor: AppColors.redCA0.withOpacity(0.1),
+                              colorText: AppColors.redCA0,
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CommonTextWidget.PoppinsMedium(
+                                      text: nativeName,
+                                      color: isSelected ? AppColors.redCA0 : AppColors.grey717,
+                                      fontSize: 14,
+                                    ),
+                                    if (languageData['name'] != nativeName)
+                                      CommonTextWidget.PoppinsRegular(
+                                        text: languageData['name'],
+                                        color: AppColors.grey717.withOpacity(0.7),
+                                        fontSize: 12,
                                       ),
-                                    )
-                                  : SizedBox.shrink(),
-                            ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: 20,
+                                width: 20,
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: isSelected ? AppColors.redCA0 : AppColors.greyB9B,
+                                    width: 2,
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                child: isSelected
+                                    ? Container(
+                                        height: 10,
+                                        width: 10,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.redCA0,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      )
+                                    : SizedBox.shrink(),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

@@ -145,15 +145,15 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
                 children: [
                   _buildSortView(),
                   _buildFilterSection(
-                      title: 'Bus Type',
+                      title: 'busType'.tr,
                       options: _busTypeOptions,
                       selectedSet: _selectedBusTypes),
                   _buildFilterSection(
-                      title: 'Seat Type',
+                      title: 'seatType'.tr,
                       options: _seatTypeOptions,
                       selectedSet: _selectedSeatTypes),
                   _buildFilterSection(
-                      title: 'Amenities',
+                      title: 'amenities'.tr,
                       options: _amenityOptions,
                       selectedSet: _selectedAmenities,
                       iconMap: {
@@ -190,7 +190,7 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Sort & Filter',
+                'sortAndFilter'.tr,
                 style: GoogleFonts.poppins(
                     fontSize: 20, fontWeight: FontWeight.w700),
               ),
@@ -214,11 +214,11 @@ class _BusFilterScreenState extends State<BusFilterScreen> {
       indicatorWeight: 3.0,
       labelStyle:
           GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14),
-      tabs: const [
-        Tab(icon: Icon(Icons.sort_rounded), text: 'Sort'),
-        Tab(icon: Icon(Icons.directions_bus_filled_rounded), text: 'Bus Type'),
-        Tab(icon: Icon(Icons.event_seat_rounded), text: 'Seat Type'),
-        Tab(icon: Icon(Icons.widgets_rounded), text: 'Amenities'),
+      tabs: [
+        Tab(icon: Icon(Icons.sort_rounded), text: 'sort'.tr),
+        Tab(icon: Icon(Icons.directions_bus_filled_rounded), text: 'busType'.tr),
+        Tab(icon: Icon(Icons.event_seat_rounded), text: 'seatType'.tr),
+        Tab(icon: Icon(Icons.widgets_rounded), text: 'amenities'.tr),
       ],
     );
   }

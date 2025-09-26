@@ -47,7 +47,7 @@ class Where2GoScreen extends StatelessWidget {
                               Icon(CupertinoIcons.search, color: AppColors.grey717),
                               SizedBox(width: 15),
                               CommonTextWidget.PoppinsRegular(
-                                text: 'Search City, Things to do...',
+                                text: 'searchCityThingsToDo'.tr,
                                 color: AppColors.grey717,
                                 fontSize: 15,
                               ),
@@ -74,7 +74,7 @@ class Where2GoScreen extends StatelessWidget {
                           color: AppColors.white),
                       SizedBox(width: 5),
                       CommonTextWidget.PoppinsSemiBold(
-                        text: 'Where2Go',
+                        text: 'where2Go'.tr,
                         color: AppColors.white,
                         fontSize: 20,
                       ),

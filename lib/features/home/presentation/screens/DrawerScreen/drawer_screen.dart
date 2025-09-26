@@ -1,14 +1,16 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/features/auth/presentation/controllers/login_controller.dart';
-import 'package:seemytrip/core/theme/app_colors.dart';
-import 'package:seemytrip/core/widgets/lists_widget.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/lists_widget.dart';
+import '../../../../auth/presentation/controllers/login_controller.dart';
 
 class DrawerScreen extends StatefulWidget {
   DrawerScreen({Key? key}) : super(key: key);
@@ -97,14 +99,14 @@ class _DrawerScreenState extends State<DrawerScreen> {
                 color: AppColors.redCA0,
               ),
               accountName: Text(
-                fullName.isNotEmpty ? fullName : 'Guest User',
+                fullName.isNotEmpty ? fullName : 'guestUser'.tr,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               accountEmail: Text(
-                emailId.isNotEmpty ? emailId : 'guest@example.com',
+                emailId.isNotEmpty ? emailId : 'guestEmail'.tr,
                 style: const TextStyle(fontSize: 14),
               ),
               currentAccountPicture: CircleAvatar(

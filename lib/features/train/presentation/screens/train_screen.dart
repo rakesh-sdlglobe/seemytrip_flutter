@@ -11,7 +11,6 @@ import 'train_search_screen.dart';
 // Temporary constants for spacing until theme is fully integrated
 const double _kDefaultPadding = 16.0;
 const double _kDefaultSpacing = 12.0;
-const double _kCardRadius = 12.0;
 
 class TrainScreen extends StatelessWidget {
   TrainScreen({Key? key}) : super(key: key);
@@ -29,8 +28,8 @@ class TrainScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
           CommonAppBar(
-            title: 'Train',
-            subtitle: 'Book Tickets Easily',
+            title: 'train'.tr,
+            subtitle: 'bookTicketsEasily'.tr,
             onBackPressed: () => Get.back(),
             action: IconButton(
               icon: Icon(Icons.search, color: colorScheme.onSecondary),
@@ -79,7 +78,7 @@ class TrainScreen extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
                     ),
-                    subtitle: 'Search and book your train tickets',
+                    subtitle: 'searchAndBookTrainTickets'.tr,
                     subtitleStyle: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -145,7 +144,7 @@ class TrainScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Train Information Services',
+                  'trainInformationServices'.tr,
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: colorScheme.onSurface,

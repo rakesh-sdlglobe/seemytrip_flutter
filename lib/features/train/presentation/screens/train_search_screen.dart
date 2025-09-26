@@ -62,32 +62,6 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-      builder: (context, child) => Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Color(0xFFD32F2F),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Color(0xFF1A1A1A),
-            ),
-            textTheme: GoogleFonts.interTextTheme(),
-            dialogBackgroundColor: Colors.white,
-          ),
-          child: child!,
-        ),
-    );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
 
   void _setDateToTomorrow() {
     setState(() {
@@ -109,7 +83,6 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('dd MMM yyyy').format(selectedDate);
     String dayOfWeek = DateFormat('EEEE').format(selectedDate);
-    bool isFormValid = selectedFromStation != null && selectedToStation != null;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -148,8 +121,8 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
   }
 
   Widget _buildHeader() => CommonAppBar(
-        title: 'Train Search',
-        subtitle: 'Plan your journey with ease',
+        title: 'trainSearch'.tr,
+        subtitle: 'planYourJourneyWithEase'.tr,
         textColor: AppColors.white,
         showBackButton: true,
       );
@@ -173,7 +146,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
           Column(
             children: [
               _buildStationField(
-                'From',
+                'from'.tr,
                 selectedFromStation,
                 _navigateToFromScreen,
               ),
@@ -183,7 +156,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                 margin: EdgeInsets.symmetric(horizontal: 16),
               ),
               _buildStationField(
-                'To',
+                'to'.tr,
                 selectedToStation,
                 _navigateToToScreen,
               ),
@@ -252,7 +225,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                     ),
                     SizedBox(height: 6),
                     Text(
-                      station ?? 'Select $label Station',
+                      station ?? (label == 'from'.tr ? 'selectFromStation'.tr : 'selectToStation'.tr),
                       style: GoogleFonts.inter(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -328,7 +301,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Travel Date',
+                  'travelDate'.tr,
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -362,9 +335,9 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
 
   Widget _buildDateOptions() => Row(
       children: [
-        _buildDateOption('Tomorrow', 1, _setDateToTomorrow),
+        _buildDateOption('tomorrow'.tr, 1, _setDateToTomorrow),
         SizedBox(width: 12),
-        _buildDateOption('Day After', 2, _setDateToDayAfter),
+        _buildDateOption('dayAfter'.tr, 2, _setDateToDayAfter),
       ],
     );
 
@@ -414,8 +387,8 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
-            child: const Text(
-              'Please select both From and To stations',
+            child:             Text(
+              'pleaseSelectBothStations'.tr,
               style: TextStyle(
                 color: Color(0xFFD32F2F),
                 fontSize: 12,
@@ -424,7 +397,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
             ),
           ),
         AppButton.primary(
-          text: isFormValid ? 'Search Trains' : 'Select Stations',
+          text: isFormValid ? 'searchTrains'.tr : 'selectStations'.tr,
           onPressed: isFormValid ? _handleSearch : null,
           isLoading: isLoading,
           isEnabled: isFormValid,
@@ -444,8 +417,8 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
   Future<void> _handleSearch() async {
     if (selectedFromStation == null || selectedToStation == null) {
       Get.snackbar(
-        'Missing Information',
-        'Please select both From and To stations',
+        'missingInformation'.tr,
+        'pleaseSelectBothStations'.tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: const Color(0xFFD32F2F),
         colorText: Colors.white,
@@ -471,7 +444,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
     
     await Get.to(
       () => TrainDetailScreen(
-        trains: _controller.trains.value,
+        trains: _controller.trains,
         selectedDate: selectedDate,
         fromStation: selectedFromStation?.split(' - ')[0] ?? '',
         toStation: selectedToStation?.split(' - ')[0] ?? '',

@@ -10,6 +10,7 @@ import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_service.dart';
 import 'features/auth/presentation/controllers/login_controller.dart';
+import 'features/shared/presentation/controllers/language_controller.dart';
 import 'firebase_options.dart';
 import 'translations/app_translations.dart';
 
@@ -27,6 +28,9 @@ void main() async {
   // Initialize controllers
   Get.put(LoginController(), permanent: true);
   await Get.putAsync<ThemeService>(() => ThemeService().init(), permanent: true);
+  
+  // Initialize LanguageController to load saved language
+  Get.put(LanguageController(), permanent: true);
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarBrightness: Brightness.dark,
@@ -44,15 +48,16 @@ class SeemytripApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeService = Get.find<ThemeService>();
+    final languageController = Get.find<LanguageController>();
     
-    return GetMaterialApp(
+    return Obx(() => GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SeeMyTrip',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeService.theme,
       translations: AppTranslations(),
-      locale: const Locale('en'), // Default language
+      locale: languageController.currentLocale.value,
       fallbackLocale: const Locale('en'),
       supportedLocales: const [
         Locale('en'),
@@ -61,6 +66,11 @@ class SeemytripApp extends StatelessWidget {
         Locale('kn'),
         Locale('te'),
         Locale('or'),
+        Locale('fr'),
+        Locale('es'),
+        Locale('ar'),
+        Locale('de'),
+        Locale('zh'),
       ],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -72,7 +82,7 @@ class SeemytripApp extends StatelessWidget {
       ],
       initialRoute: '/',
       home: SplashScreen(),
-    );
+    ));
   }
 }
 

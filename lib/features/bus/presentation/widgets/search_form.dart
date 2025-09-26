@@ -65,7 +65,7 @@ class _SearchFormState extends State<SearchForm> {
         contentPadding: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          "Select Dates",
+          "selectDates".tr,
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
         content: SizedBox(
@@ -111,7 +111,7 @@ class _SearchFormState extends State<SearchForm> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text("Done",
+            child: Text("done".tr,
                 style: GoogleFonts.poppins(
                     color: kPrimaryColor(context), fontWeight: FontWeight.bold)),
           )
@@ -161,7 +161,7 @@ class _SearchFormState extends State<SearchForm> {
           Column(
             children: [
               _buildCityField(
-                label: 'From',
+                label: 'from'.tr,
                 city: widget.departureCity,
                 onTap: widget.onDepartureTap,
                 icon: Icons.my_location,
@@ -169,7 +169,7 @@ class _SearchFormState extends State<SearchForm> {
               Divider(
                   height: 1, color: kBorderColor(context), indent: 16, endIndent: 16),
               _buildCityField(
-                label: 'To',
+                label: 'to'.tr,
                 city: widget.destinationCity,
                 onTap: widget.onDestinationTap,
                 icon: Icons.location_on_outlined,
@@ -232,7 +232,7 @@ class _SearchFormState extends State<SearchForm> {
                   const SizedBox(height: 2),
                   Obx(
                     () => Text(
-                      city.value.isEmpty ? 'Select City' : city.value,
+                      city.value.isEmpty ? 'selectCity'.tr : city.value,
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -268,7 +268,7 @@ class _SearchFormState extends State<SearchForm> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Dates of Journey',
+              'datesOfJourney'.tr,
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -287,7 +287,7 @@ class _SearchFormState extends State<SearchForm> {
           padding: const EdgeInsets.only(left: 4.0, right: 4.0, bottom: 12.0),
           child: Text(
             widget.selectedDates.isEmpty
-                ? 'Select one or more dates'
+                ? 'selectOneOrMoreDates'.tr
                 : formattedDates,
             style: GoogleFonts.poppins(
               fontSize: 14,
@@ -367,8 +367,8 @@ class _SearchFormState extends State<SearchForm> {
                     widget.destinationCity.value.isEmpty ||
                     widget.selectedDates.isEmpty) {
                   Get.snackbar(
-                    'Missing Information',
-                    'Please select cities and at least one date.',
+                    'missingInformation'.tr,
+                    'pleaseSelectCitiesAndDate'.tr,
                     snackPosition: SnackPosition.BOTTOM,
                     backgroundColor: Colors.amber[800],
                     colorText: Colors.white,
@@ -413,7 +413,7 @@ class _SearchFormState extends State<SearchForm> {
                     ),
                   )
                 : Text(
-                    'Search Buses',
+                    'searchBuses'.tr,
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,

@@ -41,10 +41,10 @@ class FlightSearchController extends GetxController {
     super.onClose();
   }
 
-  final List<Tab> myTabs = <Tab>[
-    Tab(text: 'ONE WAY'),
-    Tab(text: 'ROUNDTRIP'),
-    Tab(text: 'MULTICITY'),
+  List<Tab> get myTabs => <Tab>[
+    Tab(text: 'oneWay'.tr),
+    Tab(text: 'roundTrip'.tr),
+    Tab(text: 'multiCity'.tr),
   ];
 
   // This method should be called from the view's initState with a proper vsync

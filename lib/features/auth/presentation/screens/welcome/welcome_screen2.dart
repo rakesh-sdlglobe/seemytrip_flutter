@@ -6,21 +6,12 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/widgets/common_button_widget.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../shared/constants/images.dart';
+import '../../../../shared/presentation/controllers/language_controller.dart';
 import '../../controllers/welcome2_controller.dart';
 import '../login_screen.dart';
 
 class WelcomeScreen2 extends StatelessWidget {
   WelcomeScreen2({Key? key}) : super(key: key);
-
-  // Add language list
-  final List<Map<String, String>> languageList = [
-    {"name": "English", "code": "en", "native": "English"},
-    {"name": "हिन्दी", "code": "hi", "native": "Hindi"},
-    {"name": "தமிழ்", "code": "ta", "native": "Tamil"},
-    {"name": "ಕನ್ನಡ", "code": "kn", "native": "Kannada"},
-    {"name": "తెలుగు", "code": "te", "native": "Telugu"},
-    {"name": "ଓଡ଼ିଆ", "code": "or", "native": "Odia"},
-  ];
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -66,17 +57,17 @@ class WelcomeScreen2 extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonTextWidget.PoppinsSemiBold(
-                            text: 'Welcome',
+                            text: 'welcome'.tr,
                             color: AppColors.white,
                             fontSize: 35,
                           ),
                           CommonTextWidget.PoppinsMedium(
-                            text: 'Select your Language',
+                            text: 'selectLanguage'.tr,
                             color: AppColors.white,
                             fontSize: 20,
                           ),
                           CommonTextWidget.PoppinsRegular(
-                            text: 'You can also change language in App ' 'Settings after singning in',
+                            text: 'You can also change language in App Settings after signing in',
                             color: AppColors.greyCAC,
                             fontSize: 14,
                           ),
@@ -111,63 +102,76 @@ class WelcomeScreen2 extends StatelessWidget {
                 ),
                 child: GetBuilder<Welcome2Controller>(
                   init: Welcome2Controller(),
-                  builder: (controller) => ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: languageList.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(bottom: 15),
-                      child: InkWell(
-                        onTap: () {
-                          controller.onIndexChange(index);
-                          Get.updateLocale(Locale(languageList[index]["code"]!));
-                        },
-                        child: Container(
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                                color: controller.selectedIndex == index
-                                    ? AppColors.redCA0
-                                    : AppColors.greyB9B,
-                                width: 1),
-                            color: controller.selectedIndex == index
-                                ? AppColors.redF9E
-                                : AppColors.white,
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
+                  builder: (welcomeController) {
+                    final languageController = Get.find<LanguageController>();
+                    final languageList = languageController.getLanguageList();
+                    
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: languageList.length,
+                      itemBuilder: (context, index) {
+                        final languageEntry = languageList[index];
+                        final languageData = languageEntry.value;
+                        final locale = languageData['locale'] as Locale;
+                        final nativeName = languageData['nativeName'] as String;
+                        final name = languageData['name'] as String;
+                        final isSelected = welcomeController.selectedIndex == index;
+                        
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 15),
+                          child: InkWell(
+                            onTap: () {
+                              welcomeController.onIndexChange(index);
+                              languageController.onLanguageSelected(locale);
+                            },
+                            child: Container(
+                              height: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.redCA0
+                                        : AppColors.greyB9B,
+                                    width: 1),
+                                color: isSelected
+                                    ? AppColors.redF9E
+                                    : AppColors.white,
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SvgPicture.asset(
-                                        controller.selectedIndex == index
-                                            ? selectedIcon
-                                            : unSelectedIcon),
-                                    SizedBox(width: 20),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                            isSelected
+                                                ? selectedIcon
+                                                : unSelectedIcon),
+                                        SizedBox(width: 20),
+                                        CommonTextWidget.PoppinsMedium(
+                                          text: name,
+                                          color: AppColors.black2E2,
+                                          fontSize: 14,
+                                        ),
+                                      ],
+                                    ),
                                     CommonTextWidget.PoppinsMedium(
-                                      text: languageList[index]["name"]!,
-                                      color: AppColors.black2E2,
-                                      fontSize: 14,
+                                      text: nativeName,
+                                      color: isSelected
+                                          ? AppColors.redCA0
+                                          : AppColors.greyC8C,
+                                      fontSize: 16,
                                     ),
                                   ],
                                 ),
-                                CommonTextWidget.PoppinsMedium(
-                                  text: languageList[index]["native"]!,
-                                  color: controller.selectedIndex == index
-                                      ? AppColors.redCA0
-                                      : AppColors.greyC8C,
-                                  fontSize: 16,
-                                ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ),

@@ -782,8 +782,8 @@ class _RoundTripScreenState extends State<RoundTripScreen> {
                 );
                     } catch (e) {
                       Get.snackbar(
-                  'Search Error',
-                        'Failed to search flights: ${e.toString()}',
+                  'searchError'.tr,
+                        '${'failedToSearchFlights'.tr}: ${e.toString()}',
                         backgroundColor: AppColors.redCA0,
                   colorText: Colors.white,
                   icon: const Icon(Icons.error_outline, color: Colors.white),
@@ -807,7 +807,7 @@ class _RoundTripScreenState extends State<RoundTripScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Search Round Trip Flights',
+                          'searchRoundTripFlights'.tr,
                           style: TextStyle(
                             color: isFormComplete ? AppColors.white : AppColors.grey717,
                             fontSize: 16,
