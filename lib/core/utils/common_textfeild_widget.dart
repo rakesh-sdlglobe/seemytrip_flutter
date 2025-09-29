@@ -23,29 +23,58 @@ class CommonTextFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) => TextFormField(
       onChanged: onChanged,
       keyboardType: keyboardType,
-      cursorColor: AppColors.black2E2,
+      cursorColor: Theme.of(context).brightness == Brightness.dark 
+          ? AppColors.textPrimaryDark 
+          : AppColors.black2E2,
       controller: controller,
       style: TextStyle(
-        color: AppColors.black2E2,
+        color: Theme.of(context).brightness == Brightness.dark 
+            ? AppColors.textPrimaryDark 
+            : AppColors.black2E2,
         fontSize: 14,
         fontFamily: FontFamily.PoppinsRegular,
       ),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
-          color: AppColors.grey929,
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? AppColors.textHintDark 
+              : AppColors.grey929,
           fontSize: 14,
           fontFamily: FontFamily.PoppinsMedium,
         ),
         prefixIcon: prefixIcon,
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: Theme.of(context).brightness == Brightness.dark 
+            ? AppColors.surfaceDark 
+            : AppColors.white,
         contentPadding: EdgeInsets.zero,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.borderDark 
+                : AppColors.grey929,
+            width: 1.5,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.borderDark 
+                : AppColors.grey929,
+            width: 1.5,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(color: AppColors.redCA0, width: 1.5),
+        ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide(color: AppColors.redCA0, width: 1.5),
         ),
-        // ... rest of your decoration
       ),
     );
 }

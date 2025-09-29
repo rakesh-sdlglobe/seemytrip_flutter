@@ -1597,25 +1597,28 @@ class Lists {
         Get.to(() => MyTripScreen());
       },
     },
-     {
+    {
       'image': tagIcon,
       'text': 'Transaction History',
       'onTap': () {
-        Get.to(() => TransactionHistoryScreen());
+        // Get.to(() => TransactionHistoryScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'Transaction History'));
       },
     },
     {
       'image': heartIcon,
       'text': 'Wishlist',
       'onTap': () {
-        Get.to(() => MyWishListScreen());
+        // Get.to(() => MyWishListScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'Wishlist'));
       },
     },
     {
       'image': giftCardIcon,
       'text': 'My Gift Cards',
       'onTap': () {
-        Get.to(() => MyGiftCardScreen());
+        // Get.to(() => MyGiftCardScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'My Gift Cards'));
       },
     },
     {
@@ -1625,28 +1628,72 @@ class Lists {
     },
     {
       'image': powerOffIcon,
-      'text': 'Logout',
+      'text': 'logout'.tr,
       'onTap': () {
         Get.defaultDialog(
-          backgroundColor: AppColors.white,
+          backgroundColor: Theme.of(Get.context!).brightness == Brightness.dark
+              ? AppColors.surfaceDark
+              : AppColors.white,
           contentPadding: EdgeInsets.zero,
           title: '',
           titlePadding: EdgeInsets.zero,
-          content: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30),
+          content: Container(
+            width: Get.width * 0.8,
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(Get.context!).brightness == Brightness.dark
+                  ? AppColors.surfaceDark
+                  : AppColors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(Get.context!).brightness == Brightness.dark
+                      ? AppColors.black262.withOpacity(0.3)
+                      : AppColors.black262.withOpacity(0.1),
+                  blurRadius: 10,
+                  spreadRadius: 0,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
+                // Icon
+                Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: AppColors.redCA0.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.logout,
+                    color: AppColors.redCA0,
+                    size: 30,
+                  ),
+                ),
+                SizedBox(height: 16),
+                // Title
                 CommonTextWidget.PoppinsSemiBold(
                   text: 'Log Out',
-                  color: AppColors.black2E2,
-                  fontSize: 18,
+                  color: Theme.of(Get.context!).brightness == Brightness.dark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.black2E2,
+                  fontSize: 20,
                 ),
+                SizedBox(height: 8),
+                // Subtitle
                 CommonTextWidget.PoppinsRegular(
-                  text: 'Are you sure?',
-                  color: AppColors.black2E2,
-                  fontSize: 15,
+                  text: 'Are you sure you want to log out?',
+                  color: Theme.of(Get.context!).brightness == Brightness.dark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.grey656,
+                  fontSize: 14,
+                  textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 22),
+                SizedBox(height: 24),
+                // Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1656,24 +1703,34 @@ class Lists {
                           Get.back();
                         },
                         child: Container(
-                          height: 40,
-                          width: Get.width,
+                          height: 44,
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.black2E2, width: 1),
-                            color: AppColors.white,
+                            border: Border.all(
+                                color: Theme.of(Get.context!).brightness ==
+                                        Brightness.dark
+                                    ? AppColors.borderDark
+                                    : AppColors.greyE8E,
+                                width: 1.5),
+                            color: Theme.of(Get.context!).brightness ==
+                                    Brightness.dark
+                                ? AppColors.cardDark
+                                : AppColors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
                             child: CommonTextWidget.PoppinsMedium(
                               text: 'Cancel',
-                              color: AppColors.black2E2,
+                              color: Theme.of(Get.context!).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.textPrimaryDark
+                                  : AppColors.black2E2,
                               fontSize: 16,
                             ),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 20),
+                    SizedBox(width: 16),
                     Expanded(
                       child: InkWell(
                         onTap: () async {
@@ -1681,11 +1738,18 @@ class Lists {
                           await loginController.logout();
                         },
                         child: Container(
-                          height: 40,
-                          width: Get.width,
+                          height: 44,
                           decoration: BoxDecoration(
                             color: AppColors.redCA0,
                             borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.redCA0.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                spreadRadius: 0,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: Center(
                             child: CommonTextWidget.PoppinsMedium(
@@ -1725,11 +1789,12 @@ class Lists {
       'image': suitcaseIcon,
       'text': 'viewManageTrips'.tr,
       'onTap': () {
-        Get.to(() => MyTripScreen());
+        // Get.to(() => MyTripScreen());
+        Get.to(() => ComingSoonScreen(moduleName: 'My Trip'));
       },
     },
     {
-      'image' : tagIcon,
+      'image': tagIcon,
       'text': 'transactionHistory'.tr,
       'onTap': () {
         Get.to(() => ComingSoonScreen(moduleName: 'Transaction History'));
@@ -1775,25 +1840,69 @@ class Lists {
       'text': 'logout'.tr,
       'onTap': () {
         Get.defaultDialog(
-          backgroundColor: Theme.of(Get.context!).brightness == Brightness.dark ? AppColors.surfaceDark : AppColors.white,
+          backgroundColor: Theme.of(Get.context!).brightness == Brightness.dark
+              ? AppColors.surfaceDark
+              : AppColors.white,
           contentPadding: EdgeInsets.zero,
           title: '',
           titlePadding: EdgeInsets.zero,
-          content: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30),
+          content: Container(
+            width: Get.width * 0.8,
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(Get.context!).brightness == Brightness.dark
+                  ? AppColors.surfaceDark
+                  : AppColors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(Get.context!).brightness == Brightness.dark
+                      ? AppColors.black262.withOpacity(0.3)
+                      : AppColors.black262.withOpacity(0.1),
+                  blurRadius: 10,
+                  spreadRadius: 0,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
+                // Icon
+                Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: AppColors.redCA0.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.logout,
+                    color: AppColors.redCA0,
+                    size: 30,
+                  ),
+                ),
+                SizedBox(height: 16),
+                // Title
                 CommonTextWidget.PoppinsSemiBold(
                   text: 'Log Out',
-                  color: Theme.of(Get.context!).brightness == Brightness.dark ? AppColors.textPrimaryDark : AppColors.black2E2,
-                  fontSize: 18,
+                  color: Theme.of(Get.context!).brightness == Brightness.dark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.black2E2,
+                  fontSize: 20,
                 ),
+                SizedBox(height: 8),
+                // Subtitle
                 CommonTextWidget.PoppinsRegular(
-                  text: 'Are you sure?',
-                  color: Theme.of(Get.context!).brightness == Brightness.dark ? AppColors.textSecondaryDark : AppColors.black2E2,
-                  fontSize: 15,
+                  text: 'Are you sure you want to log out?',
+                  color: Theme.of(Get.context!).brightness == Brightness.dark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.grey656,
+                  fontSize: 14,
+                  textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 22),
+                SizedBox(height: 24),
+                // Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1803,25 +1912,26 @@ class Lists {
                           Get.back();
                         },
                         child: Container(
-                          height: 40,
-                          width: Get.width,
+                          height: 44,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Theme.of(Get.context!).brightness == Brightness.dark 
-                                  ? AppColors.borderDark 
-                                  : AppColors.black2E2, 
-                              width: 1
-                            ),
-                            color: Theme.of(Get.context!).brightness == Brightness.dark 
-                                ? AppColors.surfaceDark 
+                                color: Theme.of(Get.context!).brightness ==
+                                        Brightness.dark
+                                    ? AppColors.borderDark
+                                    : AppColors.greyE8E,
+                                width: 1.5),
+                            color: Theme.of(Get.context!).brightness ==
+                                    Brightness.dark
+                                ? AppColors.cardDark
                                 : AppColors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
                             child: CommonTextWidget.PoppinsMedium(
                               text: 'Cancel',
-                              color: Theme.of(Get.context!).brightness == Brightness.dark 
-                                  ? AppColors.textPrimaryDark 
+                              color: Theme.of(Get.context!).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.textPrimaryDark
                                   : AppColors.black2E2,
                               fontSize: 16,
                             ),
@@ -1829,7 +1939,7 @@ class Lists {
                         ),
                       ),
                     ),
-                    SizedBox(width: 20),
+                    SizedBox(width: 16),
                     Expanded(
                       child: InkWell(
                         onTap: () async {
@@ -1837,11 +1947,18 @@ class Lists {
                           await loginController.logout();
                         },
                         child: Container(
-                          height: 40,
-                          width: Get.width,
+                          height: 44,
                           decoration: BoxDecoration(
                             color: AppColors.redCA0,
                             borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.redCA0.withValues(alpha: 0.3),
+                                blurRadius: 8,
+                                spreadRadius: 0,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: Center(
                             child: CommonTextWidget.PoppinsMedium(

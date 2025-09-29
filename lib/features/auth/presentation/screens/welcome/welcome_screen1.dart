@@ -21,7 +21,9 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+          ? AppColors.backgroundDark 
+          : AppColors.white,
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -37,8 +39,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                 },
               );
             },
-            itemBuilder: (context, index) {
-              return Padding(
+            itemBuilder: (context, index) => Padding(
                 padding: EdgeInsets.only(left: 30, top: 140, right: 30),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -53,7 +54,9 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                     SizedBox(height: 100),
                     CommonTextWidget.PoppinsMedium(
                       text: Lists.welcomeList[index]['text'],
-                      color: AppColors.black2E2,
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? AppColors.textPrimaryDark 
+                          : AppColors.black2E2,
                       fontSize: 18,
                       textAlign: TextAlign.center,
                     ),
@@ -62,15 +65,16 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                       padding: EdgeInsets.symmetric(horizontal: 25),
                       child: CommonTextWidget.PoppinsRegular(
                         text: Lists.welcomeList[index]['description'],
-                        color: AppColors.grey717,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? AppColors.textSecondaryDark 
+                            : AppColors.grey717,
                         fontSize: 12,
                         textAlign: TextAlign.center,
                       ),
                     ),
                   ],
                 ),
-              );
-            },
+              ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 200),
@@ -85,7 +89,13 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
                     height: 7,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: index == position ? AppColors.black2E2 : AppColors.greyC7C,
+                      color: index == position 
+                          ? (Theme.of(context).brightness == Brightness.dark 
+                              ? AppColors.textPrimaryDark 
+                              : AppColors.black2E2)
+                          : (Theme.of(context).brightness == Brightness.dark 
+                              ? AppColors.textSecondaryDark 
+                              : AppColors.greyC7C),
                     ),
                   ),
                 ),
@@ -113,7 +123,9 @@ class _WelcomeScreen1State extends State<WelcomeScreen1> {
               },
               child: CommonTextWidget.PoppinsSemiBold(
                 text: 'Skip',
-                color: AppColors.greyC7C,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? AppColors.textSecondaryDark 
+                    : AppColors.greyC7C,
                 fontSize: 14,
                 textAlign: TextAlign.center,
               ),

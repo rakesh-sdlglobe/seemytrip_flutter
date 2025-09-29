@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -38,17 +40,17 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
   Future<void> fetchUserProfile() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('accessToken');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('accessToken');
 
       if (token == null) {
         Get.snackbar('Error', 'No access token found. Please log in again.');
         return;
       }
 
-      final response = await http.get(
+      final http.Response response = await http.get(
         Uri.parse(loginController.userProfileUrl),
-        headers: {
+        headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
@@ -80,7 +82,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+          ? AppColors.backgroundDark 
+          : AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.redCA0,
         automaticallyImplyLeading: false,
@@ -90,7 +94,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
+          child: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
           text: 'myAccount'.tr,
@@ -108,7 +112,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     SizedBox(height: 20),
                     ListTile(
                       onTap: () {
@@ -119,7 +123,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                         height: 70,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.redCA0.withOpacity(0.1),
+                          color: AppColors.redCA0.withValues(alpha:0.1),
                         ),
                         child: Icon(
                           Icons.person,
@@ -129,18 +133,22 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                       ),
                       title: CommonTextWidget.PoppinsMedium(
                         text: fullName.isNotEmpty ? fullName : 'guestUser'.tr,
-                        color: AppColors.black2E2,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? AppColors.textPrimaryDark 
+                            : AppColors.black2E2,
                         fontSize: 18,
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           if (emailId.isNotEmpty)
                             Text(
                               emailId,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey,
+                                color: Theme.of(context).brightness == Brightness.dark 
+                                    ? AppColors.textSecondaryDark 
+                                    : Colors.grey,
                               ),
                             ),
                           CommonTextWidget.PoppinsMedium(
@@ -152,31 +160,40 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                       ),
                     ),
                     SizedBox(height: 18),
-                    Divider(color: AppColors.greyE8E, thickness: 1),
+                    Divider(
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? AppColors.dividerDark 
+                          : AppColors.greyE8E, 
+                      thickness: 1
+                    ),
                     SizedBox(height: 20),
                     ListView.builder(
                       itemCount: Lists.myAccountList.length,
                       shrinkWrap: true,
                       padding: EdgeInsets.symmetric(horizontal: 24),
                       physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) => Padding(
+                      itemBuilder: (BuildContext context, int index) => Padding(
                         padding: EdgeInsets.only(bottom: 30),
                         child: InkWell(
                           onTap: Lists.myAccountList[index]['onTap'],
                           child: Row(
-                            children: [
+                            children: <Widget>[
                               Container(
                                 height: 52,
                                 width: 52,
                                 decoration: BoxDecoration(
-                                  boxShadow: [
+                                  boxShadow: <BoxShadow>[
                                     BoxShadow(
                                       offset: Offset(0, 1),
                                       blurRadius: 4,
-                                      color: AppColors.black262.withOpacity(0.25),
+                                      color: Theme.of(context).brightness == Brightness.dark 
+                                          ? AppColors.black262.withValues(alpha: 0.4)
+                                          : AppColors.black262.withValues(alpha: 0.25),
                                     ),
                                   ],
-                                  color: AppColors.white,
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                      ? AppColors.cardDark 
+                                      : AppColors.white,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
@@ -189,7 +206,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                               SizedBox(width: 20),
                               CommonTextWidget.PoppinsRegular(
                                 text: Lists.myAccountList[index]['text'],
-                                color: AppColors.black2E2,
+                                color: Theme.of(context).brightness == Brightness.dark 
+                                    ? AppColors.textPrimaryDark 
+                                    : AppColors.black2E2,
                                 fontSize: 18,
                               ),
                             ],

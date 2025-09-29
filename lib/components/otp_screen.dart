@@ -46,7 +46,9 @@ class _OtpScreen2State extends State<OtpScreen2> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.textPrimaryDark 
+                : Colors.black87,
           ),
         ),
         SizedBox(height: 10),
@@ -54,27 +56,63 @@ class _OtpScreen2State extends State<OtpScreen2> {
           'Enter your email address to receive the verification code.',
           style: TextStyle(
             fontSize: 15,
-            color: Colors.black54,
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.textSecondaryDark 
+                : Colors.black54,
           ),
         ),
         SizedBox(height: 25),
         TextField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.textPrimaryDark 
+                : Colors.black87,
+          ),
           decoration: InputDecoration(
             labelText: 'Email Address',
-            labelStyle: TextStyle(color: Colors.black54),
+            labelStyle: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark 
+                  ? AppColors.textSecondaryDark 
+                  : Colors.black54,
+            ),
             hintText: 'Enter your email',
-            hintStyle: TextStyle(color: Colors.black38),
+            hintStyle: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark 
+                  ? AppColors.textHintDark 
+                  : Colors.black38,
+            ),
+            filled: true,
+            fillColor: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.surfaceDark 
+                : Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderSide: BorderSide(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? AppColors.borderDark 
+                    : Colors.grey.shade400,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? AppColors.borderDark 
+                    : Colors.grey.shade400,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: AppColors.redCA0, width: 2),
             ),
-            prefixIcon: Icon(Icons.email_outlined, color: Colors.grey),
+            prefixIcon: Icon(
+              Icons.email_outlined, 
+              color: Theme.of(context).brightness == Brightness.dark 
+                  ? AppColors.textSecondaryDark 
+                  : Colors.grey,
+            ),
           ),
         ),
         SizedBox(height: 30),
@@ -167,7 +205,9 @@ class _OtpScreen2State extends State<OtpScreen2> {
               text: 'Enter the verification code sent to ',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black87,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? AppColors.textPrimaryDark 
+                    : Colors.black87,
               ),
               children: [
                 TextSpan(
@@ -215,9 +255,15 @@ class _OtpScreen2State extends State<OtpScreen2> {
       width: 45,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark 
+            ? AppColors.surfaceDark 
+            : Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? AppColors.borderDark 
+              : Colors.grey.shade300,
+        ),
       ),
       child: TextField(
         controller: _controllers[index],
@@ -225,7 +271,13 @@ class _OtpScreen2State extends State<OtpScreen2> {
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 20, 
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? AppColors.textPrimaryDark 
+              : Colors.black87,
+        ),
         decoration: InputDecoration(
           counterText: '',
           border: InputBorder.none,
@@ -253,7 +305,9 @@ class _OtpScreen2State extends State<OtpScreen2> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.greyE2E,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+          ? AppColors.backgroundDark 
+          : AppColors.greyE2E,
       appBar: AppBar(
         title: Text('Email Verification', style: TextStyle(color: AppColors.white)),
         backgroundColor: AppColors.redCA0,
@@ -268,11 +322,15 @@ class _OtpScreen2State extends State<OtpScreen2> {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? AppColors.cardDark 
+                    : AppColors.white,
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: Theme.of(context).brightness == Brightness.dark 
+                        ? AppColors.shadowDark.withValues(alpha: 0.3)
+                        : Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     spreadRadius: 1,
                     offset: Offset(0, 4),

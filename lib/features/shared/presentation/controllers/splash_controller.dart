@@ -16,9 +16,9 @@ class SplashController extends GetxController
   void onInit() {
     super.onInit();
 
-    // Initialize AnimationController with longer duration
+    // Initialize AnimationController with optimized duration
     animationController = AnimationController(
-      duration: const Duration(seconds: 4),
+      duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
 
@@ -59,7 +59,7 @@ class SplashController extends GetxController
     super.onReady();
     // Check login status and navigate accordingly after widget is ready
     Timer(
-      const Duration(seconds: 7),
+      const Duration(seconds: 5),
       () => checkLoginStatus(),
     );
   }

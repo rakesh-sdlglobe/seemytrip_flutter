@@ -15,9 +15,11 @@ class WelcomeScreen2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+          ? AppColors.backgroundDark 
+          : AppColors.white,
       body: Stack(
-        children: [
+        children: <Widget>[
           // Top Image Container
           Container(
             height: 350,
@@ -29,14 +31,14 @@ class WelcomeScreen2 extends StatelessWidget {
               ),
             ),
             child: Stack(
-              children: [
+              children: <Widget>[
                 Image.asset(welcome2Canvas,
                     width: Get.width, fit: BoxFit.cover),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: <Widget>[
                       SizedBox(height: 40),
                       Expanded(
                         child: Align(
@@ -55,7 +57,7 @@ class WelcomeScreen2 extends StatelessWidget {
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           CommonTextWidget.PoppinsSemiBold(
                             text: 'welcome'.tr,
                             color: AppColors.white,
@@ -68,7 +70,9 @@ class WelcomeScreen2 extends StatelessWidget {
                           ),
                           CommonTextWidget.PoppinsRegular(
                             text: 'You can also change language in App Settings after signing in',
-                            color: AppColors.greyCAC,
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? AppColors.white.withValues(alpha: 0.8)
+                                : AppColors.greyCAC,
                             fontSize: 14,
                           ),
                           SizedBox(height: 50),
@@ -91,7 +95,19 @@ class WelcomeScreen2 extends StatelessWidget {
                   topRight: Radius.circular(30),
                   topLeft: Radius.circular(30),
                 ),
-                color: AppColors.white,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? AppColors.surfaceDark 
+                    : AppColors.white,
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Theme.of(context).brightness == Brightness.dark 
+                        ? AppColors.black262.withValues(alpha: 0.2)
+                        : AppColors.black262.withValues(alpha: 0.08),
+                    blurRadius: 15,
+                    spreadRadius: 0,
+                    offset: Offset(0, -3),
+                  ),
+                ],
               ),
               child: Padding(
                 padding: EdgeInsets.only(
@@ -102,20 +118,20 @@ class WelcomeScreen2 extends StatelessWidget {
                 ),
                 child: GetBuilder<Welcome2Controller>(
                   init: Welcome2Controller(),
-                  builder: (welcomeController) {
-                    final languageController = Get.find<LanguageController>();
-                    final languageList = languageController.getLanguageList();
+                  builder: (Welcome2Controller welcomeController) {
+                    final LanguageController languageController = Get.find<LanguageController>();
+                    final List<MapEntry<String, Map<String, dynamic>>> languageList = languageController.getLanguageList();
                     
                     return ListView.builder(
                       padding: EdgeInsets.zero,
                       itemCount: languageList.length,
-                      itemBuilder: (context, index) {
-                        final languageEntry = languageList[index];
-                        final languageData = languageEntry.value;
-                        final locale = languageData['locale'] as Locale;
-                        final nativeName = languageData['nativeName'] as String;
-                        final name = languageData['name'] as String;
-                        final isSelected = welcomeController.selectedIndex == index;
+                      itemBuilder: (BuildContext context, int index) {
+                        final MapEntry<String, Map<String, dynamic>> languageEntry = languageList[index];
+                        final Map<String, dynamic> languageData = languageEntry.value;
+                        final Locale locale = languageData['locale'] as Locale;
+                        final String nativeName = languageData['nativeName'] as String;
+                        final String name = languageData['name'] as String;
+                        final bool isSelected = welcomeController.selectedIndex == index;
                         
                         return Padding(
                           padding: EdgeInsets.only(bottom: 15),
@@ -131,19 +147,33 @@ class WelcomeScreen2 extends StatelessWidget {
                                 border: Border.all(
                                     color: isSelected
                                         ? AppColors.redCA0
-                                        : AppColors.greyB9B,
+                                        : (Theme.of(context).brightness == Brightness.dark 
+                                            ? AppColors.borderDark 
+                                            : AppColors.greyB9B),
                                     width: 1),
                                 color: isSelected
                                     ? AppColors.redF9E
-                                    : AppColors.white,
+                                    : (Theme.of(context).brightness == Brightness.dark 
+                                        ? AppColors.cardDark 
+                                        : AppColors.white),
+                                boxShadow: <BoxShadow>[
+                                  BoxShadow(
+                                    color: Theme.of(context).brightness == Brightness.dark 
+                                        ? AppColors.black262.withValues(alpha: 0.1)
+                                        : AppColors.black262.withValues(alpha: 0.04),
+                                    blurRadius: 4,
+                                    spreadRadius: 0,
+                                    offset: Offset(0, 1),
+                                  ),
+                                ],
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
+                                  children: <Widget>[
                                     Row(
-                                      children: [
+                                      children: <Widget>[
                                         SvgPicture.asset(
                                             isSelected
                                                 ? selectedIcon
@@ -151,7 +181,9 @@ class WelcomeScreen2 extends StatelessWidget {
                                         SizedBox(width: 20),
                                         CommonTextWidget.PoppinsMedium(
                                           text: name,
-                                          color: AppColors.black2E2,
+                                          color: Theme.of(context).brightness == Brightness.dark 
+                                              ? AppColors.textPrimaryDark 
+                                              : AppColors.black2E2,
                                           fontSize: 14,
                                         ),
                                       ],
@@ -160,7 +192,9 @@ class WelcomeScreen2 extends StatelessWidget {
                                       text: nativeName,
                                       color: isSelected
                                           ? AppColors.redCA0
-                                          : AppColors.greyC8C,
+                                          : (Theme.of(context).brightness == Brightness.dark 
+                                              ? AppColors.textSecondaryDark 
+                                              : AppColors.greyC8C),
                                       fontSize: 16,
                                     ),
                                   ],
@@ -183,7 +217,9 @@ class WelcomeScreen2 extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              color: AppColors.white,
+              color: Theme.of(context).brightness == Brightness.dark 
+                  ? AppColors.surfaceDark 
+                  : AppColors.white,
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: CommonButtonWidget.button(
                 text: 'CONTINUE',

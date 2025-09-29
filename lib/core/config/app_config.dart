@@ -10,6 +10,7 @@ class AppConfig {
   static const String signUp = '$baseUrl/signup';
   static const String userProfile = '$baseUrl/users/userProfile';
   static const String googleUserData = '$baseUrl/auth/googleUserData';
+  static const String editProfile = '$baseUrl/users/editProfile';
   
   // Hotel endpoints
   static const String hotelCities = '$baseUrl/hotels/getHotelCities';
@@ -33,4 +34,8 @@ class AppConfig {
   // Flight endpoints
   static const String flightsAirports = '$baseUrl/flights/getFlightsAirports';
   static const String flightsSearch = '$baseUrl/flights/getFlightsList';
+  
+  // Notification endpoints
+  static const String getNotifications = '$baseUrl/notifications';
+  static const String markAllNotificationsRead = '$baseUrl/notifications/mark-all-read';
 }

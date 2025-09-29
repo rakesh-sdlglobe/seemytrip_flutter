@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/common_textfeild_widget.dart';
@@ -40,93 +36,107 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     formattedDate = DateFormat('yyyy-MM-dd').format(now);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchUserProfile();
+      _loadUserProfile();
+    });
+    
+    // Listen to user data changes
+    ever<Map<dynamic, dynamic>>(loginController.userData, (Map<dynamic, dynamic> userData) {
+      _populateFields();
     });
   }
 
-  Future<void> fetchUserProfile() async {
-    try {
-      loginController.isLoading.value = true;
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('accessToken');
+  Future<void> _loadUserProfile() async {
+    await loginController.fetchUserProfile();
+    _populateFields();
+  }
 
-      if (token == null) {
-        Get.snackbar('Error', 'No access token found. Please log in again.');
-        return;
-      }
-
-      final response = await http.get(
-        Uri.parse(loginController.userProfileUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        loginController.userData.value = data;
-
-        fullNameController.text = data['firstName'] ?? '';
-        genderController.text = data['gender'] ?? '';
-        dateOfBirthController.text = data['dob'] ?? '';
-        nationalityController.text = data['nationality'] ?? '';
-        emailIdController.text = data['email'] ?? '';
-        mobileNumberController.text = data['phoneNumber'] ?? '';
+  void _populateFields() {
+    final userData = loginController.userData;
+    if (mounted) {
+      fullNameController.text = userData['firstName'] ?? '';
+      genderController.text = userData['gender'] ?? '';
+      
+      // Format date properly if it exists
+      String dob = userData['dob'] ?? '';
+      if (dob.isNotEmpty) {
+        try {
+          // If the date is in a different format, convert it
+          DateTime date = DateTime.parse(dob);
+          dateOfBirthController.text = DateFormat('yyyy-MM-dd').format(date);
+        } catch (e) {
+          // If parsing fails, use the original value
+          dateOfBirthController.text = dob;
+        }
       } else {
-        Get.snackbar('Error', 'Failed to fetch user profile.');
+        dateOfBirthController.text = '';
       }
-    } catch (e) {
-      Get.snackbar('Error', 'Something went wrong: $e');
-    } finally {
-      loginController.isLoading.value = false;
+      
+      nationalityController.text = userData['nationality'] ?? '';
+      emailIdController.text = userData['email'] ?? '';
+      mobileNumberController.text = userData['phoneNumber'] ?? '';
     }
   }
 
-  Future<void> editProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    final accessToken = prefs.getString('accessToken');
+  Future<void> _refreshProfile() async {
+    await _loadUserProfile();
+  }
 
-    if (accessToken == null) {
-      Get.snackbar('Error', 'Access token not found.');
+  Future<void> editProfile() async {
+    // Validate required fields
+    if (fullNameController.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Please enter your name');
       return;
     }
 
-    final body = {
-      'name': fullNameController.text,
-      'gender': genderController.text,
-      'dob': dateOfBirthController.text,
-      'email': emailIdController.text,
-      'mobile': mobileNumberController.text,
+    if (emailIdController.text.trim().isEmpty) {
+      Get.snackbar('Error', 'Please enter your email');
+      return;
+    }
+
+    // Prepare profile data, only include non-empty fields
+    final Map<String, dynamic> profileData = {
+      'firstName': fullNameController.text.trim(),
+      'email': emailIdController.text.trim(),
     };
 
-    final response = await http.post(
-      Uri.parse('https://tripadmin.seemytrip.com/api/users/editProfile'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: jsonEncode(body),
-    );
+    // Add optional fields only if they have values
+    if (genderController.text.trim().isNotEmpty) {
+      profileData['gender'] = genderController.text.trim();
+    }
+    
+    if (dateOfBirthController.text.trim().isNotEmpty) {
+      profileData['dob'] = dateOfBirthController.text.trim();
+    }
+    
+    if (mobileNumberController.text.trim().isNotEmpty) {
+      profileData['phoneNumber'] = mobileNumberController.text.trim();
+    }
+    
+    if (nationalityController.text.trim().isNotEmpty) {
+      profileData['nationality'] = nationalityController.text.trim();
+    }
 
-    if (response.statusCode == 200) {
-      Get..back()
-      ..snackbar('Success', 'Profile updated successfully');
-    } else {
-      Get.snackbar('Error', 'Failed to update profile');
+    print('📤 Final profile data being sent: $profileData');
+
+    final success = await loginController.updateUserProfile(profileData);
+    
+    if (success) {
+      Get.back();
     }
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+          ? AppColors.backgroundDark 
+          : AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.redCA0,
         elevation: 0,
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.white, size: 20),
           onPressed: () => Get.back(),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
@@ -135,16 +145,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           fontSize: 18,
         ),
         actions: [
-          InkWell(
-            onTap: editProfile,
-            child: Padding(
-              padding: EdgeInsets.only(right: 24, top: 20),
-              child: CommonTextWidget.PoppinsMedium(
-                text: 'Save',
-                color: AppColors.white,
-                fontSize: 13,
-              ),
-            ),
+          // Refresh button
+          IconButton(
+            onPressed: _refreshProfile,
+            icon: Icon(Icons.refresh, color: AppColors.white, size: 26),
+            tooltip: 'Refresh Profile',
           ),
         ],
       ),
@@ -168,8 +173,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [ 
-                      Icon(Icons.account_circle, size: 130, color: AppColors.redCA0),
-                      // Optionally add an edit icon here
+                      Obx(() => Icon(
+                        Icons.account_circle, 
+                        size: 130, 
+                        color: loginController.userData.isNotEmpty 
+                            ? AppColors.redCA0 
+                            : AppColors.redCA0.withOpacity(0.5),
+                      )),
+                      // Profile edit icon
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.redCA0,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                  ? AppColors.backgroundDark 
+                                  : AppColors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.edit,
+                            color: AppColors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -178,13 +211,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 _buildField(fullNameController, 'Unknown', profileIcon),
                 _buildLabel('Gender'),
                 _buildField(genderController, 'Male', genderIcon),
+                _buildLabel('Date of Birth'),
+                _buildDateField(),
                 _buildLabel('Nationality'),
                 _buildField(nationalityController, 'India', null, isImage: true),
                 _buildLabel('Email ID'),
                 _buildField(emailIdController, 'example@email.com', emailIcon),
                 _buildLabel('Mobile No.'),
                 _buildField(mobileNumberController, '84XXX XXXXX', smartphoneIcon),
-                SizedBox(height: 60),
+                SizedBox(height: 30),
+                // Save button at bottom
+                _buildSaveButton(),
+                SizedBox(height: 30),
               ],
             ),
           ),
@@ -197,7 +235,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       children: [
         CommonTextWidget.PoppinsMedium(
           text: text,
-          color: AppColors.black2E2,
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? AppColors.textPrimaryDark 
+              : AppColors.black2E2,
           fontSize: 14,
         ),
         SizedBox(height: 10),
@@ -224,6 +264,65 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: SvgPicture.asset(iconPath),
                   )
                 : null,
+      ),
+    );
+
+  Widget _buildDateField() => InkWell(
+      onTap: () async {
+        final DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now().subtract(Duration(days: 365 * 20)), // Default to 20 years ago
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        );
+        
+        if (pickedDate != null) {
+          dateOfBirthController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+        }
+      },
+      child: CommonTextFieldWidget(
+        controller: dateOfBirthController,
+        hintText: 'Select Date of Birth',
+        keyboardType: TextInputType.none,
+        prefixIcon: Padding(
+          padding: EdgeInsets.all(10),
+          child: Icon(
+            Icons.calendar_today,
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? AppColors.textSecondaryDark 
+                : AppColors.grey929,
+            size: 20,
+          ),
+        ),
+      ),
+    );
+
+  Widget _buildSaveButton() => Container(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: editProfile,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.redCA0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          elevation: 2,
+        ),
+        child: Obx(() => loginController.isLoading.value
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: AppColors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : CommonTextWidget.PoppinsMedium(
+                text: 'Save Changes',
+                color: AppColors.white,
+                fontSize: 16,
+              )),
       ),
     );
 }
