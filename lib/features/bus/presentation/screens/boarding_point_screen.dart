@@ -20,6 +20,7 @@ class ThemeAwareColors {
 }
 
 
+
 class BoardingPointScreen extends StatefulWidget {
   final String? traceId;
   final int? resultIndex;
