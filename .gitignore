@@ -95,3 +95,6 @@ web/assets/shaders/
 build/
 !build/web/
 !build/web/assets/
+
+# Documentation
+DEVELOPER_DOCUMENTATION.md
