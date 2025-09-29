@@ -1,20 +1,20 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_redundant_argument_values
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:seemytrip/features/hotels/presentation/controllers/hotel_image_controller.dart';
-
-import 'package:seemytrip/core/theme/app_colors.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../controllers/hotel_image_controller.dart';
 
 class HotelImageScreen extends StatefulWidget {
-  final List<Map<String, String>> imageList;
 
   const HotelImageScreen({
-    Key? key,
-    required this.imageList,
+    required this.imageList, Key? key,
   }) : super(key: key);
+  final List<Map<String, String>> imageList;
 
   @override
   _HotelImageScreenState createState() => _HotelImageScreenState();
@@ -37,11 +37,14 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      backgroundColor: const Color(0xFFF8FAFD),
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Scaffold(
+      backgroundColor: isDark ? AppColors.backgroundDark : const Color(0xFFF8FAFD),
       extendBodyBehindAppBar: false,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? AppColors.cardDark : Colors.white,
         elevation: 0.5,
         centerTitle: true,
         leading: Material(
@@ -53,12 +56,12 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
               margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFFFEE8E8),
+                color: AppColors.redCA0.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: Color(0xFFD32F2F),
+                color: AppColors.redCA0,
                 size: 18,
               ),
             ),
@@ -69,12 +72,15 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF1A1A1A),
+            color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A1A),
           ),
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.close_rounded, color: Color(0xFF666666)),
+            icon: Icon(
+              Icons.close_rounded, 
+              color: isDark ? AppColors.textSecondaryDark : const Color(0xFF666666)
+            ),
             onPressed: () => Get.back(),
           ),
         ],
@@ -101,12 +107,14 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                           duration: const Duration(milliseconds: 200),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: isSelected ? const Color(0xFFD32F2F) : const Color(0xFFF5F5F5),
+                            color: isSelected 
+                                ? AppColors.redCA0 
+                                : (isDark ? AppColors.cardDark : const Color(0xFFF5F5F5)),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: isSelected
                                 ? <BoxShadow>[
                                     BoxShadow(
-                                      color: const Color(0x40D32F2F),
+                                      color: AppColors.redCA0.withValues(alpha: 0.3),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     )
@@ -116,7 +124,9 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                           child: Text(
                             category,
                             style: GoogleFonts.inter(
-                              color: isSelected ? Colors.white : const Color(0xFF666666),
+                              color: isSelected 
+                                  ? Colors.white 
+                                  : (isDark ? AppColors.textSecondaryDark : const Color(0xFF666666)),
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                               fontSize: 14,
                             ),
@@ -130,7 +140,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
               // Image Grid
               Expanded(
                 child: controller.filteredImages.isEmpty
-                    ? _buildEmptyState()
+                    ? _buildEmptyState(isDark)
                     : GridView.builder(
                         padding: const EdgeInsets.all(16),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -142,7 +152,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                         itemCount: controller.filteredImages.length,
                         itemBuilder: (BuildContext context, int index) {
                           final String url = controller.filteredImages[index];
-                          return _buildImageItem(context, url);
+                          return _buildImageItem(context, url, isDark);
                         },
                       ),
               ),
@@ -151,8 +161,9 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
         },
       ),
     );
+  }
 
-  Widget _buildImageItem(BuildContext context, String imageUrl) => GestureDetector(
+  Widget _buildImageItem(BuildContext context, String imageUrl, bool isDark) => GestureDetector(
       onTap: () => _showFullScreenImage(context, imageUrl),
       child: Hero(
         tag: 'image_$imageUrl',
@@ -161,7 +172,9 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: isDark 
+                    ? AppColors.black262.withValues(alpha: 0.3)
+                    : Colors.black.withOpacity(0.1),
                 blurRadius: 8,
                 offset: Offset(0, 2),
               ),
@@ -173,7 +186,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
               imageUrl: imageUrl,
               fit: BoxFit.cover,
               placeholder: (BuildContext context, String url) => Container(
-                color: Color(0xFFF5F5F5),
+                color: isDark ? AppColors.cardDark : const Color(0xFFF5F5F5),
                 child: Center(
                   child: LoadingAnimationWidget.fourRotatingDots(
                     color: AppColors.redCA0,
@@ -182,18 +195,21 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
                 ),
               ),
               errorWidget: (BuildContext context, String url, Object error) => Container(
-                color: Color(0xFFF5F5F5),
+                color: isDark ? AppColors.cardDark : const Color(0xFFF5F5F5),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Icon(Icons.broken_image_rounded,
-                          color: Color(0xFFCCCCCC), size: 40),
+                      Icon(
+                        Icons.broken_image_rounded,
+                        color: isDark ? AppColors.textSecondaryDark : const Color(0xFFCCCCCC), 
+                        size: 40
+                      ),
                       SizedBox(height: 8),
                       Text(
                         'Failed to load',
                         style: GoogleFonts.inter(
-                          color: Color(0xFF999999),
+                          color: isDark ? AppColors.textSecondaryDark : const Color(0xFF999999),
                           fontSize: 12,
                         ),
                       ),
@@ -279,14 +295,14 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
     );
   }
 
-  Widget _buildEmptyState() => Center(
+  Widget _buildEmptyState(bool isDark) => Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Icon(
             Icons.photo_library_outlined,
             size: 64,
-            color: Color(0xFFCCCCCC),
+            color: isDark ? AppColors.textSecondaryDark : const Color(0xFFCCCCCC),
           ),
           SizedBox(height: 16),
           Text(
@@ -294,7 +310,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF666666),
+              color: isDark ? AppColors.textPrimaryDark : const Color(0xFF666666),
             ),
           ),
           SizedBox(height: 8),
@@ -305,7 +321,7 @@ class _HotelImageScreenState extends State<HotelImageScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: Color(0xFF999999),
+                color: isDark ? AppColors.textSecondaryDark : const Color(0xFF999999),
               ),
             ),
           ),
