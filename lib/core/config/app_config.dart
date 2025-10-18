@@ -33,7 +33,7 @@ class AppConfig {
   
   // Flight endpoints
   static const String flightsAirports = '$baseUrl/flights/getFlightsAirports';
-  static const String flightsSearch = '$baseUrl/flights/getFlightsList';
+  static const String flightsSearch = '$baseUrl/flights/getFlightsListmobile';
   
   // Notification endpoints
   static const String getNotifications = '$baseUrl/notifications';
