@@ -12,30 +12,41 @@ import 'boarding_point_screen.dart';
 
 // --- SIMPLIFIED THEME-AWARE COLORS ---
 class ThemeAwareColors {
-  static Color primary(BuildContext context) => Theme.of(context).brightness == Brightness.dark
-    ? const Color(0xFFFF5722) // Orange-red for dark theme
-    : const Color(0xFFE53935); // Red for light theme
-  
-  static Color primaryVariant(BuildContext context) => Theme.of(context).brightness == Brightness.dark
-    ? const Color(0xFFE64A19) // Darker orange-red for dark theme
-    : const Color(0xFFC62828); // Darker red for light theme
-  
-  static Color accent(BuildContext context) => Theme.of(context).brightness == Brightness.dark
-    ? const Color(0xFFFFB74D) // Orange accent for dark theme
-    : const Color(0xFFFFA726); // Orange accent for light theme
-  
-  static Color seatLadies(BuildContext context) => Theme.of(context).brightness == Brightness.dark
-    ? const Color(0xFFE91E63) // Pink for dark theme
-    : const Color(0xFFF06292); // Light pink for light theme
-  
-  static Color seatBooked(BuildContext context) => Theme.of(context).brightness == Brightness.dark
-    ? Colors.grey[700]!
-    : const Color(0xFFEAECF0);
+  static Color primary(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFFF5722) // Orange-red for dark theme
+          : const Color(0xFFE53935); // Red for light theme
+
+  static Color primaryVariant(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFE64A19) // Darker orange-red for dark theme
+          : const Color(0xFFC62828); // Darker red for light theme
+
+  static Color accent(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFFFB74D) // Orange accent for dark theme
+          : const Color(0xFFFFA726); // Orange accent for light theme
+
+  static Color seatLadies(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFFE91E63) // Pink for dark theme
+          : const Color(0xFFF06292); // Light pink for light theme
+
+  static Color seatMales(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF2196F3) // Blue for dark theme
+          : const Color(0xFF42A5F5); // Light blue for light theme
+
+  static Color seatBooked(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? Colors.grey[700]!
+          : const Color(0xFFEAECF0);
 }
 
 // Keep simplified AppColors for compatibility
 class AppColors {
-  static const Color primary = Color(0xFFE53935); // Will be overridden in theme-aware widgets
+  static const Color primary =
+      Color(0xFFE53935); // Will be overridden in theme-aware widgets
   static const Color primaryVariant = Color(0xFFC62828);
   static const Color accent = Color(0xFFFFA726);
   static const Color background = Color(0xFFF5F6FA);
@@ -43,6 +54,7 @@ class AppColors {
   static const Color seatAvailableBorder = Color(0xFFD0D5DD);
   static const Color seatSelected = Color(0xFFE53935);
   static const Color seatLadies = Color(0xFFF06292);
+  static const Color seatMales = Color(0xFF42A5F5);
   static const Color seatBooked = Color(0xFFEAECF0);
   static const Color seatBookedBorder = Color(0xFFEAECF0);
   static const Color textDark = Color(0xFF1A1A1A);
@@ -88,9 +100,12 @@ class Seat {
   final String seatName;
   final bool isAvailable;
   final bool isLadiesSeat;
+  final bool isMalesSeat;
   final bool isSleeper;
   final double price;
   final bool isUpperDeck;
+  final Map<String, dynamic> priceMap;
+  final Map<String, dynamic> rawJson;
 
   Seat({
     required this.rowNo,
@@ -98,24 +113,59 @@ class Seat {
     required this.seatName,
     required this.isAvailable,
     required this.isLadiesSeat,
+    required this.isMalesSeat,
     required this.isSleeper,
     required this.price,
     required this.isUpperDeck,
+    required this.priceMap,
+    required this.rawJson,
   });
 
   factory Seat.fromJson(Map<String, dynamic> json) {
     String seatName = json['SeatName'] ?? 'N/A';
     bool isSleeper = seatName.toUpperCase().startsWith('U') ||
-        seatName.toUpperCase().startsWith('L');
+        seatName.toUpperCase().startsWith('L') ||
+        json['SeatType'] == 2 ||
+        json['SeatType'] == '2' ||
+        json['SeatType'] == 'Sleeper';
+
+    // Enhanced availability check matching React logic
+    bool isBooked = json['IsBooked'] == true ||
+        json['Status'] == 'Booked' ||
+        json['SeatStatus'] == false ||
+        json['IsAvailable'] == false ||
+        json['BookingStatus'] == 'Booked' ||
+        json['SeatStatus'] == 'Booked' ||
+        json['IsOccupied'] == true ||
+        json['Occupied'] == true ||
+        json['Booked'] == true ||
+        json['Available'] == false ||
+        json['Availability'] == false ||
+        json['IsReserved'] == true ||
+        json['Reserved'] == true ||
+        json['IsBlocked'] == true ||
+        json['Blocked'] == true ||
+        json['Status'] == 'Occupied' ||
+        json['Status'] == 'Reserved' ||
+        json['Status'] == 'Blocked' ||
+        json['Status'] == 'Unavailable';
+
     return Seat(
       rowNo: int.tryParse(json['RowNo'] ?? '0') ?? 0,
       columnNo: int.tryParse(json['ColumnNo'] ?? '0') ?? 0,
       seatName: seatName,
-      isAvailable: !(json['SeatStatus'] as bool? ?? true),
-      isLadiesSeat: json['IsLadiesSeat'] as bool? ?? false,
+      isAvailable: !isBooked,
+      isLadiesSeat: json['IsLadiesSeat'] == true || json['Gender'] == 'Female',
+      isMalesSeat: json['IsMalesSeat'] == true || json['Gender'] == 'Male',
       isSleeper: isSleeper,
-      price: (json['Price']?['PublishedPrice'] as num? ?? 0.0).toDouble(),
-      isUpperDeck: json['IsUpper'] as bool? ?? false,
+      price: (json['Price']?['PublishedPrice'] as num? ??
+              json['Price'] as num? ??
+              json['Fare'] as num? ??
+              0.0)
+          .toDouble(),
+      isUpperDeck: json['IsUpper'] == true || json['IsUpper'] == 'true',
+      priceMap: json['Price'] is Map<String, dynamic> ? json['Price'] : {},
+      rawJson: json,
     );
   }
 }
@@ -227,7 +277,8 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
         seatLayoutData['SeatDetails'] as List<dynamic>? ?? [];
 
     List<Seat> allSeats = seatDetailsJson
-        .expand((row) => (row as List).map((seatJson) => Seat.fromJson(seatJson)))
+        .expand(
+            (row) => (row as List).map((seatJson) => Seat.fromJson(seatJson)))
         .toList();
 
     List<Seat> lowerDeckSeats = allSeats.where((s) => !s.isUpperDeck).toList();
@@ -302,7 +353,7 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
     if (_fadeAnimation == null || _animationController == null) {
       return Center(
           child: LoadingAnimationWidget.dotsTriangle(
-color: ThemeAwareColors.primary(context),
+        color: ThemeAwareColors.primary(context),
         size: 40,
       ));
     }
@@ -327,7 +378,10 @@ color: ThemeAwareColors.primary(context),
                                 child: Text(
                                   'Error loading seat layout.',
                                   style: AppStyles.body.copyWith(
-                                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                               )
@@ -376,7 +430,7 @@ color: ThemeAwareColors.primary(context),
             ],
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, 
+            icon: const Icon(Icons.arrow_back_ios_new_rounded,
                 color: Colors.white, size: 18),
             onPressed: () => Get.back(),
             padding: EdgeInsets.zero,
@@ -403,10 +457,12 @@ color: ThemeAwareColors.primary(context),
               const SizedBox(height: 4),
               Row(
                 children: [
-                  Icon(Icons.calendar_today_rounded, size: 12, color: Colors.white.withOpacity(0.9)),
+                  Icon(Icons.calendar_today_rounded,
+                      size: 12, color: Colors.white.withOpacity(0.9)),
                   const SizedBox(width: 6),
                   Text(
-                    DateFormat('EEEE, d MMM yyyy').format(widget.args.travelDate),
+                    DateFormat('EEEE, d MMM yyyy')
+                        .format(widget.args.travelDate),
                     style: GoogleFonts.poppins(
                       color: Colors.white.withOpacity(0.95),
                       fontSize: 12,
@@ -437,147 +493,145 @@ color: ThemeAwareColors.primary(context),
         ),
       );
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.8)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.AppColors.redCA0.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.directions_bus_rounded,
-                  color: Colors.white,
-                  size: 26,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.args.busName,
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87,
-                        letterSpacing: 0.1,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppTheme.AppColors.redF9E.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppTheme.AppColors.redCA0.withOpacity(0.2),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.event_seat_rounded, size: 14, color: AppTheme.AppColors.redCA0),
-                          const SizedBox(width: 6),
-                          Text(
-                            '${widget.args.availableSeats} Seats Available',
-                            style: GoogleFonts.poppins(
-                              color: AppTheme.AppColors.redCA0,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (_upperDeckLayout.isNotEmpty)
+  Widget _buildHeader() => Container(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
                 Container(
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
-                    color: AppTheme.AppColors.redF9E,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: AppTheme.AppColors.redCA0.withOpacity(0.3),
-                      width: 1.5,
+                    gradient: LinearGradient(
+                      colors: [
+                        AppTheme.AppColors.redCA0,
+                        AppTheme.AppColors.redCA0.withOpacity(0.8)
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
+                    borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.AppColors.redCA0.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+                        color: AppTheme.AppColors.redCA0.withOpacity(0.3),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
-                  child: TabBar(
-                    controller: _tabController,
-                    labelColor: Colors.white,
-                    unselectedLabelColor: AppTheme.AppColors.redCA0,
-                    indicator: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.9)],
+                  child: Icon(
+                    Icons.directions_bus_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.args.busName,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              Colors.black87,
+                          letterSpacing: 0.1,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelStyle: GoogleFonts.poppins(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                    unselectedLabelStyle: GoogleFonts.poppins(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                    ),
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    tabs: const [
-                      Tab(text: 'LOWER'),
-                      Tab(text: 'UPPER'),
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppTheme.AppColors.redF9E.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppTheme.AppColors.redCA0.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.event_seat_rounded,
+                                size: 12, color: AppTheme.AppColors.redCA0),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${widget.args.availableSeats} Seats Available',
+                              style: GoogleFonts.poppins(
+                                color: AppTheme.AppColors.redCA0,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          const SeatInfoLegend(),
-        ],
-      ),
-    );
-  }
+                if (_upperDeckLayout.isNotEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.AppColors.redF9E,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppTheme.AppColors.redCA0.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    child: TabBar(
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      controller: _tabController,
+                      labelColor: Colors.white,
+                      unselectedLabelColor: AppTheme.AppColors.redCA0,
+                      indicator: BoxDecoration(
+                        color: AppTheme.AppColors.redCA0,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelStyle: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
+                      unselectedLabelStyle: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                      ),
+                      labelPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      tabs: const [
+                        Tab(text: 'LOWER'),
+                        Tab(text: 'UPPER'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const SeatInfoLegend(),
+          ],
+        ),
+      );
 
   Widget _buildDeckWidget(List<List<Seat?>> layout) {
     if (layout.isEmpty) {
@@ -588,7 +642,11 @@ color: ThemeAwareColors.primary(context),
             Icon(
               Icons.event_seat_outlined,
               size: 64,
-              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.3),
+              color: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.color
+                  ?.withOpacity(0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -621,18 +679,9 @@ color: ThemeAwareColors.primary(context),
           alignment: Alignment.topRight,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Theme.of(context).cardColor,
-                    Theme.of(context).brightness == Brightness.dark
-                        ? Colors.black.withOpacity(0.3)
-                        : AppTheme.AppColors.redF9E.withOpacity(0.05),
-                  ],
-                ),
+                color: Theme.of(context).cardColor,
                 border: Border.all(
                   color: Theme.of(context).dividerColor.withOpacity(0.3),
                   width: 1,
@@ -658,20 +707,20 @@ color: ThemeAwareColors.primary(context),
                     .asMap()
                     .entries
                     .map((entry) => TweenAnimationBuilder<double>(
-                          duration: Duration(milliseconds: 300 + (entry.key * 50)),
+                          duration:
+                              Duration(milliseconds: 300 + (entry.key * 50)),
                           tween: Tween(begin: 0.0, end: 1.0),
                           curve: Curves.easeOutCubic,
-                          builder: (context, value, child) {
-                            return Transform.translate(
-                              offset: Offset(0, 20 * (1 - value)),
-                              child: Opacity(
-                                opacity: value,
-                                child: RepaintBoundary(
-                                  child: _buildSeatRow(entry.value, columnCount),
-                                ),
+                          builder: (context, value, child) =>
+                              Transform.translate(
+                            offset: Offset(0, 20 * (1 - value)),
+                            child: Opacity(
+                              opacity: value,
+                              child: RepaintBoundary(
+                                child: _buildSeatRow(entry.value, columnCount),
                               ),
-                            );
-                          },
+                            ),
+                          ),
                         ))
                     .toList(),
               ),
@@ -702,59 +751,62 @@ color: ThemeAwareColors.primary(context),
     );
   }
 
-  Widget _buildShimmerLoading() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: List.generate(8, (index) => Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
-          child: Shimmer.fromColors(
-            baseColor: Theme.of(context).brightness == Brightness.dark
-                ? Colors.grey[800]!
-                : Colors.grey[300]!,
-            highlightColor: Theme.of(context).brightness == Brightness.dark
-                ? Colors.grey[700]!
-                : Colors.grey[100]!,
-            period: const Duration(milliseconds: 1200),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(4, (_) => Container(
-                width: 56,
-                height: 64,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              )),
-            ),
-          ),
-        )),
-      ),
-    );
-  }
+  Widget _buildShimmerLoading() => SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: List.generate(
+              8,
+              (index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Shimmer.fromColors(
+                      baseColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey[800]!
+                          : Colors.grey[300]!,
+                      highlightColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[700]!
+                              : Colors.grey[100]!,
+                      period: const Duration(milliseconds: 1200),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List.generate(
+                            4,
+                            (_) => Container(
+                                  width: 56,
+                                  height: 64,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                )),
+                      ),
+                    ),
+                  )),
+        ),
+      );
 
-  Widget _buildSeatRow(List<Seat?> row, int totalColumns) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(totalColumns, (index) {
-          final seat = index < row.length ? row[index] : null;
-          if (seat == null) {
-            return const SizedBox(width: 56, height: 64); // Aisle or empty space
-          }
-          return RepaintBoundary(
-            child: SeatWidget(
-              seat: seat,
-              isSelected: _selectedSeats.contains(seat),
-              onTap: () => _onSeatTap(seat),
-            ),
-          );
-        }),
-      ),
-    );
-  }
+  Widget _buildSeatRow(List<Seat?> row, int totalColumns) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(totalColumns, (index) {
+            final seat = index < row.length ? row[index] : null;
+            if (seat == null) {
+              return const SizedBox(
+                  width: 36, height: 58); // Aisle or empty space
+            }
+            return RepaintBoundary(
+              child: SeatWidget(
+                seat: seat,
+                isSelected: _selectedSeats.contains(seat),
+                onTap: () => _onSeatTap(seat),
+              ),
+            );
+          }),
+        ),
+      );
 
   Widget _buildSummaryCard() {
     bool isVisible = _selectedSeats.isNotEmpty;
@@ -765,16 +817,7 @@ color: ThemeAwareColors.primary(context),
       child: Container(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Theme.of(context).cardColor,
-              Theme.of(context).brightness == Brightness.dark
-                  ? Colors.black.withOpacity(0.3)
-                  : AppTheme.AppColors.redF9E.withOpacity(0.1),
-            ],
-          ),
+          color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).shadowColor.withOpacity(0.15),
@@ -859,7 +902,8 @@ color: ThemeAwareColors.primary(context),
                           '${_selectedSeats.length} Seat${_selectedSeats.length == 1 ? '' : 's'} Selected',
                           style: GoogleFonts.poppins(
                             fontSize: 13,
-                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            color:
+                                Theme.of(context).textTheme.bodyMedium?.color,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -878,10 +922,12 @@ color: ThemeAwareColors.primary(context),
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        onTap: () => setState(() => _isSummaryExpanded = !_isSummaryExpanded),
+                        onTap: () => setState(
+                            () => _isSummaryExpanded = !_isSummaryExpanded),
                         borderRadius: BorderRadius.circular(12),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -967,7 +1013,8 @@ color: ThemeAwareColors.primary(context),
                                   busName: widget.args.busName,
                                   fromCity: widget.args.fromLocation,
                                   toCity: widget.args.toLocation,
-                                  journeyDate: DateFormat('d MMM yyyy').format(widget.args.travelDate),
+                                  journeyDate: DateFormat('d MMM yyyy')
+                                      .format(widget.args.travelDate),
                                   departureTime: widget.args.departureTime,
                                   arrivalTime: widget.args.arrivalTime,
                                   fare: _totalPrice.toStringAsFixed(0),
@@ -1008,43 +1055,43 @@ color: ThemeAwareColors.primary(context),
     );
   }
 
-  Widget _buildSelectedSeatsList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      itemCount: _selectedSeats.length,
-      itemBuilder: (context, index) {
-        final seat = _selectedSeats[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6.0),
-          child: Row(
-            children: [
-              Icon(
-                seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined,
-                color: ThemeAwareColors.primary(context),
-                size: 20,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Seat ${seat.seatName}',
-                  style: AppStyles.bodyBold.copyWith(fontSize: 13),
+  Widget _buildSelectedSeatsList() => ListView.builder(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        itemCount: _selectedSeats.length,
+        itemBuilder: (context, index) {
+          final seat = _selectedSeats[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            child: Row(
+              children: [
+                Icon(
+                  seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined,
+                  color: ThemeAwareColors.primary(context),
+                  size: 20,
                 ),
-              ),
-              Text(
-                '₹${seat.price.toStringAsFixed(0)}',
-                style: AppStyles.body.copyWith(fontSize: 13),
-              ),
-              IconButton(
-                icon: Icon(Icons.close_rounded, color: Theme.of(context).textTheme.bodySmall?.color, size: 20),
-                onPressed: () => _onSeatTap(seat),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Seat ${seat.seatName}',
+                    style: AppStyles.bodyBold.copyWith(fontSize: 13),
+                  ),
+                ),
+                Text(
+                  '₹${seat.price.toStringAsFixed(0)}',
+                  style: AppStyles.body.copyWith(fontSize: 13),
+                ),
+                IconButton(
+                  icon: Icon(Icons.close_rounded,
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                      size: 20),
+                  onPressed: () => _onSeatTap(seat),
+                ),
+              ],
+            ),
+          );
+        },
+      );
 }
 
 // --- REUSABLE WIDGETS ---
@@ -1064,17 +1111,24 @@ class SeatWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Color borderColor = ThemeAwareColors.seatBooked(context);
     Color backgroundColor = ThemeAwareColors.seatBooked(context);
-    Color contentColor = Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey;
+    Color contentColor =
+        Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey;
 
     if (seat.isAvailable) {
       if (seat.isLadiesSeat) {
         borderColor = ThemeAwareColors.seatLadies(context);
-        backgroundColor = ThemeAwareColors.seatLadies(context).withOpacity(0.15);
+        backgroundColor =
+            ThemeAwareColors.seatLadies(context).withOpacity(0.15);
         contentColor = ThemeAwareColors.seatLadies(context);
+      } else if (seat.isMalesSeat) {
+        borderColor = ThemeAwareColors.seatMales(context);
+        backgroundColor = ThemeAwareColors.seatMales(context).withOpacity(0.15);
+        contentColor = ThemeAwareColors.seatMales(context);
       } else {
         borderColor = Theme.of(context).dividerColor;
         backgroundColor = Theme.of(context).cardColor;
-        contentColor = Theme.of(context).textTheme.titleLarge?.color ?? Colors.black;
+        contentColor =
+            Theme.of(context).textTheme.titleLarge?.color ?? Colors.black;
       }
     }
 
@@ -1084,33 +1138,42 @@ class SeatWidget extends StatelessWidget {
       contentColor = Colors.white;
     }
 
-    return Tooltip(
-      message: seat.isAvailable
-          ? 'Seat ${seat.seatName} | ₹${seat.price.toStringAsFixed(0)}'
-          : 'Booked',
-      preferBelow: false,
-      decoration: BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      textStyle: GoogleFonts.poppins(
-        color: Colors.white,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-      ),
-      child: GestureDetector(
-        onTap: seat.isAvailable ? onTap : null,
-        child: TweenAnimationBuilder<double>(
-          duration: const Duration(milliseconds: 200),
-          tween: Tween(begin: 1.0, end: isSelected ? 1.08 : 1.0),
-          curve: Curves.easeOutBack,
-          builder: (context, scale, child) {
-            return Transform.scale(
+    // Icon Logic matching React
+    IconData seatIcon;
+    if (seat.isSleeper) {
+      if (seat.isMalesSeat) {
+        seatIcon = Icons.male;
+      } else if (seat.isLadiesSeat) {
+        seatIcon = Icons.female;
+      } else {
+        seatIcon = Icons.person; // User icon for generic sleeper
+      }
+    } else {
+      // Seater
+      if (seat.isMalesSeat) {
+        seatIcon = Icons.male;
+      } else if (seat.isLadiesSeat) {
+        seatIcon = Icons.female;
+      } else {
+        seatIcon = Icons.chair; // Chair icon for generic seater
+      }
+    }
+
+    return GestureDetector(
+      onTap: seat.isAvailable ? onTap : null,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 200),
+            tween: Tween(begin: 1.0, end: isSelected ? 1.08 : 1.0),
+            curve: Curves.easeOutBack,
+            builder: (context, scale, child) => Transform.scale(
               scale: scale,
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                width: 60,
-                height: 68,
+                margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                width: 36, // Smaller width
+                height: seat.isSleeper ? 58 : 36, // Smaller height
                 decoration: BoxDecoration(
                   gradient: isSelected
                       ? LinearGradient(
@@ -1123,59 +1186,55 @@ class SeatWidget extends StatelessWidget {
                         )
                       : null,
                   color: isSelected ? null : backgroundColor,
-                  borderRadius: BorderRadius.circular(seat.isSleeper ? 14 : 10),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: borderColor,
-                    width: isSelected ? 2.5 : 1.5,
+                    width: isSelected ? 2.0 : 1.5,
                   ),
                   boxShadow: [
                     if (isSelected)
                       BoxShadow(
-                        color: ThemeAwareColors.primary(context).withOpacity(0.4),
-                        blurRadius: 12,
+                        color:
+                            ThemeAwareColors.primary(context).withOpacity(0.4),
+                        blurRadius: 8,
                         spreadRadius: 0,
                         offset: const Offset(0, 4),
                       ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(isSelected ? 0.15 : 0.08),
-                      blurRadius: isSelected ? 8 : 4,
-                      offset: Offset(0, isSelected ? 3 : 2),
-                    ),
                   ],
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Stack(
+                  alignment: Alignment.center,
                   children: [
                     Icon(
-                      seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined,
+                      seatIcon,
                       color: contentColor,
-                      size: isSelected ? 24 : 22,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      seat.seatName,
-                      style: GoogleFonts.poppins(
-                        color: contentColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.3,
-                      ),
+                      size: 16,
                     ),
                     if (isSelected && seat.isAvailable)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
+                      Positioned(
+                        top: 2,
+                        right: 2,
                         child: Icon(
                           Icons.check_circle,
                           color: Colors.white,
-                          size: 14,
+                          size: 10,
                         ),
                       ),
                   ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '₹${seat.price.toStringAsFixed(0)}',
+            style: GoogleFonts.poppins(
+              fontSize: 8,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1185,34 +1244,38 @@ class SeatInfoLegend extends StatelessWidget {
   const SeatInfoLegend({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 20.0,
-      runSpacing: 10.0,
-      children: [
-        LegendItem(
-          color: Theme.of(context).cardColor,
-          borderColor: Theme.of(context).dividerColor,
-          text: 'Available',
-        ),
-        LegendItem(
-          color: ThemeAwareColors.seatBooked(context),
-          borderColor: ThemeAwareColors.seatBooked(context),
-          text: 'Booked',
-        ),
-        LegendItem(
-          color: ThemeAwareColors.seatLadies(context).withOpacity(0.15),
-          borderColor: ThemeAwareColors.seatLadies(context),
-          text: 'Ladies',
-        ),
-        LegendItem(
-          color: ThemeAwareColors.primary(context),
-          borderColor: ThemeAwareColors.primary(context),
-          text: 'Selected',
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Wrap(
+        spacing: 16.0,
+        runSpacing: 10.0,
+        alignment: WrapAlignment.center,
+        children: [
+          LegendItem(
+            color: Theme.of(context).cardColor,
+            borderColor: Theme.of(context).dividerColor,
+            text: 'Available',
+          ),
+          LegendItem(
+            color: ThemeAwareColors.seatBooked(context),
+            borderColor: ThemeAwareColors.seatBooked(context),
+            text: 'Booked',
+          ),
+          LegendItem(
+            color: ThemeAwareColors.seatLadies(context).withOpacity(0.15),
+            borderColor: ThemeAwareColors.seatLadies(context),
+            text: 'Female',
+          ),
+          LegendItem(
+            color: ThemeAwareColors.seatMales(context).withOpacity(0.15),
+            borderColor: ThemeAwareColors.seatMales(context),
+            text: 'Male',
+          ),
+          LegendItem(
+            color: ThemeAwareColors.primary(context),
+            borderColor: ThemeAwareColors.primary(context),
+            text: 'Selected',
+          ),
+        ],
+      );
 }
 
 class LegendItem extends StatelessWidget {
@@ -1228,28 +1291,26 @@ class LegendItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 14,
-          height: 14,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: borderColor, width: 1),
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(3),
+              border: Border.all(color: borderColor, width: 1),
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: AppStyles.body.copyWith(
-            fontSize: 13,
-            color: Theme.of(context).textTheme.bodySmall?.color,
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: AppStyles.body.copyWith(
+              fontSize: 10,
+              color: Theme.of(context).textTheme.bodySmall?.color,
+            ),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 }

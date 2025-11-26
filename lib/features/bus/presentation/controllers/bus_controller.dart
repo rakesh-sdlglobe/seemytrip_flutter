@@ -13,13 +13,14 @@ class BusController extends GetxController {
   RxList<BusCity> busCities = <BusCity>[].obs;
   RxList cityList = <dynamic>[].obs;
   RxBool isLoading = false.obs;
-  Rxn<BoardingPointResponse> boardingPointsResponse = Rxn<BoardingPointResponse>();
-  
+  Rxn<BoardingPointResponse> boardingPointsResponse =
+      Rxn<BoardingPointResponse>();
+
   // Store search response and params for retry after session expiry
   // ignore: unused_field
   Map<String, dynamic>? _storedSearchResponse;
   Map<String, dynamic>? _storedSearchParams;
-  
+
   // Getter for stored search response (used in booking flow)
   Map<String, dynamic>? get storedSearchResponse => _storedSearchResponse;
 
@@ -73,7 +74,8 @@ class BusController extends GetxController {
     print('Sending body: $body');
 
     try {
-      final http.Response response = await http.post(url, headers: headers, body: body);
+      final http.Response response =
+          await http.post(url, headers: headers, body: body);
 
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -147,7 +149,8 @@ class BusController extends GetxController {
     });
 
     try {
-      final http.Response response = await http.post(url, headers: headers, body: body);
+      final http.Response response =
+          await http.post(url, headers: headers, body: body);
 
       print('Status: ${response.statusCode}');
       print('Response: ${response.body}');
@@ -173,7 +176,8 @@ class BusController extends GetxController {
 
           for (var busData in busSearchResult['BusResults']) {
             try {
-              final Map<String, dynamic> busJson = busData as Map<String, dynamic>;
+              final Map<String, dynamic> busJson =
+                  busData as Map<String, dynamic>;
               results.add(BusSearchResult(
                 busOperatorName:
                     busJson['TravelName']?.toString() ?? 'Unknown Operator',
@@ -239,7 +243,7 @@ class BusController extends GetxController {
 
           // Store search response for retry after session expiry
           _storedSearchResponse = responseData;
-          _storedSearchParams = {
+          _storedSearchParams = <String, dynamic>{
             'DateOfJourney': dateOfJourney,
             'DestinationId': destinationId,
             'EndUserIp': endUserIp,
@@ -325,6 +329,88 @@ class BusController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+
+        // Check for error and retry if needed
+        // React logic: ErrorCode === 5 || ErrorMessage includes 'token' or 'trace'
+        final error = data['Error'];
+        if (error != null) {
+          final int errorCode = error['ErrorCode'] is int
+              ? error['ErrorCode']
+              : int.tryParse(error['ErrorCode'].toString()) ?? 0;
+          final String errorMessage =
+              (error['ErrorMessage'] ?? '').toString().toLowerCase();
+
+          if (errorCode == 5 ||
+              errorMessage.contains('token') ||
+              errorMessage.contains('trace')) {
+            print(
+                'Token/Trace error in seat layout (Code: $errorCode, Msg: $errorMessage), refreshing and retrying...');
+
+            // Re-authenticate
+            await authenticateBusAPI();
+            if (tokenId.value.isEmpty || endUserIp.value.isEmpty) {
+              throw Exception("Failed to re-authenticate for seat layout");
+            }
+
+            // Re-search to get new TraceId
+            if (_storedSearchParams != null) {
+              final Map<String, dynamic> newSearchParams =
+                  Map<String, dynamic>.from(_storedSearchParams!);
+              newSearchParams['TokenId'] = tokenId.value;
+              newSearchParams['EndUserIp'] = endUserIp.value;
+
+              print('Re-searching buses to get new TraceId...');
+              final http.Response searchResponse = await http.post(
+                Uri.parse(AppConfig.busSearch),
+                headers: <String, String>{'Content-Type': 'application/json'},
+                body: jsonEncode(newSearchParams),
+              );
+
+              if (searchResponse.statusCode == 200) {
+                final searchData = jsonDecode(searchResponse.body);
+                final String? newTraceId =
+                    searchData['BusSearchResult']?['TraceId']?.toString();
+
+                if (newTraceId != null && newTraceId.isNotEmpty) {
+                  print('New TraceId obtained: $newTraceId');
+                  _storedSearchResponse = searchData;
+
+                  // Retry seat layout with new credentials
+                  print('Retrying seat layout with new TraceId...');
+                  final http.Response retryResponse = await http.post(
+                    Uri.parse(AppConfig.busSeatLayout),
+                    headers: <String, String>{
+                      'Content-Type': 'application/json'
+                    },
+                    body: jsonEncode(<String, Object>{
+                      'IpAddress': endUserIp.value,
+                      'ResultIndex': resultIndex,
+                      'TraceId': newTraceId,
+                      'TokenId': tokenId.value,
+                    }),
+                  );
+
+                  if (retryResponse.statusCode == 200) {
+                    final retryData = json.decode(retryResponse.body);
+                    print('Bus seat layout data (Retry): $retryData');
+                    return retryData;
+                  } else {
+                    print(
+                        'Retry failed with status: ${retryResponse.statusCode}');
+                  }
+                } else {
+                  print('Failed to get new TraceId from search response');
+                }
+              } else {
+                print(
+                    'Failed to re-search buses: ${searchResponse.statusCode}');
+              }
+            } else {
+              print('No stored search params available for retry');
+            }
+          }
+        }
+
         print('Bus seat layout data: $data');
         return data;
       } else {
@@ -364,8 +450,7 @@ class BusController extends GetxController {
       print('endUserIp: ${endUserIp.value}');
 
       final http.Response response = await http.post(
-        Uri.parse(
-            AppConfig.busBoardingPoints),
+        Uri.parse(AppConfig.busBoardingPoints),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -387,33 +472,37 @@ class BusController extends GetxController {
         if (result != null && result['ResponseStatus'] == 1) {
           // Parse boarding points
           final List<BoardingPoint> boardingPoints =
-              (result['BoardingPointsDetails'] as List? ?? <dynamic>[]).map((bp) => BoardingPoint(
-              id: bp['CityPointIndex']?.toString() ?? '',
-              location: bp['CityPointLocation'] ?? '',
-              address: bp['CityPointAddress'] ?? '',
-              contactNumber: bp['CityPointContactNumber'] ?? '',
-              time: bp['CityPointTime'] ?? '--:--',
-              landmark: bp['CityPointLandmark'] ?? '',
-              name: bp['CityPointName'] ?? 'Unknown',
-              latitude: 0.0,
-              longitude: 0.0,
-              isDefault: bp['IsDefault'] ?? false,
-            )).toList();
+              (result['BoardingPointsDetails'] as List? ?? <dynamic>[])
+                  .map((bp) => BoardingPoint(
+                        id: bp['CityPointIndex']?.toString() ?? '',
+                        location: bp['CityPointLocation'] ?? '',
+                        address: bp['CityPointAddress'] ?? '',
+                        contactNumber: bp['CityPointContactNumber'] ?? '',
+                        time: bp['CityPointTime'] ?? '--:--',
+                        landmark: bp['CityPointLandmark'] ?? '',
+                        name: bp['CityPointName'] ?? 'Unknown',
+                        latitude: 0.0,
+                        longitude: 0.0,
+                        isDefault: bp['IsDefault'] ?? false,
+                      ))
+                  .toList();
 
           // Parse dropping points
           final List<BoardingPoint> droppingPoints =
-              (result['DroppingPointsDetails'] as List? ?? <dynamic>[]).map((dp) => BoardingPoint(
-              id: dp['CityPointIndex']?.toString() ?? '',
-              location: dp['CityPointLocation'] ?? '',
-              address: dp['CityPointAddress'] ?? '',
-              contactNumber: dp['CityPointContactNumber'] ?? '',
-              time: dp['CityPointTime'] ?? '--:--',
-              landmark: dp['CityPointLandmark'] ?? '',
-              name: dp['CityPointName'] ?? 'Unknown',
-              latitude: 0.0,
-              longitude: 0.0,
-              isDefault: dp['IsDefault'] ?? false,
-            )).toList();
+              (result['DroppingPointsDetails'] as List? ?? <dynamic>[])
+                  .map((dp) => BoardingPoint(
+                        id: dp['CityPointIndex']?.toString() ?? '',
+                        location: dp['CityPointLocation'] ?? '',
+                        address: dp['CityPointAddress'] ?? '',
+                        contactNumber: dp['CityPointContactNumber'] ?? '',
+                        time: dp['CityPointTime'] ?? '--:--',
+                        landmark: dp['CityPointLandmark'] ?? '',
+                        name: dp['CityPointName'] ?? 'Unknown',
+                        latitude: 0.0,
+                        longitude: 0.0,
+                        isDefault: dp['IsDefault'] ?? false,
+                      ))
+                  .toList();
 
           // Create a response object with both boarding and dropping points
           final BoardingPointResponse boardingResponse = BoardingPointResponse(
@@ -465,426 +554,161 @@ class BusController extends GetxController {
   }) async {
     try {
       isLoading(true);
-      
-      print('[blockBus] Starting block bus request');
-      print('[blockBus] Input params:');
-      print('  - traceId: $traceId');
-      print('  - resultIndex: $resultIndex');
-      print('  - boardingPointId: $boardingPointId');
-      print('  - droppingPointId: $droppingPointId');
-      print('  - passengers count: ${passengers.length}');
 
-      // Validate TraceId
-      if (traceId.isEmpty) {
-        print('[blockBus] ERROR: TraceId is missing or empty');
-        throw Exception('TraceId is required for blocking bus seats');
-      }
+      print('BUS BLOCK START');
+      print('traceId: $traceId | resultIndex: $resultIndex');
+      print('boarding: $boardingPointId | dropping: $droppingPointId');
 
-      // Authenticate if needed
+      if (traceId.isEmpty) throw Exception('TraceId missing');
+
+      // Ensure auth
       if (tokenId.value.isEmpty || endUserIp.value.isEmpty) {
-        print('[blockBus] TokenId or EndUserIp missing, authenticating...');
         await authenticateBusAPI();
       }
-
-      // Validate TokenId and EndUserIp
-      if (tokenId.value.isEmpty) {
-        print('[blockBus] ERROR: TokenId is missing or empty');
-        throw Exception('TokenId is required for blocking bus seats');
+      if (tokenId.value.isEmpty || endUserIp.value.isEmpty) {
+        throw Exception('Auth failed');
       }
 
-      if (endUserIp.value.isEmpty) {
-        print('[blockBus] ERROR: EndUserIp is missing or empty');
-        throw Exception('EndUserIp is required for blocking bus seats');
+      // Convert IDs
+      final int? boardingId = int.tryParse(boardingPointId);
+      final int? droppingId = int.tryParse(droppingPointId);
+
+      if (boardingId == null) throw Exception('Invalid BoardingPointId');
+      if (droppingId == null) throw Exception('Invalid DroppingPointId');
+
+      // ----------------------------------------------------
+      // 1. Get fresh seat layout
+      // ----------------------------------------------------
+      print('Fetching fresh seat layout...');
+      final Map<String, dynamic>? freshLayout =
+          await getBusSeatLayout(traceId, resultIndex);
+
+      final layout = freshLayout?['GetBusSeatLayOutResult'];
+      final seatDetails = layout?['SeatLayoutDetails'];
+
+      if (seatDetails == null) throw Exception('Seat layout missing');
+
+      // Extract fresh seat data
+      final Map<String, Map<String, dynamic>> seatsMap =
+          <String, Map<String, dynamic>>{};
+      final layoutData = seatDetails['SeatLayout'] ?? seatDetails['Seat'];
+
+      if (layoutData != null) {
+        final List list =
+            layoutData is List ? layoutData : <dynamic>[layoutData];
+        for (var seat in list) {
+          if (seat['SeatName'] != null) {
+            seatsMap[seat['SeatName'].toString()] = seat;
+          }
+        }
       }
 
-      // Convert boarding and dropping point IDs to numbers
-      final int? boardingPointIdInt = int.tryParse(boardingPointId);
-      final int? droppingPointIdInt = int.tryParse(droppingPointId);
-
-      if (boardingPointIdInt == null) {
-        print('[blockBus] ERROR: Invalid BoardingPointId: $boardingPointId');
-        throw Exception('BoardingPointId must be a valid number');
+      // Fallback: use input seat data
+      if (seatsMap.isEmpty) {
+        for (Map<String, dynamic> p in passengers) {
+          final Map<String, dynamic> s = p['Seat'] as Map<String, dynamic>;
+          seatsMap[s['SeatName'].toString()] = s;
+        }
+        print('⚠ Using fallback seat data');
       }
 
-      if (droppingPointIdInt == null) {
-        print('[blockBus] ERROR: Invalid DroppingPointId: $droppingPointId');
-        throw Exception('DroppingPointId must be a valid number');
-      }
+      print('Fresh seats loaded: ${seatsMap.keys.toList()}');
 
-      // Transform passenger list from input format to TBO API format
-      final List<Map<String, dynamic>> validatedPassengers = [];
+      // ----------------------------------------------------
+      // 2. Validate passengers & rebuild with fresh data
+      // ----------------------------------------------------
+      final List<Map<String, dynamic>> validated = <Map<String, dynamic>>[];
+
       for (int i = 0; i < passengers.length; i++) {
-        final passenger = passengers[i];
-        print('[blockBus] Processing passenger ${i + 1}: $passenger');
+        final Map<String, dynamic> p = passengers[i];
+        final inputSeat = p['Seat'];
+        final String seatName = inputSeat['SeatName'].toString();
+        final Map<String, dynamic>? freshSeat = seatsMap[seatName];
 
-        // Validate required input fields
-        if (!passenger.containsKey('FirstName') || passenger['FirstName'] == null || passenger['FirstName'].toString().isEmpty) {
-          throw Exception('Passenger ${i + 1}: FirstName is required');
-        }
-        if (!passenger.containsKey('LastName') || passenger['LastName'] == null || passenger['LastName'].toString().isEmpty) {
-          throw Exception('Passenger ${i + 1}: LastName is required');
-        }
-        if (!passenger.containsKey('Age') || passenger['Age'] == null) {
-          throw Exception('Passenger ${i + 1}: Age is required');
-        }
-        if (!passenger.containsKey('Gender') || passenger['Gender'] == null) {
-          throw Exception('Passenger ${i + 1}: Gender is required');
-        }
-        if (!passenger.containsKey('Phoneno') || passenger['Phoneno'] == null || passenger['Phoneno'].toString().isEmpty) {
-          throw Exception('Passenger ${i + 1}: Phoneno is required');
-        }
-        if (!passenger.containsKey('Email') || passenger['Email'] == null || passenger['Email'].toString().isEmpty) {
-          throw Exception('Passenger ${i + 1}: Email is required');
-        }
-        if (!passenger.containsKey('Seat') || passenger['Seat'] == null) {
-          throw Exception('Passenger ${i + 1}: Seat is required');
-        }
+        if (freshSeat == null) throw Exception('Seat $seatName missing');
 
-        final seat = passenger['Seat'] as Map<String, dynamic>?;
-        if (seat == null || seat.isEmpty) {
-          throw Exception('Passenger ${i + 1}: Seat object is required');
-        }
+        // Check availability
+        final bool isBooked = freshSeat['IsBooked'] == true ||
+            freshSeat['IsAvailable'] == false ||
+            freshSeat['SeatStatus'] == 'Booked';
 
-        if (!seat.containsKey('SeatName') || seat['SeatName'] == null || seat['SeatName'].toString().isEmpty) {
-          throw Exception('Passenger ${i + 1}: Seat.SeatName is required');
-        }
+        if (isBooked) throw Exception('Seat $seatName is no longer available');
 
-        if (!seat.containsKey('SeatFare') || seat['SeatFare'] == null) {
-          throw Exception('Passenger ${i + 1}: Seat.SeatFare is required');
-        }
+        final price = freshSeat['Price'];
+        final double fare = (price?['PublishedPrice'] ?? 0).toDouble();
+        final int gender = int.parse(p['Gender'].toString());
+        final int age = int.parse(p['Age'].toString());
+        final String title = gender == 1 ? 'Mr' : 'Ms';
 
-        // Validate Gender is an integer (1 for Male, 0 for Female)
-        final genderValue = passenger['Gender'] is int 
-            ? passenger['Gender'] 
-            : int.tryParse(passenger['Gender'].toString());
-        if (genderValue == null || (genderValue != 1 && genderValue != 0)) {
-          throw Exception('Passenger ${i + 1}: Gender must be 1 (Male) or 0 (Female)');
-        }
-
-        // Fetch PassengerId from traveler data if available, otherwise use index
-        int passengerId;
-        if (passenger.containsKey('PassengerId') && passenger['PassengerId'] != null) {
-          // Use PassengerId directly if provided
-          passengerId = passenger['PassengerId'] is int 
-              ? passenger['PassengerId'] 
-              : int.tryParse(passenger['PassengerId'].toString()) ?? i;
-          print('[blockBus] Passenger ${i + 1}: Using PassengerId from data: $passengerId');
-        } else if (passenger.containsKey('passengerId') && passenger['passengerId'] != null) {
-          // Try lowercase passengerId
-          passengerId = passenger['passengerId'] is int 
-              ? passenger['passengerId'] 
-              : int.tryParse(passenger['passengerId'].toString()) ?? i;
-          print('[blockBus] Passenger ${i + 1}: Using passengerId from data: $passengerId');
-        } else if (passenger.containsKey('id') && passenger['id'] != null) {
-          // Try id field (common in traveler lists)
-          passengerId = passenger['id'] is int 
-              ? passenger['id'] 
-              : int.tryParse(passenger['id'].toString()) ?? i;
-          print('[blockBus] Passenger ${i + 1}: Using id from data: $passengerId');
-        } else {
-          // Fallback: Generate PassengerId from index (0, 1, 2, ...)
-          passengerId = i;
-          print('[blockBus] Passenger ${i + 1}: No PassengerId found, using index: $passengerId');
-        }
-
-        // Set Title based on Gender: "Mr" for 1 (Male), "Ms" for 0 (Female)
-        final title = genderValue == 1 ? 'Mr' : 'Ms';
-
-        // Extract SeatNo from Seat.SeatName
-        final seatNo = seat['SeatName'].toString();
-
-        // Extract BaseFare from Seat.SeatFare
-        final baseFare = seat['SeatFare'] is num 
-            ? seat['SeatFare'] 
-            : double.tryParse(seat['SeatFare'].toString()) ?? 0.0;
-
-        // Set Tax to 0 for now
-        final tax = 0.0;
-
-        // Parse Age
-        final age = passenger['Age'] is int 
-            ? passenger['Age'] 
-            : int.tryParse(passenger['Age'].toString()) ?? 0;
-
-        // Extract SeatIndex from Seat.SeatIndex (if available)
-        final seatIndex = seat.containsKey('SeatIndex') && seat['SeatIndex'] != null
-            ? (seat['SeatIndex'] is int 
-                ? seat['SeatIndex'] 
-                : int.tryParse(seat['SeatIndex'].toString()) ?? 0)
-            : 0;
-
-        // Build Seat object for backend validation
-        final seatObject = <String, dynamic>{
-          'SeatIndex': seatIndex,
-          'SeatName': seatNo,
-          if (seat.containsKey('SeatType')) 'SeatType': seat['SeatType'].toString(),
-          if (seat.containsKey('SeatStatus')) 'SeatStatus': seat['SeatStatus'].toString(),
-          if (seat.containsKey('PublishedPrice')) 'PublishedPrice': seat['PublishedPrice'] is num 
-              ? seat['PublishedPrice'] 
-              : double.tryParse(seat['PublishedPrice'].toString()) ?? baseFare,
-          'SeatFare': baseFare,
-        };
-
-        // Build validated passenger object
-        // Include Seat, Phoneno, Email for backend validation (backend should strip these before sending to TBO)
-        // TBO API format: PassengerId, Title, FirstName, LastName, Age, Gender, SeatNo, Fare
-        // Backend also requires: Seat, Phoneno, Email (for validation only)
-        final validatedPassenger = <String, dynamic>{
-          'PassengerId': passengerId,
+        validated.add(<String, dynamic>{
+          'PassengerId': p['PassengerId'] ?? i + 1,
           'Title': title,
-          'FirstName': passenger['FirstName'].toString(),
-          'LastName': passenger['LastName'].toString(),
+          'FirstName': p['FirstName'],
+          'LastName': p['LastName'],
           'Age': age,
-          'Gender': genderValue,
-          'SeatId': seatIndex, // Required by API - use SeatIndex as SeatId
-          'Phoneno': passenger['Phoneno'].toString(), // Required by backend validation
-          'Email': passenger['Email'].toString(), // Required by backend validation
-          'Seat': seatObject, // Required by backend validation
-          'SeatNo': seatNo, // Required by TBO API format
-          'Fare': {
-            'BaseFare': baseFare,
-            'Tax': tax,
-          },
-        };
-
-        validatedPassengers.add(validatedPassenger);
-        print('[blockBus] Passenger ${i + 1} transformed successfully:');
-        print('[blockBus]   - PassengerId: $passengerId');
-        print('[blockBus]   - Title: $title');
-        print('[blockBus]   - Name: ${passenger['FirstName']} ${passenger['LastName']}');
-        print('[blockBus]   - Age: $age');
-        print('[blockBus]   - Gender: $genderValue');
-        print('[blockBus]   - SeatId: $seatIndex');
-        print('[blockBus]   - Phoneno: ${passenger['Phoneno']}');
-        print('[blockBus]   - Email: ${passenger['Email']}');
-        print('[blockBus]   - Seat.SeatIndex: $seatIndex');
-        print('[blockBus]   - Seat.SeatName: $seatNo');
-        print('[blockBus]   - SeatNo: $seatNo');
-        print('[blockBus]   - Fare.BaseFare: $baseFare');
-        print('[blockBus]   - Fare.Tax: $tax');
-        print('[blockBus]   Note: Backend should strip Seat/Phoneno/Email before sending to TBO');
+          'Gender': gender,
+          'Phoneno': p['Phoneno'],
+          'Email': p['Email'],
+          'SeatId': freshSeat['SeatIndex'],
+          'SeatNo': seatName,
+          'IsPrimaryPax': true, // FIX APPLIED
+          "LeadPassenger": true,
+          'Fare': <String, num>{'BaseFare': fare, 'Tax': 0},
+          'Seat': <String, dynamic>{
+            'SeatIndex': freshSeat['SeatIndex'],
+            'SeatName': seatName,
+            'SeatType': freshSeat['SeatType'] ?? 'Seater',
+            'SeatStatus': 'Available',
+            'PublishedPrice': fare,
+            'SeatFare': fare,
+            'Price': price,
+          }
+        });
       }
 
-      // Build request body matching exact API format
-      final requestBody = <String, dynamic>{
+      // ----------------------------------------------------
+      // 3. Build request body
+      // ----------------------------------------------------
+      final Map<String, Object> body = <String, Object>{
         'TokenId': tokenId.value,
         'TraceId': traceId,
         'EndUserIp': endUserIp.value,
         'ResultIndex': resultIndex,
-        'BoardingPointId': boardingPointIdInt,
-        'DroppingPointId': droppingPointIdInt,
-        'Passenger': validatedPassengers,
+        'BoardingPointId': boardingId,
+        'DroppingPointId': droppingId,
+        'Passenger': validated,
       };
 
-      print('[blockBus] Request body constructed:');
-      print('[blockBus] ${jsonEncode(requestBody)}');
+      print('BLOCK REQUEST: ${jsonEncode(body)}');
 
-      // Make the API request
-      final http.Response response = await http.post(
+      // ----------------------------------------------------
+      // 4. Call API
+      // ----------------------------------------------------
+      final http.Response res = await http.post(
         Uri.parse(AppConfig.busBlock),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestBody),
+        headers: <String, String>{'Content-Type': 'application/json'},
+        body: jsonEncode(body),
       );
 
-      print('[blockBus] Response status: ${response.statusCode}');
-      print('[blockBus] Response body: ${response.body}');
+      print('STATUS: ${res.statusCode}');
+      print('RESPONSE: ${res.body}');
 
-      // Handle non-200 status codes
-      if (response.statusCode != 200) {
-        print('[blockBus] ERROR: HTTP ${response.statusCode}');
-        try {
-          final errorData = jsonDecode(response.body);
-          final errorMessage = errorData['message'] ?? 
-              errorData['error'] ?? 
-              'Failed to block bus seats (HTTP ${response.statusCode})';
-          Get.snackbar(
-            'Error',
-            errorMessage,
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 4),
-          );
-        } catch (_) {
-          Get.snackbar(
-            'Error',
-            'Failed to block bus seats (HTTP ${response.statusCode})',
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 4),
-          );
-        }
-        return null;
+      if (res.statusCode != 200) return null;
+
+      final data = jsonDecode(res.body);
+      final block = data['BlockResult'];
+
+      if (block == null) throw Exception('Invalid block response');
+
+      if (block['ResponseStatus'] != 1) {
+        throw Exception(block['Error']?['ErrorMessage'] ?? 'Block failed');
       }
 
-      // Parse response
-      final data = jsonDecode(response.body);
-      final blockResult = data['BlockResult'];
-
-      // Check if BlockResult exists
-      if (blockResult == null) {
-        print('[blockBus] ERROR: BlockResult is null in response');
-        Get.snackbar(
-          'Error',
-          'Invalid response format: BlockResult is missing',
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 4),
-        );
-        return null;
-      }
-
-      // Check for ErrorCode 5 (session expiry) - retry logic
-      final error = blockResult['Error'];
-      if (error != null && error['ErrorCode'] == 5) {
-        print('[blockBus] Session expired (ErrorCode 5), refreshing and retrying...');
-        
-        // Re-authenticate
-        await authenticateBusAPI();
-        
-        if (tokenId.value.isEmpty || endUserIp.value.isEmpty) {
-          print('[blockBus] ERROR: Failed to re-authenticate');
-          throw Exception('Failed to re-authenticate for block after session expiry');
-        }
-
-        // Re-search to get new TraceId
-        if (_storedSearchParams == null) {
-          print('[blockBus] ERROR: No stored search params available for retry');
-          throw Exception('No stored search params available for retry after session expiry');
-        }
-
-        final newSearchParams = Map<String, dynamic>.from(_storedSearchParams!);
-        newSearchParams['TokenId'] = tokenId.value;
-        newSearchParams['EndUserIp'] = endUserIp.value;
-
-        print('[blockBus] Re-searching buses to get new TraceId...');
-        final searchResponse = await http.post(
-          Uri.parse(AppConfig.busSearch),
-          headers: <String, String>{'Content-Type': 'application/json'},
-          body: jsonEncode(newSearchParams),
-        );
-
-        if (searchResponse.statusCode != 200) {
-          print('[blockBus] ERROR: Failed to re-search buses (HTTP ${searchResponse.statusCode})');
-          throw Exception('Failed to re-search buses for new TraceId');
-        }
-
-        final searchData = jsonDecode(searchResponse.body);
-        final newTraceId = searchData['BusSearchResult']?['TraceId']?.toString();
-
-        if (newTraceId == null || newTraceId.isEmpty) {
-          print('[blockBus] ERROR: Failed to get new TraceId from search response');
-          throw Exception('Failed to get new TraceId for block retry');
-        }
-
-        print('[blockBus] New TraceId obtained: $newTraceId');
-
-        // Update stored search response
-        _storedSearchResponse = searchData;
-
-        // Build retry request body
-        final retryRequestBody = <String, dynamic>{
-          'TokenId': tokenId.value,
-          'TraceId': newTraceId,
-          'EndUserIp': endUserIp.value,
-          'ResultIndex': resultIndex,
-          'BoardingPointId': boardingPointIdInt,
-          'DroppingPointId': droppingPointIdInt,
-          'Passenger': validatedPassengers,
-        };
-
-        print('[blockBus] Retrying block with new TraceId...');
-        print('[blockBus] Retry request body: ${jsonEncode(retryRequestBody)}');
-
-        final retryResponse = await http.post(
-          Uri.parse(AppConfig.busBlock),
-          headers: <String, String>{'Content-Type': 'application/json'},
-          body: jsonEncode(retryRequestBody),
-        );
-
-        print('[blockBus] Retry response status: ${retryResponse.statusCode}');
-        print('[blockBus] Retry response body: ${retryResponse.body}');
-
-        if (retryResponse.statusCode != 200) {
-          print('[blockBus] ERROR: Retry failed with HTTP ${retryResponse.statusCode}');
-          try {
-            final errorData = jsonDecode(retryResponse.body);
-            final errorMessage = errorData['message'] ?? 
-                errorData['error'] ?? 
-                'Failed to block bus seats after retry';
-            Get.snackbar(
-              'Error',
-              errorMessage,
-              snackPosition: SnackPosition.BOTTOM,
-              duration: const Duration(seconds: 4),
-            );
-          } catch (_) {
-            Get.snackbar(
-              'Error',
-              'Failed to block bus seats after retry',
-              snackPosition: SnackPosition.BOTTOM,
-              duration: const Duration(seconds: 4),
-            );
-          }
-          return null;
-        }
-
-        final retryData = jsonDecode(retryResponse.body);
-        final retryBlockResult = retryData['BlockResult'];
-
-        if (retryBlockResult == null) {
-          print('[blockBus] ERROR: BlockResult is null in retry response');
-          Get.snackbar(
-            'Error',
-            'Invalid response format: BlockResult is missing',
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 4),
-          );
-          return null;
-        }
-
-        // Validate retry response status
-        if (retryBlockResult['ResponseStatus'] != 1) {
-          final errorMessage = retryBlockResult['Error']?['ErrorMessage'] ?? 
-              'Failed to block bus seats after retry';
-          print('[blockBus] ERROR: Retry failed - ResponseStatus: ${retryBlockResult['ResponseStatus']}');
-          Get.snackbar(
-            'Error',
-            errorMessage,
-            snackPosition: SnackPosition.BOTTOM,
-            duration: const Duration(seconds: 4),
-          );
-          return null;
-        }
-
-        print('[blockBus] SUCCESS: Bus blocked successfully after retry');
-        return retryData;
-      }
-
-      // Validate response status (must be 1 for success)
-      final responseStatus = blockResult['ResponseStatus'];
-      if (responseStatus != 1) {
-        final errorMessage = blockResult['Error']?['ErrorMessage'] ?? 
-            'Failed to block bus seats (ResponseStatus: $responseStatus)';
-        print('[blockBus] ERROR: Block failed - ResponseStatus: $responseStatus');
-        Get.snackbar(
-          'Error',
-          errorMessage,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 4),
-        );
-        return null;
-      }
-
-      print('[blockBus] SUCCESS: Bus blocked successfully');
+      print('BLOCK SUCCESS');
       return data;
-
     } catch (e) {
-      print('[blockBus] EXCEPTION: $e');
-      Get.snackbar(
-        'Error',
-        'An error occurred while blocking bus seats: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 4),
-      );
+      print('BLOCK EXCEPTION: $e');
+      Get.snackbar('Error', e.toString());
       return null;
     } finally {
       isLoading(false);
@@ -912,14 +736,45 @@ class BusController extends GetxController {
         await authenticateBusAPI();
       }
 
-      final requestBody = <String, dynamic>{
+      final List<Map<String, dynamic>> validatedPassengers =
+          <Map<String, dynamic>>[];
+      for (Map<String, dynamic> passenger in passengers) {
+        // Ensure Title is present and valid
+        String title = passenger['Title'] ?? '';
+        if (title.isEmpty) {
+          final gender = passenger['Gender'];
+          if (gender == 1 || gender == '1') {
+            title = 'Mr';
+          } else if (gender == 2 || gender == '2') {
+            title =
+                'Ms'; // Or Mrs based on age/status if available, but Ms is safer default
+          } else {
+            title = 'Mr'; // Fallback
+          }
+        }
+
+        validatedPassengers.add(<String, dynamic>{
+          'Title': title,
+          'FirstName': passenger['FirstName'],
+          'LastName': passenger['LastName'],
+          'Age': passenger['Age'],
+          'Gender': passenger['Gender'],
+          'Phoneno': passenger['Phoneno'],
+          'Email': passenger['Email'],
+          'Seat': passenger['Seat'],
+          'PassengerId': passenger['PassengerId'],
+          // Add other necessary fields if any
+        });
+      }
+
+      final Map<String, dynamic> requestBody = <String, dynamic>{
         'TokenId': tokenId.value,
         'TraceId': traceId,
         'EndUserIp': endUserIp.value,
         'ResultIndex': resultIndex,
         'BoardingPointId': boardingPointId,
         'DroppingPointId': droppingPointId,
-        'Passenger': passengers,
+        'Passenger': validatedPassengers,
       };
 
       print('Book request body: ${jsonEncode(requestBody)}');
@@ -938,45 +793,47 @@ class BusController extends GetxController {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final bookResult = data['BookResult'];
-        
+
         // Check for session expiry error (ErrorCode 5)
-        if (bookResult != null && 
-            bookResult['Error'] != null && 
+        if (bookResult != null &&
+            bookResult['Error'] != null &&
             bookResult['Error']['ErrorCode'] == 5) {
           print('Session expired (ErrorCode 5), refreshing and retrying...');
-          
+
           // Re-authenticate
           await authenticateBusAPI();
           if (tokenId.value.isEmpty || endUserIp.value.isEmpty) {
             throw Exception('Failed to re-authenticate for booking');
           }
-          
+
           // Re-search to get new TraceId
           if (_storedSearchParams != null) {
-            final newSearchParams = Map<String, dynamic>.from(_storedSearchParams!);
+            final Map<String, dynamic> newSearchParams =
+                Map<String, dynamic>.from(_storedSearchParams!);
             newSearchParams['TokenId'] = tokenId.value;
             newSearchParams['EndUserIp'] = endUserIp.value;
-            
+
             // Re-search buses to get new TraceId
-            final searchResponse = await http.post(
+            final http.Response searchResponse = await http.post(
               Uri.parse(AppConfig.busSearch),
               headers: <String, String>{'Content-Type': 'application/json'},
               body: jsonEncode(newSearchParams),
             );
-            
+
             if (searchResponse.statusCode == 200) {
               final searchData = jsonDecode(searchResponse.body);
-              final newTraceId = searchData['BusSearchResult']?['TraceId']?.toString();
-              
+              final String? newTraceId =
+                  searchData['BusSearchResult']?['TraceId']?.toString();
+
               if (newTraceId == null || newTraceId.isEmpty) {
                 throw Exception('Failed to get new TraceId for booking');
               }
-              
+
               // Update stored search response
               _storedSearchResponse = searchData;
-              
+
               // Retry booking with new credentials
-              final retryRequestBody = <String, dynamic>{
+              final Map<String, dynamic> retryRequestBody = <String, dynamic>{
                 'TokenId': tokenId.value,
                 'TraceId': newTraceId,
                 'EndUserIp': endUserIp.value,
@@ -985,27 +842,28 @@ class BusController extends GetxController {
                 'DroppingPointId': droppingPointId,
                 'Passenger': passengers,
               };
-              
+
               print('Retrying booking with new TraceId: $newTraceId');
-              final retryResponse = await http.post(
+              final http.Response retryResponse = await http.post(
                 Uri.parse(AppConfig.busBook),
                 headers: <String, String>{'Content-Type': 'application/json'},
                 body: jsonEncode(retryRequestBody),
               );
-              
+
               if (retryResponse.statusCode == 200) {
                 final retryData = jsonDecode(retryResponse.body);
                 final retryBookResult = retryData['BookResult'];
-                
-                if (retryBookResult != null && 
-                    retryBookResult['ResponseStatus'] == 1 && 
-                    (retryBookResult['Error'] == null || 
-                     retryBookResult['Error']['ErrorCode'] == 0 || 
-                     retryBookResult['Error']['ErrorCode'] == null)) {
+
+                if (retryBookResult != null &&
+                    retryBookResult['ResponseStatus'] == 1 &&
+                    (retryBookResult['Error'] == null ||
+                        retryBookResult['Error']['ErrorCode'] == 0 ||
+                        retryBookResult['Error']['ErrorCode'] == null)) {
                   print('Bus booked successfully after retry');
                   return retryData;
                 } else {
-                  final errorMessage = retryBookResult?['Error']?['ErrorMessage'] ?? 
+                  final errorMessage = retryBookResult?['Error']
+                          ?['ErrorMessage'] ??
                       'Booking failed after retry';
                   Get.snackbar(
                     'Booking Failed',
@@ -1017,7 +875,8 @@ class BusController extends GetxController {
                 }
               } else {
                 final errorData = jsonDecode(retryResponse.body);
-                final errorMessage = errorData['message'] ?? 'Failed to book bus after retry';
+                final errorMessage =
+                    errorData['message'] ?? 'Failed to book bus after retry';
                 Get.snackbar(
                   'Error',
                   errorMessage,
@@ -1033,17 +892,18 @@ class BusController extends GetxController {
             throw Exception('No stored search params available for retry');
           }
         }
-        
+
         // Check if booking was successful
-        if (bookResult != null && 
-            bookResult['ResponseStatus'] == 1 && 
-            (bookResult['Error'] == null || 
-             bookResult['Error']['ErrorCode'] == 0 || 
-             bookResult['Error']['ErrorCode'] == null)) {
+        if (bookResult != null &&
+            bookResult['ResponseStatus'] == 1 &&
+            (bookResult['Error'] == null ||
+                bookResult['Error']['ErrorCode'] == 0 ||
+                bookResult['Error']['ErrorCode'] == null)) {
           print('Bus booked successfully');
           return data;
         } else {
-          final errorMessage = bookResult?['Error']?['ErrorMessage'] ?? 'Booking failed';
+          final errorMessage =
+              bookResult?['Error']?['ErrorMessage'] ?? 'Booking failed';
           Get.snackbar(
             'Booking Failed',
             errorMessage,
@@ -1093,7 +953,7 @@ class BusController extends GetxController {
         await authenticateBusAPI();
       }
 
-      final requestBody = <String, dynamic>{
+      final Map<String, dynamic> requestBody = <String, dynamic>{
         'TokenId': tokenId.value,
         'TraceId': traceId,
         'EndUserIp': endUserIp.value,
@@ -1117,7 +977,8 @@ class BusController extends GetxController {
         return data;
       } else {
         final errorData = jsonDecode(response.body);
-        final errorMessage = errorData['message'] ?? 'Failed to get booking details';
+        final errorMessage =
+            errorData['message'] ?? 'Failed to get booking details';
         Get.snackbar(
           'Error',
           errorMessage,
@@ -1158,7 +1019,7 @@ class BusController extends GetxController {
         await authenticateBusAPI();
       }
 
-      final requestBody = <String, dynamic>{
+      final Map<String, dynamic> requestBody = <String, dynamic>{
         'TokenId': tokenId.value,
         'EndUserIp': endUserIp.value,
         'BusId': busId,
@@ -1227,15 +1088,111 @@ class BusController extends GetxController {
       isLoading(true);
       print('createBusBooking called');
 
-      final requestBody = <String, dynamic>{
+      // Extract journey date from busData
+      String? journeyDate;
+      if (busData.containsKey('JourneyDate')) {
+        journeyDate = busData['JourneyDate'];
+      } else if (busData.containsKey('journey_date')) {
+        journeyDate = busData['journey_date'];
+      } else if (busData.containsKey('DepartureTime')) {
+        try {
+          final departureTime = busData['DepartureTime'];
+          if (departureTime != null) {
+            if (departureTime.toString().contains('T')) {
+              journeyDate = departureTime.toString().split('T')[0];
+            } else {
+              // If DepartureTime is just time, we need the date from somewhere else.
+              // Try to use stored search params if available
+              if (_storedSearchParams != null &&
+                  _storedSearchParams!.containsKey('DateOfJourney')) {
+                journeyDate = _storedSearchParams!['DateOfJourney'];
+                // Convert DD/MM/YYYY to YYYY-MM-DD if needed
+                if (journeyDate!.contains('/')) {
+                  final parts = journeyDate.split('/');
+                  if (parts.length == 3) {
+                    journeyDate = '${parts[2]}-${parts[1]}-${parts[0]}';
+                  }
+                }
+              }
+            }
+          }
+        } catch (_) {}
+      }
+
+      // Fallback: if journeyDate is still null, try to find it in searchResponse
+      if (journeyDate == null && searchResponse != null) {
+        // Logic to find date in searchResponse if structure allows
+      }
+
+      // Ensure journeyDate is in YYYY-MM-DD format
+      if (journeyDate != null && journeyDate.contains('/')) {
+        final parts = journeyDate.split('/');
+        if (parts.length == 3) {
+          journeyDate = '${parts[2]}-${parts[1]}-${parts[0]}';
+        }
+      }
+
+      print('DEBUG: busData keys: ${busData.keys}');
+      print('DEBUG: busData content: $busData');
+      print('DEBUG: Resolved journeyDate: $journeyDate');
+
+      // Helper to ensure full datetime string
+      String ensureDateTime(String? timeStr, String dateStr) {
+        if (timeStr == null || timeStr.isEmpty) return '';
+        if (timeStr.contains('T') || timeStr.contains(' '))
+          return timeStr; // Already full datetime
+        if (dateStr.isEmpty) return timeStr; // Can't fix without date
+        return '$dateStr $timeStr:00'; // Append date to time
+      }
+
+      // Construct the exact structure expected by the backend
+      // Backend expects: busBookingDetails -> GetBookingDetailResult -> Itinerary
+
+      // Build Itinerary object
+      final itinerary = {
+        'Origin': busData['Origin'] ?? busData['Source'] ?? '',
+        'Destination': busData['Destination'] ?? '',
+        'TravelName': busData['TravelName'] ?? busData['TravelsName'] ?? '',
+        'BusType': busData['BusType'] ?? '',
+        'DepartureTime':
+            ensureDateTime(busData['DepartureTime'], journeyDate ?? ''),
+        'ArrivalTime': ensureDateTime(
+            busData['ArrivalTime'],
+            journeyDate ??
+                ''), // Note: Arrival might be next day, but for now using journeyDate is better than invalid time
+        'DateOfJourney': journeyDate ?? '',
+        'BusId': busData['BusId'] ?? blockData['BlockResult']?['BusId'] ?? 0,
+        'TicketNo': blockData['BlockResult']?['TicketNo'] ?? '',
+        'TravelOperatorPNR':
+            blockData['BlockResult']?['TravelOperatorPNR'] ?? '',
+        'InvoiceNumber': blockData['BlockResult']?['InvoiceNumber'] ?? '',
+        'InvoiceAmount': blockData['BlockResult']?['InvoiceAmount'] ?? 0,
+        'Status': 2, // Confirmed
+        'Passenger': travelerDetails['passengers'] ??
+            [], // Ensure this matches backend structure
+        'Price': fareDetails,
+        'BoardingPointdetails': {
+          'CityPointLocation': busData['BoardingPoint'] ?? '',
+          'CityPointTime':
+              ensureDateTime(busData['BoardingTime'], journeyDate ?? '')
+        },
+        'DroppingPointdetails': {
+          'CityPointLocation': busData['DroppingPoint'] ?? '',
+          'CityPointTime':
+              ensureDateTime(busData['DroppingTime'], journeyDate ?? '')
+        }
+      };
+
+      final busBookingDetails = {
+        'GetBookingDetailResult': {'Itinerary': itinerary}
+      };
+
+      final Map<String, dynamic> requestBody = <String, dynamic>{
         'user_id': userId,
-        'busData': busData,
-        'blockData': blockData,
-        'contactDetails': contactDetails,
-        'addressDetails': addressDetails,
-        'travelerDetails': travelerDetails,
-        'fareDetails': fareDetails,
-        if (searchResponse != null) 'searchResponse': searchResponse,
+        'busBookingDetails': busBookingDetails,
+        'payment_status': 'Completed', // Assuming payment is done
+        'payment_transaction_id':
+            'TXN_${DateTime.now().millisecondsSinceEpoch}', // Placeholder or actual ID
       };
 
       print('Create booking request body keys: ${requestBody.keys}');
@@ -1308,7 +1265,7 @@ class BusController extends GetxController {
           final List<dynamic> bookings = data['bookings'];
           return bookings.cast<Map<String, dynamic>>();
         }
-        return [];
+        return <Map<String, dynamic>>[];
       } else {
         final errorData = jsonDecode(response.body);
         final errorMessage = errorData['message'] ?? 'Failed to get bookings';
@@ -1335,7 +1292,8 @@ class BusController extends GetxController {
   }
 
   // Get bus booking details by booking ID
-  Future<Map<String, dynamic>?> getBusBookingDetailsById(String bookingId) async {
+  Future<Map<String, dynamic>?> getBusBookingDetailsById(
+      String bookingId) async {
     try {
       isLoading(true);
       print('getBusBookingDetailsById called for bookingId: $bookingId');
@@ -1366,7 +1324,8 @@ class BusController extends GetxController {
         return null;
       } else {
         final errorData = jsonDecode(response.body);
-        final errorMessage = errorData['message'] ?? 'Failed to get booking details';
+        final errorMessage =
+            errorData['message'] ?? 'Failed to get booking details';
         Get.snackbar(
           'Error',
           errorMessage,
@@ -1401,11 +1360,11 @@ class BusController extends GetxController {
       isLoading(true);
       print('updateBusBookingStatus called for bookingId: $bookingId');
 
-      final requestBody = <String, dynamic>{
+      final Map<String, dynamic> requestBody = <String, dynamic>{
         'booking_status': bookingStatus,
         'payment_status': paymentStatus,
-        if (ticketNo != null) 'ticket_no': ticketNo,
-        if (travelOperatorPnr != null) 'travel_operator_pnr': travelOperatorPnr,
+        'ticket_no': ticketNo,
+        'travel_operator_pnr': travelOperatorPnr,
       };
 
       final http.Response response = await http.put(
@@ -1433,7 +1392,8 @@ class BusController extends GetxController {
         return false;
       } else {
         final errorData = jsonDecode(response.body);
-        final errorMessage = errorData['message'] ?? 'Failed to update booking status';
+        final errorMessage =
+            errorData['message'] ?? 'Failed to update booking status';
         Get.snackbar(
           'Error',
           errorMessage,
@@ -1533,7 +1493,8 @@ class BusController extends GetxController {
         return null;
       } else {
         final errorData = jsonDecode(response.body);
-        final errorMessage = errorData['message'] ?? 'Failed to get booking stats';
+        final errorMessage =
+            errorData['message'] ?? 'Failed to get booking stats';
         Get.snackbar(
           'Error',
           errorMessage,

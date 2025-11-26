@@ -15,6 +15,7 @@ import '../../../train/presentation/screens/traveller_detail_screen.dart';
 import '../../../../core/widgets/common/traveller_form_widget.dart';
 import '../../../../core/models/traveller_form_config.dart';
 import 'passenger_form.dart';
+import 'bus_seat_layout_screen.dart';
 
 // Theme extensions for common styles
 extension ThemeStyles on BuildContext {
@@ -23,7 +24,7 @@ extension ThemeStyles on BuildContext {
   TextTheme get currentTextTheme => theme.textTheme;
   ColorScheme get colorScheme => theme.colorScheme;
   IconThemeData get iconTheme => theme.iconTheme;
-  
+
   // Colors
   Color get primaryColor => colorScheme.primary;
   Color get primaryVariantColor => colorScheme.primaryContainer;
@@ -36,37 +37,48 @@ extension ThemeStyles on BuildContext {
   Color get shadowColor => colorScheme.onSurface.withOpacity(0.1);
   Color get dividerColor => theme.dividerColor.withOpacity(0.1);
   Color get textColor => currentTextTheme.bodyLarge?.color ?? Colors.black87;
-  Color get secondaryTextColor => currentTextTheme.bodyMedium?.color ?? Colors.grey[600]!;
-  
+  Color get secondaryTextColor =>
+      currentTextTheme.bodyMedium?.color ?? Colors.grey[600]!;
+
   // Compact Text styles
-  TextStyle get titleStyle => currentTextTheme.titleLarge?.copyWith(
+  TextStyle get titleStyle =>
+      currentTextTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 16,
         letterSpacing: 0.1,
-      ) ?? const TextStyle();
+      ) ??
+      const TextStyle();
 
-  TextStyle get cardTitleStyle => currentTextTheme.titleMedium?.copyWith(
+  TextStyle get cardTitleStyle =>
+      currentTextTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 14,
-      ) ?? const TextStyle();
+      ) ??
+      const TextStyle();
 
-  TextStyle get bodyStyle => currentTextTheme.bodyLarge?.copyWith(
+  TextStyle get bodyStyle =>
+      currentTextTheme.bodyLarge?.copyWith(
         fontSize: 13,
         fontWeight: FontWeight.w500,
         height: 1.3,
-      ) ?? const TextStyle();
+      ) ??
+      const TextStyle();
 
-  TextStyle get subtitleStyle => currentTextTheme.bodySmall?.copyWith(
+  TextStyle get subtitleStyle =>
+      currentTextTheme.bodySmall?.copyWith(
         fontSize: 12,
         height: 1.2,
-      ) ?? const TextStyle();
+      ) ??
+      const TextStyle();
 
-  TextStyle get buttonStyle => textTheme.labelLarge?.copyWith(
+  TextStyle get buttonStyle =>
+      textTheme.labelLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 14,
         color: colorScheme.onPrimary,
-      ) ?? const TextStyle();
-      
+      ) ??
+      const TextStyle();
+
   // Compact spacing
   double get smallSpace => 4.0;
   double get mediumSpace => 8.0;
@@ -89,6 +101,7 @@ class BusPassengerDetailsScreen extends StatefulWidget {
     this.resultIndex,
     this.boardingPointId,
     this.droppingPointId,
+    this.selectedSeatsObjects,
     super.key,
   });
 
@@ -106,6 +119,7 @@ class BusPassengerDetailsScreen extends StatefulWidget {
   final int? resultIndex;
   final String? boardingPointId;
   final String? droppingPointId;
+  final List<dynamic>? selectedSeatsObjects;
 
   @override
   State<BusPassengerDetailsScreen> createState() =>
@@ -115,16 +129,17 @@ class BusPassengerDetailsScreen extends StatefulWidget {
 class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  
+
   // Controllers
   BusController? _busController;
   LoginController? _loginController;
   late final TravellerDetailController travellerController;
-  
+
   // Dynamic data
   String _fromCity = '';
   String _toCity = '';
   String _busName = '';
+  List<dynamic> _selectedSeatsObjects = [];
   String _travelDate = '';
   String _departureTime = '';
   String _arrivalTime = '';
@@ -136,7 +151,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   int _resultIndex = 0;
   String _boardingPointId = '';
   String _droppingPointId = '';
-  
+
   // Booking data storage
   Map<String, dynamic>? _blockResponse;
   Map<String, dynamic>? _storedBusData;
@@ -145,12 +160,12 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   Map<String, dynamic>? _storedTravelerDetails;
   Map<String, dynamic>? _storedFareDetails;
   Map<String, dynamic>? _storedSearchResponse;
-  
+
   // User data
   String _userName = '';
   String _userEmail = '';
   String _userPhone = '';
-  
+
   // Form controllers
   late final List<TextEditingController> _nameControllers;
   late final List<TextEditingController> _ageControllers;
@@ -164,20 +179,21 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
   late final List<String> _selectedIdProofTypes;
   bool _isFormValid = false;
   bool _tripProtectionEnabled = true;
-  
+
   // Animation
   late final AnimationController _animationController;
   late final Animation<double> _fadeAnimation;
-  
+
   // Loading state
   bool _isLoading = true;
   String? _errorMessage;
-  
+
   // Traveller management
   List<String> selectedTravellers = [];
   bool _showAddGuestForm = false;
   final GlobalKey<FormState> _addGuestFormKey = GlobalKey<FormState>();
-  final GlobalKey<TravellerFormWidgetState> _addGuestFormWidgetKey = GlobalKey<TravellerFormWidgetState>();
+  final GlobalKey<TravellerFormWidgetState> _addGuestFormWidgetKey =
+      GlobalKey<TravellerFormWidgetState>();
   Map<String, dynamic>? _savedGuestFormData;
   late final TravellerFormConfig _addGuestConfig;
 
@@ -193,56 +209,56 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       parent: _animationController,
       curve: Curves.easeOutCubic,
     );
-    
+
     // Initialize TravellerDetailController
     if (!Get.isRegistered<TravellerDetailController>()) {
       Get.put(TravellerDetailController());
     }
     travellerController = Get.find<TravellerDetailController>();
-    
+
     // Initialize form configuration for adding bus guests
     _addGuestConfig = TravellerFormConfig.bus(
       title: 'Add Guest',
       subtitle: 'Add a guest to your saved travellers list',
     );
-    
+
     // Initialize data dynamically
     _initializeData();
   }
-  
+
   Future<void> _initializeData() async {
     try {
       setState(() {
         _isLoading = true;
         _errorMessage = null;
       });
-      
+
       // Get controllers
       try {
         _busController = Get.find<BusController>();
       } catch (e) {
         debugPrint('BusController not found: $e');
       }
-      
+
       try {
         _loginController = Get.find<LoginController>();
       } catch (e) {
         debugPrint('LoginController not found: $e');
       }
-      
+
       // Load data from controllers or use widget parameters
       await _loadData();
-      
+
       // Initialize form controllers
       _initializeFormControllers();
-      
+
       // Load user data
       await _loadUserData();
-      
+
       setState(() {
         _isLoading = false;
       });
-      
+
       _animationController.forward();
     } catch (e) {
       debugPrint('Error initializing data: $e');
@@ -252,37 +268,38 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       });
     }
   }
-  
+
   String _convertTo12HourFormat(String time24) {
     if (time24.isEmpty || time24 == '--:--' || !time24.contains(':')) {
       return time24;
     }
-    
+
     try {
       final parts = time24.split(':');
       if (parts.length != 2) return time24;
-      
+
       int hour = int.tryParse(parts[0]) ?? 0;
       int minute = int.tryParse(parts[1]) ?? 0;
-      
+
       if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
         return time24;
       }
-      
+
       String period = hour >= 12 ? 'PM' : 'AM';
       int hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
       String minuteStr = minute.toString().padLeft(2, '0');
-      
+
       return '$hour12:$minuteStr $period';
     } catch (e) {
       return time24;
     }
   }
-  
+
   Future<void> _loadData() async {
     // Use widget parameters if available, otherwise use defaults
     _fromCity = widget.fromCity ?? 'Unknown';
     _toCity = widget.toCity ?? 'Unknown';
+    _selectedSeatsObjects = widget.selectedSeatsObjects ?? [];
     _busName = widget.busName ?? 'Unknown Bus';
     _travelDate = widget.travelDate ?? 'Date not specified';
     _departureTime = _convertTo12HourFormat(widget.departureTime ?? '--:--');
@@ -295,21 +312,22 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
     _resultIndex = widget.resultIndex ?? 0;
     _boardingPointId = widget.boardingPointId ?? '';
     _droppingPointId = widget.droppingPointId ?? '';
-    
+
     // If no seats selected, default to 1
     if (_selectedSeats.isEmpty) {
       _selectedSeats = ['1'];
     }
   }
-  
+
   Future<void> _loadUserData() async {
     if (_loginController != null && _loginController!.userData.isNotEmpty) {
       final userData = _loginController!.userData;
       _userName = userData['name']?.toString() ?? '';
       _userEmail = userData['email']?.toString() ?? '';
-      _userPhone = userData['phoneNumber']?.toString() ?? 
-                   userData['phone']?.toString() ?? '';
-      
+      _userPhone = userData['phoneNumber']?.toString() ??
+          userData['phone']?.toString() ??
+          '';
+
       // Auto-populate contact fields
       if (_userEmail.isNotEmpty && _emailController.text.isEmpty) {
         _emailController.text = _userEmail;
@@ -319,7 +337,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       }
     }
   }
-  
+
   void _initializeFormControllers() {
     // Initialize ID proof types
     _idProofTypes = [
@@ -332,7 +350,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
 
     // Initialize controllers and gender selections
     int passengerCount = _selectedSeats.length;
-    
+
     _nameControllers =
         List.generate(passengerCount, (_) => TextEditingController());
     _ageControllers =
@@ -384,53 +402,74 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
     final name = traveller['passengerName'] ?? traveller['firstname'] ?? '';
     final age = traveller['passengerAge'] ?? traveller['age'];
     final gender = traveller['passengerGender'] ?? traveller['gender'];
-    final mobile = traveller['passengerMobileNumber'] ?? traveller['mobile'] ?? traveller['phone'] ?? '';
+    final mobile = traveller['passengerMobileNumber'] ??
+        traveller['mobile'] ??
+        traveller['phone'] ??
+        '';
     final email = traveller['contact_email'] ?? traveller['email'] ?? '';
     final address = traveller['address'] ?? '';
-    
+
     // Check if all mandatory fields are present and valid
     bool hasName = name.toString().trim().isNotEmpty && name != 'Unknown';
-    bool hasAge = age != null && (age is int ? age > 0 : (int.tryParse(age.toString()) ?? 0) > 0);
+    bool hasAge = age != null &&
+        (age is int ? age > 0 : (int.tryParse(age.toString()) ?? 0) > 0);
     bool hasGender = gender != null && gender.toString().trim().isNotEmpty;
-    bool hasMobile = mobile.toString().trim().isNotEmpty && 
-                     mobile != '0000000000' && 
-                     mobile.toString().replaceAll(RegExp(r'[^\d]'), '').length >= 10;
-    bool hasEmail = email.toString().trim().isNotEmpty && 
-                    GetUtils.isEmail(email.toString().trim());
+    bool hasMobile = mobile.toString().trim().isNotEmpty &&
+        mobile != '0000000000' &&
+        mobile.toString().replaceAll(RegExp(r'[^\d]'), '').length >= 10;
+    bool hasEmail = email.toString().trim().isNotEmpty &&
+        GetUtils.isEmail(email.toString().trim());
     bool hasAddress = address.toString().trim().isNotEmpty;
-    
-    return hasName && hasAge && hasGender && hasMobile && hasEmail && hasAddress;
+
+    return hasName &&
+        hasAge &&
+        hasGender &&
+        hasMobile &&
+        hasEmail &&
+        hasAddress;
   }
-  
+
   List<String> _getMissingFields(Map<String, dynamic> traveller) {
     final missing = <String>[];
     final name = traveller['passengerName'] ?? traveller['firstname'] ?? '';
     final age = traveller['passengerAge'] ?? traveller['age'];
     final gender = traveller['passengerGender'] ?? traveller['gender'];
-    final mobile = traveller['passengerMobileNumber'] ?? traveller['mobile'] ?? traveller['phone'] ?? '';
+    final mobile = traveller['passengerMobileNumber'] ??
+        traveller['mobile'] ??
+        traveller['phone'] ??
+        '';
     final email = traveller['contact_email'] ?? traveller['email'] ?? '';
     final address = traveller['address'] ?? '';
-    
-    if (name.toString().trim().isEmpty || name == 'Unknown') missing.add('Name');
-    if (age == null || (age is int ? age <= 0 : (int.tryParse(age.toString()) ?? 0) <= 0)) missing.add('Age');
-    if (gender == null || gender.toString().trim().isEmpty) missing.add('Gender');
-    if (mobile.toString().trim().isEmpty || mobile == '0000000000' || 
-        mobile.toString().replaceAll(RegExp(r'[^\d]'), '').length < 10) missing.add('Mobile');
-    if (email.toString().trim().isEmpty || !GetUtils.isEmail(email.toString().trim())) missing.add('Email');
+
+    if (name.toString().trim().isEmpty || name == 'Unknown')
+      missing.add('Name');
+    if (age == null ||
+        (age is int ? age <= 0 : (int.tryParse(age.toString()) ?? 0) <= 0))
+      missing.add('Age');
+    if (gender == null || gender.toString().trim().isEmpty)
+      missing.add('Gender');
+    if (mobile.toString().trim().isEmpty ||
+        mobile == '0000000000' ||
+        mobile.toString().replaceAll(RegExp(r'[^\d]'), '').length < 10)
+      missing.add('Mobile');
+    if (email.toString().trim().isEmpty ||
+        !GetUtils.isEmail(email.toString().trim())) missing.add('Email');
     if (address.toString().trim().isEmpty) missing.add('Address');
-    
+
     return missing;
   }
 
   void _validateForm() {
     bool isValid = _formKey.currentState?.validate() ?? false;
-    
+
     // Also validate selected travellers have all mandatory fields
     if (selectedTravellers.isNotEmpty) {
       final travellers = travellerController.travellers;
       for (final travellerName in selectedTravellers) {
         final traveller = travellers.firstWhere(
-          (t) => (t['passengerName'] ?? t['firstname'] ?? 'Unknown') == travellerName,
+          (t) =>
+              (t['passengerName'] ?? t['firstname'] ?? 'Unknown') ==
+              travellerName,
           orElse: () => <String, dynamic>{},
         );
         if (traveller.isNotEmpty && !_isTravellerComplete(traveller)) {
@@ -463,22 +502,24 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       );
       return;
     }
-    
+
     // Validate selected travellers have all mandatory fields
     if (selectedTravellers.isNotEmpty) {
       final travellers = travellerController.travellers;
       final incompleteTravellers = <String>[];
-      
+
       for (final travellerName in selectedTravellers) {
         final traveller = travellers.firstWhere(
-          (t) => (t['passengerName'] ?? t['firstname'] ?? 'Unknown') == travellerName,
+          (t) =>
+              (t['passengerName'] ?? t['firstname'] ?? 'Unknown') ==
+              travellerName,
           orElse: () => <String, dynamic>{},
         );
         if (traveller.isNotEmpty && !_isTravellerComplete(traveller)) {
           incompleteTravellers.add(travellerName);
         }
       }
-      
+
       if (incompleteTravellers.isNotEmpty) {
         HapticFeedback.heavyImpact();
         Get.snackbar(
@@ -495,9 +536,12 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         return;
       }
     }
-    
+
     // Validate required booking parameters
-    if (_traceId.isEmpty || _resultIndex == 0 || _boardingPointId.isEmpty || _droppingPointId.isEmpty) {
+    if (_traceId.isEmpty ||
+        _resultIndex == 0 ||
+        _boardingPointId.isEmpty ||
+        _droppingPointId.isEmpty) {
       HapticFeedback.heavyImpact();
       Get.snackbar(
         'Error',
@@ -512,43 +556,47 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       );
       return;
     }
-    
+
     HapticFeedback.mediumImpact();
-    
+
     try {
       // STEP 1: Prepare passenger data
       print('\n═══════════════════════════════════════════════════════════');
       print('🚌 BUS BOOKING FLOW STARTED');
       print('═══════════════════════════════════════════════════════════');
       print('📋 STEP 1: Preparing Passenger Data');
-      
+
       final List<Map<String, dynamic>> passengers = _preparePassengerData();
       if (passengers.isEmpty) {
         throw Exception('Failed to prepare passenger data');
       }
-      
+
       print('   ✅ Prepared ${passengers.length} passenger(s)');
       print('');
-      
+
       // STEP 2: Store booking data for later use
       _storedContactDetails = {
-        'email': _emailController.text.trim().isNotEmpty 
-            ? _emailController.text.trim() 
-            : _userEmail.isNotEmpty ? _userEmail : 'guest@example.com',
-        'mobile': _phoneController.text.trim().isNotEmpty 
-            ? _phoneController.text.trim() 
-            : _userPhone.isNotEmpty ? _userPhone : '0000000000',
+        'email': _emailController.text.trim().isNotEmpty
+            ? _emailController.text.trim()
+            : _userEmail.isNotEmpty
+                ? _userEmail
+                : 'guest@example.com',
+        'mobile': _phoneController.text.trim().isNotEmpty
+            ? _phoneController.text.trim()
+            : _userPhone.isNotEmpty
+                ? _userPhone
+                : '0000000000',
         'fromCityName': _fromCity,
         'toCityName': _toCity,
       };
-      
+
       _storedAddressDetails = {
         'address': '', // Bus booking may not require full address
         'city': _fromCity,
         'state': '',
         'pincode': '',
       };
-      
+
       _storedTravelerDetails = {};
       for (int i = 0; i < passengers.length; i++) {
         final seatLabel = _selectedSeats[i];
@@ -563,14 +611,15 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
           'idNumber': passengers[i]['IdNumber'],
         };
       }
-      
+
       _storedFareDetails = {
         'baseFare': _fare,
-        'total': (_fare * _selectedSeats.length) + 
+        'total': (_fare * _selectedSeats.length) +
             (_tripProtectionEnabled ? (109 * _selectedSeats.length) : 0),
-        'tripProtection': _tripProtectionEnabled ? (109 * _selectedSeats.length) : 0,
+        'tripProtection':
+            _tripProtectionEnabled ? (109 * _selectedSeats.length) : 0,
       };
-      
+
       _storedBusData = {
         'bus_id': null, // Will be set after booking
         'TravelName': _busName,
@@ -582,15 +631,15 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         'total_seats': 0,
         'AvailableSeats': 0,
       };
-      
+
       // STEP 3: Block seats before payment
       print('📋 STEP 2: Blocking Bus Seats');
       print('   🔄 Calling block API...');
-      
+
       if (_busController == null) {
         throw Exception('BusController not available');
       }
-      
+
       final blockResponse = await _busController!.blockBus(
         traceId: _traceId,
         resultIndex: _resultIndex,
@@ -598,44 +647,53 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         droppingPointId: _droppingPointId,
         passengers: passengers,
       );
-      
+
       if (blockResponse == null) {
         throw Exception('Failed to block bus seats');
       }
-      
+
       _blockResponse = blockResponse;
       print('   ✅ Seats blocked successfully');
       print('');
-      
+
       // STEP 4: Proceed to payment
       print('📋 STEP 3: Initiating Payment');
-      final totalAmount = (_fare * _selectedSeats.length) + 
+      final totalAmount = (_fare * _selectedSeats.length) +
           (_tripProtectionEnabled ? (109 * _selectedSeats.length) : 0);
-      
+
       print('   💰 Payment Amount: ₹$totalAmount');
       print('   🔄 Opening payment gateway...');
       print('');
-      
+
       if (!mounted) return;
-      
+
       await Get.to(
         () => EasebuzzPaymentWidget(
           amount: totalAmount,
-          name: _nameControllers.isNotEmpty && _nameControllers[0].text.trim().isNotEmpty 
-              ? _nameControllers[0].text.trim() 
-              : _userName.isNotEmpty ? _userName : 'Guest',
-          email: _emailController.text.trim().isNotEmpty 
-              ? _emailController.text.trim() 
-              : _userEmail.isNotEmpty ? _userEmail : 'guest@example.com',
-          phone: _phoneController.text.trim().isNotEmpty 
-              ? _phoneController.text.trim() 
-              : _userPhone.isNotEmpty ? _userPhone : '0000000000',
+          name: _nameControllers.isNotEmpty &&
+                  _nameControllers[0].text.trim().isNotEmpty
+              ? _nameControllers[0].text.trim()
+              : _userName.isNotEmpty
+                  ? _userName
+                  : 'Guest',
+          email: _emailController.text.trim().isNotEmpty
+              ? _emailController.text.trim()
+              : _userEmail.isNotEmpty
+                  ? _userEmail
+                  : 'guest@example.com',
+          phone: _phoneController.text.trim().isNotEmpty
+              ? _phoneController.text.trim()
+              : _userPhone.isNotEmpty
+                  ? _userPhone
+                  : '0000000000',
           productInfo: 'Bus Ticket - $_busName',
           onSuccess: () async {
             print('\n');
-            print('═══════════════════════════════════════════════════════════');
+            print(
+                '═══════════════════════════════════════════════════════════');
             print('💳 PAYMENT SUCCESSFUL');
-            print('═══════════════════════════════════════════════════════════');
+            print(
+                '═══════════════════════════════════════════════════════════');
             print('📅 Timestamp: ${DateTime.now().toIso8601String()}');
             print('');
             // Call complete booking after successful payment
@@ -643,12 +701,14 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
           },
           onFailure: () {
             print('\n');
-            print('═══════════════════════════════════════════════════════════');
+            print(
+                '═══════════════════════════════════════════════════════════');
             print('❌ PAYMENT FAILED');
-            print('═══════════════════════════════════════════════════════════');
+            print(
+                '═══════════════════════════════════════════════════════════');
             print('📅 Timestamp: ${DateTime.now().toIso8601String()}');
             print('');
-            
+
             // Clear stored data on payment failure
             _blockResponse = null;
             _storedBusData = null;
@@ -656,7 +716,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             _storedAddressDetails = null;
             _storedTravelerDetails = null;
             _storedFareDetails = null;
-            
+
             Get.snackbar(
               'Payment Failed',
               'Payment was not successful. Please try again.',
@@ -688,11 +748,11 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       );
     }
   }
-  
+
   List<Map<String, dynamic>> _preparePassengerData() {
     final List<Map<String, dynamic>> passengers = [];
     final travellers = travellerController.travellers;
-    
+
     // Ensure we create a passenger for each selected seat
     for (int i = 0; i < _selectedSeats.length; i++) {
       // Get and validate name
@@ -700,13 +760,12 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       if (name.isEmpty) {
         throw Exception('Passenger ${i + 1} name is required');
       }
-      
+
       final nameParts = name.split(' ');
       final firstName = nameParts.isNotEmpty ? nameParts[0] : name;
-      final lastName = nameParts.length > 1 
-          ? nameParts.sublist(1).join(' ') 
-          : '';
-      
+      final lastName =
+          nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
       // Validate and get age
       final ageText = _ageControllers[i].text.trim();
       if (ageText.isEmpty) {
@@ -716,99 +775,115 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       if (age == null || age <= 0 || age > 120) {
         throw Exception('Passenger ${i + 1} has invalid age');
       }
-      
+
       // Validate and get gender
-      final genderIndex = _genderSelections[i].indexWhere((selected) => selected);
+      final genderIndex =
+          _genderSelections[i].indexWhere((selected) => selected);
       if (genderIndex == -1) {
         throw Exception('Passenger ${i + 1} gender is required');
       }
       // Convert genderIndex to integer: 0 (Male) -> 1, 1 (Female) -> 0
       final genderValue = genderIndex == 0 ? 1 : (genderIndex == 1 ? 0 : 1);
       // Keep genderCode as string for comparison with traveler data
-      final genderCode = genderIndex == 0 ? 'M' : (genderIndex == 1 ? 'F' : 'M');
-      
+      final genderCode =
+          genderIndex == 0 ? 'M' : (genderIndex == 1 ? 'F' : 'M');
+
       // Get contact details (required)
-      final phone = _phoneController.text.trim().isNotEmpty 
-          ? _phoneController.text.trim() 
-          : _userPhone.isNotEmpty ? _userPhone : '';
+      final phone = _phoneController.text.trim().isNotEmpty
+          ? _phoneController.text.trim()
+          : _userPhone.isNotEmpty
+              ? _userPhone
+              : '';
       if (phone.isEmpty) {
         throw Exception('Contact phone number is required');
       }
-      
-      final email = _emailController.text.trim().isNotEmpty 
-          ? _emailController.text.trim() 
-          : _userEmail.isNotEmpty ? _userEmail : '';
+
+      final email = _emailController.text.trim().isNotEmpty
+          ? _emailController.text.trim()
+          : _userEmail.isNotEmpty
+              ? _userEmail
+              : '';
       if (email.isEmpty || !GetUtils.isEmail(email)) {
         throw Exception('Valid contact email is required');
       }
-      
+
       // Try to find matching traveler and get passengerId
       int? passengerId;
       try {
         final matchingTraveller = travellers.firstWhere(
           (t) {
-            final travellerName = (t['passengerName'] ?? t['firstname'] ?? '').toString().trim();
+            final travellerName =
+                (t['passengerName'] ?? t['firstname'] ?? '').toString().trim();
             final travellerAge = t['passengerAge'] ?? t['age'];
-            final travellerAgeNum = travellerAge is int ? travellerAge : int.tryParse(travellerAge.toString());
-            final travellerGender = (t['passengerGender'] ?? t['gender'] ?? '').toString().toUpperCase();
-            final travellerPhone = (t['passengerMobileNumber'] ?? t['mobile'] ?? '').toString().trim();
-            
+            final travellerAgeNum = travellerAge is int
+                ? travellerAge
+                : int.tryParse(travellerAge.toString());
+            final travellerGender = (t['passengerGender'] ?? t['gender'] ?? '')
+                .toString()
+                .toUpperCase();
+            final travellerPhone =
+                (t['passengerMobileNumber'] ?? t['mobile'] ?? '')
+                    .toString()
+                    .trim();
+
             // Match by name, age, gender, and phone
             return travellerName.toLowerCase() == name.toLowerCase() &&
-                   travellerAgeNum == age &&
-                   (travellerGender == genderCode || travellerGender.isEmpty) &&
-                   (travellerPhone == phone || travellerPhone.isEmpty);
+                travellerAgeNum == age &&
+                (travellerGender == genderCode || travellerGender.isEmpty) &&
+                (travellerPhone == phone || travellerPhone.isEmpty);
           },
           orElse: () => <String, dynamic>{},
         );
-        
+
         if (matchingTraveller.isNotEmpty) {
-          final travellerPassengerId = matchingTraveller['passengerId'] ?? matchingTraveller['id'];
+          final travellerPassengerId =
+              matchingTraveller['passengerId'] ?? matchingTraveller['id'];
           if (travellerPassengerId != null) {
-            passengerId = travellerPassengerId is int 
-                ? travellerPassengerId 
+            passengerId = travellerPassengerId is int
+                ? travellerPassengerId
                 : int.tryParse(travellerPassengerId.toString());
             if (passengerId != null) {
-              print('✅ Passenger ${i + 1}: Found matching traveler with passengerId: $passengerId');
+              print(
+                  '✅ Passenger ${i + 1}: Found matching traveler with passengerId: $passengerId');
             }
           }
         }
       } catch (e) {
-        print('ℹ️ Passenger ${i + 1}: No matching traveler found, will use index: $e');
+        print(
+            'ℹ️ Passenger ${i + 1}: No matching traveler found, will use index: $e');
       }
-      
+
       // Get ID details (optional)
-      final idType = _selectedIdProofTypes[i].isNotEmpty 
-          ? _selectedIdProofTypes[i] 
+      final idType =
+          _selectedIdProofTypes[i].isNotEmpty ? _selectedIdProofTypes[i] : null;
+      final idNumber = _idNumberControllers[i].text.trim().isNotEmpty
+          ? _idNumberControllers[i].text.trim()
           : null;
-      final idNumber = _idNumberControllers[i].text.trim().isNotEmpty 
-          ? _idNumberControllers[i].text.trim() 
-          : null;
-      
+
       // Get seat information - ensure it's a valid string
       final seatNameRaw = _selectedSeats[i];
       String seatName = seatNameRaw.toString();
-      
+
       // Validate seat name is not empty or invalid
-      if (seatName.isEmpty || 
-          seatName == 'null' || 
+      if (seatName.isEmpty ||
+          seatName == 'null' ||
           seatName.contains('Instance of') ||
           seatName.trim().isEmpty) {
         throw Exception('Passenger ${i + 1} seat name is invalid: $seatName');
       }
-      
+
       // Clean up seat name (remove any extra whitespace)
       seatName = seatName.trim();
-      
+
       // Calculate SeatIndex - the API expects this to match the actual seat index from layout
       // For seats like "2-1", calculate as: (row * 1000) + col
       // For simple numbers like "3", use the number directly
       final seatIndex = _parseSeatIndex(seatName);
-      
+
       print('🔍 Passenger ${i + 1} Seat Info:');
       print('   SeatName: $seatName');
       print('   SeatIndex: $seatIndex');
-      
+
       // Create passenger object with all required fields
       // IMPORTANT: The API expects specific data types and structure
       // - All numeric fields must be numbers (not strings)
@@ -816,21 +891,56 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       // - Gender must be an integer (1 for Male, 0 for Female)
       final passenger = <String, dynamic>{
         'FirstName': firstName,
-        'LastName': lastName.isNotEmpty ? lastName : firstName, // Use firstName as lastName if empty
+        'LastName': lastName.isNotEmpty
+            ? lastName
+            : firstName, // Use firstName as lastName if empty
         'Age': age, // Integer
         'Gender': genderValue, // Integer: 1 for Male, 0 for Female
         'Phoneno': phone, // String
         'Email': email, // String
         'Seat': <String, dynamic>{
-          'SeatIndex': seatIndex, // Integer - must match actual seat index from layout
+          'SeatIndex':
+              seatIndex, // Integer - must match actual seat index from layout
           'SeatName': seatName, // String
-          'SeatType': 'Seater', // String - Default, can be updated from seat layout
+          'SeatType':
+              'Seater', // String - Default, can be updated from seat layout
           'SeatStatus': 'Available', // String
           'PublishedPrice': _fare.toDouble(), // Double/Number (not string)
           'SeatFare': _fare.toDouble(), // Double/Number (not string)
         },
       };
-      
+
+      // If we have full seat object details, use them to populate Price and other fields
+      if (_selectedSeatsObjects.isNotEmpty &&
+          i < _selectedSeatsObjects.length) {
+        final seatObj = _selectedSeatsObjects[i];
+        if (seatObj is Seat) {
+          passenger['Seat']['SeatType'] =
+              seatObj.isSleeper ? 'Sleeper' : 'Seater';
+          passenger['Seat']['SeatStatus'] =
+              seatObj.isAvailable ? 'Available' : 'Booked';
+
+          // Use price from seat object if available
+          if (seatObj.price > 0) {
+            passenger['Seat']['PublishedPrice'] = seatObj.price;
+            passenger['Seat']['SeatFare'] = seatObj.price;
+          }
+
+          // Add Price object if available
+          if (seatObj.priceMap.isNotEmpty) {
+            passenger['Seat']['Price'] = seatObj.priceMap;
+          }
+        } else if (seatObj is Map<String, dynamic>) {
+          // Handle if it's a Map
+          if (seatObj.containsKey('SeatType'))
+            passenger['Seat']['SeatType'] = seatObj['SeatType'];
+          if (seatObj.containsKey('SeatStatus'))
+            passenger['Seat']['SeatStatus'] = seatObj['SeatStatus'];
+          if (seatObj.containsKey('Price'))
+            passenger['Seat']['Price'] = seatObj['Price'];
+        }
+      }
+
       // Add passengerId if found from traveler data
       if (passengerId != null) {
         passenger['PassengerId'] = passengerId;
@@ -838,39 +948,71 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         passenger['id'] = passengerId;
         print('   PassengerId: $passengerId (from traveler data)');
       } else {
-        print('   PassengerId: Not found in traveler data, will use index in blockBus');
+        print(
+            '   PassengerId: Not found in traveler data, will use index in blockBus');
       }
-      
+
       print('📝 Passenger ${i + 1} Data:');
       print('   FirstName: ${passenger['FirstName']}');
       print('   LastName: ${passenger['LastName']}');
       print('   Age: ${passenger['Age']} (${passenger['Age'].runtimeType})');
-      print('   Gender: ${passenger['Gender']} (${passenger['Gender'].runtimeType})');
+      print(
+          '   Gender: ${passenger['Gender']} (${passenger['Gender'].runtimeType})');
       print('   Phoneno: ${passenger['Phoneno']}');
       print('   Email: ${passenger['Email']}');
-      print('   Seat.SeatIndex: ${passenger['Seat']['SeatIndex']} (${passenger['Seat']['SeatIndex'].runtimeType})');
+      print(
+          '   Seat.SeatIndex: ${passenger['Seat']['SeatIndex']} (${passenger['Seat']['SeatIndex'].runtimeType})');
       print('   Seat.SeatName: ${passenger['Seat']['SeatName']}');
-      print('   Seat.PublishedPrice: ${passenger['Seat']['PublishedPrice']} (${passenger['Seat']['PublishedPrice'].runtimeType})');
-      print('   Seat.SeatFare: ${passenger['Seat']['SeatFare']} (${passenger['Seat']['SeatFare'].runtimeType})');
-      
+      print(
+          '   Seat.PublishedPrice: ${passenger['Seat']['PublishedPrice']} (${passenger['Seat']['PublishedPrice'].runtimeType})');
+      print(
+          '   Seat.SeatFare: ${passenger['Seat']['SeatFare']} (${passenger['Seat']['SeatFare'].runtimeType})');
+
       // Add ID details only if both are provided (optional)
-      if (idType != null && idType.isNotEmpty && idNumber != null && idNumber.isNotEmpty) {
+      if (idType != null &&
+          idType.isNotEmpty &&
+          idNumber != null &&
+          idNumber.isNotEmpty) {
         passenger['IdType'] = idType;
         passenger['IdNumber'] = idNumber;
       }
-      
+
       passengers.add(passenger);
     }
-    
+
     // Ensure we have the same number of passengers as seats
     if (passengers.length != _selectedSeats.length) {
-      throw Exception('Number of passengers (${passengers.length}) does not match number of seats (${_selectedSeats.length})');
+      throw Exception(
+          'Number of passengers (${passengers.length}) does not match number of seats (${_selectedSeats.length})');
     }
-    
+
     return passengers;
   }
-  
+
   int _parseSeatIndex(String seatName) {
+    // First check if we have the seat object stored to get the exact SeatIndex
+    if (_selectedSeatsObjects.isNotEmpty) {
+      for (var seatObj in _selectedSeatsObjects) {
+        if (seatObj is Seat && seatObj.seatName == seatName) {
+          // Seat object doesn't store original SeatIndex directly in properties shown in Seat class
+          // But we added rawJson, so we can check that
+          if (seatObj.rawJson.containsKey('SeatIndex')) {
+            final idx = seatObj.rawJson['SeatIndex'];
+            if (idx is int) return idx;
+            if (idx is String) return int.tryParse(idx) ?? 1;
+          }
+        } else if (seatObj is Map &&
+            (seatObj['SeatName'] == seatName ||
+                seatObj['seatName'] == seatName)) {
+          if (seatObj.containsKey('SeatIndex')) {
+            final idx = seatObj['SeatIndex'];
+            if (idx is int) return idx;
+            if (idx is String) return int.tryParse(idx) ?? 1;
+          }
+        }
+      }
+    }
+
     // Try to parse seat name like "2-1" or "1" to integer
     // The API expects SeatIndex as an integer
     // For seats like "2-1", convert to format: row * 1000 + col
@@ -892,19 +1034,19 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
     // Otherwise default to 1
     return 1;
   }
-  
+
   Future<void> _completeBooking() async {
     try {
       print('📋 STEP 4: Completing Bus Booking');
       print('   🔄 Calling book API...');
-      
+
       if (_busController == null || _blockResponse == null) {
         throw Exception('Missing required data for booking');
       }
-      
+
       // Prepare passenger data again for booking
       final passengers = _preparePassengerData();
-      
+
       // STEP 5: Book the bus
       final bookResponse = await _busController!.bookBus(
         traceId: _traceId,
@@ -913,29 +1055,29 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         droppingPointId: _droppingPointId,
         passengers: passengers,
       );
-      
+
       if (bookResponse == null) {
         throw Exception('Failed to book bus');
       }
-      
+
       print('   ✅ Bus booked successfully');
-      
+
       // Extract BusId from response
       final busId = bookResponse['BookResult']?['BusId']?.toString() ?? '';
       if (busId.isNotEmpty && _storedBusData != null) {
         _storedBusData!['bus_id'] = busId;
       }
-      
+
       print('');
-      
+
       // STEP 6: Save booking to database
       print('📋 STEP 5: Saving Booking to Database');
       print('   🔄 Saving booking with payment transaction...');
-      
-      final userId = _loginController?.userData['user_id'] ?? 
-                     _loginController?.userData['userId'] ?? 
-                     null;
-      
+
+      final userId = _loginController?.userData['user_id'] ??
+          _loginController?.userData['userId'] ??
+          null;
+
       // Get payment transaction details (if available from payment widget)
       // Note: In a real implementation, you'd get this from the payment callback
       final bookingData = await _busController!.createBusBooking(
@@ -948,13 +1090,13 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         fareDetails: _storedFareDetails ?? {},
         searchResponse: _storedSearchResponse,
       );
-      
+
       if (bookingData != null && bookingData['success'] == true) {
         print('   ✅ Booking saved to database successfully');
         print('      Booking ID: ${bookingData['booking_id']}');
         print('      Booking Reference: ${bookingData['booking_reference']}');
         print('');
-        
+
         // STEP 7: Update booking status with payment details
         final bookingId = bookingData['booking_id']?.toString();
         if (bookingId != null) {
@@ -962,17 +1104,18 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
           await _busController!.updateBusBookingStatus(
             bookingId: bookingId,
             bookingStatus: 'Confirmed',
-            paymentStatus: 'Paid',
+            paymentStatus: 'Completed',
             ticketNo: bookResponse['BookResult']?['TicketNo']?.toString(),
-            travelOperatorPnr: bookResponse['BookResult']?['PNR']?.toString(),
+            travelOperatorPnr: bookResponse['BookResult']?['PNR']?.toString() ??
+                bookResponse['BookResult']?['TravelOperatorPNR']?.toString(),
           );
         }
-        
+
         print('═══════════════════════════════════════════════════════════');
         print('✅ BOOKING COMPLETED SUCCESSFULLY');
         print('═══════════════════════════════════════════════════════════');
         print('');
-        
+
         Get.snackbar(
           'Booking Confirmed!',
           'Your bus booking has been confirmed. Booking ID: ${bookingData['booking_reference']}',
@@ -984,14 +1127,14 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
           icon: const Icon(Icons.check_circle, color: Colors.white),
           duration: const Duration(seconds: 5),
         );
-        
+
         // Navigate back or to booking confirmation screen
         Get.back(); // Go back to previous screen
       } else {
         print('   ⚠️  WARNING: Booking confirmed but not saved to database');
         print('      💡 This should be handled by backend or retried later');
         print('');
-        
+
         Get.snackbar(
           'Booking Confirmed',
           'Your bus booking is confirmed. Please note your booking reference.',
@@ -1007,7 +1150,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
     } catch (e) {
       print('❌ Error completing booking: $e');
       print('═══════════════════════════════════════════════════════════\n');
-      
+
       Get.snackbar(
         'Booking Error',
         'Payment was successful but booking confirmation failed. Please contact support with your payment reference.',
@@ -1031,7 +1174,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         body: _buildShimmerLoading(),
       );
     }
-    
+
     if (_errorMessage != null) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -1043,7 +1186,11 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               Icon(
                 Icons.error_outline,
                 size: 64,
-                color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.3),
+                color: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.color
+                    ?.withOpacity(0.3),
               ),
               const SizedBox(height: 16),
               Text(
@@ -1064,7 +1211,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.AppColors.redCA0,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -1113,7 +1261,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       bottomNavigationBar: _buildBottomBar(),
     );
   }
-  
+
   Widget _buildShimmerLoading() {
     return Shimmer.fromColors(
       baseColor: Theme.of(context).brightness == Brightness.dark
@@ -1249,7 +1397,10 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                         height: 44,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.8)],
+                            colors: [
+                              AppTheme.AppColors.redCA0,
+                              AppTheme.AppColors.redCA0.withOpacity(0.8)
+                            ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -1304,7 +1455,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color: AppTheme.AppColors.redCA0.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -1347,7 +1499,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               runSpacing: 10,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppTheme.AppColors.redCA0.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -1355,7 +1508,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.people_rounded, size: 14, color: AppTheme.AppColors.redCA0),
+                      Icon(Icons.people_rounded,
+                          size: 14, color: AppTheme.AppColors.redCA0),
                       const SizedBox(width: 6),
                       Text(
                         '${_selectedSeats.length} Traveller${_selectedSeats.length == 1 ? '' : 's'}',
@@ -1369,7 +1523,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.grey[100]!,
                     borderRadius: BorderRadius.circular(8),
@@ -1377,7 +1532,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.calendar_today_rounded, size: 14, color: Colors.black54),
+                      Icon(Icons.calendar_today_rounded,
+                          size: 14, color: Colors.black54),
                       const SizedBox(width: 6),
                       Text(
                         _travelDate,
@@ -1391,7 +1547,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.grey[100]!,
                     borderRadius: BorderRadius.circular(8),
@@ -1399,7 +1556,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.access_time_rounded, size: 14, color: Colors.black54),
+                      Icon(Icons.access_time_rounded,
+                          size: 14, color: Colors.black54),
                       const SizedBox(width: 6),
                       Text(
                         '$_departureTime - $_arrivalTime',
@@ -1417,7 +1575,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             const SizedBox(height: 10),
             Row(
               children: [
-                Icon(Icons.location_on_rounded, size: 16, color: Colors.black54),
+                Icon(Icons.location_on_rounded,
+                    size: 16, color: Colors.black54),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -1472,22 +1631,29 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                       color: Colors.grey[100]!,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.close, size: 18, color: Colors.black54),
+                    child: const Icon(Icons.close,
+                        size: 18, color: Colors.black54),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            _buildModalDetailRow('Route', '$_fromCity → $_toCity', Icons.route_rounded),
+            _buildModalDetailRow(
+                'Route', '$_fromCity → $_toCity', Icons.route_rounded),
             const SizedBox(height: 16),
             _buildModalDetailRow('Bus', _busName, Icons.directions_bus_rounded),
             const SizedBox(height: 16),
-            _buildModalDetailRow('Date & Time', '$_travelDate | $_departureTime - $_arrivalTime', Icons.calendar_today_rounded),
+            _buildModalDetailRow(
+                'Date & Time',
+                '$_travelDate | $_departureTime - $_arrivalTime',
+                Icons.calendar_today_rounded),
             const SizedBox(height: 16),
-            _buildModalDetailRow('Boarding & Dropping', '$_boardingPoint → $_droppingPoint', Icons.location_on_rounded),
+            _buildModalDetailRow('Boarding & Dropping',
+                '$_boardingPoint → $_droppingPoint', Icons.location_on_rounded),
             const SizedBox(height: 16),
-            _buildModalDetailRow('Seats', _selectedSeats.join(', '), Icons.event_seat_rounded),
+            _buildModalDetailRow(
+                'Seats', _selectedSeats.join(', '), Icons.event_seat_rounded),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
@@ -1530,7 +1696,7 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
           ],
         ),
       );
-  
+
   Widget _buildModalDetailRow(String label, String value, IconData icon) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1580,7 +1746,10 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.8)],
+                      colors: [
+                        AppTheme.AppColors.redCA0,
+                        AppTheme.AppColors.redCA0.withOpacity(0.8)
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -1750,533 +1919,562 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
       );
 
   Widget _buildTravellersSection() => Obx(() {
-    // Get ADDITIONAL GUESTS from TRAVELLERS table
-    final travellers = travellerController.travellers;
-    
-    return _buildCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // Get ADDITIONAL GUESTS from TRAVELLERS table
+        final travellers = travellerController.travellers;
+
+        return _buildCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Saved Travellers (Optional)',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Select from saved travellers or add new (${selectedTravellers.length} selected)',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.black54,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _showAddGuestForm = !_showAddGuestForm;
-                    });
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.AppColors.redCA0.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppTheme.AppColors.redCA0, width: 1),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _showAddGuestForm ? Icons.close : Icons.add,
-                          color: AppTheme.AppColors.redCA0,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _showAddGuestForm ? 'Cancel' : 'Add Guest',
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: AppTheme.AppColors.redCA0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => Get.to(() => TravellerDetailScreen(
-                    travelType: TravelType.bus,
-                  )),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.blue, width: 1),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.people_outline, color: Colors.blue, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Manage',
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          
-          // Add Guest Form (expandable)
-          if (_showAddGuestForm) ...[
-            Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppTheme.AppColors.redCA0.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppTheme.AppColors.redCA0.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TravellerFormWidget(
-                    config: _addGuestConfig,
-                    formKey: _addGuestFormKey,
-                    widgetKey: _addGuestFormWidgetKey,
-                    onSaved: (data) {
-                      _savedGuestFormData = data;
-                    },
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Saved Travellers (Optional)',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Select from saved travellers or add new (${selectedTravellers.length} selected)',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _showAddGuestForm = false;
-                            _addGuestFormKey.currentState?.reset();
-                            _savedGuestFormData = null;
-                          });
-                        },
-                        child: const Text('Cancel'),
+                  const SizedBox(width: 8),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          _showAddGuestForm = !_showAddGuestForm;
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppTheme.AppColors.redCA0.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: AppTheme.AppColors.redCA0, width: 1),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _showAddGuestForm ? Icons.close : Icons.add,
+                              color: AppTheme.AppColors.redCA0,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _showAddGuestForm ? 'Cancel' : 'Add Guest',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: AppTheme.AppColors.redCA0,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () async {
-                          // Use post-frame callback to ensure widget is built
-                          await Future.microtask(() {});
-                          
-                          if (!_addGuestFormKey.currentState!.validate()) {
-                            return;
-                          }
-                          
-                          // Save the form first to ensure state is updated
-                          _addGuestFormKey.currentState?.save();
-                          
-                          // Try to get form data from widget state (primary method)
-                          Map<String, dynamic>? formData;
-                          final widgetState = _addGuestFormWidgetKey.currentState;
-                          
-                          if (widgetState != null) {
-                            formData = widgetState.getFormData();
-                            if (formData.isNotEmpty) {
-                              _savedGuestFormData = formData;
-                            }
-                          } else {
-                            formData = _savedGuestFormData;
-                          }
-                          
-                          if (formData != null && formData.isNotEmpty) {
-                            try {
-                              // Prepare data for controller
-                              final name = formData['name'] ?? formData['passengerName'] ?? '';
-                              final age = formData['age']?.toString() ?? '';
-                              final gender = formData['gender'] ?? formData['passengerGender'];
-                              final mobile = formData['mobile'] ?? formData['phone'] ?? formData['passengerMobileNumber'] ?? '';
-                              final email = formData['email'] ?? '';
-                              final address = formData['address'] ?? '';
-                              // Note: ID number and ID proof type are stored in the traveller record
-                              // but the saveTravellerDetails method doesn't currently support them
-                              // They will be saved when the traveller is used in actual booking
-                              
-                              // Validate required fields for bus
-                              if (name.isEmpty) {
-                                Get.snackbar(
-                                  'Error',
-                                  'Name is required',
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                                return;
-                              }
-                              
-                              if (age.isEmpty) {
-                                Get.snackbar(
-                                  'Error',
-                                  'Age is required',
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                                return;
-                              }
-                              
-                              final ageNum = int.tryParse(age);
-                              if (ageNum == null || ageNum < 0) {
-                                Get.snackbar(
-                                  'Error',
-                                  'Please enter a valid age',
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                                return;
-                              }
-                              
-                              if (mobile.isEmpty) {
-                                Get.snackbar(
-                                  'Error',
-                                  'Mobile number is required',
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                                return;
-                              }
-                              
-                              if (email.isEmpty) {
-                                Get.snackbar(
-                                  'Error',
-                                  'Email is required',
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                                return;
-                              }
-                              
-                              if (address.isEmpty) {
-                                Get.snackbar(
-                                  'Error',
-                                  'Address is required',
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
-                                return;
-                              }
-                              
-                              // Save the new traveller
-                              await travellerController.saveTravellerDetails(
-                                name: name,
-                                age: age,
-                                gender: gender,
-                                mobile: mobile,
-                                berthPreference: '',
-                                foodPreference: '',
-                              );
-                              
-                              // Refresh travellers list
-                              await travellerController.fetchTravelers();
-                              
-                              // Reset form and hide
-                              if (mounted) {
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Get.to(() => TravellerDetailScreen(
+                            travelType: TravelType.bus,
+                          )),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.blue, width: 1),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.people_outline,
+                                color: Colors.blue, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Manage',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Add Guest Form (expandable)
+              if (_showAddGuestForm) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.AppColors.redCA0.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppTheme.AppColors.redCA0.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TravellerFormWidget(
+                        config: _addGuestConfig,
+                        formKey: _addGuestFormKey,
+                        widgetKey: _addGuestFormWidgetKey,
+                        onSaved: (data) {
+                          _savedGuestFormData = data;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _showAddGuestForm = false;
                                 _addGuestFormKey.currentState?.reset();
                                 _savedGuestFormData = null;
-                                setState(() {
-                                  _showAddGuestForm = false;
-                                });
-                                
-                                Get.snackbar(
-                                  'Success',
-                                  'Guest added successfully',
-                                  backgroundColor: Colors.green,
-                                  colorText: Colors.white,
-                                  duration: const Duration(seconds: 2),
-                                );
+                              });
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () async {
+                              // Use post-frame callback to ensure widget is built
+                              await Future.microtask(() {});
+
+                              if (!_addGuestFormKey.currentState!.validate()) {
+                                return;
                               }
-                            } catch (e) {
-                              if (mounted) {
+
+                              // Save the form first to ensure state is updated
+                              _addGuestFormKey.currentState?.save();
+
+                              // Try to get form data from widget state (primary method)
+                              Map<String, dynamic>? formData;
+                              final widgetState =
+                                  _addGuestFormWidgetKey.currentState;
+
+                              if (widgetState != null) {
+                                formData = widgetState.getFormData();
+                                if (formData.isNotEmpty) {
+                                  _savedGuestFormData = formData;
+                                }
+                              } else {
+                                formData = _savedGuestFormData;
+                              }
+
+                              if (formData != null && formData.isNotEmpty) {
+                                try {
+                                  // Prepare data for controller
+                                  final name = formData['name'] ??
+                                      formData['passengerName'] ??
+                                      '';
+                                  final age = formData['age']?.toString() ?? '';
+                                  final gender = formData['gender'] ??
+                                      formData['passengerGender'];
+                                  final mobile = formData['mobile'] ??
+                                      formData['phone'] ??
+                                      formData['passengerMobileNumber'] ??
+                                      '';
+                                  final email = formData['email'] ?? '';
+                                  final address = formData['address'] ?? '';
+                                  // Note: ID number and ID proof type are stored in the traveller record
+                                  // but the saveTravellerDetails method doesn't currently support them
+                                  // They will be saved when the traveller is used in actual booking
+
+                                  // Validate required fields for bus
+                                  if (name.isEmpty) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Name is required',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                    return;
+                                  }
+
+                                  if (age.isEmpty) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Age is required',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                    return;
+                                  }
+
+                                  final ageNum = int.tryParse(age);
+                                  if (ageNum == null || ageNum < 0) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Please enter a valid age',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                    return;
+                                  }
+
+                                  if (mobile.isEmpty) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Mobile number is required',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                    return;
+                                  }
+
+                                  if (email.isEmpty) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Email is required',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                    return;
+                                  }
+
+                                  if (address.isEmpty) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Address is required',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                    return;
+                                  }
+
+                                  // Save the new traveller
+                                  await travellerController
+                                      .saveTravellerDetails(
+                                    name: name,
+                                    age: age,
+                                    gender: gender,
+                                    mobile: mobile,
+                                    berthPreference: '',
+                                    foodPreference: '',
+                                  );
+
+                                  // Refresh travellers list
+                                  await travellerController.fetchTravelers();
+
+                                  // Reset form and hide
+                                  if (mounted) {
+                                    _addGuestFormKey.currentState?.reset();
+                                    _savedGuestFormData = null;
+                                    setState(() {
+                                      _showAddGuestForm = false;
+                                    });
+
+                                    Get.snackbar(
+                                      'Success',
+                                      'Guest added successfully',
+                                      backgroundColor: Colors.green,
+                                      colorText: Colors.white,
+                                      duration: const Duration(seconds: 2),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (mounted) {
+                                    Get.snackbar(
+                                      'Error',
+                                      'Failed to add guest: ${e.toString()}',
+                                      backgroundColor: Colors.red,
+                                      colorText: Colors.white,
+                                    );
+                                  }
+                                }
+                              } else {
                                 Get.snackbar(
                                   'Error',
-                                  'Failed to add guest: ${e.toString()}',
+                                  'Please fill in all required fields',
                                   backgroundColor: Colors.red,
                                   colorText: Colors.white,
                                 );
                               }
-                            }
-                          } else {
-                            Get.snackbar(
-                              'Error',
-                              'Please fill in all required fields',
-                              backgroundColor: Colors.red,
-                              colorText: Colors.white,
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.AppColors.redCA0,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Add Guest'),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.AppColors.redCA0,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('Add Guest'),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-          ],
-          
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.blue[50]?.withOpacity(0.5) ?? Colors.blue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.blue[200] ?? Colors.blue, width: 1),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'You can select saved travellers to auto-fill passenger details below, or add new travellers to your saved list.',
-                    style: GoogleFonts.poppins(
-                      fontSize: 11,
-                      color: Colors.blue[900],
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (travellers.isEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  Icon(Icons.person_add_alt_1_outlined,
-                      size: 40, color: Colors.grey.withOpacity(0.5)),
-                  const SizedBox(height: 8),
-                  Text(
-                    'No saved travellers yet',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'You can add travellers or fill passenger details manually',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            )
-          else
-            ...travellers.map((traveller) {
-              final name = traveller['passengerName'] ?? 
-                          traveller['firstname'] ?? 
-                          'Unknown';
-              final age = traveller['passengerAge'] ?? traveller['age'];
-              final ageNum = age != null ? (age is int ? age : int.tryParse(age.toString())) : null;
-              final isSelected = selectedTravellers.contains(name);
-              final isComplete = _isTravellerComplete(traveller);
-              final missingFields = _getMissingFields(traveller);
-              
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
+
+              Container(
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.blue[50]?.withOpacity(0.5) ??
+                      Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: isSelected
-                        ? (isComplete ? AppTheme.AppColors.redCA0 : Colors.orange)
-                        : Colors.grey.withOpacity(0.5),
-                    width: isSelected ? 1.5 : 1,
-                  ),
-                  color: isSelected
-                      ? (isComplete 
-                          ? AppTheme.AppColors.redCA0.withOpacity(0.05)
-                          : Colors.orange.withOpacity(0.05))
-                      : Colors.transparent,
+                      color: Colors.blue[200] ?? Colors.blue, width: 1),
                 ),
-                child: Column(
+                child: Row(
                   children: [
-                    CheckboxListTile(
-                      title: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              name,
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                            ),
-                          ),
-                          if (!isComplete && isSelected)
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.orange,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'Incomplete',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (ageNum != null)
-                            Text(
-                              '$ageNum yrs • ${ageNum < 18 ? 'Child' : 'Adult'}',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          if (!isComplete && isSelected && missingFields.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text(
-                                'Missing: ${missingFields.join(", ")}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: Colors.orange[700],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      value: isSelected,
-                      onChanged: (value) {
-                        setState(() {
-                          if (value == true) {
-                            selectedTravellers.add(name);
-                            // Auto-fill passenger form if possible
-                            _fillPassengerFormFromTraveller(traveller);
-                          } else {
-                            selectedTravellers.remove(name);
-                          }
-                          _validateForm();
-                        });
-                      },
-                      activeColor: AppTheme.AppColors.redCA0,
-                    ),
-                    if (!isComplete && isSelected)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              // Navigate to edit traveller with pre-filled data
-                              final travellers = travellerController.travellers;
-                              final traveller = travellers.firstWhere(
-                                (t) => (t['passengerName'] ?? t['firstname'] ?? 'Unknown') == name,
-                                orElse: () => <String, dynamic>{},
-                              );
-                              if (traveller.isNotEmpty) {
-                                Get.to(() => TravellerDetailScreen(
-                                  traveller: traveller,
-                                  travelType: TravelType.bus,
-                                ))?.then((_) {
-                                  setState(() {
-                                    travellerController.fetchTravelers();
-                                    _validateForm();
-                                  });
-                                });
-                              }
-                            },
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.orange, width: 1),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.edit, size: 16, color: Colors.orange[700]),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'Edit Details',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.orange[700],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                    Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'You can select saved travellers to auto-fill passenger details below, or add new travellers to your saved list.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          color: Colors.blue[900],
+                          fontWeight: FontWeight.normal,
                         ),
                       ),
+                    ),
                   ],
                 ),
-              );
-            }).toList(),
-        ],
-      ),
-    );
-  });
-  
+              ),
+              const SizedBox(height: 16),
+              if (travellers.isEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      Icon(Icons.person_add_alt_1_outlined,
+                          size: 40, color: Colors.grey.withOpacity(0.5)),
+                      const SizedBox(height: 8),
+                      Text(
+                        'No saved travellers yet',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'You can add travellers or fill passenger details manually',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 12,
+                          color: Colors.grey[500],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                )
+              else
+                ...travellers.map((traveller) {
+                  final name = traveller['passengerName'] ??
+                      traveller['firstname'] ??
+                      'Unknown';
+                  final age = traveller['passengerAge'] ?? traveller['age'];
+                  final ageNum = age != null
+                      ? (age is int ? age : int.tryParse(age.toString()))
+                      : null;
+                  final isSelected = selectedTravellers.contains(name);
+                  final isComplete = _isTravellerComplete(traveller);
+                  final missingFields = _getMissingFields(traveller);
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? (isComplete
+                                ? AppTheme.AppColors.redCA0
+                                : Colors.orange)
+                            : Colors.grey.withOpacity(0.5),
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                      color: isSelected
+                          ? (isComplete
+                              ? AppTheme.AppColors.redCA0.withOpacity(0.05)
+                              : Colors.orange.withOpacity(0.05))
+                          : Colors.transparent,
+                    ),
+                    child: Column(
+                      children: [
+                        CheckboxListTile(
+                          title: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  name,
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              if (!isComplete && isSelected)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    'Incomplete',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (ageNum != null)
+                                Text(
+                                  '$ageNum yrs • ${ageNum < 18 ? 'Child' : 'Adult'}',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              if (!isComplete &&
+                                  isSelected &&
+                                  missingFields.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    'Missing: ${missingFields.join(", ")}',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 11,
+                                      color: Colors.orange[700],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          value: isSelected,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value == true) {
+                                selectedTravellers.add(name);
+                                // Auto-fill passenger form if possible
+                                _fillPassengerFormFromTraveller(traveller);
+                              } else {
+                                selectedTravellers.remove(name);
+                              }
+                              _validateForm();
+                            });
+                          },
+                          activeColor: AppTheme.AppColors.redCA0,
+                        ),
+                        if (!isComplete && isSelected)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  // Navigate to edit traveller with pre-filled data
+                                  final travellers =
+                                      travellerController.travellers;
+                                  final traveller = travellers.firstWhere(
+                                    (t) =>
+                                        (t['passengerName'] ??
+                                            t['firstname'] ??
+                                            'Unknown') ==
+                                        name,
+                                    orElse: () => <String, dynamic>{},
+                                  );
+                                  if (traveller.isNotEmpty) {
+                                    Get.to(() => TravellerDetailScreen(
+                                          traveller: traveller,
+                                          travelType: TravelType.bus,
+                                        ))?.then((_) {
+                                      setState(() {
+                                        travellerController.fetchTravelers();
+                                        _validateForm();
+                                      });
+                                    });
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: Colors.orange, width: 1),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.edit,
+                                          size: 16, color: Colors.orange[700]),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        'Edit Details',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.orange[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+            ],
+          ),
+        );
+      });
+
   void _fillPassengerFormFromTraveller(Map<String, dynamic> traveller) {
     // Find the first empty passenger slot
     for (int i = 0; i < _nameControllers.length; i++) {
@@ -2284,9 +2482,12 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         final name = traveller['passengerName'] ?? traveller['firstname'] ?? '';
         final age = traveller['passengerAge'] ?? traveller['age'];
         final gender = traveller['passengerGender'] ?? traveller['gender'];
-        final mobile = traveller['passengerMobileNumber'] ?? traveller['mobile'] ?? traveller['phone'] ?? '';
+        final mobile = traveller['passengerMobileNumber'] ??
+            traveller['mobile'] ??
+            traveller['phone'] ??
+            '';
         final email = traveller['contact_email'] ?? traveller['email'] ?? '';
-        
+
         if (name.isNotEmpty) {
           _nameControllers[i].text = name;
         }
@@ -2295,24 +2496,28 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         }
         if (gender != null) {
           // Set gender selection
-          if (gender.toString().toLowerCase().contains('male') || gender == 'M') {
+          if (gender.toString().toLowerCase().contains('male') ||
+              gender == 'M') {
             _genderSelections[i] = [true, false, false];
-          } else if (gender.toString().toLowerCase().contains('female') || gender == 'F') {
+          } else if (gender.toString().toLowerCase().contains('female') ||
+              gender == 'F') {
             _genderSelections[i] = [false, true, false];
           } else {
             _genderSelections[i] = [false, false, true];
           }
         }
-        
+
         // Fill contact details if available
-        if (mobile.isNotEmpty && mobile != '0000000000' && _phoneController.text.isEmpty) {
+        if (mobile.isNotEmpty &&
+            mobile != '0000000000' &&
+            _phoneController.text.isEmpty) {
           _phoneController.text = mobile;
         }
         if (email.isNotEmpty && _emailController.text.isEmpty) {
           _emailController.text = email;
         }
         // Note: Address validation is checked in _isTravellerComplete but not auto-filled here
-        
+
         _validateForm();
         break; // Fill only one slot at a time
       }
@@ -2330,7 +2535,10 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.8)],
+                      colors: [
+                        AppTheme.AppColors.redCA0,
+                        AppTheme.AppColors.redCA0.withOpacity(0.8)
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -2860,13 +3068,18 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: _tripProtectionEnabled
-                      ? [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.8)]
+                      ? [
+                          AppTheme.AppColors.redCA0,
+                          AppTheme.AppColors.redCA0.withOpacity(0.8)
+                        ]
                       : [Colors.grey[400]!, Colors.grey[500]!],
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
-                _tripProtectionEnabled ? Icons.verified_user_rounded : Icons.verified_user_outlined,
+                _tripProtectionEnabled
+                    ? Icons.verified_user_rounded
+                    : Icons.verified_user_outlined,
                 color: Colors.white,
                 size: 22,
               ),
@@ -2922,9 +3135,10 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
 
   Widget _buildBottomBar() {
     final double totalFare = (_fare * _selectedSeats.length).toDouble();
-    final double tripProtection = _tripProtectionEnabled ? (109.0 * _selectedSeats.length) : 0.0;
+    final double tripProtection =
+        _tripProtectionEnabled ? (109.0 * _selectedSeats.length) : 0.0;
     final double finalFare = totalFare + tripProtection;
-    
+
     return Container(
       padding: EdgeInsets.only(
         left: 20,
@@ -2959,7 +3173,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             children: [
               Row(
                 children: [
-                  Icon(Icons.currency_rupee_rounded, size: 20, color: AppTheme.AppColors.redCA0),
+                  Icon(Icons.currency_rupee_rounded,
+                      size: 20, color: AppTheme.AppColors.redCA0),
                   Text(
                     finalFare.toStringAsFixed(0),
                     style: GoogleFonts.poppins(
@@ -2999,7 +3214,10 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: _isFormValid
-                    ? [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.9)]
+                    ? [
+                        AppTheme.AppColors.redCA0,
+                        AppTheme.AppColors.redCA0.withOpacity(0.9)
+                      ]
                     : [Colors.grey[400]!, Colors.grey[500]!],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -3022,7 +3240,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                 onTap: _isFormValid ? _onProceed : null,
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -3088,7 +3307,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                       color: Colors.grey[100]!,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.close, size: 18, color: Colors.black54),
+                    child: const Icon(Icons.close,
+                        size: 18, color: Colors.black54),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -3108,7 +3328,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                 ),
                 Row(
                   children: [
-                    Icon(Icons.currency_rupee_rounded, size: 16, color: Colors.black87),
+                    Icon(Icons.currency_rupee_rounded,
+                        size: 16, color: Colors.black87),
                     Text(
                       totalFare.toStringAsFixed(0),
                       style: GoogleFonts.poppins(
@@ -3136,7 +3357,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   ),
                   Row(
                     children: [
-                      Icon(Icons.currency_rupee_rounded, size: 16, color: Colors.black87),
+                      Icon(Icons.currency_rupee_rounded,
+                          size: 16, color: Colors.black87),
                       Text(
                         (109 * _selectedSeats.length).toStringAsFixed(0),
                         style: GoogleFonts.poppins(
@@ -3184,7 +3406,8 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
                   ),
                   Row(
                     children: [
-                      Icon(Icons.currency_rupee_rounded, size: 22, color: AppTheme.AppColors.redCA0),
+                      Icon(Icons.currency_rupee_rounded,
+                          size: 22, color: AppTheme.AppColors.redCA0),
                       Text(
                         finalFare.toStringAsFixed(0),
                         style: GoogleFonts.poppins(
@@ -3203,4 +3426,3 @@ class _BusPassengerDetailsScreenState extends State<BusPassengerDetailsScreen>
         ),
       );
 }
-

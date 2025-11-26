@@ -13,7 +13,6 @@ import '../controllers/bus_controller.dart';
 import 'bus_passenger_details_screen.dart';
 import 'bus_seat_layout_screen.dart';
 
-
 class BoardingPointScreen extends StatefulWidget {
   final String? traceId;
   final int? resultIndex;
@@ -46,7 +45,8 @@ class BoardingPointScreen extends StatefulWidget {
   State<BoardingPointScreen> createState() => _BoardingPointScreenState();
 }
 
-class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerProviderStateMixin {
+class _BoardingPointScreenState extends State<BoardingPointScreen>
+    with TickerProviderStateMixin {
   final BusController _busController = Get.find<BusController>();
   BoardingPoint? _selectedBoardingPoint;
   BoardingPoint? _selectedDroppingPoint;
@@ -54,7 +54,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
   final MapController _mapController = MapController();
   List<Marker> _boardingMarkers = <Marker>[];
   List<Marker> _droppingMarkers = <Marker>[];
-  
+
   late final TabController _tabController;
   late final AnimationController _animationController;
   late final Animation<double> _fadeAnimation;
@@ -77,16 +77,16 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
       curve: Curves.easeOutCubic,
     );
     _tabController.addListener(() {
-        if (_tabController.indexIsChanging) {
-          HapticFeedback.selectionClick();
-          setState(() {
-            _animateToSelectedPoint();
-          });
-        } else if (_tabController.index != _tabController.previousIndex) {
-          setState(() {
-            // Rebuild when tab changes to update selected point card
-          });
-        }
+      if (_tabController.indexIsChanging) {
+        HapticFeedback.selectionClick();
+        setState(() {
+          _animateToSelectedPoint();
+        });
+      } else if (_tabController.index != _tabController.previousIndex) {
+        setState(() {
+          // Rebuild when tab changes to update selected point card
+        });
+      }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadPoints();
@@ -106,22 +106,22 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     if (time24.isEmpty || time24 == '--:--' || !time24.contains(':')) {
       return time24;
     }
-    
+
     try {
       final parts = time24.split(':');
       if (parts.length != 2) return time24;
-      
+
       int hour = int.tryParse(parts[0]) ?? 0;
       int minute = int.tryParse(parts[1]) ?? 0;
-      
+
       if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
         return time24;
       }
-      
+
       String period = hour >= 12 ? 'PM' : 'AM';
       int hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
       String minuteStr = minute.toString().padLeft(2, '0');
-      
+
       return '$hour12:$minuteStr $period';
     } catch (e) {
       return time24;
@@ -130,34 +130,39 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
 
   Future<void> _loadPoints() async {
     if (widget.traceId == null || widget.resultIndex == null) {
-        debugPrint('Error: traceId or resultIndex is null.');
-        if (mounted) Get.snackbar('Error', 'Could not load boarding points. Missing required information.', snackPosition: SnackPosition.BOTTOM);
-        return;
+      debugPrint('Error: traceId or resultIndex is null.');
+      if (mounted)
+        Get.snackbar('Error',
+            'Could not load boarding points. Missing required information.',
+            snackPosition: SnackPosition.BOTTOM);
+      return;
     }
 
     try {
-      final BoardingPointResponse? response = await _busController.getBoardingPoints(
+      final BoardingPointResponse? response =
+          await _busController.getBoardingPoints(
         traceId: widget.traceId!,
         resultIndex: widget.resultIndex!,
       );
-      
+
       if (mounted && response != null) {
         setState(() {
           if (response.boardingPoints.isNotEmpty) {
-             _selectedBoardingPoint = response.boardingPoints.firstWhere(
-              (BoardingPoint p) => p.isDefault, 
+            _selectedBoardingPoint = response.boardingPoints.firstWhere(
+              (BoardingPoint p) => p.isDefault,
               orElse: () => response.boardingPoints.first,
             );
-            _mapCenter = LatLng(_selectedBoardingPoint!.latitude, _selectedBoardingPoint!.longitude);
+            _mapCenter = LatLng(_selectedBoardingPoint!.latitude,
+                _selectedBoardingPoint!.longitude);
             _isMapReady = true;
           }
           if (response.droppingPoints.isNotEmpty) {
             _selectedDroppingPoint = response.droppingPoints.firstWhere(
-              (BoardingPoint p) => p.isDefault, 
+              (BoardingPoint p) => p.isDefault,
               orElse: () => response.droppingPoints.first,
             );
           }
-          
+
           _updateAllMarkers(response);
           _isLoading = false;
         });
@@ -165,117 +170,134 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
       }
     } catch (e) {
       debugPrint('Error loading points: $e');
-      if (mounted) Get.snackbar('Error', 'Failed to load points.', snackPosition: SnackPosition.BOTTOM);
+      if (mounted)
+        Get.snackbar('Error', 'Failed to load points.',
+            snackPosition: SnackPosition.BOTTOM);
     }
   }
 
   void _updateAllMarkers(BoardingPointResponse response) {
-    _boardingMarkers = response.boardingPoints.map((BoardingPoint point) => Marker(
-          width: 80,
-          height: 80,
-          point: LatLng(point.latitude, point.longitude),
-            child: GestureDetector(
-            onTap: () {
-              HapticFeedback.mediumImpact();
-              setState(() {
-                _selectedBoardingPoint = point;
+    _boardingMarkers = response.boardingPoints
+        .map((BoardingPoint point) => Marker(
+              width: 80,
+              height: 80,
+              point: LatLng(point.latitude, point.longitude),
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  setState(() {
+                    _selectedBoardingPoint = point;
                     if (_busController.boardingPointsResponse.value != null) {
                       _updateAllMarkers(
                           _busController.boardingPointsResponse.value!);
                     }
-                _animateToSelectedPoint();
-              });
-            },
-            child: AnimatedScale(
-              duration: const Duration(milliseconds: 200),
-              scale: _selectedBoardingPoint?.id == point.id ? 1.15 : 1.0,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: _selectedBoardingPoint?.id == point.id 
-                      ? AppTheme.AppColors.redCA0
-                      : Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
+                    _animateToSelectedPoint();
+                  });
+                },
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 200),
+                  scale: _selectedBoardingPoint?.id == point.id ? 1.15 : 1.0,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
                       color: _selectedBoardingPoint?.id == point.id
-                          ? AppTheme.AppColors.redCA0.withOpacity(0.5)
-                          : Colors.black.withOpacity(0.2),
-                      blurRadius: _selectedBoardingPoint?.id == point.id ? 12 : 6,
-                      spreadRadius: _selectedBoardingPoint?.id == point.id ? 2 : 0,
-                      offset: const Offset(0, 4),
+                          ? AppTheme.AppColors.redCA0
+                          : Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: _selectedBoardingPoint?.id == point.id
+                              ? AppTheme.AppColors.redCA0.withOpacity(0.5)
+                              : Colors.black.withOpacity(0.2),
+                          blurRadius:
+                              _selectedBoardingPoint?.id == point.id ? 12 : 6,
+                          spreadRadius:
+                              _selectedBoardingPoint?.id == point.id ? 2 : 0,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.location_on_rounded,
-                  color: _selectedBoardingPoint?.id == point.id 
-                      ? Colors.white
-                      : (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600),
-                  size: _selectedBoardingPoint?.id == point.id ? 32 : 24,
+                    child: Icon(
+                      Icons.location_on_rounded,
+                      color: _selectedBoardingPoint?.id == point.id
+                          ? Colors.white
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600),
+                      size: _selectedBoardingPoint?.id == point.id ? 32 : 24,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        )).toList();
+            ))
+        .toList();
 
-    _droppingMarkers = response.droppingPoints.map((BoardingPoint point) => Marker(
-          width: 80,
-          height: 80,
-          point: LatLng(point.latitude, point.longitude),
-            child: GestureDetector(
-            onTap: () {
-              HapticFeedback.mediumImpact();
-              setState(() {
-                _selectedDroppingPoint = point;
-                if (_busController.boardingPointsResponse.value != null) {
-                  _updateAllMarkers(_busController.boardingPointsResponse.value!);
-                }
-                _animateToSelectedPoint();
-              });
-            },
-            child: AnimatedScale(
-              duration: const Duration(milliseconds: 200),
-              scale: _selectedDroppingPoint?.id == point.id ? 1.15 : 1.0,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: _selectedDroppingPoint?.id == point.id 
-                      ? AppTheme.AppColors.redCA0
-                      : Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
+    _droppingMarkers = response.droppingPoints
+        .map((BoardingPoint point) => Marker(
+              width: 80,
+              height: 80,
+              point: LatLng(point.latitude, point.longitude),
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  setState(() {
+                    _selectedDroppingPoint = point;
+                    if (_busController.boardingPointsResponse.value != null) {
+                      _updateAllMarkers(
+                          _busController.boardingPointsResponse.value!);
+                    }
+                    _animateToSelectedPoint();
+                  });
+                },
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 200),
+                  scale: _selectedDroppingPoint?.id == point.id ? 1.15 : 1.0,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
                       color: _selectedDroppingPoint?.id == point.id
-                          ? AppTheme.AppColors.redCA0.withOpacity(0.5)
-                          : Colors.black.withOpacity(0.2),
-                      blurRadius: _selectedDroppingPoint?.id == point.id ? 12 : 6,
-                      spreadRadius: _selectedDroppingPoint?.id == point.id ? 2 : 0,
-                      offset: const Offset(0, 4),
+                          ? AppTheme.AppColors.redCA0
+                          : Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: _selectedDroppingPoint?.id == point.id
+                              ? AppTheme.AppColors.redCA0.withOpacity(0.5)
+                              : Colors.black.withOpacity(0.2),
+                          blurRadius:
+                              _selectedDroppingPoint?.id == point.id ? 12 : 6,
+                          spreadRadius:
+                              _selectedDroppingPoint?.id == point.id ? 2 : 0,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.location_on_rounded,
-                  color: _selectedDroppingPoint?.id == point.id 
-                      ? Colors.white
-                      : (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade400 : Colors.grey.shade600),
-                  size: _selectedDroppingPoint?.id == point.id ? 32 : 24,
+                    child: Icon(
+                      Icons.location_on_rounded,
+                      color: _selectedDroppingPoint?.id == point.id
+                          ? Colors.white
+                          : (Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600),
+                      size: _selectedDroppingPoint?.id == point.id ? 32 : 24,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        )).toList();
+            ))
+        .toList();
   }
 
   void _animateToSelectedPoint() {
     LatLng? target;
     if (_tabController.index == 0 && _selectedBoardingPoint != null) {
-      target = LatLng(_selectedBoardingPoint!.latitude, _selectedBoardingPoint!.longitude);
+      target = LatLng(
+          _selectedBoardingPoint!.latitude, _selectedBoardingPoint!.longitude);
     } else if (_tabController.index == 1 && _selectedDroppingPoint != null) {
-      target = LatLng(_selectedDroppingPoint!.latitude, _selectedDroppingPoint!.longitude);
+      target = LatLng(
+          _selectedDroppingPoint!.latitude, _selectedDroppingPoint!.longitude);
     }
-    
+
     if (target != null) {
       _mapController.move(target, 15.0);
     }
@@ -300,9 +322,12 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             Builder(
               builder: (context) {
                 final bool isBoardingTab = _tabController.index == 0;
-                final BoardingPoint? selectedPoint = isBoardingTab ? _selectedBoardingPoint : _selectedDroppingPoint;
+                final BoardingPoint? selectedPoint = isBoardingTab
+                    ? _selectedBoardingPoint
+                    : _selectedDroppingPoint;
                 if (selectedPoint != null) {
-                  return _buildSelectedPointHighlightCard(selectedPoint, isBoardingTab);
+                  return _buildSelectedPointHighlightCard(
+                      selectedPoint, isBoardingTab);
                 }
                 return const SizedBox.shrink();
               },
@@ -332,7 +357,8 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
           ),
           child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: Colors.white, size: 18),
             onPressed: () => Get.back(),
             padding: EdgeInsets.zero,
           ),
@@ -375,13 +401,14 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     return Obx(() {
       // Only observable values are accessed here
       final bool isLoading = _busController.isLoading.value;
-      final BoardingPointResponse? response = _busController.boardingPointsResponse.value;
-      
+      final BoardingPointResponse? response =
+          _busController.boardingPointsResponse.value;
+
       // Show loading if controller is loading (reactive update)
       if (isLoading) {
         return _buildShimmerLoading();
       }
-      
+
       if (response == null) {
         return Center(
           child: Column(
@@ -390,7 +417,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
               Icon(
                 Icons.location_off_outlined,
                 size: 64,
-                color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.3),
+                color: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.color
+                    ?.withOpacity(0.3),
               ),
               const SizedBox(height: 16),
               Text(
@@ -442,7 +473,10 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
           unselectedLabelColor: AppTheme.AppColors.redCA0,
           indicator: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.9)],
+              colors: [
+                AppTheme.AppColors.redCA0,
+                AppTheme.AppColors.redCA0.withOpacity(0.9)
+              ],
             ),
             borderRadius: BorderRadius.circular(10),
           ),
@@ -458,7 +492,8 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             fontSize: 13,
             letterSpacing: 0.5,
           ),
-          labelPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          labelPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           tabs: const <Widget>[
             Tab(text: 'BOARDING'),
             Tab(text: 'DROPPING'),
@@ -466,7 +501,9 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
         ),
       );
 
-  Widget _buildSelectedPointHighlightCard(BoardingPoint point, bool isBoarding) => Container(
+  Widget _buildSelectedPointHighlightCard(
+          BoardingPoint point, bool isBoarding) =>
+      Container(
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -567,184 +604,190 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
       );
 
   Widget _buildJourneySummary() => Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
-          width: 1,
+        margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(context).dividerColor.withOpacity(0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 8,
+              spreadRadius: 0,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 8,
-            spreadRadius: 0,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.8)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.directions_bus_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.busName ?? 'Unknown Bus',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                    letterSpacing: 0.1,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.location_on_rounded, size: 14, color: AppTheme.AppColors.redCA0),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        '${widget.fromCity ?? 'Unknown'} → ${widget.toCity ?? 'Unknown'}',
-                        style: GoogleFonts.poppins(
-                          fontSize: 13,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-
-  Widget _buildMapView() => Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            spreadRadius: 0,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: _isMapReady
-          ? Stack(
-              children: [
-                FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    initialCenter: _mapCenter,
-                    initialZoom: 15.0,
-                    interactionOptions: const InteractionOptions(
-                      flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                    ),
-                  ),
-                  children: <Widget>[
-                    TileLayer(
-                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.example.seemytrip',
-                    ),
-                    MarkerLayer(markers: _tabController.index == 0 ? _boardingMarkers : _droppingMarkers),
-                  ],
-                ),
-                // Center pin indicator
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppTheme.AppColors.redCA0,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.AppColors.redCA0.withOpacity(0.4),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Container(
-              height: 200,
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
                   colors: [
-                    Colors.blue[50]!,
-                    Colors.blue[100]!,
+                    AppTheme.AppColors.redCA0,
+                    AppTheme.AppColors.redCA0.withOpacity(0.8)
                   ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    LoadingAnimationWidget.staggeredDotsWave(
-                      color: AppTheme.AppColors.redCA0, 
-                      size: 40
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Loading Map...',
-                      style: GoogleFonts.poppins(
-                        color: Colors.black54,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+              child: const Icon(
+                Icons.directions_bus_rounded,
+                color: Colors.white,
+                size: 24,
               ),
             ),
-    );
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.busName ?? 'Unknown Bus',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                      letterSpacing: 0.1,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on_rounded,
+                          size: 14, color: AppTheme.AppColors.redCA0),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          '${widget.fromCity ?? 'Unknown'} → ${widget.toCity ?? 'Unknown'}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildMapView() => Container(
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Theme.of(context).dividerColor.withOpacity(0.1),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 12,
+              spreadRadius: 0,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: _isMapReady
+            ? Stack(
+                children: [
+                  FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      initialCenter: _mapCenter,
+                      initialZoom: 15.0,
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                      ),
+                    ),
+                    children: <Widget>[
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.seemytrip',
+                      ),
+                      MarkerLayer(
+                          markers: _tabController.index == 0
+                              ? _boardingMarkers
+                              : _droppingMarkers),
+                    ],
+                  ),
+                  // Center pin indicator
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppTheme.AppColors.redCA0,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.AppColors.redCA0.withOpacity(0.4),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.location_on,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.blue[50]!,
+                      Colors.blue[100]!,
+                    ],
+                  ),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      LoadingAnimationWidget.staggeredDotsWave(
+                          color: AppTheme.AppColors.redCA0, size: 40),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Loading Map...',
+                        style: GoogleFonts.poppins(
+                          color: Colors.black54,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+      );
 
   Widget _buildShimmerLoading() {
     return Shimmer.fromColors(
@@ -779,7 +822,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             Icon(
               Icons.location_off_outlined,
               size: 64,
-              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.3),
+              color: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.color
+                  ?.withOpacity(0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -794,10 +841,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
         ),
       );
     }
-    
+
     // Filter out selected point from list
-    final List<BoardingPoint> filteredPoints = points.where((p) => p.id != _selectedBoardingPoint?.id).toList();
-    
+    final List<BoardingPoint> filteredPoints =
+        points.where((p) => p.id != _selectedBoardingPoint?.id).toList();
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       physics: const BouncingScrollPhysics(),
@@ -822,8 +870,10 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                       HapticFeedback.mediumImpact();
                       setState(() {
                         _selectedBoardingPoint = point;
-                        if (_busController.boardingPointsResponse.value != null) {
-                            _updateAllMarkers(_busController.boardingPointsResponse.value!);
+                        if (_busController.boardingPointsResponse.value !=
+                            null) {
+                          _updateAllMarkers(
+                              _busController.boardingPointsResponse.value!);
                         }
                         _animateToSelectedPoint();
                       });
@@ -837,7 +887,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
       },
     );
   }
-  
+
   Widget _buildDroppingPointsList(List<BoardingPoint> points) {
     if (points.isEmpty) {
       return Center(
@@ -847,7 +897,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
             Icon(
               Icons.location_off_outlined,
               size: 64,
-              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.3),
+              color: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.color
+                  ?.withOpacity(0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -862,10 +916,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
         ),
       );
     }
-    
+
     // Filter out selected point from list
-    final List<BoardingPoint> filteredPoints = points.where((p) => p.id != _selectedDroppingPoint?.id).toList();
-    
+    final List<BoardingPoint> filteredPoints =
+        points.where((p) => p.id != _selectedDroppingPoint?.id).toList();
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       physics: const BouncingScrollPhysics(),
@@ -890,8 +945,10 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                       HapticFeedback.mediumImpact();
                       setState(() {
                         _selectedDroppingPoint = point;
-                        if (_busController.boardingPointsResponse.value != null) {
-                            _updateAllMarkers(_busController.boardingPointsResponse.value!);
+                        if (_busController.boardingPointsResponse.value !=
+                            null) {
+                          _updateAllMarkers(
+                              _busController.boardingPointsResponse.value!);
                         }
                         _animateToSelectedPoint();
                       });
@@ -917,7 +974,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     final String address = point.address;
     final String landmark = point.landmark;
     final String name = point.name;
-    
+
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 200),
       tween: Tween(begin: 1.0, end: isSelected ? 1.02 : 1.0),
@@ -961,15 +1018,21 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                         decoration: BoxDecoration(
                           gradient: isSelected
                               ? LinearGradient(
-                                  colors: [accentColor, accentColor.withOpacity(0.8)],
+                                  colors: [
+                                    accentColor,
+                                    accentColor.withOpacity(0.8)
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 )
                               : null,
-                          color: isSelected ? null : accentColor.withOpacity(0.1),
+                          color:
+                              isSelected ? null : accentColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isSelected ? accentColor.withOpacity(0.3) : accentColor.withOpacity(0.2),
+                            color: isSelected
+                                ? accentColor.withOpacity(0.3)
+                                : accentColor.withOpacity(0.2),
                             width: 1,
                           ),
                           boxShadow: isSelected
@@ -996,17 +1059,24 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                             Row(
                               children: <Widget>[
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
                                     gradient: isSelected
                                         ? LinearGradient(
-                                            colors: [accentColor, accentColor.withOpacity(0.8)],
+                                            colors: [
+                                              accentColor,
+                                              accentColor.withOpacity(0.8)
+                                            ],
                                           )
                                         : null,
-                                    color: isSelected ? null : accentColor.withOpacity(0.12),
+                                    color: isSelected
+                                        ? null
+                                        : accentColor.withOpacity(0.12),
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
-                                      color: accentColor.withOpacity(isSelected ? 0.3 : 0.2),
+                                      color: accentColor
+                                          .withOpacity(isSelected ? 0.3 : 0.2),
                                       width: 1,
                                     ),
                                   ),
@@ -1014,7 +1084,9 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                                     time,
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
-                                      color: isSelected ? Colors.white : accentColor,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : accentColor,
                                       fontWeight: FontWeight.w700,
                                       letterSpacing: 0.3,
                                     ),
@@ -1028,7 +1100,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                               style: GoogleFonts.poppins(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w700,
-                                color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black87,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.color ??
+                                    Colors.black87,
                                 letterSpacing: 0.1,
                               ),
                               maxLines: 2,
@@ -1038,14 +1114,24 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                               const SizedBox(height: 6),
                               Row(
                                 children: [
-                                  Icon(Icons.map_outlined, size: 14, color: Theme.of(context).textTheme.bodySmall?.color,),
+                                  Icon(
+                                    Icons.map_outlined,
+                                    size: 14,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color,
+                                  ),
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
                                       location,
                                       style: GoogleFonts.poppins(
                                         fontSize: 13,
-                                        color: Theme.of(context).textTheme.bodySmall?.color,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       maxLines: 1,
@@ -1061,7 +1147,11 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                                 address,
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
-                                  color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8),
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withOpacity(0.8),
                                   height: 1.4,
                                 ),
                                 maxLines: 2,
@@ -1071,14 +1161,18 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                             if (landmark.isNotEmpty) ...<Widget>[
                               const SizedBox(height: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).brightness == Brightness.dark
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
                                       ? Colors.grey[800]!.withOpacity(0.5)
                                       : Colors.grey[100]!.withOpacity(0.8),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: Theme.of(context).dividerColor.withOpacity(0.3),
+                                    color: Theme.of(context)
+                                        .dividerColor
+                                        .withOpacity(0.3),
                                     width: 1,
                                   ),
                                 ),
@@ -1096,7 +1190,10 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                                         'Near $landmark',
                                         style: GoogleFonts.poppins(
                                           fontSize: 12,
-                                          color: Theme.of(context).textTheme.bodySmall?.color,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
                                           fontWeight: FontWeight.w500,
                                         ),
                                         maxLines: 1,
@@ -1116,7 +1213,10 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [accentColor, accentColor.withOpacity(0.9)],
+                              colors: [
+                                accentColor,
+                                accentColor.withOpacity(0.9)
+                              ],
                             ),
                             shape: BoxShape.circle,
                             boxShadow: [
@@ -1137,10 +1237,13 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).dividerColor.withOpacity(0.2),
+                            color:
+                                Theme.of(context).dividerColor.withOpacity(0.2),
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Theme.of(context).dividerColor.withOpacity(0.3),
+                              color: Theme.of(context)
+                                  .dividerColor
+                                  .withOpacity(0.3),
                               width: 2,
                             ),
                           ),
@@ -1162,134 +1265,144 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
   }
 
   Widget _buildContinueButton() => Container(
-      padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 16,
-        bottom: 16 + MediaQuery.of(context).padding.bottom,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Theme.of(context).cardColor,
-            Theme.of(context).brightness == Brightness.dark
-                ? Colors.black.withOpacity(0.3)
-                : AppTheme.AppColors.redF9E.withOpacity(0.1),
+        padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 16,
+          bottom: 16 + MediaQuery.of(context).padding.bottom,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).cardColor,
+              Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withOpacity(0.3)
+                  : AppTheme.AppColors.redF9E.withOpacity(0.1),
+            ],
+          ),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withOpacity(0.15),
+              blurRadius: 25,
+              spreadRadius: 0,
+              offset: const Offset(0, -8),
+            ),
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withOpacity(0.08),
+              blurRadius: 10,
+              spreadRadius: 0,
+              offset: const Offset(0, -2),
+            ),
           ],
-        ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.15),
-            blurRadius: 25,
-            spreadRadius: 0,
-            offset: const Offset(0, -8),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(28),
           ),
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.08),
-            blurRadius: 10,
-            spreadRadius: 0,
-            offset: const Offset(0, -2),
-          ),
-        ],
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(28),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (_selectedBoardingPoint != null || _selectedDroppingPoint != null)
-            Row(
-              children: <Widget>[
-                if (_selectedBoardingPoint != null)
-                  Expanded(
-                      child: _buildSelectedPointCard('Boarding',
-                          _selectedBoardingPoint!, AppTheme.AppColors.redCA0)),
-                if (_selectedBoardingPoint != null && _selectedDroppingPoint != null)
-                  const SizedBox(width: 12),
-                if (_selectedDroppingPoint != null)
-                  Expanded(
-                      child: _buildSelectedPointCard(
-                          'Dropping',
-                          _selectedDroppingPoint!,
-                          AppTheme.AppColors.redCA0)),
-              ],
-            ),
-          if (_selectedBoardingPoint != null || _selectedDroppingPoint != null)
-            const SizedBox(height: 16),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: _selectedBoardingPoint != null && _selectedDroppingPoint != null
-                    ? [
-                        AppTheme.AppColors.redCA0,
-                        AppTheme.AppColors.redCA0.withOpacity(0.9),
-                      ]
-                    : [
-                        Colors.grey[400]!,
-                        Colors.grey[500]!,
-                      ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (_selectedBoardingPoint != null ||
+                _selectedDroppingPoint != null)
+              Row(
+                children: <Widget>[
+                  if (_selectedBoardingPoint != null)
+                    Expanded(
+                        child: _buildSelectedPointCard(
+                            'Boarding',
+                            _selectedBoardingPoint!,
+                            AppTheme.AppColors.redCA0)),
+                  if (_selectedBoardingPoint != null &&
+                      _selectedDroppingPoint != null)
+                    const SizedBox(width: 12),
+                  if (_selectedDroppingPoint != null)
+                    Expanded(
+                        child: _buildSelectedPointCard(
+                            'Dropping',
+                            _selectedDroppingPoint!,
+                            AppTheme.AppColors.redCA0)),
+                ],
               ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: _selectedBoardingPoint != null && _selectedDroppingPoint != null
-                  ? [
-                      BoxShadow(
-                        color: AppTheme.AppColors.redCA0.withOpacity(0.4),
-                        blurRadius: 16,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 6),
-                      ),
-                      BoxShadow(
-                        color: AppTheme.AppColors.redCA0.withOpacity(0.2),
-                        blurRadius: 8,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 3),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: _selectedBoardingPoint != null && _selectedDroppingPoint != null
-                    ? _onContinuePressed
-                    : null,
+            if (_selectedBoardingPoint != null ||
+                _selectedDroppingPoint != null)
+              const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: _selectedBoardingPoint != null &&
+                          _selectedDroppingPoint != null
+                      ? [
+                          AppTheme.AppColors.redCA0,
+                          AppTheme.AppColors.redCA0.withOpacity(0.9),
+                        ]
+                      : [
+                          Colors.grey[400]!,
+                          Colors.grey[500]!,
+                        ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Continue',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 17,
-                          color: Colors.white,
-                          letterSpacing: 0.3,
+                boxShadow: _selectedBoardingPoint != null &&
+                        _selectedDroppingPoint != null
+                    ? [
+                        BoxShadow(
+                          color: AppTheme.AppColors.redCA0.withOpacity(0.4),
+                          blurRadius: 16,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 6),
                         ),
-                      ),
-                    ],
+                        BoxShadow(
+                          color: AppTheme.AppColors.redCA0.withOpacity(0.2),
+                          blurRadius: 8,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _selectedBoardingPoint != null &&
+                          _selectedDroppingPoint != null
+                      ? _onContinuePressed
+                      : null,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Continue',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 17,
+                            color: Colors.white,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
 
-  Widget _buildSelectedPointCard(String title, BoardingPoint point, Color accentColor) => Container(
+  Widget _buildSelectedPointCard(
+          String title, BoardingPoint point, Color accentColor) =>
+      Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -1327,7 +1440,9 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
-                    title.contains('Boarding') ? Icons.departure_board : Icons.flag,
+                    title.contains('Boarding')
+                        ? Icons.departure_board
+                        : Icons.flag,
                     color: Colors.white,
                     size: 14,
                   ),
@@ -1350,7 +1465,8 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
               style: GoogleFonts.poppins(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).textTheme.titleLarge?.color ?? Colors.black87,
+                color: Theme.of(context).textTheme.titleLarge?.color ??
+                    Colors.black87,
                 letterSpacing: 0.1,
               ),
               maxLines: 1,
@@ -1380,7 +1496,7 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     if (_selectedBoardingPoint == null || _selectedDroppingPoint == null) {
       HapticFeedback.heavyImpact();
       Get.snackbar(
-        'Required', 
+        'Required',
         'Please select both boarding and dropping points',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppTheme.AppColors.redCA0,
@@ -1400,26 +1516,32 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
     }
 
     // Extract seat names from Seat objects or strings
-    final List<String> selectedSeats = widget.selectedSeats != null 
-        ? widget.selectedSeats!.map((e) {
-            // If it's already a string, use it directly
-            if (e is String) {
-              return e;
-            }
-            // If it's a Seat object, extract the seatName property
-            if (e is Seat) {
-              return e.seatName;
-            }
-            // If it's a Map (serialized), try to get seatName
-            if (e is Map) {
-              return e['seatName']?.toString() ?? 
-                     e['SeatName']?.toString() ?? 
-                     e.toString();
-            }
-            // Fallback to string conversion
-            return e.toString();
-          }).toList().cast<String>()
+    final List<String> selectedSeats = widget.selectedSeats != null
+        ? widget.selectedSeats!
+            .map((e) {
+              // If it's already a string, use it directly
+              if (e is String) {
+                return e;
+              }
+              // If it's a Seat object, extract the seatName property
+              if (e is Seat) {
+                return e.seatName;
+              }
+              // If it's a Map (serialized), try to get seatName
+              if (e is Map) {
+                return e['seatName']?.toString() ??
+                    e['SeatName']?.toString() ??
+                    e.toString();
+              }
+              // Fallback to string conversion
+              return e.toString();
+            })
+            .toList()
+            .cast<String>()
         : <String>[];
+
+    // Extract full seat objects if available
+    final List<dynamic>? selectedSeatsObjects = widget.selectedSeats;
 
     Get.to(
       () => BusPassengerDetailsScreen(
@@ -1431,16 +1553,20 @@ class _BoardingPointScreenState extends State<BoardingPointScreen> with TickerPr
         arrivalTime: widget.arrivalTime ?? '--:--',
         fare: fare,
         selectedSeats: selectedSeats,
+        selectedSeatsObjects: selectedSeatsObjects,
         boardingPoint: _selectedBoardingPoint?.name ?? 'Not selected',
         droppingPoint: _selectedDroppingPoint?.name ?? 'Not selected',
         traceId: widget.traceId ?? '',
         resultIndex: widget.resultIndex ?? 0,
-        boardingPointId: _selectedBoardingPoint?.id ?? _selectedBoardingPoint?.cityPointIndex ?? '',
-        droppingPointId: _selectedDroppingPoint?.id ?? _selectedDroppingPoint?.cityPointIndex ?? '',
+        boardingPointId: _selectedBoardingPoint?.id ??
+            _selectedBoardingPoint?.cityPointIndex ??
+            '',
+        droppingPointId: _selectedDroppingPoint?.id ??
+            _selectedDroppingPoint?.cityPointIndex ??
+            '',
       ),
       transition: Transition.rightToLeft,
       duration: const Duration(milliseconds: 300),
     );
   }
 }
-
