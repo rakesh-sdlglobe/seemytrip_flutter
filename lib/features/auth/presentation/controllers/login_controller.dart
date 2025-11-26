@@ -21,6 +21,26 @@ class LoginController extends GetxController {
 
   RxBool isLogin = true.obs;
   RxBool isLoading = false.obs;
+  RxBool isDarkMode = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadThemePreference();
+  }
+
+  Future<void> _loadThemePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    isDarkMode.value = prefs.getBool('isDarkMode') ?? false;
+    Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
+  }
+
+  Future<void> toggleTheme() async {
+    isDarkMode.toggle();
+    Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', isDarkMode.value);
+  }
 
   final TextEditingController confirmPasswordController =
       TextEditingController();
@@ -283,8 +303,36 @@ Future<void> signInWithGoogle() async {
         return false;
       }
 
-      print('📤 Sending profile data: $profileData');
-      print('🌐 API URL: ${AppConfig.editProfile}');
+      // Enhanced logging to verify data
+      print('═══════════════════════════════════════════════════');
+      print('📥 [CONTROLLER] Received Profile Data:');
+      print('   - firstName: ${profileData['firstName'] ?? 'NOT PROVIDED'}');
+      print('   - email: ${profileData['email'] ?? 'NOT PROVIDED'}');
+      print('   - gender: ${profileData['gender'] ?? 'NOT PROVIDED'}');
+      print('   - dob: ${profileData['dob'] ?? 'NOT PROVIDED'}');
+      print('   - mobile: ${profileData['mobile'] ?? profileData['mobile'] ?? 'NOT PROVIDED'}');
+      print('   - nationality: ${profileData['nationality'] ?? 'NOT PROVIDED'}');
+      print('   - Total fields: ${profileData.length}');
+      print('   - Full data map: $profileData');
+      print('═══════════════════════════════════════════════════');
+
+      // Validate required fields
+      if (profileData['firstName'] == null || profileData['firstName'].toString().trim().isEmpty) {
+        print('❌ [CONTROLLER] Validation failed: firstName is required');
+        Get.snackbar('Error', 'First name is required');
+        return false;
+      }
+
+      if (profileData['email'] == null || profileData['email'].toString().trim().isEmpty) {
+        print('❌ [CONTROLLER] Validation failed: email is required');
+        Get.snackbar('Error', 'Email is required');
+        return false;
+      }
+
+      // Prepare JSON body
+      final String jsonBody = jsonEncode(profileData);
+      print('📤 [CONTROLLER] JSON Body being sent: $jsonBody');
+      print('🌐 [CONTROLLER] API URL: ${AppConfig.editProfile}');
       
       final http.Response response = await http.post(
         Uri.parse(AppConfig.editProfile),
@@ -292,17 +340,58 @@ Future<void> signInWithGoogle() async {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $accessToken',
         },
-        body: jsonEncode(profileData),
+        body: jsonBody,
       );
 
-      print('📥 Response status: ${response.statusCode}');
-      print('📥 Response body: ${response.body}');
+      print('═══════════════════════════════════════════════════');
+      print('📥 [CONTROLLER] API Response:');
+      print('   - Status Code: ${response.statusCode}');
+      print('   - Response Body: ${response.body}');
+      print('═══════════════════════════════════════════════════');
 
-      if (response.statusCode == 200) {
-        // Update local userData with new information
-        userData.value = Map.from(userData)..addAll(profileData);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Try to parse response to get updated user data
+        try {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          print('✅ [CONTROLLER] Response parsed successfully');
+          
+          // The API response contains user data at root level
+          // Extract user data and normalize field names
+          Map<String, dynamic> updatedUserData = {};
+          
+          // Copy all fields from response (excluding message)
+          responseData.forEach((key, value) {
+            if (key != 'message') {
+              updatedUserData[key] = value;
+            }
+          });
+          
+          // Field names are already correct - backend uses "mobile"
+          
+          // Normalize gender: convert M/F/O back to readable format for display
+          if (updatedUserData.containsKey('gender')) {
+            String gender = updatedUserData['gender'].toString();
+            if (gender == 'M') {
+              updatedUserData['gender'] = 'Male';
+            } else if (gender == 'F') {
+              updatedUserData['gender'] = 'Female';
+            } else if (gender == 'O') {
+              updatedUserData['gender'] = 'Other';
+            }
+          }
+          
+          // Update userData with response data
+          userData.value = Map<String, dynamic>.from(updatedUserData);
+          print('✅ [CONTROLLER] Updated userData from API response');
+          print('✅ [CONTROLLER] Current userData: $userData');
+        } catch (e) {
+          // If response parsing fails, still update with sent data
+          print('⚠️ [CONTROLLER] Could not parse response, using sent data: $e');
+          userData.value = Map.from(userData)..addAll(profileData);
+        }
+        
         Get.snackbar('Success', 'Profile updated successfully');
-        print('✅ Profile updated successfully');
+        print('✅ [CONTROLLER] Profile update completed successfully');
         return true;
       } else {
         // Try to parse error message from response
@@ -311,19 +400,23 @@ Future<void> signInWithGoogle() async {
           final Map<String, dynamic> errorResponse = json.decode(response.body);
           errorMessage = errorResponse['message'] ?? 
                         errorResponse['error'] ?? 
+                        errorResponse['msg'] ??
                         'Server error: ${response.statusCode}';
+          print('❌ [CONTROLLER] Error from server: $errorMessage');
         } catch (e) {
           errorMessage = 'Server error: ${response.statusCode}';
+          print('❌ [CONTROLLER] Could not parse error response: $e');
         }
         
         Get.snackbar('Error', errorMessage);
-        print('❌ Profile update failed: ${response.statusCode}');
-        print('❌ Error details: ${response.body}');
+        print('❌ [CONTROLLER] Profile update failed with status: ${response.statusCode}');
+        print('❌ [CONTROLLER] Full error response: ${response.body}');
         return false;
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       Get.snackbar('Error', 'Something went wrong: $e');
-      print('❌ Profile update error: $e');
+      print('❌ [CONTROLLER] Profile update exception: $e');
+      print('❌ [CONTROLLER] Stack trace: $stackTrace');
       return false;
     } finally {
       isLoading.value = false;
@@ -333,7 +426,7 @@ Future<void> signInWithGoogle() async {
   // Getter methods for easy access to user data
   String get userName => userData['firstName'] ?? '';
   String get userEmail => userData['email'] ?? '';
-  String get userPhone => userData['phoneNumber'] ?? '';
+  String get userPhone => userData['mobile'] ?? '';
   String get userGender => userData['gender'] ?? '';
   String get userDob => userData['dob'] ?? '';
   String get userNationality => userData['nationality'] ?? '';

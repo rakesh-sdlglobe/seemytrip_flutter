@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
+import '../core/theme/app_colors.dart';
+
 class IRCTCWebView extends StatefulWidget {
   @override
   _IRCTCWebViewState createState() => _IRCTCWebViewState();
@@ -36,8 +38,8 @@ class _IRCTCWebViewState extends State<IRCTCWebView> {
     // Configure Android-specific settings
     if (_controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(false);
-      final androidController = _controller.platform as AndroidWebViewController;
-      androidController
+      final androidController = _controller.platform as AndroidWebViewController
+      
         ..setMediaPlaybackRequiresUserGesture(false)
         ..setUserAgent(
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -46,11 +48,10 @@ class _IRCTCWebViewState extends State<IRCTCWebView> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: Text('Create IRCTC Account'),
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColors.redCA0,
       ),
       body: SafeArea(
         child: WebViewWidget(
@@ -58,5 +59,4 @@ class _IRCTCWebViewState extends State<IRCTCWebView> {
         ),
       ),
     );
-  }
 }

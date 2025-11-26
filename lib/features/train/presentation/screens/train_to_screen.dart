@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:seemytrip/core/theme/app_colors.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../controllers/traintoSearchController.dart';
 
 class TrainToScreen extends StatelessWidget {
@@ -44,7 +44,7 @@ class TrainToScreen extends StatelessWidget {
       );
   
   Widget _buildModernHeader(BuildContext context) => Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -66,17 +66,17 @@ class TrainToScreen extends StatelessWidget {
           children: [
             // Back Button
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: InkWell(
                 onTap: () => Get.back(),
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_back_ios,
                   color: AppColors.white,
-                  size: 20,
+                  size: 18,
                 ),
               ),
             ),
@@ -91,35 +91,35 @@ class TrainToScreen extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.train_rounded,
                           color: AppColors.white,
-                          size: 20,
+                          size: 18,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       Text(
                         'Arrival Station',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     'Select your destination',
                     style: TextStyle(
                       color: AppColors.white.withOpacity(0.9),
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -131,11 +131,11 @@ class TrainToScreen extends StatelessWidget {
       );
   
   Widget _buildModernSearchSection(BuildContext context) => Container(
-        margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).shadowColor.withOpacity(0.1),
@@ -152,29 +152,29 @@ class TrainToScreen extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: AppColors.redCA0.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     Icons.search_rounded,
                     color: AppColors.redCA0,
-                    size: 20,
+                    size: 18,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Text(
                   'Search Stations',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                     color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             
             // Modern Search Field
             Container(
@@ -182,7 +182,7 @@ class TrainToScreen extends StatelessWidget {
                 color: Theme.of(context).brightness == Brightness.dark
                     ? AppColors.grey363.withOpacity(0.3)
                     : AppColors.greyEEE.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: Theme.of(context).dividerColor,
                   width: 1,
@@ -192,7 +192,7 @@ class TrainToScreen extends StatelessWidget {
                 controller: controller.toController,
                 autofocus: true,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                   fontWeight: FontWeight.w500,
                 ),
@@ -200,13 +200,13 @@ class TrainToScreen extends StatelessWidget {
                   hintText: 'Type city or station name...',
                   hintStyle: TextStyle(
                     color: Theme.of(context).hintColor,
-                    fontSize: 15,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
                     color: Theme.of(context).hintColor,
-                    size: 24,
+                    size: 18,
                   ),
                   suffixIcon: controller.toController.text.isNotEmpty
                       ? IconButton(
@@ -216,14 +216,14 @@ class TrainToScreen extends StatelessWidget {
                           icon: Icon(
                             Icons.clear_rounded,
                             color: Theme.of(context).hintColor,
-                            size: 20,
+                            size: 16,
                           ),
                         )
                       : null,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
+                    horizontal: 12,
+                    vertical: 12,
                   ),
                 ),
                 onChanged: (value) {
@@ -236,12 +236,12 @@ class TrainToScreen extends StatelessWidget {
       );
   
   Widget _buildModernStationsList(BuildContext context) => Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
           ),
           boxShadow: [
             BoxShadow(
@@ -257,27 +257,27 @@ class TrainToScreen extends StatelessWidget {
           children: [
             // Section Header
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: AppColors.redCA0.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       Icons.location_city_rounded,
                       color: AppColors.redCA0,
-                      size: 20,
+                      size: 18,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 6),
                   Text(
                     'Popular Stations',
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
@@ -304,16 +304,16 @@ class TrainToScreen extends StatelessWidget {
       );
   
   Widget _buildModernStationsListView() => ListView.builder(
-        padding: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.only(bottom: 12),
         physics: const BouncingScrollPhysics(),
         itemCount: controller.filteredStations.length,
         itemBuilder: (context, index) {
           final station = controller.filteredStations[index];
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: Theme.of(context).dividerColor.withOpacity(0.3),
                 width: 1,
@@ -321,41 +321,41 @@ class TrainToScreen extends StatelessWidget {
             ),
             child: Material(
               color: Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
               child: InkWell(
                 onTap: () {
                   controller.selectStation(station);
                 },
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: AppColors.redCA0.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           Icons.train_rounded,
                           color: AppColors.redCA0,
-                          size: 20,
+                          size: 18,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           station,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.all(6),
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: Theme.of(context).dividerColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
@@ -363,7 +363,7 @@ class TrainToScreen extends StatelessWidget {
                         child: Icon(
                           Icons.arrow_forward_ios_rounded,
                           color: Theme.of(context).textTheme.bodyMedium?.color,
-                          size: 14,
+                          size: 12,
                         ),
                       ),
                     ],

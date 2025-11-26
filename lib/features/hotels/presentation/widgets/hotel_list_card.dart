@@ -75,7 +75,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
         // Handle hotel tap
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
+        margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
@@ -99,15 +99,15 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                     top: Radius.circular(16),
                   ),
                   child: AspectRatio(
-                    aspectRatio: 16 / 9,
+                    aspectRatio: 16 / 10,
                     child: _buildHotelImage(context, widget.hotel),
                   ),
                 ),
 
                 // Favorite Button
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 8,
+                  right: 8,
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
@@ -123,7 +123,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                       // TODO: Add your favorite logic here
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(6),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         shape: BoxShape.circle,
@@ -142,7 +142,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                           color: Theme.of(context).brightness == Brightness.dark 
                             ? const Color(0xFFFF5722) // Orange-red for dark theme
                             : const Color(0xFFCA0B0B), // Red for light theme
-                          size: 20,
+                          size: 16,
                         ),
                       ),
                     ),
@@ -153,8 +153,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
 
             // Hotel Info
             Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(16, 16, 16, 0), // Adjusted padding
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -167,11 +166,11 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                         child: Text(
                           widget.hotel['HotelName'] ?? 'Unknown Hotel',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Theme.of(context).textTheme.titleLarge?.color,
                             fontFamily: 'Poppins',
-                            height: 1.2,
+                            height: 1.1,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -185,11 +184,11 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                   ),
 
                   // Location
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   _buildLocationInfo(context, widget.hotel, widget.cityName),
 
                   // Price
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -201,14 +200,14 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                           fontFamily: 'Poppins',
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 1),
                       Text(
                         '₹${_getHotelPrice(widget.hotel)}',
                         style: TextStyle(
                           color: Theme.of(context).brightness == Brightness.dark 
                             ? const Color(0xFFFF5722) // Orange-red for dark theme
                             : const Color(0xFFCA0B0B), // Red for light theme
-                          fontSize: 22,
+                          fontSize: 18,
                           fontWeight: FontWeight.w800,
                           fontFamily: 'Poppins',
                         ),
@@ -221,15 +220,13 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
 
             // Cancellation Policy and Book Button
             Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(16, 12, 16, 16), // Adjusted padding
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark 
                           ? Colors.green.withOpacity(0.2)
@@ -283,9 +280,9 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                         ? const Color(0xFFFF5722) // Orange-red for dark theme
                         : const Color(0xFFCA0B0B), // Red for light theme
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                          horizontal: 12, vertical: 6),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                     ),
                     child: Text(
@@ -293,7 +290,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                       style: _poppinsMedium(
                         context,
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ),
@@ -323,7 +320,7 @@ class _HotelListCardState extends State<HotelListCard> with SingleTickerProvider
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.hotel, size: 40, color: Theme.of(context).iconTheme.color?.withOpacity(0.6)),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     'No Image Available',
                     style: TextStyle(

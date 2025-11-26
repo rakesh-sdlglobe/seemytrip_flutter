@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:seemytrip/features/payment/easebuzz_payment_widget.dart';
 
 class RoundTripFlightDetailsScreen extends StatelessWidget {
-
   const RoundTripFlightDetailsScreen({
-    required this.flight, required this.searchParams, Key? key,
+    required this.flight,
+    required this.searchParams,
+    Key? key,
   }) : super(key: key);
   final Map<String, dynamic> flight;
   final Map<String, dynamic> searchParams;
@@ -15,10 +17,11 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
     try {
       final dateTime = DateTime.tryParse(dateTimeStr);
       if (dateTime == null) return dateTimeStr;
-      
+
       final now = DateTime.now();
-      final difference = dateTime.difference(DateTime(now.year, now.month, now.day));
-      
+      final difference =
+          dateTime.difference(DateTime(now.year, now.month, now.day));
+
       String dayInfo = '';
       if (dateTime.year == now.year && dateTime.month == now.month) {
         if (dateTime.day == now.day) {
@@ -29,10 +32,9 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
           dayInfo = 'Yesterday, ';
         }
       }
-      
+
       // Format: "Today, 2:30 PM • 18 Sep 2023"
       return '$dayInfo${DateFormat('h:mm a • d MMM yyyy').format(dateTime)}';
-      
     } catch (e) {
       return dateTimeStr;
     }
@@ -59,10 +61,13 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
             _buildInfoRow('Flight Number', segment['flightNumber'] ?? 'N/A'),
             _buildInfoRow('From', '${segment['origin'] ?? 'N/A'}'),
             _buildInfoRow('To', '${segment['destination'] ?? 'N/A'}'),
-            _buildInfoRow('Departure', _formatDateTime(segment['departureTime'] ?? '')),
-            _buildInfoRow('Arrival', _formatDateTime(segment['arrivalTime'] ?? '')),
+            _buildInfoRow(
+                'Departure', _formatDateTime(segment['departureTime'] ?? '')),
+            _buildInfoRow(
+                'Arrival', _formatDateTime(segment['arrivalTime'] ?? '')),
             _buildInfoRow('Duration', segment['duration'] ?? 'N/A'),
-            _buildInfoRow('Stops', '${segment['stopCount'] ?? 0} ${segment['stopCount'] == 1 ? 'stop' : 'stops'}'),
+            _buildInfoRow('Stops',
+                '${segment['stopCount'] ?? 0} ${segment['stopCount'] == 1 ? 'stop' : 'stops'}'),
             if (segment['operatedBy'] != null)
               _buildInfoRow('Operated By', segment['operatedBy']),
           ],
@@ -120,9 +125,12 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
 
     final returnFlight = {
       'airlineName': flight['airlineName'], // Assuming same airline for return
-      'flightNumber': flight['flightNumber'], // Adjust if return flight has different number
-      'origin': flight['destination'], // Return flight origin is the outbound destination
-      'destination': flight['origin'], // Return flight destination is the outbound origin
+      'flightNumber': flight[
+          'flightNumber'], // Adjust if return flight has different number
+      'origin': flight[
+          'destination'], // Return flight origin is the outbound destination
+      'destination':
+          flight['origin'], // Return flight destination is the outbound origin
       'departureTime': flight['returnDepartureTime'],
       'arrivalTime': flight['returnArrivalTime'],
       'duration': flight['returnDuration'],
@@ -157,15 +165,21 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                     const Divider(),
                     _buildInfoRow('From', searchParams['fromAirport'] ?? 'N/A'),
                     _buildInfoRow('To', searchParams['toAirport'] ?? 'N/A'),
-                    _buildInfoRow('Departure', _formatDateTime(searchParams['departDate'] ?? '')),
+                    _buildInfoRow('Departure',
+                        _formatDateTime(searchParams['departDate'] ?? '')),
                     if (searchParams['returnDate'] != null)
-                      _buildInfoRow('Return', _formatDateTime(searchParams['returnDate'] ?? '')),
-                    _buildInfoRow('Passengers', '${searchParams['adults'] ?? 1} Adult${searchParams['adults'] != 1 ? 's' : ''}'),
+                      _buildInfoRow('Return',
+                          _formatDateTime(searchParams['returnDate'] ?? '')),
+                    _buildInfoRow('Passengers',
+                        '${searchParams['adults'] ?? 1} Adult${searchParams['adults'] != 1 ? 's' : ''}'),
                     if ((searchParams['children'] ?? 0) > 0)
-                      _buildInfoRow('', '${searchParams['children']} Child${searchParams['children'] != 1 ? 'ren' : ''}'),
+                      _buildInfoRow('',
+                          '${searchParams['children']} Child${searchParams['children'] != 1 ? 'ren' : ''}'),
                     if ((searchParams['infants'] ?? 0) > 0)
-                      _buildInfoRow('', '${searchParams['infants']} Infant${searchParams['infants'] != 1 ? 's' : ''}'),
-                    _buildInfoRow('Class', searchParams['travelClass'] ?? 'Economy'),
+                      _buildInfoRow('',
+                          '${searchParams['infants']} Infant${searchParams['infants'] != 1 ? 's' : ''}'),
+                    _buildInfoRow(
+                        'Class', searchParams['travelClass'] ?? 'Economy'),
                   ],
                 ),
               ),
@@ -193,8 +207,10 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     const Divider(),
-                    _buildInfoRow('Base Fare', '₹${flight['baseFare']?.toStringAsFixed(2) ?? '0.00'}'),
-                    _buildInfoRow('Taxes & Fees', '₹${flight['tax']?.toStringAsFixed(2) ?? '0.00'}'),
+                    _buildInfoRow('Base Fare',
+                        '₹${flight['baseFare']?.toStringAsFixed(2) ?? '0.00'}'),
+                    _buildInfoRow('Taxes & Fees',
+                        '₹${flight['tax']?.toStringAsFixed(2) ?? '0.00'}'),
                     const Divider(),
                     _buildInfoRow(
                       'Total Amount',
@@ -239,12 +255,20 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                       ),
                     ),
                     const Divider(),
-                    _buildInfoRow('Baggage Allowance', flight['baggageAllowance'] ?? '7 kg'),
-                    _buildInfoRow('Cabin Baggage', flight['cabinBaggage'] ?? '7 kg'),
-                    _buildInfoRow('Meal', flight['mealIncluded'] == true ? 'Included' : 'Not Included'),
-                    _buildInfoRow('Aircraft Type', flight['aircraftType'] ?? 'N/A'),
+                    _buildInfoRow('Baggage Allowance',
+                        flight['baggageAllowance'] ?? '7 kg'),
+                    _buildInfoRow(
+                        'Cabin Baggage', flight['cabinBaggage'] ?? '7 kg'),
+                    _buildInfoRow(
+                        'Meal',
+                        flight['mealIncluded'] == true
+                            ? 'Included'
+                            : 'Not Included'),
+                    _buildInfoRow(
+                        'Aircraft Type', flight['aircraftType'] ?? 'N/A'),
                     if (flight['lastBookingTime'] != null)
-                      _buildInfoRow('Last Booking Time', _formatDateTime(flight['lastBookingTime'])),
+                      _buildInfoRow('Last Booking Time',
+                          _formatDateTime(flight['lastBookingTime'])),
                   ],
                 ),
               ),
@@ -259,6 +283,87 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                   onPressed: () {
                     // Handle booking
                     // You can add navigation to booking screen here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EasebuzzPaymentWidget(
+                          amount: (() {
+                            final total = double.tryParse(
+                                flight['totalFare']?.toString() ??
+                                    flight['TotalFare']?.toString() ??
+                                    '');
+                            if (total != null) return total;
+                            final base = double.tryParse(
+                                    flight['baseFare']?.toString() ??
+                                        flight['BaseFare']?.toString() ??
+                                        '0') ??
+                                0.0;
+                            final tax = double.tryParse(
+                                    flight['tax']?.toString() ??
+                                        flight['Tax']?.toString() ??
+                                        '0') ??
+                                0.0;
+                            return base + tax;
+                          })(),
+                          name: (() {
+                            final fullName =
+                                (searchParams['fullName'] ?? '').toString();
+                            if (fullName.trim().isNotEmpty) return fullName.trim();
+                            final first =
+                                (searchParams['firstName'] ?? '').toString();
+                            final last =
+                                (searchParams['lastName'] ?? '').toString();
+                            final combined = ('$first $last').trim();
+                            return combined.isNotEmpty ? combined : 'Guest';
+                          })(),
+                          email: (() {
+                            final e =
+                                (searchParams['email'] ?? '').toString().trim();
+                            return e.isNotEmpty ? e : 'guest@example.com';
+                          })(),
+                          phone: (() {
+                            final p = (searchParams['phone'] ??
+                                    searchParams['mobile'] ?? '')
+                                .toString()
+                                .trim();
+                            return p.isNotEmpty ? p : '0000000000';
+                          })(),
+                          productInfo: (() {
+                            final fromCode = (flight['origin'] ??
+                                    flight['Origin'] ??
+                                    '')
+                                .toString();
+                            final toCode = (flight['destination'] ??
+                                    flight['Destination'] ??
+                                    '')
+                                .toString();
+                            if (fromCode.isNotEmpty && toCode.isNotEmpty) {
+                              return 'Flight Booking - $fromCode to $toCode';
+                            }
+                            return 'Flight Booking';
+                          })(),
+                          onSuccess: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Payment successful! Booking confirmed.')),
+                            );
+                            // Navigator.pushReplacement(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (_) => const BookingSuccessPage()),
+                            // );
+                          },
+                          onFailure: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Payment failed. Please try again.')),
+                            );
+                          },
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -285,8 +390,10 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildTripSummary() {
-    final String from = _extractAirportCode(flight['origin'] ?? flight['Origin']);
-    final String to = _extractAirportCode(flight['destination'] ?? flight['Destination']);
+    final String from =
+        _extractAirportCode(flight['origin'] ?? flight['Origin']);
+    final String to =
+        _extractAirportCode(flight['destination'] ?? flight['Destination']);
     final String departureDate = searchParams['departureDate'] ?? '';
     final String returnDate = searchParams['returnDate'] ?? '';
     final int passengers = searchParams['passengers'] ?? 1;
@@ -319,10 +426,13 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildOutboundFlight() {
-    final List segments = _extractSegments(flight['Segments'] ?? flight['segments']);
-    final String from = _extractAirportCode(flight['origin'] ?? flight['Origin']);
-    final String to = _extractAirportCode(flight['destination'] ?? flight['Destination']);
-    
+    final List segments =
+        _extractSegments(flight['Segments'] ?? flight['segments']);
+    final String from =
+        _extractAirportCode(flight['origin'] ?? flight['Origin']);
+    final String to =
+        _extractAirportCode(flight['destination'] ?? flight['Destination']);
+
     return _buildFlightSection(
       title: 'Outbound Flight',
       date: searchParams['departureDate'] ?? '',
@@ -333,29 +443,33 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildReturnFlight() {
-    final List returnSegments = _extractSegments(flight['ReturnSegments'] ?? flight['returnSegments']);
+    final List returnSegments =
+        _extractSegments(flight['ReturnSegments'] ?? flight['returnSegments']);
     if (returnSegments.isEmpty) return const SizedBox.shrink();
-    
+
     // For return flight, get origin and destination from segments
     String from = '';
     String to = '';
-    
+
     if (returnSegments.isNotEmpty) {
       // Get origin from first segment
       final firstSegment = returnSegments.first;
-      from = _extractAirportCode(firstSegment['origin'] ?? firstSegment['Origin'] ?? '');
-      
+      from = _extractAirportCode(
+          firstSegment['origin'] ?? firstSegment['Origin'] ?? '');
+
       // Get destination from last segment
       final lastSegment = returnSegments.last;
-      to = _extractAirportCode(lastSegment['destination'] ?? lastSegment['Destination'] ?? '');
+      to = _extractAirportCode(
+          lastSegment['destination'] ?? lastSegment['Destination'] ?? '');
     }
-    
+
     // Fallback to reversed origin/destination if couldn't extract from segments
     if (from.isEmpty || to.isEmpty) {
-      from = _extractAirportCode(flight['destination'] ?? flight['Destination'] ?? '');
+      from = _extractAirportCode(
+          flight['destination'] ?? flight['Destination'] ?? '');
       to = _extractAirportCode(flight['origin'] ?? flight['Origin'] ?? '');
     }
-    
+
     return _buildFlightSection(
       title: 'Return Flight',
       date: searchParams['returnDate'] ?? '',
@@ -371,44 +485,47 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
     required List<dynamic> segments,
     required String defaultFrom,
     required String defaultTo,
-  }) => Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '$title • ${_formatDate(date)}',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+  }) =>
+      Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                '$title • ${_formatDate(date)}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          ...segments.asMap().entries.map((MapEntry<int, dynamic> entry) {
-            final int index = entry.key;
-            final dynamic segment = entry.value;
-            
-            // For each segment, try to get its specific origin and destination
-            String segmentFrom = _extractAirportCode(segment['origin'] ?? segment['Origin'] ?? '');
-            String segmentTo = _extractAirportCode(segment['destination'] ?? segment['Destination'] ?? '');
-            
-            // Fall back to the provided defaults if not found in segment
-            if (segmentFrom.isEmpty) segmentFrom = defaultFrom;
-            if (segmentTo.isEmpty) segmentTo = defaultTo;
-            
-            return _buildSegmentCard(
-              segment,
-              defaultFrom: segmentFrom,
-              defaultTo: segmentTo,
-              segmentIndex: index,
-              totalSegments: segments.length,
-            );
-          }),
-        ],
-      ),
-    );
+            ...segments.asMap().entries.map((MapEntry<int, dynamic> entry) {
+              final int index = entry.key;
+              final dynamic segment = entry.value;
+
+              // For each segment, try to get its specific origin and destination
+              String segmentFrom = _extractAirportCode(
+                  segment['origin'] ?? segment['Origin'] ?? '');
+              String segmentTo = _extractAirportCode(
+                  segment['destination'] ?? segment['Destination'] ?? '');
+
+              // Fall back to the provided defaults if not found in segment
+              if (segmentFrom.isEmpty) segmentFrom = defaultFrom;
+              if (segmentTo.isEmpty) segmentTo = defaultTo;
+
+              return _buildSegmentCard(
+                segment,
+                defaultFrom: segmentFrom,
+                defaultTo: segmentTo,
+                segmentIndex: index,
+                totalSegments: segments.length,
+              );
+            }),
+          ],
+        ),
+      );
 
   Widget _buildSegmentCard(
     dynamic segment, {
@@ -417,12 +534,16 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
     required int segmentIndex,
     required int totalSegments,
   }) {
-    final String from = _extractAirportCode(segment['origin'] ?? segment['Origin'] ?? defaultFrom);
-    final String to = _extractAirportCode(segment['destination'] ?? segment['Destination'] ?? defaultTo);
+    final String from = _extractAirportCode(
+        segment['origin'] ?? segment['Origin'] ?? defaultFrom);
+    final String to = _extractAirportCode(
+        segment['destination'] ?? segment['Destination'] ?? defaultTo);
     final String airlineCode = _extractAirlineCode(segment);
     final String flightNumber = _extractFlightNumber(segment);
-    final String departureTime = _formatTime(segment['departureTime'] ?? segment['DepartureTime']);
-    final String arrivalTime = _formatTime(segment['arrivalTime'] ?? segment['ArrivalTime']);
+    final String departureTime =
+        _formatTime(segment['departureTime'] ?? segment['DepartureTime']);
+    final String arrivalTime =
+        _formatTime(segment['arrivalTime'] ?? segment['ArrivalTime']);
     final duration = segment['duration'] ?? segment['Duration'] ?? '';
     final stops = segment['stops'] ?? segment['Stops'] ?? 0;
 
@@ -449,15 +570,18 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                 // Airline logo
                 if (airlineCode.isNotEmpty)
                   CachedNetworkImage(
-                    imageUrl: 'https://d1ufw0nild2mi8m.cloudfront.net/images/airlines/V2/svg/$airlineCode.svg',
+                    imageUrl:
+                        'https://d1ufw0nild2mi8m.cloudfront.net/images/airlines/V2/svg/$airlineCode.svg',
                     width: 40,
                     height: 40,
-                    errorWidget: (BuildContext context, String url, Object error) => const Icon(Icons.airplanemode_active),
+                    errorWidget:
+                        (BuildContext context, String url, Object error) =>
+                            const Icon(Icons.airplanemode_active),
                   ),
                 const SizedBox(width: 16),
                 // Flight number
                 Text(
-                  '${airlineCode ?? ''} $flightNumber',
+                  '${airlineCode} $flightNumber',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
@@ -472,7 +596,8 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       from,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(departureTime),
                   ],
@@ -483,7 +608,8 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       to,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     Text(arrivalTime),
                   ],
@@ -502,7 +628,9 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 12.0),
                     child: Text('Duration: $duration'),
                   ),
-                  Text(stops > 0 ? '$stops ${stops == 1 ? 'stop' : 'stops'}' : 'Non-stop'),
+                  Text(stops > 0
+                      ? '$stops ${stops == 1 ? 'stop' : 'stops'}'
+                      : 'Non-stop'),
                 ],
               ),
             ),
@@ -547,23 +675,23 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildBookingButton(BuildContext context) => Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () {
-            // Handle booking
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Booking flight...')),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
+        padding: const EdgeInsets.all(16.0),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              // Handle booking
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   const SnackBar(content: Text('Booking flight...')),
+              // );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+            ),
+            child: const Text('Book Now'),
           ),
-          child: const Text('Book Now'),
         ),
-      ),
-    );
+      );
 
   // Helper methods
   String _extractAirportCode(dynamic airport) {
@@ -593,11 +721,12 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
   String _extractFlightNumber(dynamic segment) {
     if (segment == null) return '';
     if (segment is Map) {
-      return (segment['FlightNumber'] ?? 
-              segment['flightNumber'] ?? 
-              segment['FlightNo'] ?? 
-              segment['flightNo'] ?? 
-              '').toString();
+      return (segment['FlightNumber'] ??
+              segment['flightNumber'] ??
+              segment['FlightNo'] ??
+              segment['flightNo'] ??
+              '')
+          .toString();
     }
     return '';
   }
@@ -629,7 +758,8 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
 
   String _formatCurrency(dynamic amount) {
     if (amount == null) return '₹0';
-    final num number = amount is num ? amount : double.tryParse(amount.toString()) ?? 0;
+    final num number =
+        amount is num ? amount : double.tryParse(amount.toString()) ?? 0;
     return '₹${number.toStringAsFixed(2)}';
   }
 
@@ -640,43 +770,44 @@ class RoundTripFlightDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildTripRow(String label, String value) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            label,
-            style: const TextStyle(color: Colors.grey),
-          ),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              label,
+              style: const TextStyle(color: Colors.grey),
+            ),
+            Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
 
-  Widget _buildFareRow(String label, String value, {bool isTotal = false}) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            label,
-            style: TextStyle(
-              color: isTotal ? Colors.blue : Colors.grey,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+  Widget _buildFareRow(String label, String value, {bool isTotal = false}) =>
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              label,
+              style: TextStyle(
+                color: isTotal ? Colors.blue : Colors.grey,
+                fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              color: isTotal ? Colors.blue : Colors.black,
-              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-              fontSize: isTotal ? 18 : 14,
+            Text(
+              value,
+              style: TextStyle(
+                color: isTotal ? Colors.blue : Colors.black,
+                fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+                fontSize: isTotal ? 18 : 14,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
 }

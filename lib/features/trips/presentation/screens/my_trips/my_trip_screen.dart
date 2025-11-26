@@ -4,14 +4,31 @@ import 'package:get/get.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/widgets/common_text_widget.dart';
 import '../../../../../features/trips/presentation/controllers/my_trip_controller.dart';
+import '../../../../../features/trips/presentation/screens/my_trips/all_trip_screen.dart';
 import '../../../../../features/trips/presentation/screens/my_trips/cancelled_trip_screen.dart';
 import '../../../../../features/trips/presentation/screens/my_trips/upcoming_trip_screen.dart';
+import '../../../../../features/trips/presentation/screens/my_trips/completed_trip_screen.dart';
+import '../../../../../features/trips/presentation/screens/my_trips/unsuccessful_trip_screen.dart';
 
-class MyTripScreen extends StatelessWidget {
+class MyTripScreen extends StatefulWidget {
   MyTripScreen({Key? key}) : super(key: key);
 
-  final MyTripTabController myTripTabController =
-      Get.put(MyTripTabController());
+  @override
+  State<MyTripScreen> createState() => _MyTripScreenState();
+}
+
+class _MyTripScreenState extends State<MyTripScreen> {
+  late final MyTripTabController myTripTabController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Delete existing controller if it exists to ensure fresh instance with correct length
+    if (Get.isRegistered<MyTripTabController>()) {
+      Get.delete<MyTripTabController>();
+    }
+    myTripTabController = Get.put(MyTripTabController(), permanent: false);
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -26,10 +43,11 @@ class MyTripScreen extends StatelessWidget {
             child: TabBarView(
               controller: myTripTabController.controller,
               children: [
+                AllTripScreen(),
                 UpComingTripScreen(),
                 CancelledTripScreen(),
-                _buildEmptyState(context, 'completed'.tr, Icons.check_circle_outline),
-                _buildEmptyState(context, 'unsuccessful'.tr, Icons.cancel_outlined),
+                CompletedTripScreen(),
+                UnsuccessfulTripScreen(),
               ],
             ),
           ),
@@ -179,61 +197,6 @@ class MyTripScreen extends StatelessWidget {
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: isDark ? AppColors.textSecondaryDark : AppColors.grey5F5,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context, String title, IconData icon) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: isDark 
-                    ? AppColors.surfaceDark.withValues(alpha: 0.5)
-                    : AppColors.redCA0.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 48,
-                color: isDark ? AppColors.textSecondaryDark : AppColors.redCA0,
-              ),
-            ),
-            SizedBox(height: 24),
-            CommonTextWidget.PoppinsBold(
-              text: 'No $title Trips',
-              color: isDark ? AppColors.textPrimaryDark : AppColors.black2E2,
-              fontSize: 18,
-            ),
-            SizedBox(height: 8),
-            CommonTextWidget.PoppinsRegular(
-              text: 'Your $title trips will appear here',
-              color: isDark ? AppColors.textSecondaryDark : AppColors.grey656,
-              fontSize: 14,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 32),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              decoration: BoxDecoration(
-                color: AppColors.redCA0,
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: CommonTextWidget.PoppinsMedium(
-                text: 'Book a Trip',
-                color: AppColors.white,
-                fontSize: 14,
-              ),
-            ),
-          ],
         ),
       ),
     );

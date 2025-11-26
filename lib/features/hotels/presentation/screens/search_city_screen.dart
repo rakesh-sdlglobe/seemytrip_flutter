@@ -389,7 +389,7 @@ class SearchCityScreen extends StatelessWidget {
         style: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.w700,
-          color: Theme.of(context).textTheme.headlineSmall?.color,
+          color: Colors.white,
           letterSpacing: -0.5,
         ),
       ),

@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 class AppColors {
   // ==================== New Theme Colors ====================
   // Common Colors
-  static const Color primary = Color(0xFF2196F3);
-  static const Color primaryDark = Color(0xFF1976D2);
+  static const Color primary = redCA0; // redCA0
+  static const Color primaryDark = redCA0;
   static const Color secondary = Color(0xFF03DAC5);
   static const Color error = Color(0xFFB00020);
   static const Color white = Colors.white;

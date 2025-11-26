@@ -69,7 +69,7 @@ class TrainDetailController extends GetxController {
       final toStnCode = toStation.split(' - ').last;
       final formattedDate = DateFormat('yyyyMMdd').format(DateTime.parse(date).toLocal());
       
-      print("API Request - From: $fromStnCode, To: $toStnCode, Date: $formattedDate");
+      print('API Request - From: $fromStnCode, To: $toStnCode, Date: $formattedDate');
 
       final requestBody = {
         'fromStnCode': fromStnCode,
@@ -77,7 +77,7 @@ class TrainDetailController extends GetxController {
         'journeyDate': formattedDate
       };
 
-      print("Request body: $requestBody");
+      print('Request body: $requestBody');
 
       final response = await http.post(
         Uri.parse(AppConfig.trainsList),
@@ -87,7 +87,7 @@ class TrainDetailController extends GetxController {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        print("API Response data: $data");
+        print('API Response data: $data');
         trains.value = data['trainBtwnStnsList'] ?? [];
         applyFilters(trains.value);
         // Print first train's availability if exists
@@ -132,4 +132,61 @@ class TrainDetailController extends GetxController {
       }
     }
   }
+
+
+  //seat block
+
+  Future<Map<String, dynamic>?> blockSeats({
+  required String trainNumber,
+  required String journeyDate,
+  required String fromStnCode,
+  required String toStnCode,
+  required String jClass,
+  required String jQuota,
+  required List<Map<String, dynamic>> passengers,
+  required String boardingStationCode,
+}) async {
+  try {
+    isLoading.value = true;
+
+    final url = Uri.parse(AppConfig.trainSeatBlock); // backend URL
+
+    final requestBody = {
+      "trainNumber": trainNumber,
+      "journeyDate": journeyDate,
+      "fromStnCode": fromStnCode,
+      "toStnCode": toStnCode,
+      "jClass": jClass,
+      "jQuota": jQuota,
+      "boardingStation": boardingStationCode,
+      "passengerList": passengers
+    };
+
+    print("Seat Block Request: $requestBody");
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(requestBody),
+    );
+
+    print("Seat Block Response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data;
+    } else {
+      Get.snackbar("Error", "Seat block failed");
+      return null;
+    }
+  } catch (e) {
+    print("Seat Block Error: $e");
+    Get.snackbar("Error", "Something went wrong");
+    return null;
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+
 }

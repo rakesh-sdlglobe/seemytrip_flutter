@@ -9,8 +9,8 @@ import '../../../../core/widgets/lists_widget.dart';
 import 'train_search_screen.dart';
 
 // Temporary constants for spacing until theme is fully integrated
-const double _kDefaultPadding = 16.0;
-const double _kDefaultSpacing = 12.0;
+const double _kDefaultPadding = 12.0;
+const double _kDefaultSpacing = 8.0;
 
 class TrainScreen extends StatelessWidget {
   TrainScreen({Key? key}) : super(key: key);
@@ -30,10 +30,14 @@ class TrainScreen extends StatelessWidget {
           CommonAppBar(
             title: 'train'.tr,
             subtitle: 'bookTicketsEasily'.tr,
+            backgroundColor: colorScheme.primary,
+            textColor: colorScheme.onPrimary,
             onBackPressed: () => Get.back(),
             action: IconButton(
-              icon: Icon(Icons.search, color: colorScheme.onSecondary),
+              icon: Icon(Icons.search, size: 20, color: colorScheme.onSecondary),
               onPressed: () {},
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints(),
             ),
           ),
           // Container(
@@ -77,14 +81,16 @@ class TrainScreen extends StatelessWidget {
                     titleStyle: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
+                      fontSize: 14,
                     ),
                     subtitle: 'searchAndBookTrainTickets'.tr,
                     subtitleStyle: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.6),
+                      fontSize: 11,
                     ),
-                    borderRadius: 12.0,
-                    elevation: 2.0,
-                    padding: const EdgeInsets.all(16.0),
+                    borderRadius: 10.0,
+                    elevation: 1.0,
+                    padding: const EdgeInsets.all(12.0),
                     margin: EdgeInsets.zero,
                     trailing: Icon(
                       Icons.arrow_forward_ios_rounded,
@@ -94,22 +100,22 @@ class TrainScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: colorScheme.surface.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: SvgPicture.asset(
                             Lists.bookBusAndTrainList[index]['image'],
-                            width: 20,
-                            height: 20,
+                            width: 18,
+                            height: 18,
                             colorFilter: ColorFilter.mode(
                               colorScheme.primary,
                               BlendMode.srcIn,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,8 +167,8 @@ class TrainScreen extends StatelessWidget {
                         crossAxisCount: crossAxisCount,
                         mainAxisSpacing: _kDefaultSpacing,
                         crossAxisSpacing: _kDefaultSpacing,
-                        childAspectRatio: 1.5,
-                        mainAxisExtent: 100, // Fixed height for all grid items
+                        childAspectRatio: 1.4,
+                        mainAxisExtent: 100, // Increased height for grid items
                       ),
                       itemCount: Lists.trainAndBusInformationServiceList.length,
                       itemBuilder: (BuildContext context, int index) => AppCard(
@@ -170,13 +176,14 @@ class TrainScreen extends StatelessWidget {
                           onTap: () {},
                           child: Center(
                             child: Padding(
-                              padding: const EdgeInsets.all(_kDefaultSpacing),
+                              padding: const EdgeInsets.all(8),
                               child: Text(
                                 Lists.trainAndBusInformationServiceList[index],
                                 textAlign: TextAlign.center,
                                 style: textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.w500,
                                   color: colorScheme.onSurface,
+                                  fontSize: 12,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -190,7 +197,7 @@ class TrainScreen extends StatelessWidget {
               ],
             ),
           ),
-            const SizedBox(height: _kDefaultPadding),
+            const SizedBox(height: _kDefaultSpacing),
           ],
         ),
       ),

@@ -94,22 +94,22 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(),
-                  SizedBox(height: 28),
+                  SizedBox(height: 20),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: _buildStationSelection(),
+                  ),
+                  SizedBox(height: 16),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: _buildDateSelection(formattedDate, dayOfWeek),
                   ),
                   SizedBox(height: 20),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: _buildDateSelection(formattedDate, dayOfWeek),
-                  ),
-                  SizedBox(height: 28),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     child: _buildSearchButton(),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 24),
                 ],
               ),
             ),
@@ -174,7 +174,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFFD32F2F).withValues(alpha: 0.2),
+                      color: AppColors.redCA0.withOpacity(0.2),
                       blurRadius: 8,
                       offset: Offset(0, 2),
                     ),
@@ -182,8 +182,8 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                 ),
                 child: Icon(
                   Icons.swap_vert,
-                  color: Color(0xFFD32F2F),
-                  size: 24,
+                  color: AppColors.redCA0,
+                  size: 20,
                 ),
               ),
             ),
@@ -199,18 +199,18 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           child: Row(
             children: [
               SvgPicture.asset(
                 trainAndBusFromToIcon,
-                height: 22,
+                height: 20,
                 colorFilter: ColorFilter.mode(
                   Color(0xFFD32F2F),
                   BlendMode.srcIn,
                 ),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,16 +218,16 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                     Text(
                       label,
                       style: GoogleFonts.inter(
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: Colors.grey[500],
                       ),
                     ),
-                    SizedBox(height: 6),
+                    SizedBox(height: 4),
                     Text(
                       station ?? (label == 'from'.tr ? 'selectFromStation'.tr : 'selectToStation'.tr),
                       style: GoogleFonts.inter(
-                        fontSize: 17,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: station == null
                             ? Theme.of(context).hintColor
@@ -263,7 +263,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
           onTap: _navigateToCalendarScreen,
           child: AnimatedContainer(
             duration: Duration(milliseconds: 200),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -293,9 +293,9 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
           Icon(
             Icons.calendar_today_outlined,
             color: Color(0xFFD32F2F),
-            size: 22,
+            size: 20,
           ),
-          SizedBox(width: 12),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,7 +303,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                 Text(
                   'travelDate'.tr,
                   style: GoogleFonts.inter(
-                    fontSize: 13,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey[500],
                   ),
@@ -312,7 +312,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                 Text(
                   formattedDate,
                   style: GoogleFonts.inter(
-                    fontSize: 17,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).textTheme.bodyLarge?.color,
                     // overflow: TextOverflow.ellipsis,
@@ -321,7 +321,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
                 Text(
                   dayOfWeek,
                   style: GoogleFonts.inter(
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w400,
                     color: Colors.grey[500],
                   ),
@@ -336,7 +336,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
   Widget _buildDateOptions() => Row(
       children: [
         _buildDateOption('tomorrow'.tr, 1, _setDateToTomorrow),
-        SizedBox(width: 12),
+        SizedBox(width: 10),
         _buildDateOption('dayAfter'.tr, 2, _setDateToDayAfter),
       ],
     );
@@ -345,11 +345,11 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
       onTap: onTap,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color:
               selectedDateOption == option ? Color(0xFFD32F2F) : Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: selectedDateOption == option
                 ? Color(0xFFD32F2F)
@@ -360,7 +360,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
               ? [
                   BoxShadow(
                     color: Color(0xFFD32F2F).withOpacity(0.3),
-                    blurRadius: 6,
+                    blurRadius: 4,
                     offset: Offset(0, 2),
                   ),
                 ]
@@ -386,12 +386,12 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
         if (!isFormValid)
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(bottom: 8.0, left: 4.0),
+            padding: const EdgeInsets.only(bottom: 6.0, left: 4.0),
             child:             Text(
               'pleaseSelectBothStations'.tr,
               style: TextStyle(
                 color: Color(0xFFD32F2F),
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -406,7 +406,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
               ? const Icon(
                   Icons.train_rounded,
                   color: Colors.white,
-                  size: 22,
+                  size: 18,
                 )
               : null,
         ),
@@ -420,11 +420,11 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
         'missingInformation'.tr,
         'pleaseSelectBothStations'.tr,
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFFD32F2F),
+        backgroundColor: AppColors.redCA0,
         colorText: Colors.white,
         margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        borderRadius: 16,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        borderRadius: 12,
         snackStyle: SnackStyle.FLOATING,
         duration: Duration(seconds: 3),
         icon: const Icon(Icons.error_outline, color: Colors.white),
@@ -450,7 +450,7 @@ class _TrainSearchScreenState extends State<TrainSearchScreen> {
         toStation: selectedToStation?.split(' - ')[0] ?? '',
       ),
       transition: Transition.cupertino,
-      duration: Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 300),
     );
     
     if (mounted) setState(() => isLoading = false);

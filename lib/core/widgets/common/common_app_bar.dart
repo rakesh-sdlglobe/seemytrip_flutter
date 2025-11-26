@@ -15,7 +15,7 @@ class CommonAppBar extends StatelessWidget {
     this.textColor = Colors.white,
     this.showBackButton = true,
     this.action,
-    this.height = 197, // Default height
+    this.height = 169, // Slightly increased from 140
   }) : super(key: key);
   final String title;
   final String? subtitle;
@@ -63,7 +63,7 @@ class CommonAppBar extends StatelessWidget {
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -92,8 +92,8 @@ class CommonAppBar extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
-              width: 44,
-              height: 44,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: textColor.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(12.0),
@@ -113,7 +113,7 @@ class CommonAppBar extends StatelessWidget {
         text: TextSpan(
           style: GoogleFonts.poppins(
             color: textColor,
-            fontSize: 26,
+            fontSize: 24,
             height: 1.3,
             shadows: [
               Shadow(
@@ -131,7 +131,7 @@ class CommonAppBar extends StatelessWidget {
             if (subtitle != null)
               TextSpan(
                 text: subtitle,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w400),
               ),
           ],
         ),
@@ -140,18 +140,18 @@ class CommonAppBar extends StatelessWidget {
   Widget _buildDecorativeShapes() => Stack(
         children: [
           Positioned(
-            top: -50,
-            left: -80,
+            top: -40,
+            left: -60,
             child: CircleAvatar(
-              radius: 100,
+              radius: 80,
               backgroundColor: textColor.withOpacity(0.1),
             ),
           ),
           Positioned(
-            bottom: -100,
-            right: -60,
+            bottom: -80,
+            right: -40,
             child: CircleAvatar(
-              radius: 90,
+              radius: 70,
               backgroundColor: textColor.withOpacity(0.07),
             ),
           ),

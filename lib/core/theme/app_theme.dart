@@ -208,7 +208,7 @@ class AppTheme {
 
       // App Bar Theme for Dark Mode
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.cardDark,
+        backgroundColor: AppColors.primary,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: AppTextStyles.heading2.copyWith(color: AppColors.white),

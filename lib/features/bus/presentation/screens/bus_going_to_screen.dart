@@ -77,280 +77,292 @@ class _BusGoingToScreenState extends State<BusGoingToScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(
-          'Select Destination City',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).appBarTheme.titleTextStyle?.color ?? Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => Get.back(),
-        ),
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? const Color(0xFFFF5722) // Orange-red for dark theme
-          : const Color(0xFFCA0B0B), // Red for light theme
-        elevation: 0,
-        centerTitle: true,
-        foregroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(16),
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: Text(
+            'Select Destination City',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
-            child: TextField(
-              controller: searchController,
-              style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
-              decoration: InputDecoration(
-                hintText: "Search for a city...",
-                hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 15),
-                prefixIcon: Icon(Icons.search_rounded, 
-                  color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFFFF5722) // Orange-red for dark theme
-                    : const Color(0xFFCA0B0B), // Red for light theme
-                  size: 24),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+          leading: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 16),
+              onPressed: () => Get.back(),
+              padding: EdgeInsets.zero,
+            ),
+          ),
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFFFF5722)
+              : const Color(0xFFCA0B0B),
+          elevation: 0,
+          centerTitle: true,
+          foregroundColor: Colors.white,
+          toolbarHeight: 60,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(16),
+            ),
+          ),
+        ),
+        body: Column(
+          children: [
+            // Search Bar
+            Container(
+              margin: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor.withOpacity(0.05),
+                    spreadRadius: 0.5,
+                    blurRadius: 6,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: TextField(
+                controller: searchController,
+                style: TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodyLarge?.color),
+                decoration: InputDecoration(
+                  hintText: "Search for a city...",
+                  hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 12),
+                  prefixIcon: Icon(Icons.search_rounded, 
+                    color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFFFF5722)
+                      : const Color(0xFFCA0B0B),
+                    size: 18),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+                  isDense: true,
+                ),
               ),
             ),
-          ),
-          
-          // Available Cities Header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            child: Row(
-              children: [
-                Text(
-                  'Available Cities',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).textTheme.titleMedium?.color,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: (Theme.of(context).brightness == Brightness.dark
-                      ? const Color(0xFFFF5722) // Orange-red for dark theme
-                      : const Color(0xFFCA0B0B)).withValues(alpha: 0.1), // Red for light theme
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Obx(() => Text(
-                    '${filteredCities.length} cities',
+            
+            // Available Cities Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              child: Row(
+                children: [
+                  Text(
+                    'Available Cities',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFFFF5722) // Orange-red for dark theme
-                        : const Color(0xFFCA0B0B), // Red for light theme
-                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).textTheme.titleMedium?.color,
                     ),
-                  )),
-                ),
-              ],
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: (Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFFFF5722)
+                        : const Color(0xFFCA0B0B)).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Obx(() => Text(
+                      '${filteredCities.length} cities',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFFFF5722)
+                          : const Color(0xFFCA0B0B),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+                  ),
+                ],
+              ),
             ),
-          ),
-          
-          // Cities List
-          Expanded(
-            child: Obx(() {
-              // Show loading indicator when cities are being loaded
-              if (controller.isLoading.value) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        child: LoadingAnimationWidget.dotsTriangle(
-                          color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFFFF5722) // Orange-red for dark theme
-                            : const Color(0xFFCA0B0B), // Red for light theme
-                          size: 40,
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Loading cities...',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
 
-              // Show error state if loading failed
-              if (controller.cityList.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 64,
-                        color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.red[400]
-                          : Colors.red[300],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Failed to load cities',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                          fontWeight: FontWeight.w500,
+            // Cities List
+            Expanded(
+              child: Obx(() {
+                // Show loading indicator when cities are being loaded
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: LoadingAnimationWidget.dotsTriangle(
+                            color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFFFF5722)
+                              : const Color(0xFFCA0B0B),
+                            size: 28,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextButton.icon(
-                        onPressed: _loadCities,
-                        icon: const Icon(Icons.refresh_rounded, size: 20),
-                        label: const Text('Retry'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFFFF5722) // Orange-red for dark theme
-                            : const Color(0xFFCA0B0B), // Red for light theme
+                        const SizedBox(height: 10),
+                        Text(
+                          'Loading...',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              // Show empty state when no cities match search
-              if (filteredCities.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.search_off_rounded,
-                        size: 64,
-                        color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey[600]
-                          : Colors.grey[300],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No cities found',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Try a different search term',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-              
-              return ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: filteredCities.length,
-                separatorBuilder: (context, index) => Divider(
-                  height: 1,
-                  color: Theme.of(context).dividerColor,
-                  indent: 16,
-                  endIndent: 16,
-                ),
-                itemBuilder: (context, index) {
-                  final city = filteredCities[index];
-                  return Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        Get.back(result: {
-                          'name': city['CityName'],
-                          'id': city['CityId'].toString(),
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: (Theme.of(context).brightness == Brightness.dark
-                                  ? const Color(0xFFFF5722) // Orange-red for dark theme
-                                  : const Color(0xFFCA0B0B)).withValues(alpha: 0.1), // Red for light theme
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                Icons.place_rounded,
-                                color: Theme.of(context).brightness == Brightness.dark
-                                  ? const Color(0xFFFF5722) // Orange-red for dark theme
-                                  : const Color(0xFFCA0B0B), // Red for light theme
-                                size: 24,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                city['CityName'] ?? 'Unknown City',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context).textTheme.bodyLarge?.color,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Icon(
-                              Icons.chevron_right_rounded,
-                              color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
                   );
-                },
-              );
-            }),
-          ),
-        ],
-      ),
-    );
+                }
+
+                // Show error state if loading failed
+                if (controller.cityList.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          size: 40,
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.red[400]
+                            : Colors.red[300],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Failed to load',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        TextButton.icon(
+                          onPressed: _loadCities,
+                          icon: const Icon(Icons.refresh_rounded, size: 16),
+                          label: const Text('Retry', style: TextStyle(fontSize: 12)),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFFFF5722)
+                              : const Color(0xFFCA0B0B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                // Show empty state when no cities match search
+                if (filteredCities.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off_rounded,
+                          size: 40,
+                          color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[500]
+                            : Colors.grey[400],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'No results',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Try different search',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  itemCount: filteredCities.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    color: Theme.of(context).dividerColor,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
+                  itemBuilder: (context, index) {
+                    final city = filteredCities[index];
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Get.back(result: {
+                            'name': city['CityName'],
+                            'id': city['CityId'].toString(),
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: (Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFFFF5722)
+                                    : const Color(0xFFCA0B0B)).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.place_rounded,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFFFF5722)
+                                    : const Color(0xFFCA0B0B),
+                                  size: 18,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  city['CityName'] ?? 'Unknown City',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
+      );
 }

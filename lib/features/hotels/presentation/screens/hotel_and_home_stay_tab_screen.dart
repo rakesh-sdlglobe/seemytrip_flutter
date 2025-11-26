@@ -22,8 +22,11 @@ class HotelAndHomeStayTabScreen extends StatelessWidget {
             children: [
               CommonAppBar(
                 title: 'hotels'.tr,
+                subtitle: 'discoverAmazingStaysAtBestPrices'.tr,
                 showBackButton: true,
-                // height: 255,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                textColor: Theme.of(context).colorScheme.onPrimary,
+                
               ),
               Expanded(child: HotelHomeScreen()),
               // Expanded(

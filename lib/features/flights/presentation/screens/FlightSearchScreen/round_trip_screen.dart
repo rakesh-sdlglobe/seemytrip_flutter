@@ -202,42 +202,56 @@ class _RoundTripScreenState extends State<RoundTripScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header with round trip icon
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.blue1F9.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            Icons.compare_arrows,
-                            color: AppColors.blue1F9,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Round Trip Flight',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Theme.of(context).textTheme.bodyLarge?.color,
-                              ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width - 88, // Account for padding and icon
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.blue1F9.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            Text(
-                              'Book your departure & return journey',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                color: Theme.of(context).textTheme.bodyMedium?.color,
-                              ),
+                            child: Icon(
+                              Icons.compare_arrows,
+                              color: AppColors.blue1F9,
+                              size: 24,
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          const SizedBox(width: 12),
+                          Flexible(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Round Trip Flight',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Book your departure & return journey',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 32),
                     

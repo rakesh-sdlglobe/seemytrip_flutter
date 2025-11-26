@@ -125,10 +125,10 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      // --- FIX: Wrap the body in Obx and Stack to show a loading overlay ---
       body: Obx(
         () => Stack(
           children: [
+            // Main content
             SingleChildScrollView(
               child: Column(
                 children: [
@@ -165,16 +165,30 @@ class _BusHomeScreenState extends State<BusHomeScreen> {
               ),
             ),
 
-            // --- FIX: Add a conditional loading overlay ---
-            // if (_isLoading.value)
-            //   Container(
-            //     color: Colors.black.withOpacity(0.5),
-            //     child: const Center(
-            //       child: CircularProgressIndicator(
-            //         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            //       ),
-            //     ),
-            //   ),
+            // Loading overlay - show while bus station data is being fetched
+            if (_busController.isLoading.value)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Loading bus stations...',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),

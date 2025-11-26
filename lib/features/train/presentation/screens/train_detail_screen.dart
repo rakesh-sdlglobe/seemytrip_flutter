@@ -109,9 +109,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
             children: [
               _buildHeader(context),
               _buildDateSelector(controller),
-              SizedBox(height: 15),
+              SizedBox(height: 10),
               _buildTrainList(),
-              SizedBox(height: 100),
+              SizedBox(height: 70),
             ],
           ),
           _buildBottomFilterBar(context),
@@ -128,16 +128,16 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
   }
 
   Widget _buildHeader(BuildContext context) => Container(
-      height: 145,
+      height: 120,
       width: Get.width,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage(busAndTrainImage),
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.only(left: 24, right: 24, top: 60, bottom: 10),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 50, bottom: 8),
         child: Container(
           width: Get.width,
           decoration: BoxDecoration(
@@ -153,18 +153,18 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
               child: Icon(
                 Icons.arrow_back, 
                 color: Theme.of(context).iconTheme.color ?? AppColors.grey888, 
-                size: 20
+                size: 18
               ),
             ),
             title: CommonTextWidget.PoppinsRegular(
               text: '${widget.fromStation} To ${widget.toStation}',
               color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
-              fontSize: 15,
+              fontSize: 14,
             ),
             subtitle: CommonTextWidget.PoppinsRegular(
               text: DateFormat('dd MMM, EEEE').format(widget.selectedDate),
               color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
-              fontSize: 12,
+              fontSize: 11,
             ),
             trailing: InkWell(
               onTap: () {
@@ -182,11 +182,11 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SvgPicture.asset(draw),
-                  SizedBox(height: 10),
+                  SizedBox(height: 8),
                   CommonTextWidget.PoppinsMedium(
                     text: 'Edit',
                     color: AppColors.redCA0,
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
                 ],
               ),
@@ -209,28 +209,28 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, bottom: 8),
+              padding: const EdgeInsets.only(left: 6.0, bottom: 6),
               child: Text(
                 'Select Journey Date',
                 style: TextStyle(
                   fontFamily: FontFamily.PoppinsSemiBold,
-                  fontSize: 14,
+                  fontSize: 11,
                   color: Theme.of(context).textTheme.titleMedium?.color ?? AppColors.black2E2,
                 ),
               ),
             ),
             SizedBox(
-              height: 80,
+              height: 70,
               child: GetBuilder<TrainDetailController>(
                 init: TrainDetailController(),
                 builder: (controller) => ListView.builder(
                   controller: ScrollController(
-                    initialScrollOffset: controller.selectedIndex.value * 80.0,
+                    initialScrollOffset: controller.selectedIndex.value * 70.0,
                   ),
                   itemCount:
                       TrainDetailController.trainAndBusDetailList1.length,
@@ -246,14 +246,14 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                       child: AnimatedContainer(
                         duration: Duration(milliseconds: 200),
                         margin: EdgeInsets.symmetric(horizontal: 4),
-                        width: 60,
+                        width: 52,
                         decoration: BoxDecoration(
                           color: isSelected 
                             ? AppColors.redCA0.withOpacity(0.1) 
                             : Theme.of(context).brightness == Brightness.dark 
                               ? Colors.grey[800] 
                               : Colors.grey[50],
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isSelected 
                               ? AppColors.redCA0 
@@ -270,7 +270,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                               DateFormat('EEE').format(date),
                               style: TextStyle(
                                 fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsMedium,
-                                fontSize: 12,
+                                fontSize: 10,
                                 color: isSelected 
                                   ? AppColors.redCA0 
                                   : Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey[600],
@@ -278,8 +278,8 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                             ),
                             SizedBox(height: 4),
                             Container(
-                              width: 32,
-                              height: 32,
+                              width: 20,
+                              height: 20,
                               decoration: BoxDecoration(
                                 color: isSelected ? AppColors.redCA0 : Colors.transparent,
                                 shape: BoxShape.circle,
@@ -289,7 +289,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                                   DateFormat('d').format(date),
                                   style: TextStyle(
                                     fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsMedium,
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     color: isSelected 
                                       ? AppColors.white 
                                       : Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87,
@@ -302,7 +302,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                               DateFormat('MMM').format(date),
                               style: TextStyle(
                                 fontFamily: isSelected ? FontFamily.PoppinsSemiBold : FontFamily.PoppinsRegular,
-                                fontSize: 10,
+                                fontSize: 8,
                                 color: isSelected 
                                   ? AppColors.redCA0 
                                   : Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
@@ -364,16 +364,16 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                 init: TrainSortAndFilterController(),
                 builder: (controller) => ListView.builder(
                     shrinkWrap: true,
-                    padding: EdgeInsets.only(bottom: 16, top: 8),
+                    padding: EdgeInsets.only(bottom: 12, top: 8),
                     itemCount: filteredTrains.length,
                     itemBuilder: (context, index) {
                       final train = filteredTrains[index];
                       return Padding(
-                        padding: EdgeInsets.only(bottom: 12, left: 16, right: 16),
+                        padding: EdgeInsets.only(bottom: 10, left: 12, right: 12),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
                                 color: Theme.of(context).shadowColor.withOpacity(0.05),
@@ -385,17 +385,17 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(14),
                               onTap: () {
                                 // Handle train selection
                               },
                               child: Padding(
-                                padding: EdgeInsets.all(16),
+                                padding: EdgeInsets.all(5),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _buildTrainHeader(train),
-                                    SizedBox(height: 16),
+                                    SizedBox(height: 8),
                                     _buildTrainTimings(train),
                                     SizedBox(height: 16),
                                     _buildTrainDistance(train),
@@ -484,7 +484,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                 child: Icon(
                   Icons.train_rounded,
                   color: AppColors.redCA0,
-                  size: 20,
+                  size: 18,
                 ),
               ),
               SizedBox(width: 12),
@@ -508,7 +508,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                       style: TextStyle(
                         fontFamily: FontFamily.PoppinsRegular,
                         color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey[600],
-                        fontSize: 12,
+                        fontSize: 11,
                       ),
                     ),
                   ],
@@ -558,7 +558,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
             CommonTextWidget.PoppinsMedium(
               text: train['duration'] ?? 'N/A',
               color: Theme.of(context).textTheme.bodySmall?.color ?? AppColors.grey717,
-              fontSize: 12,
+              fontSize: 11,
             ),
             SizedBox(width: 15),
             Container(
@@ -680,22 +680,25 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
             children: [
               // Availability status with icon and formatted seat data
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     statusIcon,
                     color: statusColor,
-                    size: 13,
+                    size: 12,
                   ),
-                  SizedBox(width: 4),
-                  Text(
-                    getFormattedSeatsData(availability),
-                    style: TextStyle(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      getFormattedSeatsData(availability),
                       overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
                     ),
-                  ),
+                    ),
+                  )
                 ],
               ),
               SizedBox(height: 3),
@@ -938,6 +941,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                                   .format(widget.selectedDate),
                               arrival: calculateArrival(train,
                                   widget.selectedDate)['formattedArrivalDate'],
+                              journeyDate: DateFormat('yyyyMMdd').format(widget.selectedDate),
+                              jQuota: seat['quota'] ?? 'GN',
+                              boardingStationCode: train['fromStnCode'],
                             ),
                           );
                         } else {
@@ -945,7 +951,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                         }
                       },
                       child: Container(
-                        width: 150,
+                        width: 140,
                         decoration: BoxDecoration(
                           color: boxColor,
                           boxShadow: [
@@ -971,14 +977,14 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                                   CommonTextWidget.PoppinsMedium(
                                     text: seat['enqClass'] ?? 'N/A',
                                     color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
-                                    fontSize: 13,
+                                    fontSize: 11,
                                   ),
                                   CommonTextWidget.PoppinsMedium(
                                     text: seat['totalFare'] != null
                                         ? "₹${seat['totalFare']}"
                                         : 'Regret',
                                     color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black,
-                                    fontSize: 13,
+                                    fontSize: 11,
                                   ),
                                 ],
                               ),
@@ -1001,7 +1007,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                                                 ? 'Ladies'
                                                 : '',
                                     color: Colors.red,
-                                    fontSize: 10,
+                                    fontSize: 9,
                                   ),
                                 ),
                               // Build the availability widgets
@@ -1024,9 +1030,9 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
   Widget _buildBottomFilterBar(BuildContext context) => Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20, left: 12, right: 12),
+        padding: const EdgeInsets.only(bottom: 16, left: 10, right: 10),
         child: Container(
-          height: 70,
+          height: 60,
           width: Get.width,
           decoration: BoxDecoration(
             color: AppColors.redCA0,
@@ -1055,15 +1061,15 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
                       child: SvgPicture.asset(
                         slidersHorizontal,
-                        height: 20,
-                        width: 20,
+                        height: 18,
+                        width: 18,
                         colorFilter: ColorFilter.mode(AppColors.redCA0, BlendMode.srcIn),
                       ),
                     ),
@@ -1072,7 +1078,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
                       'Filter',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
+                        fontSize: 11,
                         fontFamily: FontFamily.PoppinsMedium,
                       ),
                     ),
@@ -1094,7 +1100,7 @@ class _TrainDetailScreenState extends State<TrainDetailScreen> {
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: toggleValue.value

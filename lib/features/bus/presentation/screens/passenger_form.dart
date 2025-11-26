@@ -188,7 +188,7 @@ class PassengerFormWidget extends StatelessWidget {
                         children: [
                           const SizedBox(height: 20),
                           Text(
-                            'ID Proof (Required for age 5+)',
+                            'ID Proof (Optional)',
                             style: _AppStyles.subtitle.copyWith(
                               fontSize: 14,
                               color: _AppStyles.textSecondary,
@@ -216,13 +216,11 @@ class PassengerFormWidget extends StatelessWidget {
                                 flex: 6,
                                 child: _buildTextField(
                                   controller: idNumberControllers[index],
-                                  label: 'ID Number',
+                                  label: 'ID Number (Optional)',
                                   icon: Icons.credit_card_rounded,
                                   onChanged: (_) => validateForm(),
                                   validator: (value) {
-                                    if (age > 5 && (value == null || value.isEmpty)) {
-                                      return 'Required';
-                                    }
+                                    // ID Number is optional - no validation required
                                     return null;
                                   },
                                 ),
@@ -335,24 +333,31 @@ class _GenderSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: _AppStyles.divider.withOpacity(0.5)),
-      ),
-      child: ToggleButtons(
         borderRadius: BorderRadius.circular(10),
-        selectedColor: Colors.white,
-        fillColor: _AppStyles.primary,
-        selectedBorderColor: _AppStyles.primary,
-        borderColor: _AppStyles.divider.withOpacity(0.5),
-        children: const [
-          _GenderOption(label: 'Male', icon: Icons.male_rounded),
-          _GenderOption(label: 'Female', icon: Icons.female_rounded),
-          _GenderOption(label: 'Other', icon: Icons.transgender_rounded),
-        ],
-        isSelected: isSelected,
-        onPressed: onPressed,
+        border: Border.all(color: _AppStyles.divider.withOpacity(0.3)),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return ToggleButtons(
+            constraints: BoxConstraints.expand(
+              width: (constraints.maxWidth / 3) - 2, // Divide width equally
+            ),
+            borderRadius: BorderRadius.circular(8),
+            selectedColor: Colors.white,
+            fillColor: _AppStyles.primary,
+            selectedBorderColor: _AppStyles.primary,
+            borderColor: _AppStyles.divider.withOpacity(0.3),
+            children: const [
+              _GenderOption(label: 'Male', icon: Icons.male_rounded),
+              _GenderOption(label: 'Female', icon: Icons.female_rounded),
+              _GenderOption(label: 'Other', icon: Icons.transgender_rounded),
+            ],
+            isSelected: isSelected,
+            onPressed: onPressed,
+          );
+        },
       ),
     );
 }
@@ -369,18 +374,21 @@ class _GenderOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: _AppStyles.textPrimary),
-            const SizedBox(width: 6),
+            Icon(icon, size: 16, color: _AppStyles.textPrimary),
+            const SizedBox(width: 4),
             Text(
               label,
               style: _AppStyles.body.copyWith(
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -393,7 +401,6 @@ class _AppStyles {
   static const Color textSecondary = Color(0xFF757575);
   static const Color divider = Color(0xFFE0E0E0);
   static const Color background = Color(0xFFF8FAFC);
-  static const Color iconColor = Color(0xFF616161);
 
   static const TextStyle cardTitle = TextStyle(
     fontSize: 18,

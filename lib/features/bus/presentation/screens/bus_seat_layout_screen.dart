@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:seemytrip/core/theme/app_colors.dart' as AppTheme;
 import '../controllers/bus_controller.dart';
 import 'boarding_point_screen.dart';
 
@@ -46,33 +48,35 @@ class AppColors {
   static const Color textDark = Color(0xFF1A1A1A);
   static const Color textLight = Color(0xFF757575);
   static const Color card = Colors.white;
+  static const Color redCA0 = Color(0xFFCA0D0D);
+  static const Color redF9E = Color(0xFFF9E4E4);
 }
 
 class AppStyles {
   static final TextStyle heading1 = GoogleFonts.poppins(
     fontWeight: FontWeight.w600,
-    fontSize: 20,
+    fontSize: 18,
     color: AppColors.textDark,
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   );
   static final TextStyle heading2 = GoogleFonts.poppins(
     fontWeight: FontWeight.w600,
-    fontSize: 16,
+    fontSize: 15,
     color: AppColors.textDark,
   );
   static final TextStyle body = GoogleFonts.poppins(
-    fontSize: 14,
+    fontSize: 13,
     color: AppColors.textLight,
-    height: 1.5,
+    height: 1.4,
   );
   static final TextStyle bodyBold = GoogleFonts.poppins(
     fontWeight: FontWeight.w600,
-    fontSize: 14,
+    fontSize: 13,
     color: AppColors.textDark,
   );
   static final TextStyle button = GoogleFonts.poppins(
     fontWeight: FontWeight.w600,
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.white,
   );
 }
@@ -124,6 +128,8 @@ class BusSeatLayoutScreenArguments {
   final DateTime travelDate;
   final String busName;
   final int availableSeats;
+  final String? departureTime;
+  final String? arrivalTime;
 
   BusSeatLayoutScreenArguments({
     required this.traceId,
@@ -133,6 +139,8 @@ class BusSeatLayoutScreenArguments {
     required this.travelDate,
     required this.busName,
     required this.availableSeats,
+    this.departureTime,
+    this.arrivalTime,
   });
 }
 
@@ -164,13 +172,12 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 600),
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController!,
-      curve: Curves.easeInOut,
+      curve: Curves.easeOutCubic,
     );
-    _animationController!.forward();
     _loadSeatData();
   }
 
@@ -258,7 +265,10 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
   }
 
   void _onSeatTap(Seat seat) {
-    if (!seat.isAvailable) return;
+    if (!seat.isAvailable) {
+      HapticFeedback.lightImpact();
+      return;
+    }
     HapticFeedback.mediumImpact();
     setState(() {
       if (_selectedSeats.contains(seat)) {
@@ -268,15 +278,17 @@ class _BusSeatLayoutScreenState extends State<BusSeatLayoutScreen>
         _selectedSeats.add(seat);
         _totalPrice += seat.price;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: ThemeAwareColors.primaryVariant(context),
-            content: Text(
-              'You can select a maximum of 6 seats.',
-              style: AppStyles.body.copyWith(color: Colors.white),
-            ),
-            duration: const Duration(seconds: 3),
-          ),
+        HapticFeedback.heavyImpact();
+        Get.snackbar(
+          'Maximum Seats',
+          'You can select a maximum of 6 seats.',
+          backgroundColor: AppTheme.AppColors.redCA0,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 2),
+          borderRadius: 12,
+          margin: const EdgeInsets.all(16),
+          icon: const Icon(Icons.info_outline, color: Colors.white),
         );
       }
       _isSummaryExpanded = _selectedSeats.isNotEmpty;
@@ -309,12 +321,7 @@ color: ThemeAwareColors.primary(context),
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: _isLoading
-                        ? Center(
-                            child: LoadingAnimationWidget.dotsTriangle(
-                              color: ThemeAwareColors.primary(context),
-                              size: 40,
-                            ),
-                          )
+                        ? _buildShimmerLoading()
                         : _tabController == null
                             ? Center(
                                 child: Text(
@@ -349,55 +356,83 @@ color: ThemeAwareColors.primary(context),
   }
 
   PreferredSizeWidget _buildAppBar() => AppBar(
-        backgroundColor: Theme.of(context).cardColor,
+        backgroundColor: AppTheme.AppColors.redCA0,
+        foregroundColor: Colors.white,
+        toolbarHeight: 85,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        shadowColor: ThemeAwareColors.primary(context).withOpacity(0.1),
         leading: Container(
-          margin: const EdgeInsets.all(8),
+          margin: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Colors.white.withOpacity(0.2),
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
           child: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded,
-                color: Theme.of(context).textTheme.titleLarge?.color, size: 20),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, 
+                color: Colors.white, size: 18),
             onPressed: () => Get.back(),
+            padding: EdgeInsets.zero,
           ),
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${widget.args.fromLocation} → ${widget.args.toLocation}',
-              style: AppStyles.heading2.copyWith(
-                fontSize: 18,
-                color: Theme.of(context).textTheme.titleLarge?.color,
+        title: Container(
+          padding: const EdgeInsets.only(right: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '${widget.args.fromLocation} → ${widget.args.toLocation}',
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
+                  height: 1.2,
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              DateFormat('E, d MMM yyyy').format(widget.args.travelDate),
-              style: AppStyles.body.copyWith(
-                fontSize: 13,
-                color: Theme.of(context).textTheme.bodySmall?.color,
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(Icons.calendar_today_rounded, size: 12, color: Colors.white.withOpacity(0.9)),
+                  const SizedBox(width: 6),
+                  Text(
+                    DateFormat('EEEE, d MMM yyyy').format(widget.args.travelDate),
+                    style: GoogleFonts.poppins(
+                      color: Colors.white.withOpacity(0.95),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
+          preferredSize: const Size.fromHeight(4),
           child: Container(
-            color: Theme.of(context).dividerColor.withOpacity(0.5),
-            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.1),
+                  Colors.transparent,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            height: 4,
           ),
         ),
       );
@@ -407,53 +442,138 @@ color: ThemeAwareColors.primary(context),
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border(
-          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
-        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.args.busName,
-            style: AppStyles.heading1.copyWith(
-              color: Theme.of(context).textTheme.titleLarge?.color,
-            ),
-          ),
-          const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.event_seat_outlined, color: Theme.of(context).textTheme.bodySmall?.color, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                '${widget.args.availableSeats} Seats Available',
-                style: AppStyles.body.copyWith(fontSize: 13),
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.8)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.AppColors.redCA0.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.directions_bus_rounded,
+                  color: Colors.white,
+                  size: 26,
+                ),
               ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.args.busName,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87,
+                        letterSpacing: 0.1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppTheme.AppColors.redF9E.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppTheme.AppColors.redCA0.withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.event_seat_rounded, size: 14, color: AppTheme.AppColors.redCA0),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${widget.args.availableSeats} Seats Available',
+                            style: GoogleFonts.poppins(
+                              color: AppTheme.AppColors.redCA0,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_upperDeckLayout.isNotEmpty)
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppTheme.AppColors.redF9E,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: AppTheme.AppColors.redCA0.withOpacity(0.3),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.AppColors.redCA0.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: AppTheme.AppColors.redCA0,
+                    indicator: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppTheme.AppColors.redCA0, AppTheme.AppColors.redCA0.withOpacity(0.9)],
+                      ),
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelStyle: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                    unselectedLabelStyle: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                    ),
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    tabs: const [
+                      Tab(text: 'LOWER'),
+                      Tab(text: 'UPPER'),
+                    ],
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 16),
           const SeatInfoLegend(),
-          const SizedBox(height: 12),
-          if (!_isLoading && _upperDeckLayout.isNotEmpty && _tabController != null)
-            TabBar(
-              controller: _tabController,
-              indicatorColor: ThemeAwareColors.accent(context),
-              indicatorWeight: 3,
-              labelColor: ThemeAwareColors.primary(context),
-              unselectedLabelColor: Theme.of(context).textTheme.bodySmall?.color,
-              labelStyle: AppStyles.bodyBold.copyWith(
-                fontSize: 13,
-                color: ThemeAwareColors.primary(context),
-              ),
-              unselectedLabelStyle: AppStyles.body.copyWith(
-                fontSize: 13,
-                color: Theme.of(context).textTheme.bodySmall?.color,
-              ),
-              tabs: const [
-                Tab(text: 'LOWER DECK'),
-                Tab(text: 'UPPER DECK'),
-              ],
-            ),
         ],
       ),
     );
@@ -462,9 +582,24 @@ color: ThemeAwareColors.primary(context),
   Widget _buildDeckWidget(List<List<Seat?>> layout) {
     if (layout.isEmpty) {
       return Center(
-        child: Text(
-          "No layout available for this deck.",
-          style: AppStyles.body.copyWith(fontSize: 15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.event_seat_outlined,
+              size: 64,
+              color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.3),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "No layout available for this deck.",
+              style: GoogleFonts.poppins(
+                fontSize: 15,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -476,24 +611,45 @@ color: ThemeAwareColors.primary(context),
         16,
         24,
         16,
-        200 + MediaQuery.of(context).padding.bottom,
+        220 + MediaQuery.of(context).padding.bottom,
       ),
+      physics: const BouncingScrollPhysics(),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
         child: Stack(
           alignment: Alignment.topRight,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                border: Border.all(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).cardColor,
+                    Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black.withOpacity(0.3)
+                        : AppTheme.AppColors.redF9E.withOpacity(0.05),
+                  ],
+                ),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withOpacity(0.3),
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).shadowColor.withOpacity(0.08),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    color: Theme.of(context).shadowColor.withOpacity(0.1),
+                    blurRadius: 20,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 6),
+                  ),
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor.withOpacity(0.05),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -501,24 +657,43 @@ color: ThemeAwareColors.primary(context),
                 children: layout
                     .asMap()
                     .entries
-                    .map((entry) => FadeTransition(
-                          opacity: Tween<double>(begin: 0, end: 1).animate(
-                            CurvedAnimation(
-                              parent: _animationController!,
-                              curve: Interval(0.1 * entry.key, 1.0, curve: Curves.easeOut),
-                            ),
-                          ),
-                          child: _buildSeatRow(entry.value, columnCount),
+                    .map((entry) => TweenAnimationBuilder<double>(
+                          duration: Duration(milliseconds: 300 + (entry.key * 50)),
+                          tween: Tween(begin: 0.0, end: 1.0),
+                          curve: Curves.easeOutCubic,
+                          builder: (context, value, child) {
+                            return Transform.translate(
+                              offset: Offset(0, 20 * (1 - value)),
+                              child: Opacity(
+                                opacity: value,
+                                child: RepaintBoundary(
+                                  child: _buildSeatRow(entry.value, columnCount),
+                                ),
+                              ),
+                            );
+                          },
                         ))
                     .toList(),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16, top: 16),
-              child: Icon(
-                Icons.directions_bus,
-                color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
-                size: 36,
+            Positioned(
+              right: 20,
+              top: 20,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.AppColors.redCA0.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppTheme.AppColors.redCA0.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Icon(
+                  Icons.directions_bus_rounded,
+                  color: AppTheme.AppColors.redCA0.withOpacity(0.6),
+                  size: 32,
+                ),
               ),
             ),
           ],
@@ -527,20 +702,55 @@ color: ThemeAwareColors.primary(context),
     );
   }
 
+  Widget _buildShimmerLoading() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: List.generate(8, (index) => Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: Shimmer.fromColors(
+            baseColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[800]!
+                : Colors.grey[300]!,
+            highlightColor: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[700]!
+                : Colors.grey[100]!,
+            period: const Duration(milliseconds: 1200),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(4, (_) => Container(
+                width: 56,
+                height: 64,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              )),
+            ),
+          ),
+        )),
+      ),
+    );
+  }
+
   Widget _buildSeatRow(List<Seat?> row, int totalColumns) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(totalColumns, (index) {
           final seat = index < row.length ? row[index] : null;
-          return seat == null
-              ? const SizedBox(width: 56, height: 64) // Aisle or empty space
-              : SeatWidget(
-                  seat: seat,
-                  isSelected: _selectedSeats.contains(seat),
-                  onTap: () => _onSeatTap(seat),
-                );
+          if (seat == null) {
+            return const SizedBox(width: 56, height: 64); // Aisle or empty space
+          }
+          return RepaintBoundary(
+            child: SeatWidget(
+              seat: seat,
+              isSelected: _selectedSeats.contains(seat),
+              onTap: () => _onSeatTap(seat),
+            ),
+          );
         }),
       ),
     );
@@ -549,61 +759,155 @@ color: ThemeAwareColors.primary(context),
   Widget _buildSummaryCard() {
     bool isVisible = _selectedSeats.isNotEmpty;
     return AnimatedSlide(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
       offset: isVisible ? Offset.zero : const Offset(0, 2),
       child: Container(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).cardColor,
+              Theme.of(context).brightness == Brightness.dark
+                  ? Colors.black.withOpacity(0.3)
+                  : AppTheme.AppColors.redF9E.withOpacity(0.1),
+            ],
+          ),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).shadowColor.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
+              color: Theme.of(context).shadowColor.withOpacity(0.15),
+              blurRadius: 25,
+              spreadRadius: 0,
+              offset: const Offset(0, -8),
+            ),
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withOpacity(0.08),
+              blurRadius: 10,
+              spreadRadius: 0,
+              offset: const Offset(0, -2),
             ),
           ],
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
               child: Row(
                 children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.AppColors.redCA0,
+                          AppTheme.AppColors.redCA0.withOpacity(0.8),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.AppColors.redCA0.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.event_seat_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          '₹${_totalPrice.toStringAsFixed(0)}',
-                          style: AppStyles.heading1.copyWith(
-                            color: ThemeAwareColors.accent(context),
-                            fontSize: 24,
-                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '₹',
+                              style: GoogleFonts.poppins(
+                                color: AppTheme.AppColors.redCA0,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2,
+                              ),
+                            ),
+                            Text(
+                              _totalPrice.toStringAsFixed(0),
+                              style: GoogleFonts.poppins(
+                                color: AppTheme.AppColors.redCA0,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.5,
+                                height: 1.1,
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 4),
                         Text(
                           '${_selectedSeats.length} Seat${_selectedSeats.length == 1 ? '' : 's'} Selected',
-                          style: AppStyles.body.copyWith(
+                          style: GoogleFonts.poppins(
                             fontSize: 13,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  TextButton.icon(
-                    onPressed: () => setState(() => _isSummaryExpanded = !_isSummaryExpanded),
-                    icon: AnimatedRotation(
-                      duration: const Duration(milliseconds: 200),
-                      turns: _isSummaryExpanded ? 0.5 : 0,
-                      child: Icon(Icons.expand_less, color: Theme.of(context).textTheme.bodySmall?.color),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.AppColors.redF9E.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppTheme.AppColors.redCA0.withOpacity(0.2),
+                        width: 1,
+                      ),
                     ),
-                    label: Text(
-                      "Details",
-                      style: AppStyles.body.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => setState(() => _isSummaryExpanded = !_isSummaryExpanded),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Details",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.AppColors.redCA0,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              AnimatedRotation(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                turns: _isSummaryExpanded ? 0.5 : 0,
+                                child: Icon(
+                                  Icons.expand_less,
+                                  color: AppTheme.AppColors.redCA0,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -620,35 +924,81 @@ color: ThemeAwareColors.primary(context),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ThemeAwareColors.primary(context),
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: _selectedSeats.isEmpty
+                        ? [Colors.grey[400]!, Colors.grey[500]!]
+                        : [
+                            AppTheme.AppColors.redCA0,
+                            AppTheme.AppColors.redCA0.withOpacity(0.9),
+                          ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  elevation: 0,
-                  shadowColor: ThemeAwareColors.primary(context).withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: _selectedSeats.isEmpty
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: AppTheme.AppColors.redCA0.withOpacity(0.4),
+                            blurRadius: 16,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 6),
+                          ),
+                          BoxShadow(
+                            color: AppTheme.AppColors.redCA0.withOpacity(0.2),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                 ),
-                onPressed: _selectedSeats.isEmpty
-                    ? null
-                    : () {
-                        Get.to(() => BoardingPointScreen(
-                              traceId: widget.args.traceId,
-                              resultIndex: widget.args.resultIndex,
-                              busName: widget.args.busName,
-                              fromCity: widget.args.fromLocation,
-                              toCity: widget.args.toLocation,
-                              journeyDate: DateFormat('d MMM yyyy').format(widget.args.travelDate),
-                              fare: _totalPrice.toStringAsFixed(0),
-                              selectedSeats: _selectedSeats,
-                            ));
-                      },
-                child: Text(
-                  'Select Boarding Point',
-                  style: AppStyles.button,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _selectedSeats.isEmpty
+                        ? null
+                        : () {
+                            Get.to(() => BoardingPointScreen(
+                                  traceId: widget.args.traceId,
+                                  resultIndex: widget.args.resultIndex,
+                                  busName: widget.args.busName,
+                                  fromCity: widget.args.fromLocation,
+                                  toCity: widget.args.toLocation,
+                                  journeyDate: DateFormat('d MMM yyyy').format(widget.args.travelDate),
+                                  departureTime: widget.args.departureTime,
+                                  arrivalTime: widget.args.arrivalTime,
+                                  fare: _totalPrice.toStringAsFixed(0),
+                                  selectedSeats: _selectedSeats,
+                                ));
+                          },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.location_on_rounded,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Select Boarding Point',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: Colors.white,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -738,46 +1088,93 @@ class SeatWidget extends StatelessWidget {
       message: seat.isAvailable
           ? 'Seat ${seat.seatName} | ₹${seat.price.toStringAsFixed(0)}'
           : 'Booked',
+      preferBelow: false,
+      decoration: BoxDecoration(
+        color: Colors.black87,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      textStyle: GoogleFonts.poppins(
+        color: Colors.white,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
       child: GestureDetector(
         onTap: seat.isAvailable ? onTap : null,
-        child: AnimatedScale(
-          duration: const Duration(milliseconds: 150),
-          scale: isSelected ? 1.1 : 1.0,
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            width: 56,
-            height: 64,
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(seat.isSleeper ? 12 : 8),
-              border: Border.all(color: borderColor, width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(isSelected ? 0.2 : 0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined,
-                  color: contentColor,
-                  size: 22,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  seat.seatName,
-                  style: AppStyles.bodyBold.copyWith(
-                    color: contentColor,
-                    fontSize: 12,
+        child: TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 200),
+          tween: Tween(begin: 1.0, end: isSelected ? 1.08 : 1.0),
+          curve: Curves.easeOutBack,
+          builder: (context, scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                width: 60,
+                height: 68,
+                decoration: BoxDecoration(
+                  gradient: isSelected
+                      ? LinearGradient(
+                          colors: [
+                            ThemeAwareColors.primary(context),
+                            ThemeAwareColors.primary(context).withOpacity(0.9),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  color: isSelected ? null : backgroundColor,
+                  borderRadius: BorderRadius.circular(seat.isSleeper ? 14 : 10),
+                  border: Border.all(
+                    color: borderColor,
+                    width: isSelected ? 2.5 : 1.5,
                   ),
+                  boxShadow: [
+                    if (isSelected)
+                      BoxShadow(
+                        color: ThemeAwareColors.primary(context).withOpacity(0.4),
+                        blurRadius: 12,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 4),
+                      ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isSelected ? 0.15 : 0.08),
+                      blurRadius: isSelected ? 8 : 4,
+                      offset: Offset(0, isSelected ? 3 : 2),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      seat.isSleeper ? Icons.bed_outlined : Icons.chair_outlined,
+                      color: contentColor,
+                      size: isSelected ? 24 : 22,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      seat.seatName,
+                      style: GoogleFonts.poppins(
+                        color: contentColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    if (isSelected && seat.isAvailable)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

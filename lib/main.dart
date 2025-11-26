@@ -5,10 +5,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
+import 'core/controllers/network_controller.dart';
 import 'core/presentation/screens/splash/splash_screen.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_service.dart';
+import 'core/widgets/connectivity_wrapper.dart';
 import 'features/auth/presentation/controllers/login_controller.dart';
 import 'features/shared/presentation/controllers/language_controller.dart';
 import 'firebase_options.dart';
@@ -31,6 +33,9 @@ void main() async {
   
   // Initialize LanguageController to load saved language
   Get.put(LanguageController(), permanent: true);
+  
+  // Initialize NetworkController to monitor connectivity
+  Get.put(NetworkController(), permanent: true);
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarBrightness: Brightness.dark,
@@ -50,38 +55,40 @@ class SeemytripApp extends StatelessWidget {
     final themeService = Get.find<ThemeService>();
     final languageController = Get.find<LanguageController>();
     
-    return Obx(() => GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'SeeMyTrip',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeService.theme,
-      translations: AppTranslations(),
-      locale: languageController.currentLocale.value,
-      fallbackLocale: const Locale('en'),
-      supportedLocales: const [
-        Locale('en'),
-        Locale('hi'),
-        Locale('ta'),
-        Locale('kn'),
-        Locale('te'),
-        Locale('or'),
-        Locale('fr'),
-        Locale('es'),
-        Locale('ar'),
-        Locale('de'),
-        Locale('zh'),
-      ],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      getPages: [
-        ...AppRoutes.routes,
-      ],
-      initialRoute: '/',
-      home: SplashScreen(),
+    return Obx(() => ConnectivityWrapper(
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'SeeMyTrip',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeService.theme,
+        translations: AppTranslations(),
+        locale: languageController.currentLocale.value,
+        fallbackLocale: const Locale('en'),
+        supportedLocales: const [
+          Locale('en'),
+          Locale('hi'),
+          Locale('ta'),
+          Locale('kn'),
+          Locale('te'),
+          Locale('or'),
+          Locale('fr'),
+          Locale('es'),
+          Locale('ar'),
+          Locale('de'),
+          Locale('zh'),
+        ],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        getPages: [
+          ...AppRoutes.routes,
+        ],
+        initialRoute: '/',
+        home: SplashScreen(),
+      ),
     ));
   }
 }

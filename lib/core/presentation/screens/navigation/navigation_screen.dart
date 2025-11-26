@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import '../../../../features/common/presentation/screens/coming_soon_screen.dart';
 
 import '../../../../features/home/presentation/controllers/navigation_controller.dart';
 import '../../../../features/home/presentation/screens/DrawerScreen/drawer_screen.dart';
@@ -82,7 +83,7 @@ class NavigationScreen extends StatelessWidget {
               label: "whereToGo".tr,
               index: 2,
               isSelected: navigationController.pageIndex.value == 2,
-              onTap: () => navigationController.pageIndex.value = 2,
+              onTap: () => Get.to(() => const ComingSoonScreen()),
             ),
             _buildNavItem(
               context: context,

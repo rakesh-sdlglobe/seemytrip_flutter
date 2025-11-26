@@ -13,6 +13,7 @@ import '../../../airport_cab/presentation/screens/cab_search_screen.dart';
 import '../../../bus/presentation/screens/bus_home_screen.dart';
 import '../../../flights/presentation/screens/FlightSearchScreen/flight_search_screen.dart';
 import '../../../hotels/presentation/screens/hotel_and_home_stay_tab_screen.dart';
+import '../../../insurance/screens/insurance_home_screen.dart';
 import '../../../profile/presentation/screens/notifications/notification_screen.dart';
 import '../../../train/presentation/screens/train_screen.dart';
 import 'OutStationCabsScreen/out_station_cab_screen.dart';
@@ -154,7 +155,8 @@ class HomeScreen extends StatelessWidget {
                             InkWell(
                               onTap: () {
                                 // Get.to(() => CabSearchScreen());
-                                Get.to(() => ComingSoonScreen(moduleName: 'Airport Cabs'));
+                                // Get.to(() => ComingSoonScreen(moduleName: 'Airport Cabs'));
+                                Get.to(() => InsuranceHomePage());
                               },
                               child: Column(
                                 children: [

@@ -16,13 +16,9 @@ class TopBanner extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: <Color>[
-                  Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFFFF5722) // Orange-red for dark theme
-                    : const Color(0xFFCA0B0B), // Red for light theme
-                  Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFFFF5722) // Orange-red for dark theme
-                    : const Color(0xFFCA0B0B), // Red for light theme
+               colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.primaryContainer,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -95,7 +91,7 @@ class TopBanner extends StatelessWidget {
           height: 1.3,
           shadows: <Shadow>[
             Shadow(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withValues(alpha: 0.25),
               blurRadius: 5,
               offset: const Offset(0, 2),
             )

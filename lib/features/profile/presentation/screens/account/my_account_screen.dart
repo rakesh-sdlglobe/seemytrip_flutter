@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -17,7 +16,7 @@ import '../../../../auth/presentation/controllers/login_controller.dart';
 import 'edit_profile_screen.dart';
 
 class MyAccountScreen extends StatefulWidget {
-  MyAccountScreen({Key? key}) : super(key: key);
+  const MyAccountScreen({Key? key}) : super(key: key);
 
   @override
   _MyAccountScreenState createState() => _MyAccountScreenState();
@@ -40,185 +39,212 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
   Future<void> fetchUserProfile() async {
     try {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String? token = prefs.getString('accessToken');
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('accessToken');
 
       if (token == null) {
         Get.snackbar('Error', 'No access token found. Please log in again.');
         return;
       }
 
-      final http.Response response = await http.get(
+      final response = await http.get(
         Uri.parse(loginController.userProfileUrl),
-        headers: <String, String>{
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
 
-      print('Response Status: ${response.statusCode}');
-      print('Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        loginController.userData.value = responseData;
+        final data = json.decode(response.body);
+        loginController.userData.value = data;
 
         setState(() {
           fullName =
-              '${responseData['firstName'] ?? ''} ${responseData['middleName'] ?? ''}${responseData['lastName'] ?? ''}';
-          gender = responseData['gender'] ?? '';
-          dateOfBirth = responseData['dob'] ?? '';
-          emailId = responseData['email'] ?? '';
-          phoneNumber = responseData['phoneNumber'] ?? '';
+              '${data['firstName'] ?? ''} ${data['middleName'] ?? ''}${data['lastName'] ?? ''}';
+          gender = data['gender'] ?? '';
+          dateOfBirth = data['dob'] ?? '';
+          emailId = data['email'] ?? '';
+          phoneNumber = data['phoneNumber'] ?? '';
         });
       } else {
         Get.snackbar('Error', 'Failed to fetch user profile.');
       }
-    } catch (error) {
-      print('Error: $error');
-      Get.snackbar('Error', 'An error occurred: $error');
+    } catch (e) {
+      Get.snackbar('Error', 'An error occurred: $e');
     }
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark 
-          ? AppColors.backgroundDark 
-          : AppColors.white,
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.redCA0,
-        automaticallyImplyLeading: false,
         elevation: 0,
         centerTitle: true,
-        leading: InkWell(
-          onTap: () {
-            Get.back();
-          },
-          child: Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.white, size: 20),
+        leading: IconButton(
+          onPressed: () => Get.back(),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.white, size: 20),
         ),
         title: CommonTextWidget.PoppinsSemiBold(
-          text: 'myAccount'.tr,
-          color: AppColors.white,
+          text: 'My Account',
+          color: Colors.white,
           fontSize: 18,
         ),
       ),
-      body: Obx(() => loginController.isLoading.value
-          ? Center(child: LoadingAnimationWidget.dotsTriangle(
-            color: AppColors.redCA0,
-            size: 24,
-          ))
-          : ScrollConfiguration(
-              behavior: MyBehavior(),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(height: 20),
-                    ListTile(
-                      onTap: () {
-                        Get.to(() => EditProfileScreen());
-                      },
-                      leading: Container(
-                        width: 70,
-                        height: 70,
+      body: Obx(
+        () => loginController.isLoading.value
+            ? Center(
+                child: LoadingAnimationWidget.dotsTriangle(
+                  color: AppColors.redCA0,
+                  size: 32,
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: fetchUserProfile,
+                color: AppColors.redCA0,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Profile Card
+                      Container(
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.redCA0.withValues(alpha:0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          color: isDark ? AppColors.cardDark : Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
-                          color: AppColors.redCA0,
-                        ),
-                      ),
-                      title: CommonTextWidget.PoppinsMedium(
-                        text: fullName.isNotEmpty ? fullName : 'guestUser'.tr,
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? AppColors.textPrimaryDark 
-                            : AppColors.black2E2,
-                        fontSize: 18,
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          if (emailId.isNotEmpty)
-                            Text(
-                              emailId,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context).brightness == Brightness.dark 
-                                    ? AppColors.textSecondaryDark 
-                                    : Colors.grey,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.redCA0.withOpacity(0.1),
+                              ),
+                              child: const Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Color(0xFFCA0000),
                               ),
                             ),
-                          CommonTextWidget.PoppinsMedium(
-                            text: 'Edit Profile',
-                            color: AppColors.redCA0,
-                            fontSize: 12,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 18),
-                    Divider(
-                      color: Theme.of(context).brightness == Brightness.dark 
-                          ? AppColors.dividerDark 
-                          : AppColors.greyE8E, 
-                      thickness: 1
-                    ),
-                    SizedBox(height: 20),
-                    ListView.builder(
-                      itemCount: Lists.myAccountList.length,
-                      shrinkWrap: true,
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (BuildContext context, int index) => Padding(
-                        padding: EdgeInsets.only(bottom: 30),
-                        child: InkWell(
-                          onTap: Lists.myAccountList[index]['onTap'],
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                height: 52,
-                                width: 52,
-                                decoration: BoxDecoration(
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                      offset: Offset(0, 1),
-                                      blurRadius: 4,
-                                      color: Theme.of(context).brightness == Brightness.dark 
-                                          ? AppColors.black262.withValues(alpha: 0.4)
-                                          : AppColors.black262.withValues(alpha: 0.25),
-                                    ),
-                                  ],
-                                  color: Theme.of(context).brightness == Brightness.dark 
-                                      ? AppColors.cardDark 
-                                      : AppColors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    Lists.myAccountList[index]['image'],
-                                    color: AppColors.redCA0,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CommonTextWidget.PoppinsMedium(
+                                    text: fullName.isNotEmpty
+                                        ? fullName
+                                        : 'Guest User',
+                                    color: isDark
+                                        ? AppColors.textPrimaryDark
+                                        : AppColors.black2E2,
+                                    fontSize: 18,
                                   ),
-                                ),
+                                  const SizedBox(height: 4),
+                                  if (emailId.isNotEmpty)
+                                    Text(
+                                      emailId,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: isDark
+                                            ? AppColors.textSecondaryDark
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                  const SizedBox(height: 6),
+                                  GestureDetector(
+                                    onTap: () =>
+                                        Get.to(() => EditProfileScreen()),
+                                    child: CommonTextWidget.PoppinsMedium(
+                                      text: 'Edit Profile',
+                                      color: AppColors.redCA0,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 20),
-                              CommonTextWidget.PoppinsRegular(
-                                text: Lists.myAccountList[index]['text'],
-                                color: Theme.of(context).brightness == Brightness.dark 
-                                    ? AppColors.textPrimaryDark 
-                                    : AppColors.black2E2,
-                                fontSize: 18,
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 24),
+
+                      // Account Options
+                      ...Lists.myAccountList.map((item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 14),
+                          child: InkWell(
+                            onTap: item['onTap'],
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color:
+                                    isDark ? AppColors.cardDark : Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.redCA0.withOpacity(0.08),
+                                    ),
+                                    child: Center(
+                                      child: SvgPicture.asset(
+                                        item['image'],
+                                        color: AppColors.redCA0,
+                                        height: 22,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: CommonTextWidget.PoppinsRegular(
+                                      text: item['text'],
+                                      color: isDark
+                                          ? AppColors.textPrimaryDark
+                                          : AppColors.black2E2,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Icon(Icons.arrow_forward_ios_rounded,
+                                      color: Colors.grey[400], size: 16),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )).toList(),
+                    ],
+                  ),
                 ),
               ),
-            )),
+      ),
     );
+  }
 }

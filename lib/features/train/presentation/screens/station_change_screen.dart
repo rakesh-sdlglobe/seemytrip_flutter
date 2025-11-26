@@ -163,6 +163,9 @@ class StationChangeScreen extends StatelessWidget {
                                 departure:
                                     DateFormat('dd MMM').format(departure),
                                 arrival: DateFormat('dd MMM').format(arrival),
+                                journeyDate: DateFormat('yyyyMMdd').format(departure),
+                                jQuota: 'GN',
+                                boardingStationCode: startStation,
                               ));
                         },
                         child: CommonTextWidget.PoppinsMedium(

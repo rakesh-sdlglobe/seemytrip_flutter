@@ -121,7 +121,7 @@ class LogInScreen extends StatelessWidget {
               ),
               child: SafeArea(
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                   child: Column(
                     children: [
                       // Skip Button
@@ -170,7 +170,7 @@ class LogInScreen extends StatelessWidget {
                             fontSize: 36,
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 12),
+                          SizedBox(height: 16),
                           CommonTextWidget.PoppinsMedium(
                             text: 'Join 10 crore+ happy travellers',
                             color: Theme.of(context).brightness == Brightness.dark 
@@ -189,167 +189,169 @@ class LogInScreen extends StatelessWidget {
             ),
           ),
           
-          // Bottom Content
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: Get.height * 0.45,
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark 
-                    ? AppColors.surfaceDark 
-                    : AppColors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-                boxShadow: [
-                  BoxShadow(
+          // Main Content - Moved to bottom
+          Positioned.fill(
+            child: Column(
+              children: [
+                // Top Spacer to push content down
+                Spacer(),
+                // Content Container
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark 
-                        ? AppColors.black262.withOpacity(0.2)
-                        : AppColors.black262.withOpacity(0.08),
-                    blurRadius: 15,
-                    spreadRadius: 0,
-                    offset: Offset(0, -3),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20),
-                    
-                    // Title
-                    CommonTextWidget.PoppinsBold(
-                      text: 'Get Started',
-                      color: Theme.of(context).brightness == Brightness.dark 
-                          ? AppColors.textPrimaryDark 
-                          : AppColors.black2E2,
-                      fontSize: 28,
+                        ? AppColors.surfaceDark 
+                        : AppColors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
                     ),
-                    SizedBox(height: 8),
-                    CommonTextWidget.PoppinsMedium(
-                      text: 'Choose your preferred login method',
-                      color: Theme.of(context).brightness == Brightness.dark 
-                          ? AppColors.textSecondaryDark 
-                          : AppColors.grey929,
-                      fontSize: 16,
-                    ),
-                    SizedBox(height: 40),
-                    
-                    // Google Login Button
-                    Obx(() => _buildLoginButton(
-                      context: context,
-                      onTap: loginController.isSigningIn.value
-                          ? null
-                          : () => loginController.signInWithGoogle(),
-                      icon: Image.asset(googleImage, height: 20, width: 20),
-                      text: 'Continue with Google',
-                      isLoading: loginController.isSigningIn.value,
-                      isPrimary: true,
-                    )),
-                    
-                    SizedBox(height: 16),
-                    
-                    // Email OTP Button
-                    _buildLoginButton(
-                      context: context,
-                      onTap: () => Get.to(() => OtpScreen2()),
-                      icon: Icon(
-                        Icons.email_outlined,
+                    boxShadow: [
+                      BoxShadow(
                         color: Theme.of(context).brightness == Brightness.dark 
-                            ? AppColors.textPrimaryDark 
-                            : AppColors.grey717,
-                        size: 20,
+                            ? AppColors.black262.withOpacity(0.2)
+                            : AppColors.black262.withOpacity(0.08),
+                        blurRadius: 15,
+                        spreadRadius: 0,
+                        offset: Offset(0, -3),
                       ),
-                      text: 'Continue with Email OTP',
-                      isPrimary: false,
-                    ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        CommonTextWidget.PoppinsBold(
+                          text: 'Get Started',
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? AppColors.textPrimaryDark 
+                              : AppColors.black2E2,
+                          fontSize: 24,
+                        ),
+                        SizedBox(height: 8),
+                        CommonTextWidget.PoppinsMedium(
+                          text: 'Choose your preferred login method',
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? AppColors.textSecondaryDark 
+                              : AppColors.grey929,
+                          fontSize: 15,
+                        ),
+                        SizedBox(height: 30),
                     
-                    Spacer(),
+                        // Google Login Button
+                        Obx(() => _buildLoginButton(
+                          context: context,
+                          onTap: loginController.isSigningIn.value
+                              ? null
+                              : () => loginController.signInWithGoogle(),
+                          icon: Image.asset(googleImage, height: 20, width: 20),
+                          text: 'Continue with Google',
+                          isLoading: loginController.isSigningIn.value,
+                          isPrimary: true,
+                        )),
+                        
+                        SizedBox(height: 16),
+                        
+                        // Email OTP Button
+                        _buildLoginButton(
+                          context: context,
+                          onTap: () => Get.to(() => OtpScreen2()),
+                          icon: Icon(
+                            Icons.email_outlined,
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? AppColors.textPrimaryDark 
+                                : AppColors.grey717,
+                            size: 20,
+                          ),
+                          text: 'Continue with Email OTP',
+                          isPrimary: false,
+                        ),
+                        
+                        SizedBox(height: 24),
                     
-                    // Referral Code
-                    Center(
-                      child: InkWell(
-                        onTap: () => Get.to(() => ReferralScreen()),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text: 'Have a ',
-                            style: TextStyle(
-                              fontFamily: FontFamily.PoppinsMedium,
-                              fontSize: 14,
-                              color: Theme.of(context).brightness == Brightness.dark 
-                                  ? AppColors.textSecondaryDark 
-                                  : AppColors.grey929,
-                            ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Referral Code?',
+                        // Referral Code
+                        Center(
+                          child: InkWell(
+                            onTap: () => Get.to(() => ReferralScreen()),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text: 'Have a ',
                                 style: TextStyle(
+                                  fontFamily: FontFamily.PoppinsMedium,
                                   fontSize: 14,
-                                  fontFamily: FontFamily.PoppinsSemiBold,
-                                  color: AppColors.redCA0,
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                      ? AppColors.textSecondaryDark 
+                                      : AppColors.grey929,
                                 ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Referral Code?',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontFamily: FontFamily.PoppinsSemiBold,
+                                      color: AppColors.redCA0,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    
-                    SizedBox(height: 20),
-                    
-                    // Terms and Conditions
-                    Center(
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: 'By continuing, you agree to our ',
-                          style: TextStyle(
-                            fontFamily: FontFamily.PoppinsRegular,
-                            fontSize: 12,
-                            color: Theme.of(context).brightness == Brightness.dark 
-                                ? AppColors.textSecondaryDark 
-                                : AppColors.grey929,
-                          ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: 'Terms of Service',
+                        
+                        SizedBox(height: 20),
+                        
+                        // Terms and Conditions
+                        Center(
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              text: 'By continuing, you agree to our ',
                               style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: FontFamily.PoppinsMedium,
-                                color: AppColors.redCA0,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' and ',
-                              style: TextStyle(
-                                fontSize: 12,
                                 fontFamily: FontFamily.PoppinsRegular,
+                                fontSize: 12,
                                 color: Theme.of(context).brightness == Brightness.dark 
                                     ? AppColors.textSecondaryDark 
                                     : AppColors.grey929,
                               ),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: 'Terms of Service',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: FontFamily.PoppinsMedium,
+                                    color: AppColors.redCA0,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' and ',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: FontFamily.PoppinsRegular,
+                                    color: Theme.of(context).brightness == Brightness.dark 
+                                        ? AppColors.textSecondaryDark 
+                                        : AppColors.grey929,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: 'Privacy Policy',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: FontFamily.PoppinsMedium,
+                                    color: AppColors.redCA0,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: 'Privacy Policy',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontFamily: FontFamily.PoppinsMedium,
-                                color: AppColors.redCA0,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -366,7 +368,7 @@ class LogInScreen extends StatelessWidget {
   }) => GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 50,
+        height: 48,
         width: Get.width,
         decoration: BoxDecoration(
           color: isPrimary 
@@ -395,7 +397,7 @@ class LogInScreen extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -38,7 +37,6 @@ class City {
 }
 
 class SearchCityController extends GetxController {
-  final dio = Dio();
 
   final roomsCount = 1.obs;
   final adultsCount = 2.obs;
@@ -106,20 +104,18 @@ class SearchCityController extends GetxController {
     hasError.value = false;
     errorMessage.value = '';
     try {
-      final response = await dio.post(
-        AppConfig.hotelCities,
-        options: Options(
-          sendTimeout: const Duration(seconds: 30),
-          receiveTimeout: const Duration(seconds: 30),
-          headers: {'Content-Type': 'application/json'},
-        ),
-      );
-      if (response.statusCode == 200 && response.data != null) {
-        if (response.data['AcList'] == null) {
+      final response = await http.post(
+        Uri.parse(AppConfig.hotelCities),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 30));
+      
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+        if (responseData['AcList'] == null) {
           _setError('Invalid response format: missing AcList');
           return;
         }
-        final acList = response.data['AcList'] as List<dynamic>;
+        final acList = responseData['AcList'] as List<dynamic>;
         final cities = acList
             .map((json) {
               try {
@@ -227,25 +223,28 @@ class SearchCityController extends GetxController {
       print("Children: $children");
       print('Request Data: ${jsonEncode(requestData)}');
 
-      final response = await dio.post(
-        AppConfig.hotelsList,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-          validateStatus: (status) => status! < 500,
-        ),
-        data: requestData,
+      final response = await http.post(
+        Uri.parse(AppConfig.hotelsList),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestData),
       );
-      print("Response from hotels list API: ${response.data}");
-      if (response.data != null && response.data['Hotels'] != null) {
-        print(
-            " *** Yeah , count for hotels is ${response.data['Hotels'].length}");
-        hotelDetails.value = Map<String, dynamic>.from(response.data);
-        hotelDetails.refresh();
-        Get.to(() => HotelScreen(
-              cityId: cityId,
-              cityName: cityName,
-              hotelDetails: Map<String, dynamic>.from(response.data),
-            ));
+      
+      if (response.statusCode < 500 && response.body.isNotEmpty) {
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+        print("Response from hotels list API: $responseData");
+        if (responseData['Hotels'] != null) {
+          print(
+              " *** Yeah , count for hotels is ${responseData['Hotels'].length}");
+          hotelDetails.value = Map<String, dynamic>.from(responseData);
+          hotelDetails.refresh();
+          Get.to(() => HotelScreen(
+                cityId: cityId,
+                cityName: cityName,
+                hotelDetails: Map<String, dynamic>.from(responseData),
+              ));
+        } else {
+          _setError("No hotels found for the given criteria");
+        }
       } else {
         _setError("No hotels found for the given criteria");
       }
@@ -324,7 +323,7 @@ class SearchCityController extends GetxController {
         headers: {'Content-Type': 'application/json'},
         // The backend expects "HotelProviderSearchId" not "HotelId"
         body:
-            jsonEncode({'HotelProviderSearchId': hotelProviderSearchId ?? ''}),
+            jsonEncode({'HotelProviderSearchId': hotelProviderSearchId}),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -345,7 +344,7 @@ class SearchCityController extends GetxController {
               .toList();
         }
         Get.to(() => HotelImageScreen(
-              imageList: images ?? <Map<String, String>>[],
+              imageList: images,
             ));
         print('Fetched images: $images');
 
@@ -362,14 +361,14 @@ class SearchCityController extends GetxController {
   Future<void> fetchGeoLocations(String sessionId) async {
     isGeoLoading.value = true;
     try {
-      final response = await dio.post(
-        AppConfig.hotelGeoList,
-        data: {'SessionId': sessionId},
-        options: Options(headers: {'Content-Type': 'application/json'}),
+      final response = await http.post(
+        Uri.parse(AppConfig.hotelGeoList),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'SessionId': sessionId}),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
-        final locationObjects = response.data;
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final locationObjects = jsonDecode(response.body) as Map<String, dynamic>;
         // print('Fetched locations: $locationObjects');
         // 1. Get the raw list from the map
         final List<dynamic> rawList =
@@ -464,5 +463,879 @@ class SearchCityController extends GetxController {
       snackPosition: SnackPosition.BOTTOM,
       icon: const Icon(Icons.error_outline, color: Colors.white),
     );
+  }
+
+  /// Hotel Prebook API - Books the hotel before payment
+  /// 
+  /// This method builds the prebook request body and calls the backend API
+  /// to reserve the hotel booking with traveller details.
+  /// 
+  /// Parameters:
+  /// - [hotelDetails]: Map containing hotel information
+  /// - [selectedRoom]: Map containing selected room details (must include UniqueReferencekey, ServiceIdentifer, OptionalToken, ServiceBookPrice)
+  /// - [searchParams]: Map containing search parameters (checkInDate, checkOutDate, rooms, adults, children, etc.)
+  /// - [primaryGuest]: Map containing primary guest details (name, email, mobile, etc.)
+  /// - [selectedTravellers]: List of selected traveller maps from travellers list
+  /// - [currency]: Currency code (default: "AED")
+  /// 
+  /// Returns: Map containing the API response
+  Future<Map<String, dynamic>> hotelPrebook({
+    required Map<String, dynamic> hotelDetails,
+    required Map<String, dynamic> selectedRoom,
+    required Map<String, dynamic> searchParams,
+    required Map<String, dynamic> primaryGuest,
+    required List<Map<String, dynamic>> selectedTravellers,
+    String currency = 'AED',
+  }) async {
+    try {
+      // Build the request body
+      final requestBody = _buildPrebookRequestBody(
+        hotelDetails: hotelDetails,
+        selectedRoom: selectedRoom,
+        searchParams: searchParams,
+        primaryGuest: primaryGuest,
+        selectedTravellers: selectedTravellers,
+        currency: currency,
+      );
+
+      print('   📤 API Request Details:');
+      print('      Endpoint: ${AppConfig.hotelPrebook}');
+      print('      Method: POST');
+      print('      Request Body: ${jsonEncode(requestBody)}');
+      print('   🔄 Sending request to backend...');
+
+      final response = await http.post(
+        Uri.parse(AppConfig.hotelPrebook),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      print('   📥 API Response Received:');
+      print('      Status Code: ${response.statusCode}');
+      print('      Response: ${response.body}');
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Prebook API failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error in hotelPrebook: $e');
+      rethrow;
+    }
+  }
+
+  /// Builds the prebook request body from booking data
+  Map<String, dynamic> _buildPrebookRequestBody({
+    required Map<String, dynamic> hotelDetails,
+    required Map<String, dynamic> selectedRoom,
+    required Map<String, dynamic> searchParams,
+    required Map<String, dynamic> primaryGuest,
+    required List<Map<String, dynamic>> selectedTravellers,
+    required String currency,
+  }) {
+    // Extract dates
+    final checkInDate = searchParams['checkInDate'] ?? '';
+    final checkOutDate = searchParams['checkOutDate'] ?? '';
+    final checkInDateTime = checkInDate.isNotEmpty 
+        ? DateTime.tryParse(checkInDate) ?? DateTime.now()
+        : DateTime.now();
+    
+    // Extract room and price information
+    final uniqueReferenceKey = selectedRoom['UniqueReferencekey'] ?? 
+                               selectedRoom['uniqueReferencekey'] ?? 
+                               '';
+    final serviceIdentifier = selectedRoom['ServiceIdentifer'] ?? 
+                              selectedRoom['serviceIdentifer'] ?? 
+                              '';
+    final optionalToken = selectedRoom['OptionalToken'] ?? 
+                          selectedRoom['optionalToken'] ?? 
+                          '';
+    final serviceBookPrice = (selectedRoom['ServiceBookPrice'] ?? 
+                              selectedRoom['serviceBookPrice'] ?? 
+                              0.0) as num;
+    
+    // Extract hotel information
+    final hotelDetail = hotelDetails['HotelDetail'] ?? hotelDetails;
+    final hotelName = hotelDetail['HotelName'] ?? 'Hotel';
+    final hotelImage = (hotelDetail['HotelImages'] is List && 
+                       hotelDetail['HotelImages'].isNotEmpty)
+        ? hotelDetail['HotelImages'][0]
+        : selectedRoom['Image']?['ImageUrl'] ?? '';
+    
+    // Extract room details
+    final roomName = selectedRoom['Name'] ?? selectedRoom['RoomName'] ?? 'Room';
+    final mealCode = selectedRoom['MealCode'] ?? selectedRoom['mealCode'] ?? 'RO';
+    final roomType = selectedRoom['RoomType'] ?? selectedRoom['roomType'] ?? '';
+    
+    // Extract guest counts
+    final numRooms = int.tryParse(searchParams['rooms']?.toString() ?? '1') ?? 1;
+    final numAdults = int.tryParse(searchParams['adults']?.toString() ?? '2') ?? 2;
+    final numChildren = int.tryParse(searchParams['children']?.toString() ?? '0') ?? 0;
+    
+    // Build room details with passengers
+    final roomDetails = _buildRoomDetails(
+      numRooms: numRooms,
+      numAdults: numAdults,
+      numChildren: numChildren,
+      primaryGuest: primaryGuest,
+      selectedTravellers: selectedTravellers,
+      roomName: roomName,
+      roomType: roomType,
+    );
+    
+    // Build pax detail string
+    final totalAdults = numAdults;
+    final totalChildren = numChildren;
+    final paxDetail = '$totalAdults Adult${totalAdults != 1 ? 's' : ''} & $totalChildren Child${totalChildren != 1 ? 'ren' : ''} in $numRooms Room${numRooms != 1 ? 's' : ''}';
+    
+    // Build the request body (Credential will be added by backend)
+    return {
+      'ReservationName': _extractFullName(primaryGuest),
+      'ReservationArrivalDate': '${checkInDateTime.toIso8601String().split('T')[0]}T00:00:00',
+      'ReservationCurrency': currency,
+      'ReservationAmount': serviceBookPrice.toDouble(),
+      'ReservationClientReference': null,
+      'ReservationRemarks': null,
+      'BookingDetails': [
+        {
+          'SearchType': 'Hotel',
+          'UniqueReferencekey': uniqueReferenceKey,
+          'HotelServiceDetail': {
+            'UniqueReferencekey': uniqueReferenceKey,
+            'ProviderName': selectedRoom['ProviderName'] ?? 'HotelBeds',
+            'ServiceIdentifer': serviceIdentifier,
+            'ServiceBookPrice': serviceBookPrice.toDouble(),
+            'OptionalToken': optionalToken,
+            'ServiceCheckInTime': null,
+            'Image': hotelImage,
+            'HotelName': hotelName,
+            'FromDate': checkInDate,
+            'ToDate': checkOutDate,
+            'ServiceName': '$roomName with $mealCode',
+            'MealCode': mealCode,
+            'PaxDetail': paxDetail,
+            'BookCurrency': currency,
+            'RoomDetails': roomDetails,
+          }
+        }
+      ]
+    };
+  }
+
+  /// Builds room details array with passenger information
+  List<Map<String, dynamic>> _buildRoomDetails({
+    required int numRooms,
+    required int numAdults,
+    required int numChildren,
+    required Map<String, dynamic> primaryGuest,
+    required List<Map<String, dynamic>> selectedTravellers,
+    required String roomName,
+    required String roomType,
+  }) {
+    final List<Map<String, dynamic>> roomDetailsList = [];
+    
+    // Calculate adults and children per room
+    final adultsPerRoom = (numAdults / numRooms).ceil();
+    final childrenPerRoom = (numChildren / numRooms).ceil();
+    
+    // Combine primary guest with selected travellers
+    final allTravellers = <Map<String, dynamic>>[];
+    
+    // Add primary guest first (as lead passenger)
+    allTravellers.add({
+      ...primaryGuest,
+      'isPrimary': true,
+    });
+    
+    // Add selected travellers
+    for (var traveller in selectedTravellers) {
+      allTravellers.add({
+        ...traveller,
+        'isPrimary': false,
+      });
+    }
+    
+    // Distribute travellers across rooms
+    int paxId = 1;
+    int travellerIndex = 0;
+    bool leadPaxAssigned = false;
+    
+    for (int roomId = 1; roomId <= numRooms; roomId++) {
+      final roomPaxs = <Map<String, dynamic>>[];
+      int adultsInRoom = 0;
+      int childrenInRoom = 0;
+      
+      // Add adults to this room
+      while (adultsInRoom < adultsPerRoom && travellerIndex < allTravellers.length) {
+        final traveller = allTravellers[travellerIndex];
+        final paxType = _getPaxType(traveller);
+        
+        if (paxType == 'A') {
+          final isLeadPax = !leadPaxAssigned && roomId == 1;
+          if (isLeadPax) leadPaxAssigned = true;
+          
+          roomPaxs.add(_buildPaxObject(
+            traveller: traveller,
+            paxId: paxId++,
+            roomId: roomId,
+            isLeadPax: isLeadPax,
+          ));
+          adultsInRoom++;
+        }
+        travellerIndex++;
+      }
+      
+      // Add children to this room
+      while (childrenInRoom < childrenPerRoom && travellerIndex < allTravellers.length) {
+        final traveller = allTravellers[travellerIndex];
+        final paxType = _getPaxType(traveller);
+        
+        if (paxType == 'C') {
+          roomPaxs.add(_buildPaxObject(
+            traveller: traveller,
+            paxId: paxId++,
+            roomId: roomId,
+            isLeadPax: false,
+          ));
+          childrenInRoom++;
+        }
+        travellerIndex++;
+      }
+      
+      // If we still need more adults/children, use remaining travellers
+      while ((adultsInRoom < adultsPerRoom || childrenInRoom < childrenPerRoom) && 
+             travellerIndex < allTravellers.length) {
+        final traveller = allTravellers[travellerIndex];
+        final paxType = _getPaxType(traveller);
+        
+        if (paxType == 'A' && adultsInRoom < adultsPerRoom) {
+          roomPaxs.add(_buildPaxObject(
+            traveller: traveller,
+            paxId: paxId++,
+            roomId: roomId,
+            isLeadPax: false,
+          ));
+          adultsInRoom++;
+        } else if (paxType == 'C' && childrenInRoom < childrenPerRoom) {
+          roomPaxs.add(_buildPaxObject(
+            traveller: traveller,
+            paxId: paxId++,
+            roomId: roomId,
+            isLeadPax: false,
+          ));
+          childrenInRoom++;
+        }
+        travellerIndex++;
+      }
+      
+      roomDetailsList.add({
+        'RoomId': roomId,
+        'Adults': adultsInRoom,
+        if (childrenInRoom > 0) 'Children': childrenInRoom,
+        'RoomName': roomName,
+        'RoomType': roomType,
+        'Paxs': roomPaxs,
+        'ExtraBed': 0,
+      });
+    }
+    
+    return roomDetailsList;
+  }
+
+  /// Builds a passenger (Pax) object from traveller data
+  Map<String, dynamic> _buildPaxObject({
+    required Map<String, dynamic> traveller,
+    required int paxId,
+    required int roomId,
+    required bool isLeadPax,
+  }) {
+    // Extract name components
+    final fullName = _extractFullName(traveller);
+    final nameParts = _splitName(fullName);
+    final forename = nameParts['first'] ?? '';
+    final midname = nameParts['middle'] ?? '';
+    final surname = nameParts['last'] ?? '';
+    
+    // Extract other details
+    final title = traveller['title'] ?? traveller['Title'] ?? 'Mr';
+    final paxType = _getPaxType(traveller);
+    final age = _getAge(traveller);
+    final dob = _getDOB(traveller);
+    final email = traveller['email'] ?? 
+                  traveller['PaxEmail'] ?? 
+                  traveller['contact_email'] ?? 
+                  '';
+    final mobile = traveller['mobile'] ?? 
+                   traveller['PaxMobile'] ?? 
+                   traveller['passengerMobileNumber'] ?? 
+                   traveller['phone'] ?? 
+                   '';
+    final mobilePrefix = traveller['mobilePrefix'] ?? 
+                         traveller['PaxMobilePrefix'] ?? 
+                         traveller['mobile_prefix'] ?? 
+                         '+91';
+    
+    return {
+      'LeadPax': isLeadPax,
+      'PaxId': paxId,
+      'Title': title,
+      'Forename': forename,
+      'Midname': midname.isNotEmpty ? midname : null,
+      'Surname': surname,
+      'PaxType': paxType,
+      'Age': age.toString(),
+      'DOB': dob,
+      'AddPax': !isLeadPax,
+      'PaxEmail': email,
+      'PaxMobile': mobile,
+      'PaxMobilePrefix': mobilePrefix,
+      'PaxDocuments': {
+        'Passport': {
+          'Nationality': null,
+          'NationalityCode': null,
+          'PassportNumber': null,
+          'IssuingCountry': null,
+          'IssuingCountryCode': null,
+          'DateOfIssue': null,
+          'DateOfExpiry': null,
+          'PassportUpload': null,
+          'IssuingCity': null,
+          'IssuingCityCode': null,
+          'PassportFirstPageURL': null,
+          'PassportLastPageURL': null,
+        },
+        'Pan': {
+          'PanNumber': null,
+          'PanUpload': null,
+        }
+      },
+      'RoomID': roomId,
+    };
+  }
+
+  /// Helper methods
+  String _extractFullName(Map<String, dynamic> traveller) {
+    if (traveller['name'] != null) return traveller['name'].toString();
+    if (traveller['passengerName'] != null) return traveller['passengerName'].toString();
+    if (traveller['firstname'] != null) return traveller['firstname'].toString();
+    
+    final firstName = traveller['firstName'] ?? traveller['Forename'] ?? '';
+    final middleName = traveller['middleName'] ?? traveller['Midname'] ?? '';
+    final lastName = traveller['lastName'] ?? traveller['Surname'] ?? '';
+    
+    return [firstName, middleName, lastName]
+        .where((n) => n != null && n.toString().isNotEmpty)
+        .join(' ')
+        .trim();
+  }
+
+  Map<String, String> _splitName(String fullName) {
+    final parts = fullName.trim().split(' ');
+    if (parts.isEmpty) return {'first': '', 'middle': '', 'last': ''};
+    if (parts.length == 1) return {'first': parts[0], 'middle': '', 'last': ''};
+    if (parts.length == 2) return {'first': parts[0], 'middle': '', 'last': parts[1]};
+    
+    return {
+      'first': parts[0],
+      'middle': parts.sublist(1, parts.length - 1).join(' '),
+      'last': parts.last,
+    };
+  }
+
+  String _getPaxType(Map<String, dynamic> traveller) {
+    if (traveller['PaxType'] != null) {
+      final type = traveller['PaxType'].toString().toUpperCase();
+      return type == 'C' ? 'C' : 'A';
+    }
+    if (traveller['paxType'] != null) {
+      final type = traveller['paxType'].toString().toUpperCase();
+      return type == 'C' ? 'C' : 'A';
+    }
+    
+    // Determine from age
+    final age = _getAge(traveller);
+    return age < 18 ? 'C' : 'A';
+  }
+
+  int _getAge(Map<String, dynamic> traveller) {
+    if (traveller['age'] != null) {
+      final age = traveller['age'];
+      if (age is int) return age;
+      if (age is String) return int.tryParse(age) ?? 0;
+    }
+    if (traveller['Age'] != null) {
+      final age = traveller['Age'];
+      if (age is int) return age;
+      if (age is String) return int.tryParse(age) ?? 0;
+    }
+    if (traveller['passengerAge'] != null) {
+      final age = traveller['passengerAge'];
+      if (age is int) return age;
+      if (age is String) return int.tryParse(age) ?? 0;
+    }
+    
+    // Calculate from DOB if available
+    final dob = _getDOB(traveller);
+    if (dob != null) {
+      try {
+        final dobDate = DateTime.parse(dob);
+        final now = DateTime.now();
+        final age = now.year - dobDate.year;
+        if (now.month < dobDate.month || 
+            (now.month == dobDate.month && now.day < dobDate.day)) {
+          return age - 1;
+        }
+        return age;
+      } catch (e) {
+        return 0;
+      }
+    }
+    
+    return 0;
+  }
+
+  String? _getDOB(Map<String, dynamic> traveller) {
+    if (traveller['DOB'] != null) return traveller['DOB'].toString();
+    if (traveller['dob'] != null) return traveller['dob'].toString();
+    if (traveller['dateOfBirth'] != null) return traveller['dateOfBirth'].toString();
+    return null;
+  }
+
+  /// Hotel Book Complete API - Confirms the booking after payment
+  /// 
+  /// This method builds the book complete request body and calls the backend API
+  /// to confirm the hotel booking after successful payment.
+  /// 
+  /// Parameters:
+  /// - [prebookResponse]: Response from hotelPrebook API containing ReservationId and BookingId
+  /// - [hotelDetails]: Map containing hotel information
+  /// - [selectedRoom]: Map containing selected room details
+  /// - [searchParams]: Map containing search parameters
+  /// - [primaryGuest]: Map containing primary guest details
+  /// - [selectedTravellers]: List of selected traveller maps
+  /// - [currency]: Currency code (default: "AED")
+  /// 
+  /// Returns: Map containing the API response
+  Future<Map<String, dynamic>> hotelBookComplete({
+    required Map<String, dynamic> prebookResponse,
+    required Map<String, dynamic> hotelDetails,
+    required Map<String, dynamic> selectedRoom,
+    required Map<String, dynamic> searchParams,
+    required Map<String, dynamic> primaryGuest,
+    required List<Map<String, dynamic>> selectedTravellers,
+    String currency = 'AED',
+  }) async {
+    try {
+      // Log the full prebook response structure for debugging
+      print('   🔍 Analyzing Prebook Response Structure:');
+      print('      Response keys: ${prebookResponse.keys.toList()}');
+      print('      Full response: ${jsonEncode(prebookResponse)}');
+      
+      // Extract ReservationId and BookingId from prebook response (try multiple variations)
+      String reservationId = '';
+      String bookingId = '';
+      
+      // Try different possible field names for ReservationId
+      reservationId = prebookResponse['ReservationId']?.toString() ?? 
+                     prebookResponse['reservationId']?.toString() ?? 
+                     prebookResponse['ReservationID']?.toString() ??
+                     prebookResponse['reservation_id']?.toString() ??
+                     prebookResponse['reservationID']?.toString() ?? '';
+      
+      print('   🔍 ReservationId extraction:');
+      print('      Found: ${reservationId.isNotEmpty ? "✅" : "❌"}');
+      if (reservationId.isNotEmpty) {
+        print('      Value: $reservationId');
+      }
+      
+      // Try different possible structures for BookingDetails
+      dynamic bookingDetails = prebookResponse['BookingDetails'] ?? 
+                              prebookResponse['bookingDetails'] ?? 
+                              prebookResponse['booking_details'] ??
+                              prebookResponse['Booking_Details'];
+      
+      if (bookingDetails != null) {
+        print('   🔍 BookingDetails found: ${bookingDetails.runtimeType}');
+        
+        if (bookingDetails is List && bookingDetails.isNotEmpty) {
+          print('      BookingDetails is a List with ${bookingDetails.length} items');
+          final firstBooking = bookingDetails[0];
+          print('      First booking keys: ${firstBooking is Map ? firstBooking.keys.toList() : "Not a Map"}');
+          
+          if (firstBooking is Map) {
+            // Try different possible field names for BookingId
+            bookingId = firstBooking['BookingId']?.toString() ?? 
+                       firstBooking['bookingId']?.toString() ?? 
+                       firstBooking['BookingID']?.toString() ??
+                       firstBooking['booking_id']?.toString() ??
+                       firstBooking['bookingID']?.toString() ?? '';
+          }
+        } else if (bookingDetails is Map) {
+          print('      BookingDetails is a Map');
+          print('      BookingDetails keys: ${bookingDetails.keys.toList()}');
+          bookingId = bookingDetails['BookingId']?.toString() ?? 
+                     bookingDetails['bookingId']?.toString() ?? 
+                     bookingDetails['BookingID']?.toString() ??
+                     bookingDetails['booking_id']?.toString() ??
+                     bookingDetails['bookingID']?.toString() ?? '';
+        }
+      } else {
+        print('   ⚠️  BookingDetails not found in response');
+        // Try to find BookingId directly in the response root
+        print('   🔍 Trying to find BookingId in response root...');
+        bookingId = prebookResponse['BookingId']?.toString() ?? 
+                   prebookResponse['bookingId']?.toString() ?? 
+                   prebookResponse['BookingID']?.toString() ??
+                   prebookResponse['booking_id']?.toString() ??
+                   prebookResponse['bookingID']?.toString() ?? '';
+        
+        if (bookingId.isNotEmpty) {
+          print('      ✅ Found BookingId in response root: $bookingId');
+        } else {
+          print('      ❌ BookingId not found in response root either');
+        }
+      }
+      
+      print('   🔍 BookingId extraction:');
+      print('      Found: ${bookingId.isNotEmpty ? "✅" : "❌"}');
+      if (bookingId.isNotEmpty) {
+        print('      Value: $bookingId');
+      }
+
+      // Check if ReservationId is present (required)
+      if (reservationId.isEmpty) {
+        print('   ❌ ERROR: Missing ReservationId');
+        print('   💡 Please check the prebook API response structure');
+        throw Exception('Missing ReservationId from prebook response');
+      }
+
+      // BookingId might not be in prebook response - it might come from book complete response
+      // If BookingId is missing, we'll use a placeholder or generate one
+      if (bookingId.isEmpty) {
+        print('   ⚠️  WARNING: BookingId not found in prebook response');
+        print('   💡 BookingId might be generated by backend or come from book complete response');
+        print('   🔄 Using ReservationId as BookingId placeholder (backend should handle this)');
+        // Use reservationId as a fallback - backend might generate BookingId
+        bookingId = reservationId;
+      }
+
+      // Build the request body
+      final requestBody = _buildBookCompleteRequestBody(
+        reservationId: reservationId,
+        bookingId: bookingId,
+        hotelDetails: hotelDetails,
+        selectedRoom: selectedRoom,
+        searchParams: searchParams,
+        primaryGuest: primaryGuest,
+        selectedTravellers: selectedTravellers,
+        currency: currency,
+      );
+
+      print('   📤 API Request Details:');
+      print('      Endpoint: ${AppConfig.hotelBooked}');
+      print('      Method: POST');
+      print('      ReservationId: $reservationId');
+      print('      BookingId: $bookingId');
+      print('      Request Body: ${jsonEncode(requestBody)}');
+      print('   🔄 Sending request to backend...');
+
+      final response = await http.post(
+        Uri.parse(AppConfig.hotelBooked),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      print('   📥 API Response Received:');
+      print('      Status Code: ${response.statusCode}');
+      print('      Response: ${response.body}');
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Book Complete API failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error in hotelBookComplete: $e');
+      rethrow;
+    }
+  }
+
+  /// Builds the book complete request body from booking data
+  Map<String, dynamic> _buildBookCompleteRequestBody({
+    required String reservationId,
+    required String bookingId,
+    required Map<String, dynamic> hotelDetails,
+    required Map<String, dynamic> selectedRoom,
+    required Map<String, dynamic> searchParams,
+    required Map<String, dynamic> primaryGuest,
+    required List<Map<String, dynamic>> selectedTravellers,
+    required String currency,
+  }) {
+    // Extract dates
+    final checkInDate = searchParams['checkInDate'] ?? '';
+    final checkOutDate = searchParams['checkOutDate'] ?? '';
+    final checkInDateTime = checkInDate.isNotEmpty 
+        ? DateTime.tryParse(checkInDate) ?? DateTime.now()
+        : DateTime.now();
+    
+    // Extract room and price information
+    final uniqueReferenceKey = selectedRoom['UniqueReferencekey'] ?? 
+                               selectedRoom['uniqueReferencekey'] ?? 
+                               '';
+    final serviceIdentifier = selectedRoom['ServiceIdentifer'] ?? 
+                              selectedRoom['serviceIdentifer'] ?? 
+                              '';
+    final optionalToken = selectedRoom['OptionalToken'] ?? 
+                          selectedRoom['optionalToken'] ?? 
+                          '';
+    final serviceBookPrice = (selectedRoom['ServiceBookPrice'] ?? 
+                              selectedRoom['serviceBookPrice'] ?? 
+                              0.0) as num;
+    
+    // Extract hotel information
+    final hotelDetail = hotelDetails['HotelDetail'] ?? hotelDetails;
+    final hotelName = hotelDetail['HotelName'] ?? 'Hotel';
+    final hotelImage = (hotelDetail['HotelImages'] is List && 
+                       hotelDetail['HotelImages'].isNotEmpty)
+        ? hotelDetail['HotelImages'][0]
+        : selectedRoom['Image']?['ImageUrl'] ?? '';
+    
+    // Extract room details
+    final roomName = selectedRoom['Name'] ?? selectedRoom['RoomName'] ?? 'Room';
+    final mealCode = selectedRoom['MealCode'] ?? selectedRoom['mealCode'] ?? 'RO';
+    final roomType = selectedRoom['RoomType'] ?? selectedRoom['roomType'] ?? '';
+    
+    // Extract guest counts
+    final numRooms = int.tryParse(searchParams['rooms']?.toString() ?? '1') ?? 1;
+    final numAdults = int.tryParse(searchParams['adults']?.toString() ?? '2') ?? 2;
+    final numChildren = int.tryParse(searchParams['children']?.toString() ?? '0') ?? 0;
+    
+    // Build room details with passengers
+    final roomDetails = _buildRoomDetails(
+      numRooms: numRooms,
+      numAdults: numAdults,
+      numChildren: numChildren,
+      primaryGuest: primaryGuest,
+      selectedTravellers: selectedTravellers,
+      roomName: roomName,
+      roomType: roomType,
+    );
+    
+    // Build pax detail string
+    final totalAdults = numAdults;
+    final totalChildren = numChildren;
+    final paxDetail = '$totalAdults Adult${totalAdults != 1 ? 's' : ''} & $totalChildren Child${totalChildren != 1 ? 'ren' : ''} in $numRooms Room${numRooms != 1 ? 's' : ''}';
+    
+    // Build the request body (Credential will be added by backend)
+    return {
+      'ReservationId': reservationId,
+      'ReservationName': _extractFullName(primaryGuest),
+      'ReservationArrivalDate': '${checkInDateTime.toIso8601String().split('T')[0]}T00:00:00',
+      'ReservationCurrency': currency,
+      'ReservationAmount': serviceBookPrice.toDouble(),
+      'ReservationClientReference': null,
+      'ReservationRemarks': null,
+      'BookingDetails': [
+        {
+          'BookingId': bookingId,
+          'SearchType': 'Hotel',
+          'UniqueReferencekey': uniqueReferenceKey,
+          'HotelServiceDetail': {
+            'UniqueReferencekey': uniqueReferenceKey,
+            'ProviderName': selectedRoom['ProviderName'] ?? 'HotelBeds',
+            'ServiceIdentifer': serviceIdentifier,
+            'ServiceBookPrice': serviceBookPrice.toDouble(),
+            'OptionalToken': optionalToken,
+            'ServiceCheckInTime': null,
+            'Image': hotelImage,
+            'HotelName': hotelName,
+            'FromDate': checkInDate,
+            'ToDate': checkOutDate,
+            'ServiceName': '$roomName with $mealCode',
+            'MealCode': mealCode,
+            'PaxDetail': paxDetail,
+            'BookCurrency': currency,
+            'RoomDetails': roomDetails,
+          }
+        }
+      ]
+    };
+  }
+
+  /// Save hotel booking to database
+  /// 
+  /// This method saves the completed booking information to the database
+  /// 
+  /// Parameters:
+  /// - [bookingData]: Map containing all booking information to save
+  /// 
+  /// Returns: Map containing the save response
+  Future<Map<String, dynamic>> saveHotelBookingToDatabase({
+    required Map<String, dynamic> bookingData,
+  }) async {
+    try {
+      print('   💾 Preparing booking data for database...');
+      print('   📤 API Request Details:');
+      print('      Endpoint: ${AppConfig.saveHotelBooking}');
+      print('      Method: POST');
+      print('   📋 Booking Data Being Sent:');
+      print('      ${jsonEncode(bookingData)}');
+      print('   🔄 Sending request to backend...');
+
+      final response = await http.post(
+        Uri.parse(AppConfig.saveHotelBooking),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(bookingData),
+      );
+
+      print('   📥 API Response Received:');
+      print('      Status Code: ${response.statusCode}');
+      print('      Response: ${response.body}');
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+        if (responseData['success'] == true) {
+          print('   ✅ Booking saved to database successfully');
+          print('      Database ID: ${responseData['bookingId']}');
+          return responseData;
+        } else {
+          throw Exception(responseData['message'] ?? 'Failed to save booking');
+        }
+      } else {
+        throw Exception('Save booking API failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('   ❌ Error saving booking to database: $e');
+      rethrow;
+    }
+  }
+
+  /// Get all hotel bookings
+  /// 
+  /// Returns: List of all hotel bookings
+  Future<List<Map<String, dynamic>>> getAllHotelBookings() async {
+    try {
+      print('   📋 Fetching all hotel bookings...');
+      print('   📤 API Request Details:');
+      print('      Endpoint: ${AppConfig.getAllHotelBookings}');
+      print('      Method: GET');
+
+      final response = await http.get(
+        Uri.parse(AppConfig.getAllHotelBookings),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('   📥 API Response Received:');
+      print('      Status Code: ${response.statusCode}');
+      print('      Response: ${response.body}');
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final responseData = jsonDecode(response.body);
+        if (responseData is List) {
+          return responseData.map((item) => Map<String, dynamic>.from(item)).toList();
+        } else if (responseData is Map) {
+          // Handle {"success":true,"data":[...]} structure
+          if (responseData['data'] != null && responseData['data'] is List) {
+            final bookings = responseData['data'] as List;
+            return bookings.map((item) => Map<String, dynamic>.from(item)).toList();
+          } else if (responseData['bookings'] != null && responseData['bookings'] is List) {
+            final bookings = responseData['bookings'] as List;
+            return bookings.map((item) => Map<String, dynamic>.from(item)).toList();
+          } else {
+            return [];
+          }
+        } else {
+          return [];
+        }
+      } else {
+        throw Exception('Failed to fetch bookings: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('   ❌ Error fetching all hotel bookings: $e');
+      rethrow;
+    }
+  }
+
+  /// Get hotel bookings for a specific user
+  /// 
+  /// Parameters:
+  /// - [userId]: The user ID to fetch bookings for
+  /// 
+  /// Returns: List of hotel bookings for the user
+  Future<List<Map<String, dynamic>>> getUserHotelBookings(int userId) async {
+    try {
+      print('   📋 Fetching hotel bookings for user: $userId');
+      print('   📤 API Request Details:');
+      print('      Endpoint: ${AppConfig.getUserHotelBookings(userId)}');
+      print('      Method: GET');
+
+      final response = await http.get(
+        Uri.parse(AppConfig.getUserHotelBookings(userId)),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('   📥 API Response Received:');
+      print('      Status Code: ${response.statusCode}');
+      print('      Response: ${response.body}');
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final responseData = jsonDecode(response.body);
+        if (responseData is List) {
+          return responseData.map((item) => Map<String, dynamic>.from(item)).toList();
+        } else if (responseData is Map) {
+          // Handle {"success":true,"data":[...]} structure
+          if (responseData['data'] != null && responseData['data'] is List) {
+            final bookings = responseData['data'] as List;
+            return bookings.map((item) => Map<String, dynamic>.from(item)).toList();
+          } else if (responseData['bookings'] != null && responseData['bookings'] is List) {
+            final bookings = responseData['bookings'] as List;
+            return bookings.map((item) => Map<String, dynamic>.from(item)).toList();
+          } else {
+            return [];
+          }
+        } else {
+          return [];
+        }
+      } else {
+        throw Exception('Failed to fetch user bookings: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('   ❌ Error fetching user hotel bookings: $e');
+      rethrow;
+    }
+  }
+
+  /// Get a specific hotel booking by ID
+  /// 
+  /// Parameters:
+  /// - [bookingId]: The booking ID to fetch
+  /// 
+  /// Returns: Map containing the booking details
+  Future<Map<String, dynamic>> getHotelBookingById(String bookingId) async {
+    try {
+      print('   📋 Fetching hotel booking: $bookingId');
+      print('   📤 API Request Details:');
+      print('      Endpoint: ${AppConfig.getHotelBookingById(bookingId)}');
+      print('      Method: GET');
+
+      final response = await http.get(
+        Uri.parse(AppConfig.getHotelBookingById(bookingId)),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('   📥 API Response Received:');
+      print('      Status Code: ${response.statusCode}');
+      print('      Response: ${response.body}');
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Failed to fetch booking: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('   ❌ Error fetching hotel booking by ID: $e');
+      rethrow;
+    }
   }
 }

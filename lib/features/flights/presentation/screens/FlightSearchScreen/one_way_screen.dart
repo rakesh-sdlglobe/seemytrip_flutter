@@ -162,10 +162,10 @@ class _OneWayScreenState extends State<OneWayScreen> {
           children: [
               const SizedBox(height: 20),
               
-              // Modern Flight Search Card
+              // Modern Flight Search Card (Compact)
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(24),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(20),
@@ -184,59 +184,73 @@ class _OneWayScreenState extends State<OneWayScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header with flight icon
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.redCA0.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            Icons.flight_takeoff_rounded,
-                            color: AppColors.redCA0,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Book Your Flight',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Theme.of(context).textTheme.bodyLarge?.color,
-                              ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width - 88, // Account for padding and icon
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.redCA0.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            Text(
-                              'Find the best deals for your journey',
-                              style: TextStyle(
-                                  fontSize: 14,
-                                color: Theme.of(context).textTheme.bodyMedium?.color,
-                              ),
+                            child: Icon(
+                              Icons.flight_takeoff_rounded,
+                              color: AppColors.redCA0,
+                              size: 18,
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          const SizedBox(width: 12),
+                          Flexible(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Book Your Flight',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Find the best deals for your journey',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
                     
                     // From and To Selection with modern design
                     _buildModernRouteSelector(context),
                     
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
                     
                     // Date Selection with modern design
                     _buildModernDateSelector(context, formattedDepartureDate, dayOfWeekDeparture),
                     
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
                     
                     // Travelers & Class with modern design
                     _buildModernTravelersSelector(context),
                     
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
                     
                     // Modern Search Button
                     _buildModernSearchButton(context),
@@ -267,8 +281,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
     );
   }
   
-  Widget _buildModernRouteSelector(BuildContext context) {
-    return Container(
+  Widget _buildModernRouteSelector(BuildContext context) => Container(
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
             ? AppColors.grey363.withOpacity(0.3)
@@ -347,7 +360,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
             children: [
               Container(
                 height: 1,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 16),
                 color: Theme.of(context).dividerColor,
               ),
               Container(
@@ -448,10 +461,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
         ],
       ),
     );
-  }
   
-  Widget _buildModernDateSelector(BuildContext context, String formattedDate, String dayOfWeek) {
-    return GestureDetector(
+  Widget _buildModernDateSelector(BuildContext context, String formattedDate, String dayOfWeek) => GestureDetector(
       onTap: () => _selectDate(context),
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -516,10 +527,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
         ),
       ),
     );
-  }
   
-  Widget _buildModernTravelersSelector(BuildContext context) {
-    return GestureDetector(
+  Widget _buildModernTravelersSelector(BuildContext context) => GestureDetector(
       onTap: _selectTravelersAndClass,
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -584,10 +593,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
         ),
       ),
     );
-  }
   
-  Widget _buildModernSearchButton(BuildContext context) {
-    return Obx(() {
+  Widget _buildModernSearchButton(BuildContext context) => Obx(() {
       final FlightController flightController = Get.find<FlightController>();
       return Container(
         width: double.infinity,
@@ -626,6 +633,14 @@ class _OneWayScreenState extends State<OneWayScreen> {
 
                     try {
                 final String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
+
+                print('📤 Sending from OneWayScreen:');
+                print('fromAirportCode: $selectedFromCode');
+                print('toAirportCode: $selectedToCode');
+                print('departDate: $formattedDate');
+                print('adults: $travelers');
+                print('travelClass: ${travelClass == 'Economy' ? 'E' : travelClass == 'Business' ? 'B' : 'F'}');
+                print('flightType: O');
 
                       await flightController.searchAndShowFlights(
                         fromAirportCode: selectedFromCode!,
@@ -677,10 +692,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
                         ),
                 );
     });
-  }
   
-  Widget _buildModernSpecialFares(BuildContext context) {
-    return Column(
+  Widget _buildModernSpecialFares(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -754,10 +767,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
         ),
       ],
     );
-  }
   
-  Widget _buildModernOffersSection(BuildContext context) {
-    return Column(
+  Widget _buildModernOffersSection(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
             Padding(
@@ -779,7 +790,7 @@ class _OneWayScreenState extends State<OneWayScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.redCA0.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -864,10 +875,8 @@ class _OneWayScreenState extends State<OneWayScreen> {
         ),
       ],
     );
-  }
   
-  Widget _buildModernFareCalendar(BuildContext context) {
-    return Container(
+  Widget _buildModernFareCalendar(BuildContext context) => Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -948,5 +957,4 @@ class _OneWayScreenState extends State<OneWayScreen> {
         ],
       ),
     );
-  }
 }

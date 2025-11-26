@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 class MyTripTabController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final List<Tab> myTabs = <Tab>[
+    Tab(text: 'All'),
     Tab(text: 'upcoming'.tr),
     Tab(text: 'cancelled'.tr),
     Tab(text: 'completed'.tr),

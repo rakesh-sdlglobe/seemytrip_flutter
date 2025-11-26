@@ -491,7 +491,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(12.0),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -499,7 +499,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
               Text('All Filters',
                   style: TextStyle(
                     fontWeight: FontWeight.bold, 
-                    fontSize: 18,
+                    fontSize: 16,
                     color: Theme.of(context).textTheme.headlineSmall?.color,
                   )),
               SizedBox(height: 18),
@@ -554,18 +554,18 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                     },
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 180),
-                      margin: EdgeInsets.symmetric(horizontal: 4),
-                      padding: EdgeInsets.all(6),
+                      margin: const EdgeInsets.symmetric(horizontal: 2),
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         color: selectedStar >= star
                             ? Theme.of(context).primaryColor.withOpacity(0.15)
                             : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: selectedStar >= star
                               ? Theme.of(context).primaryColor
                               : Theme.of(context).dividerColor,
-                          width: 1,
+                          width: 0.8,
                         ),
                       ),
                       child: Icon(
@@ -579,7 +579,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                   );
                 }),
               ),
-              SizedBox(height: 28),
+              const SizedBox(height: 16),
               // Add more filter widgets here (e.g. amenities, meal plan, cancellation, etc.)
               SizedBox(
                 width: double.infinity,
@@ -619,9 +619,9 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(22),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     elevation: 0,
                   ),
                   child: const Text(
@@ -635,7 +635,7 @@ class _HotelFilterBottomSheetState extends State<_HotelFilterBottomSheet> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(

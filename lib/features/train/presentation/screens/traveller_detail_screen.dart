@@ -1,286 +1,600 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../../../core/utils/common_textfeild_widget.dart';
-import '../controllers/train_detail_controller.dart';
-import '../controllers/travellerDetailController.dart';
-import 'package:seemytrip/core/theme/app_colors.dart';
-import '../../../../core/widgets/common_button_widget.dart';
-import '../../../../core/widgets/common_text_widget.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-// Ensure it's a StatefulWidget
+import '../controllers/travellerDetailController.dart';
+import '../../../../core/widgets/common/traveller_form_widget.dart';
+import '../../../../core/models/traveller_form_config.dart';
+
 class TravellerDetailScreen extends StatefulWidget {
-  TravellerDetailScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic>? traveller;
+  final TravelType? travelType; // Add travel type parameter
+  
+  const TravellerDetailScreen({Key? key, this.traveller, this.travelType}) : super(key: key);
 
   @override
   State<TravellerDetailScreen> createState() => _TravellerDetailScreenState();
 }
 
 class _TravellerDetailScreenState extends State<TravellerDetailScreen> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
-  final TextEditingController nationalityController = TextEditingController();
-  // Find the controller instance
-  final TrainDetailController controller = Get.find<TrainDetailController>();
-  final TravellerDetailController travellerDetailController = Get.put(TravellerDetailController());
+  final _formKey = GlobalKey<FormState>();
+  final _widgetKey = GlobalKey<TravellerFormWidgetState>();
+  final TravellerDetailController _travellerController = Get.put(TravellerDetailController());
 
-  // State variables for dropdowns
-  String? _selectedGender; // Allow null initially
-  String? _selectedBerth; // Allow null initially
-
-  final List<String> genderItems = <String>['Male', 'Female', 'Other'];
-  // --- NEW: Add "No Preference" to UI list ---
-  final List<String> berthItems = <String>[
-    'Lower Berth',
-    'Middle Berth',
-    'Upper Berth',
-    'Side Lower Berth',
-    'Side Upper Berth',
-    'No Preference' // Added No Preference
-  ];
-  // --- End NEW ---
+  bool _isExpanded = false;
+  bool _isEditMode = false;
+  
+  // Configuration for traveller form
+  late final TravellerFormConfig _formConfig;
 
   @override
   void initState() {
     super.initState();
-    // Set default nationality
-    nationalityController.text = 'INDIAN';
-    // Set default selections (optional, can show hint text instead)
-    // _selectedGender = genderItems.first; // e.g., Male
-    _selectedBerth = berthItems.last; // e.g., No Preference
+    
+    _isEditMode = widget.traveller != null;
+    
+    // Initialize form configuration based on travel type
+    final travelType = widget.travelType ?? TravelType.train;
+    
+    if (travelType == TravelType.bus) {
+      _formConfig = TravellerFormConfig.bus(
+        title: _isEditMode ? 'Edit Traveller' : 'Add New Traveller',
+      );
+    } else if (travelType == TravelType.flight) {
+      _formConfig = TravellerFormConfig.flight(
+        title: _isEditMode ? 'Edit Traveller' : 'Add New Traveller',
+      );
+    } else if (travelType == TravelType.hotel) {
+      _formConfig = TravellerFormConfig.hotel(
+        title: _isEditMode ? 'Edit Traveller' : 'Add New Traveller',
+      );
+    } else {
+      // Default to train
+      _formConfig = TravellerFormConfig.train(
+        title: _isEditMode ? 'Edit Traveller' : 'Add New Traveller',
+        berthOptions: [
+          'Lower Berth',
+          'Middle Berth',
+          'Upper Berth',
+          'Side Lower',
+          'Side Upper',
+          'No Preference'
+        ],
+        foodOptions: ['Veg', 'Non-Veg'],
+      );
+    }
+    
+    // Only fetch travelers if not in edit mode
+    if (!_isEditMode) {
+      _travellerController.fetchTravelers();
+    } else {
+      // If editing, expand the form
+      _isExpanded = true;
+    }
+  }
+
+  Future<void> _handleSave() async {
+    if (!_formKey.currentState!.validate()) return;
+    
+    final formData = _widgetKey.currentState?.getFormData();
+    if (formData == null) return;
+    
+    try {
+      final travelType = widget.travelType ?? TravelType.train;
+      
+      // Check if we're in edit mode
+      if (_isEditMode && widget.traveller != null) {
+        // Get passenger ID from traveller data
+        final passengerId = (widget.traveller!['id'] ?? 
+                            widget.traveller!['passengerId'] ?? 
+                            '').toString();
+        
+        if (passengerId.isEmpty) {
+          Get.snackbar(
+            'Error',
+            'Cannot edit: Passenger ID is missing',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+        
+        // Edit traveller using PUT request
+        if (travelType == TravelType.bus) {
+          await _travellerController.editTraveller(
+            passengerId: passengerId,
+            name: formData['name'] ?? formData['passengerName'] ?? '',
+            age: formData['age']?.toString() ?? '',
+            gender: formData['gender'] ?? formData['passengerGender'],
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+            email: formData['email'] ?? '',
+            address: formData['address'] ?? '',
+          );
+        } else if (travelType == TravelType.flight) {
+          final firstName = formData['firstName'] ?? formData['firstAndMiddleName'] ?? '';
+          final lastName = formData['lastName'] ?? '';
+          await _travellerController.editTraveller(
+            passengerId: passengerId,
+            name: '$firstName $lastName'.trim(),
+            age: formData['age']?.toString() ?? '',
+            gender: formData['gender'] ?? formData['passengerGender'],
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+          );
+        } else if (travelType == TravelType.hotel) {
+          await _travellerController.editTraveller(
+            passengerId: passengerId,
+            name: formData['name'] ?? formData['passengerName'] ?? '',
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+            email: formData['email'] ?? '',
+            address: formData['address'] ?? '',
+          );
+        } else {
+          // Train
+          await _travellerController.editTraveller(
+            passengerId: passengerId,
+            name: formData['name'] ?? formData['passengerName'] ?? '',
+            age: formData['age']?.toString() ?? '',
+            gender: formData['gender'] ?? formData['passengerGender'],
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+            berthPreference: formData['passengerBerthChoice'] == 'NP' 
+                ? 'No Preference' 
+                : _getBerthNameFromCode(formData['passengerBerthChoice']),
+            foodPreference: formData['passengerFoodChoice'] ?? 'Veg',
+          );
+        }
+      } else {
+        // Add new traveller using POST request
+        if (travelType == TravelType.bus) {
+          // Bus requires: name, age, gender, mobile, email, address
+          await _travellerController.saveTravellerDetails(
+            name: formData['name'] ?? formData['passengerName'] ?? '',
+            age: formData['age']?.toString() ?? '',
+            gender: formData['gender'] ?? formData['passengerGender'],
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+            email: formData['email'] ?? '',
+            address: formData['address'] ?? '',
+          );
+        } else if (travelType == TravelType.flight) {
+          // Flight requires: firstName, lastName, gender
+          final firstName = formData['firstName'] ?? formData['firstAndMiddleName'] ?? '';
+          final lastName = formData['lastName'] ?? '';
+          await _travellerController.saveTravellerDetails(
+            name: '$firstName $lastName'.trim(),
+            age: formData['age']?.toString() ?? '',
+            gender: formData['gender'] ?? formData['passengerGender'],
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+          );
+        } else if (travelType == TravelType.hotel) {
+          // Hotel requires: title, firstName, lastName, email, mobile, roomId, leadPax, paxType
+          final firstName = formData['firstName'] ?? '';
+          final middleName = formData['middleName'] ?? '';
+          final lastName = formData['lastName'] ?? '';
+          final fullName = formData['name'] ?? formData['passengerName'] ?? '';
+          
+          // Build name: if firstName/lastName exist, use them; otherwise use fullName
+          final name = (firstName.isNotEmpty || lastName.isNotEmpty)
+              ? [firstName, middleName, lastName].where((n) => n.isNotEmpty).join(' ').trim()
+              : fullName;
+          
+          await _travellerController.saveTravellerDetails(
+            name: name,
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+            email: formData['email'] ?? formData['contact_email'] ?? '',
+            address: formData['address'] ?? '',
+            // Hotel-specific fields
+            title: formData['title'],
+            firstName: firstName.isNotEmpty ? firstName : null,
+            middleName: middleName.isNotEmpty ? middleName : null,
+            lastName: lastName.isNotEmpty ? lastName : null,
+            mobilePrefix: formData['mobilePrefix'] ?? formData['mobile_prefix'],
+            roomId: formData['roomId'] ?? formData['room_id'],
+            leadPax: formData['leadPax'] ?? formData['lead_pax'],
+            paxType: formData['paxType'] ?? formData['pax_type'],
+            dob: formData['dob'] ?? formData['dateOfBirth'],
+          );
+        } else {
+          // Train requires: name, age, gender, mobile, berth, food
+          await _travellerController.saveTravellerDetails(
+            name: formData['name'] ?? formData['passengerName'] ?? '',
+            age: formData['age']?.toString() ?? '',
+            gender: formData['gender'] ?? formData['passengerGender'],
+            mobile: formData['mobile'] ?? formData['passengerMobileNumber'] ?? '',
+            berthPreference: formData['passengerBerthChoice'] == 'NP' 
+                ? 'No Preference' 
+                : _getBerthNameFromCode(formData['passengerBerthChoice']),
+            foodPreference: formData['passengerFoodChoice'] ?? 'Veg',
+          );
+        }
+        
+        // Show success message and reset form for new traveller
+        if (mounted) {
+          Get.snackbar(
+            'Success',
+            'Traveller saved successfully',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 2),
+          );
+          
+          _formKey.currentState?.reset();
+          setState(() => _isExpanded = false);
+          
+          // Refresh travellers list
+          _travellerController.fetchTravelers();
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Get.snackbar(
+          'Error',
+          'Failed to ${_isEditMode ? 'update' : 'save'} traveler: ${e.toString()}',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    }
+  }
+  
+  String _getBerthNameFromCode(String? code) {
+    if (code == null) return 'No Preference';
+    final berthMap = {
+      'LB': 'Lower Berth',
+      'MB': 'Middle Berth',
+      'UB': 'Upper Berth',
+      'SL': 'Side Lower',
+      'SU': 'Side Upper',
+    };
+    return berthMap[code] ?? 'No Preference';
   }
 
   @override
-  void dispose() {
-    nameController.dispose();
-    ageController.dispose();
-    nationalityController.dispose();
-    super.dispose();
-  }
-
-  // Updated to pass local state to controller
-  void _handleSave() {
-    // Basic Validation
-    if (nameController.text.trim().isEmpty) {
-       Get.snackbar('Error', "Please enter the traveller's name.", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
-       return;
-    }
-     if (ageController.text.trim().isEmpty) {
-       Get.snackbar('Error', "Please enter the traveller's age.", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
-       return;
-    }
-    if (_selectedGender == null) {
-      Get.snackbar('Error', 'Please select a gender.', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-     if (_selectedBerth == null) {
-      Get.snackbar('Error', 'Please select a berth preference.', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
-      return;
-    }
-     if (nationalityController.text.trim().isEmpty) {
-       // Although defaulted, check just in case
-       Get.snackbar('Error', 'Please enter the nationality.', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
-       return;
-    }
-
-
-    // Call controller method with current state values
-    travellerDetailController.saveTravellerDetails(
-      name: nameController.text,
-      age: ageController.text,
-      gender: _selectedGender, // Pass the selected gender from state
-      nationality: nationalityController.text,
-      berthPreference: _selectedBerth, // Pass the selected berth from state
-    );
-  }
-
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: _buildAppBar(),
-      // Use Obx ONLY for parts reacting to controller state (like isLoading)
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _buildTextField('Name', 'Full Name (As Per Govt. ID)',
-                        nameController, TextInputType.name),
-                    SizedBox(height: 16),
-                    _buildAgeAndGenderFields(), // Uses local state _selectedGender
-                    SizedBox(height: 16),
-                    _buildBerthPreferenceSection(), // Uses local state _selectedBerth
-                    SizedBox(height: 16),
-                    _buildTextField('Nationality', 'Enter Nationality', nationalityController,
-                        TextInputType.text),
-                  ],
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text('Traveller Details'),
+        elevation: 0,
+        centerTitle: true,
+      ),
+      body: _isEditMode
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Edit Traveller Card
+                  Card(
+                    margin: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            _formConfig.title ?? 'Edit Traveller',
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: TravellerFormWidget(
+                            config: _formConfig,
+                            formKey: _formKey,
+                            widgetKey: _widgetKey,
+                            initialData: widget.traveller,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _handleSave,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Obx(() => _travellerController.isLoading.value
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                  : Text(
+                                      'Update Traveller',
+                                      style: GoogleFonts.poppins(fontSize: 16),
+                                    )),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Column(
+              children: [
+                // Add New Traveller Card
+                Card(
+                  margin: const EdgeInsets.all(16),
+                  child: ExpansionTile(
+                    title: Text(
+                      _formConfig.title ?? 'Add New Traveller',
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                    ),
+                    initiallyExpanded: _isExpanded,
+                    onExpansionChanged: (expanded) => setState(() => _isExpanded = expanded),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TravellerFormWidget(
+                          config: _formConfig,
+                          formKey: _formKey,
+                          widgetKey: _widgetKey,
+                          initialData: widget.traveller,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _handleSave,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Obx(() => _travellerController.isLoading.value
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : Text(
+                                    'Save Traveller',
+                                    style: GoogleFonts.poppins(fontSize: 16),
+                                  )),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+          
+          // Saved Travellers List (only show if not in edit mode)
+          if (!_isEditMode) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                children: [
+                  Text(
+                    'Saved Travellers',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Obx(() => Text(
+                    '(${_travellerController.travellers.length})',
+                    style: GoogleFonts.poppins(color: Colors.grey[600]),
+                  )),
+                ],
               ),
             ),
-            // Button Section at the bottom - reacts to controller.isLoading
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              child: Obx( // Use Obx here for the button's loading state
-                () => CommonButtonWidget.button(
-                  text: controller.isLoading.value ? null : 'SAVE',
-                  buttonColor: AppColors.redCA0,
-                  onTap: controller.isLoading.value ? null : _handleSave,
-                  child: controller.isLoading.value
-                      ? SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: LoadingAnimationWidget.fourRotatingDots(
-                            color: AppColors.white,
-                            size: 20,
-                          ),
-                        )
-                      : null,
+            
+            // Travellers List
+            Expanded(
+              child: Obx(() {
+                if (_travellerController.isLoading.value && _travellerController.travellers.isEmpty) {
+                  return _buildShimmerLoading();
+                }
+                
+                if (_travellerController.travellers.isEmpty) {
+                  return RefreshIndicator(
+                    onRefresh: () => _travellerController.fetchTravelers(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.people_outline,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No travelers added yet',
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey[600],
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Pull down to refresh',
+                              style: GoogleFonts.poppins(
+                                color: Colors.grey[400],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                
+                return RefreshIndicator(
+                  onRefresh: () => _travellerController.fetchTravelers(),
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: _travellerController.travellers.length,
+                    itemBuilder: (context, index) {
+                      final traveler = _travellerController.travellers[index];
+                      return _buildTravelerCard(traveler, theme);
+                    },
+                  ),
+                );
+              }),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildShimmerLoading() => ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: 3,
+      itemBuilder: (context, index) => Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 150,
+                    height: 16,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 100,
+                    height: 14,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+    );
+  
+  Widget _buildTravelerCard(Map<String, dynamic> traveler, ThemeData theme) => Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        title: Text(
+          traveler['passengerName'] ?? traveler['firstname'] ?? 'No Name',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              'Age: ${traveler['passengerAge'] ?? traveler['age'] ?? 'N/A'}, ${traveler['passengerGender'] ?? 'N/A'}',
+              style: GoogleFonts.poppins(fontSize: 13),
+            ),
+            if (traveler['passengerMobileNumber'] != null && 
+                traveler['passengerMobileNumber'].toString().isNotEmpty &&
+                traveler['passengerMobileNumber'] != '0000000000')
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  'Mobile: ${traveler['passengerMobileNumber']}',
+                  style: GoogleFonts.poppins(fontSize: 13),
                 ),
               ),
+            if (traveler['contact_email'] != null && traveler['contact_email'].toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  'Email: ${traveler['contact_email']}',
+                  style: GoogleFonts.poppins(fontSize: 13),
+                ),
+              ),
+            if (traveler['address'] != null && traveler['address'].toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  'Address: ${traveler['address']}',
+                  style: GoogleFonts.poppins(fontSize: 13),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            if (traveler['passengerBerthChoice'] != null && traveler['passengerBerthChoice'].toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  'Berth: ${traveler['passengerBerthChoice']}',
+                  style: GoogleFonts.poppins(fontSize: 13),
+                ),
+              ),
+            if (traveler['passengerFoodChoice'] != null && traveler['passengerFoodChoice'].toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  'Food: ${traveler['passengerFoodChoice']}',
+                  style: GoogleFonts.poppins(fontSize: 13),
+                ),
+              ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit_outlined, color: Colors.blue),
+              onPressed: () {
+                final travelType = widget.travelType ?? TravelType.train;
+                Get.to(() => TravellerDetailScreen(
+                  traveller: traveler,
+                  travelType: travelType,
+                ))?.then((_) {
+                  _travellerController.fetchTravelers();
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.red),
+              onPressed: () {
+                Get.defaultDialog(
+                  title: 'Delete Traveler',
+                  middleText: 'Are you sure you want to delete ${traveler['passengerName'] ?? traveler['firstname'] ?? 'this traveler'}? This action cannot be undone.',
+                  textConfirm: 'Delete',
+                  textCancel: 'Cancel',
+                  confirmTextColor: Colors.white,
+                  buttonColor: Colors.red,
+                  onConfirm: () async {
+                    Get.back();
+                    final travellerId = traveler['id'] ?? traveler['passengerId'];
+                    await _travellerController.deleteTraveler(travellerId);
+                  },
+                );
+              },
             ),
           ],
         ),
       ),
-    );
-
-  AppBar _buildAppBar() => AppBar(
-      backgroundColor: AppColors.redCA0,
-      automaticallyImplyLeading: false,
-      elevation: 0,
-      centerTitle: true,
-      leading: InkWell(
-        onTap: () {
-          Get.back();
-        },
-        child: Icon(Icons.arrow_back, color: AppColors.white, size: 20),
-      ),
-      title: CommonTextWidget.PoppinsSemiBold(
-        text: 'Traveller Details',
-        color: AppColors.white,
-        fontSize: 18,
-      ),
-    );
-
-  // Helper for TextFields (remains the same)
-  Widget _buildTextField(String label, String hint,
-      TextEditingController controller, TextInputType keyboardType) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        CommonTextWidget.PoppinsMedium(
-          text: label,
-          color: AppColors.grey717,
-          fontSize: 12,
-        ),
-        SizedBox(height: 5),
-        // Assuming CommonTextFieldWidget.TextFormField5 exists and is styled
-        CommonTextFieldWidget(
-          hintText: hint,
-          controller: controller,
-          keyboardType: keyboardType,
-        ),
-      ],
-    );
-
-  // Helper for Age and Gender Row - uses local state _selectedGender
-  Widget _buildAgeAndGenderFields() => Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: _buildTextField(
-              'Age', 'Enter age', ageController, TextInputType.number),
-        ),
-        SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              CommonTextWidget.PoppinsMedium(
-                text: 'Gender',
-                color: AppColors.grey717,
-                fontSize: 12,
-              ),
-              SizedBox(height: 5),
-              DropdownButtonFormField<String>(
-                 // Add styling matching your app theme
-                 decoration: InputDecoration(
-                   hintText: 'Select Gender', // Add hint text
-                   contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
-                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
-                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.redCA0, width: 1.5)),
-                   filled: true, fillColor: AppColors.greyE2E.withOpacity(0.5),
-                 ),
-                value: _selectedGender, // Use state variable
-                isExpanded: true,
-                icon: Icon(Icons.arrow_drop_down, color: AppColors.grey717),
-                items: genderItems.map((String value) => DropdownMenuItem<String>(
-                    value: value,
-                    child: CommonTextWidget.PoppinsRegular(
-                      text: value, color: AppColors.black2E2, fontSize: 14,
-                    ),
-                  )).toList(),
-                onChanged: (String? newValue) {
-                  // Update state when changed
-                  setState(() {
-                    _selectedGender = newValue;
-                  });
-                },
-                // Optional validation
-                validator: (String? value) => value == null ? 'Please select gender' : null,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-
-  // Helper for Berth Preference Dropdown - uses local state _selectedBerth
-  Widget _buildBerthPreferenceSection() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        CommonTextWidget.PoppinsMedium(
-          text: 'Berth Preference',
-          color: AppColors.grey717,
-          fontSize: 12,
-        ),
-        SizedBox(height: 5),
-        DropdownButtonFormField<String>(
-           // Add styling matching your app theme
-           decoration: InputDecoration(
-             hintText: 'Select Preference', // Add hint text
-             contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-             border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
-             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.greyBEB)),
-             focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: AppColors.redCA0, width: 1.5)),
-             filled: true, fillColor: AppColors.greyE2E.withOpacity(0.5),
-           ),
-          value: _selectedBerth, // Use state variable
-          isExpanded: true,
-          icon: Icon(Icons.arrow_drop_down, color: AppColors.grey717),
-          // ignore: prefer_expression_function_bodies
-          items: berthItems.map((String value) { // Use updated berthItems list
-            return DropdownMenuItem<String>(
-              value: value,
-              child: CommonTextWidget.PoppinsRegular(
-                text: value, color: AppColors.black2E2, fontSize: 14,
-              ),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              setState(() {
-                _selectedBerth = newValue;
-              });
-            }
-          },
-           // Optional validation
-           validator: (String? value) => value == null ? 'Please select preference' : null,
-        ),
-      ],
     );
 }

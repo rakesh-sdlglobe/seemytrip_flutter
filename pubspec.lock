@@ -337,6 +337,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.3"
+  easebuzz_flutter:
+    dependency: "direct main"
+    description:
+      name: easebuzz_flutter
+      sha256: "0005e373b3d52826896ac30016ac3423a3b2c87e30d9bdd3ef27f91a5f29aef5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
   eventify:
     dependency: transitive
     description:

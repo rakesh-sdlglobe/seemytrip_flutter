@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import 'package:seemytrip/core/theme/app_colors.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/widgets/dynamic_language_selector.dart';
 import '../../../../../core/widgets/global_language_wrapper.dart';
-import '../../../../../shared/constants/images.dart';
 import '../../controllers/flight_search_controller.dart';
 import 'multicity_screen.dart';
 import 'one_way_screen.dart';
@@ -86,259 +84,156 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> with TickerProv
     ),
   );
   
-  Widget _buildModernHeader(BuildContext context) => Container(
-      height: 120,
+  Widget _buildModernHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return Container(
       width: double.infinity,
+      padding: const EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 16,
+        bottom: 20,
+      ),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.redCA0,
-            AppColors.redCA0.withOpacity(0.8),
-          ],
+        color: colorScheme.primary,
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.redCA0.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: colorScheme.primary.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            children: [
-              // Back Button
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: InkWell(
-                  onTap: () => Get.back(),
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    color: AppColors.white,
-                    size: 20,
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Bar with Back Button and Actions
+            Row(
+              children: [
+                // Back Button with subtle background
+                Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.onPrimary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-              ),
-              
-              const SizedBox(width: 16),
-              
-              // Header Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            Icons.flight_takeoff_rounded,
-                            color: AppColors.white,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'flightSearch'.tr,
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'findBestFlights'.tr,
-                      style: TextStyle(
-                        color: AppColors.white.withOpacity(0.9),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back_rounded, color: colorScheme.onPrimary),
+                    onPressed: () => Get.back(),
+                    style: IconButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              
-              // Language Selector
-              QuickLanguageSwitcher(),
-            ],
-          ),
-        ),
-      ),
-    );
-  
-  Widget _buildModernTabBar(BuildContext context) => Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: GetBuilder<FlightSearchController>(
-        builder: (FlightSearchController controller) {
-          if (!controller.isControllerInitialized) {
-            return Container(
-              height: 56,
-              child: Center(
-                child: LoadingAnimationWidget.threeRotatingDots(
-                  color: AppColors.redCA0,
-                  size: 20,
-                ),
-              ),
-            );
-          }
-          return Container(
-            height: 56,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: TabBar(
-              controller: controller.tabController,
-              isScrollable: false,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [AppColors.redCA0, AppColors.redCA0.withOpacity(0.8)],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.redCA0.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerColor: Colors.transparent,
-              labelColor: AppColors.white,
-              unselectedLabelColor: Theme.of(context).textTheme.bodyMedium?.color,
-              labelStyle: const TextStyle(
-                fontFamily: 'PoppinsSemiBold',
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-              unselectedLabelStyle: const TextStyle(
-                fontFamily: 'PoppinsMedium',
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-              tabs: controller.myTabs.map((tab) {
-                return Container(
-                  height: 56,
-                  child: Center(child: tab),
-                );
-              }).toList(),
-              onTap: (int index) {
-                controller.tabController.animateTo(index);
-              },
-            ),
-          );
-        },
-      ),
-    );
-  
-  Widget _buildModernOfferBanner(BuildContext context) => Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.redF9E,
-            AppColors.redF9E.withOpacity(0.8),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.redCA0.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          // Offer Icon
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.redCA0.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: SvgPicture.asset(
-              offerIcon,
-              width: 20,
-              height: 20,
-              color: AppColors.redCA0,
-            ),
-          ),
-          
-          const SizedBox(width: 16),
-          
-          // Offer Text
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'specialOffer'.tr,
-                  style: TextStyle(
-                    color: AppColors.redCA0,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'getFlatOff'.tr,
-                  style: TextStyle(
-                    color: AppColors.redCA0.withOpacity(0.8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                
+                const Spacer(),
+                
+                // Language Selector with subtle background
+                Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.onPrimary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  child: QuickLanguageSwitcher(),
                 ),
               ],
             ),
-          ),
-          
-          // Arrow Icon
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.redCA0.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+            
+            const SizedBox(height: 16),
+            
+            // Header Content
+            Row(
+              children: [
+                // Icon with subtle background
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: colorScheme.onPrimary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.flight_takeoff_rounded,
+                    color: colorScheme.onPrimary,
+                    size: 24,
+                  ),
+                ),
+                
+                const SizedBox(width: 12),
+                
+                // Title and Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title with subtle text shadow
+                      Text(
+                        'flightSearch'.tr,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.1),
+                              offset: const Offset(0, 2),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      // Subtitle with subtle transparency
+                      Text(
+                        'findBestFlights'.tr,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onPrimary.withOpacity(0.9),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            child: Icon(
-              Icons.arrow_forward_ios,
-              color: AppColors.redCA0,
-              size: 16,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+  
+  Widget _buildModernTabBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return GetBuilder<FlightSearchController>(
+      builder: (controller) {
+        if (!controller.isControllerInitialized) {
+          return const SizedBox.shrink();
+        }
+        
+        return TabBar(
+          controller: controller.tabController,
+          labelColor: colorScheme.primary,
+          unselectedLabelColor: theme.unselectedWidgetColor,
+          indicatorColor: colorScheme.primary,
+          indicatorWeight: 2,
+          tabs: [
+            Tab(text: 'oneWay'.tr),
+            Tab(text: 'roundTrip'.tr),
+            Tab(text: 'multiCity'.tr),
+          ],
+          labelPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        );
+      },
+    );
+  }
+}
