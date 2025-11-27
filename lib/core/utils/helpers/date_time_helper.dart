@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class DateTimeHelper {
   /// Format a DateTime to a string with the given format
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// formatDate(DateTime(2023, 1, 1), 'yyyy-MM-dd') // '2023-01-01'
@@ -13,7 +13,7 @@ class DateTimeHelper {
   }
 
   /// Parse a string to DateTime with the given format
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// parseDate('2023-01-01', 'yyyy-MM-dd') // DateTime(2023, 1, 1)
@@ -27,7 +27,7 @@ class DateTimeHelper {
   }
 
   /// Get a human-readable time difference between two dates
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// getTimeAgo(DateTime.now().subtract(Duration(hours: 2))) // '2 hours ago'
@@ -107,7 +107,7 @@ class DateTimeHelper {
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    
+
     if (duration.inHours > 0) {
       return '$hours:$minutes:$seconds';
     } else {
@@ -119,18 +119,45 @@ class DateTimeHelper {
   static int calculateAge(DateTime birthDate) {
     final now = DateTime.now();
     int age = now.year - birthDate.year;
-    
+
     // Adjust age if birthday hasn't occurred yet this year
-    if (now.month < birthDate.month || 
+    if (now.month < birthDate.month ||
         (now.month == birthDate.month && now.day < birthDate.day)) {
       age--;
     }
-    
+
     return age;
   }
 
   /// Check if a year is a leap year
   static bool isLeapYear(int year) {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+  }
+
+  /// Convert 24-hour time string (HH:mm) to 12-hour format (hh:mm AM/PM)
+  static String convertTo12HourFormat(String time24) {
+    if (time24.isEmpty || time24 == '--:--' || !time24.contains(':')) {
+      return time24;
+    }
+
+    try {
+      final parts = time24.split(':');
+      if (parts.length != 2) return time24;
+
+      int hour = int.tryParse(parts[0]) ?? 0;
+      int minute = int.tryParse(parts[1]) ?? 0;
+
+      if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+        return time24;
+      }
+
+      String period = hour >= 12 ? 'PM' : 'AM';
+      int hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+      String minuteStr = minute.toString().padLeft(2, '0');
+
+      return '$hour12:$minuteStr $period';
+    } catch (e) {
+      return time24;
+    }
   }
 }
